@@ -98,8 +98,6 @@ export function dataSourceFromEvidence(evidence: { opd?: string }[]): string {
     // padahal data simulasi (user: jawaban DTSEN muncul padahal API masih 401).
     else if (opd.includes('DTSEN Demo') || opd.includes('DTSEN (Demo')) opds.add('DTSEN (data demo — simulasi)');
     // @hotfix 29 Agu 2026: sumber dibedakan dari opd yang dikirim planner:
-    // DB rilis (warehouse) / BAPPEDA offline / SPLP live — jangan menebak dari nama.
-    else if (opd.includes('DB rilis')) opds.add('DTSEN (DB rilis — warehouse)');
     else if (opd.includes('BAPPEDA') || opd.includes('offline')) opds.add('DTSEN (BAPPEDA Des 2025 — offline)');
     else if (opd.includes('SPLP')) opds.add('DTSEN (Kemensos/BPS via SPLP API)');
     else if (opd.includes('DTSEN')) opds.add('DTSEN (Kemensos/BPS)');
@@ -194,7 +192,6 @@ export function tokenizeQuery(query: string): string[] {
 /**
  * Stemmer Bahasa Indonesia yang SENGAJA naif & konservatif: hanya memotong
  * afiksia umum jika sisa kata ≥ 4 huruf. Yang penting kedua sisi (query dan
- * dokumen) diproses identik sehingga "kemiskinan" ↔ "miskin" tetap bertemu,
  * sedangkan "sehat" tidak terpotong jadi "hat" (sisa < 4 → tidak dipotong).
  */
 export function stemId(word: string): string {
