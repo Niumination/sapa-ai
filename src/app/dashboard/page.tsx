@@ -203,7 +203,7 @@ export default function DashboardPage() {
       )}
 
       {mode === 'ai-response' && !isLoading && aiResponse && (
-        <AIResponseRenderer response={aiResponse} />
+        <AIResponseRenderer response={aiResponse} onFollowUp={handleQuery} />
       )}
 
       {mode === 'ai-response' && isLoading && (

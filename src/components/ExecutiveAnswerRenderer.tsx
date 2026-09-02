@@ -89,7 +89,7 @@ function AnswerBadge({ presentation }: { presentation: ExecutivePresentation }) 
   const originLabel = presentation.provenance.origin === 'direct'
     ? 'Direct API'
     : presentation.provenance.origin === 'splp'
-      ? 'Fallback SPLP'
+      ? 'SAPA SPLP'
       : 'Sumber SAPA';
   return (
     <div className="flex flex-wrap items-center gap-2">
@@ -318,6 +318,8 @@ function ProvenancePanel({ presentation, onFollowUp }: { presentation: Executive
 
 function EvidenceSummary({ presentation }: { presentation: ExecutivePresentation }) {
   if (presentation.evidence.length === 0) return null;
+  // Hindari duplikasi: visual table sudah menampilkan evidence yang sama
+  if (presentation.visual.type === 'table') return null;
   return (
     <section className="mt-5"><div className="mb-2 flex items-center justify-between gap-3"><h3 className="text-xs font-bold text-[var(--brand)]">Evidence yang dipakai</h3><span className="text-[10px] text-[var(--text-muted)]">{presentation.provenance.evidenceCount} item terstruktur</span></div><div className="overflow-x-auto rounded-xl border border-[var(--border)] bg-[var(--surface-card)]"><table className="w-full min-w-[620px] text-xs"><thead className="bg-[var(--surface-muted)]"><tr><th className="px-3 py-2 text-left text-[10px] font-bold uppercase tracking-wide text-[var(--text-muted)]">Indikator</th><th className="px-3 py-2 text-left text-[10px] font-bold uppercase tracking-wide text-[var(--text-muted)]">Nilai</th><th className="px-3 py-2 text-left text-[10px] font-bold uppercase tracking-wide text-[var(--text-muted)]">Satuan</th><th className="px-3 py-2 text-left text-[10px] font-bold uppercase tracking-wide text-[var(--text-muted)]">OPD</th><th className="px-3 py-2 text-left text-[10px] font-bold uppercase tracking-wide text-[var(--text-muted)]">Tahun</th></tr></thead><tbody>{presentation.evidence.slice(0, 12).map((row, index) => <tr key={`${row.id}-${index}`} className="border-t border-[var(--surface-muted)]"><td className="px-3 py-2.5 text-[var(--text-body)]">{row.indikator}</td><td className="px-3 py-2.5 font-bold text-[var(--brand)]">{row.nilai}</td><td className="px-3 py-2.5 text-[var(--text-body)]">{row.satuan || '—'}</td><td className="px-3 py-2.5 text-[var(--text-muted)]">{row.opd || '—'}</td><td className="px-3 py-2.5 text-[var(--text-muted)]">{row.tahun || '—'}</td></tr>)}</tbody></table></div></section>
   );
