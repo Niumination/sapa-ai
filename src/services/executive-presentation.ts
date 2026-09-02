@@ -472,7 +472,7 @@ function detectOrigin(dataSource: string): 'direct' | 'splp' | 'unknown' {
 }
 
 export function buildExecutivePresentation(response: HybridResponse): ExecutivePresentation {
-  const metrics = buildMetrics(response);
+  let metrics = buildMetrics(response);
   const visual = buildVisual(response);
   let evidence: ExecutiveEvidence[] = [];
 
@@ -487,6 +487,28 @@ export function buildExecutivePresentation(response: HybridResponse): ExecutiveP
     ? visual.title
     : metrics[0]?.label ?? (answerType === 'not_available' ? 'Data belum dapat disimpulkan' : 'Ringkasan jawaban SAPA');
   const primaryLead = (response.narasi ?? '').trim();
+  // Sinkronkan headline besar dengan lead: ranking evidence by topik agar 730 tidak kalah oleh 16.936 (balita total)
+  const topicForRanking = extractTopic(primaryLead);
+  const rankedForVisual = rankEvidence(evidence, topicForRanking);
+  // Jika ada ranking yang mengubah urutan, selaraskan metrics & visual.rows agar headline/metric sinkron dengan lead
+  if (rankedForVisual.length > 0 && rankedForVisual[0]?.id !== evidence[0]?.id) {
+    evidence = rankedForVisual;
+    if (visual.type === 'table') {
+      // Reorder visual.rows sesuai ranked evidence — headline 16.936 vs 730 fix
+      const colKeys = visual.columns.map((c) => c.key);
+      visual.rows = evidence.map((e) => {
+        const row: Record<string, unknown> = {};
+        // Mapping kolom generik: Indikator, Nilai, Satuan, OPD, Tahun
+        const values = [e.indikator, e.nilai, e.satuan, e.opd ?? '—', e.tahun ?? '—'];
+        colKeys.forEach((k, i) => { row[k] = values[i] ?? '—'; });
+        return row;
+      });
+      // Metrics juga sinkron: 3 teratas ranked
+      metrics = evidence.slice(0, 3).map((e) => ({ label: e.indikator, value: e.nilai, unit: e.satuan, opd: e.opd, tahun: e.tahun }));
+    } else if (visual.type === 'metric') {
+      metrics = evidence.slice(0, 6).map((e) => ({ label: e.indikator, value: e.nilai, unit: e.satuan, opd: e.opd, tahun: e.tahun }));
+    }
+  }
   const lead = buildLead(evidence, answerType, primaryLead);
   const presentation: ExecutivePresentation = {
     version: 'v1',
