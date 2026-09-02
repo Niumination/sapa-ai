@@ -1,0 +1,82 @@
+{
+  "judul": "Data Balita Stunting Kab. Aceh Tengah (per 2026-07)",
+  "opd": "Dinas Kesehatan",
+  "dokumen": "B",
+  "sumber_file": "STUNTING BY NIK.xlsx (sheet STUNTING BY NIK)",
+  "catatan": "AGREGAT KEAMANAN: hanya jumlah balita stunting per kecamatan & jenis kelamin. Baris nama/NIK/alamat/anak TIDAK diikutsertakan (UU PDP, data anak).",
+  "ringkasan": {
+    "total_balita_stunting": 654
+  },
+  "per_kecamatan": [
+    {
+      "kecamatan": "SILIH NARA",
+      "jumlah": 100
+    },
+    {
+      "kecamatan": "KETOL",
+      "jumlah": 75
+    },
+    {
+      "kecamatan": "KEBAYAKAN",
+      "jumlah": 70
+    },
+    {
+      "kecamatan": "LUT TAWAR",
+      "jumlah": 65
+    },
+    {
+      "kecamatan": "LINGE",
+      "jumlah": 50
+    },
+    {
+      "kecamatan": "BINTANG",
+      "jumlah": 47
+    },
+    {
+      "kecamatan": "PEGASING",
+      "jumlah": 43
+    },
+    {
+      "kecamatan": "BEBESEN",
+      "jumlah": 42
+    },
+    {
+      "kecamatan": "KUTE PANANG",
+      "jumlah": 39
+    },
+    {
+      "kecamatan": "JAGONG JEGET",
+      "jumlah": 34
+    },
+    {
+      "kecamatan": "ATU LINTANG",
+      "jumlah": 34
+    },
+    {
+      "kecamatan": "BIES",
+      "jumlah": 24
+    },
+    {
+      "kecamatan": "RUSIP ANTARA",
+      "jumlah": 17
+    },
+    {
+      "kecamatan": "CELALA",
+      "jumlah": 14
+    }
+  ],
+  "per_jenis_kelamin": [
+    {
+      "jenis_kelamin": "P",
+      "jumlah": 297
+    },
+    {
+      "jenis_kelamin": "L",
+      "jumlah": 357
+    }
+  ],
+  "metadata": {
+    "periode": "2026-07",
+    "satuan": "balita"
+  }
+}

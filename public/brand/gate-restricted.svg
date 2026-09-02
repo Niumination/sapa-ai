@@ -1,0 +1,28 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 200" role="img" aria-label="Ilustrasi: data terlindungi audit penuh">
+  <rect width="320" height="200" rx="16" fill="#10221A"/>
+  <!-- Pegunungan samar -->
+  <path d="M0 150 L70 88 L130 150 Z" fill="#1B4332" opacity="0.55"/>
+  <path d="M96 150 L176 72 L256 150 Z" fill="#1B4332" opacity="0.7"/>
+  <path d="M224 150 L288 92 L320 150 Z" fill="#1B4332" opacity="0.55"/>
+  <!-- Bulan/matahari emas samar -->
+  <circle cx="252" cy="46" r="15" fill="#D4A853" opacity="0.85"/>
+  <!-- Perisai -->
+  <path d="M160 34 C 185 46 200 48 200 48 L200 96 C200 124 178 140 160 148 C142 140 120 124 120 96 L120 48 C120 48 135 46 160 34 Z"
+        fill="#244B38" stroke="#D4A853" stroke-width="2.5"/>
+  <path d="M160 42 C 180 52 192 54 192 54 L192 94 C192 118 174 132 160 139 C146 132 128 118 128 94 L128 54 C128 54 140 52 160 42 Z"
+        fill="#1E3A2C"/>
+  <!-- Gembok -->
+  <rect x="142" y="88" width="36" height="28" rx="6" fill="#D4A853"/>
+  <path d="M148 88 L148 78 a12 12 0 0 1 24 0 L172 88" fill="none" stroke="#D4A853" stroke-width="6" stroke-linecap="round"/>
+  <circle cx="160" cy="100" r="4" fill="#10221A"/>
+  <rect x="158.6" y="102" width="2.8" height="8" rx="1.4" fill="#10221A"/>
+  <!-- Riak danau -->
+  <path d="M24 164 q8 -4 16 0 t16 0 t16 0" fill="none" stroke="#2D6A4F" stroke-width="2.5" stroke-linecap="round"/>
+  <path d="M232 172 q8 -4 16 0 t16 0 t16 0" fill="none" stroke="#2D6A4F" stroke-width="2.5" stroke-linecap="round"/>
+  <!-- Baris "audit trail" -->
+  <g opacity="0.9">
+    <rect x="38" y="180" width="10" height="10" rx="2" fill="#D4A853"/>
+    <rect x="54" y="182.5" width="60" height="5" rx="2.5" fill="#3E5C4D"/>
+    <rect x="120" y="182.5" width="34" height="5" rx="2.5" fill="#2D6A4F"/>
+  </g>
+</svg>

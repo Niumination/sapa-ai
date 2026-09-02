@@ -1,0 +1,97 @@
+{
+  "judul": "DHV Santri Dalam Daerah Kab. Aceh Tengah 2025",
+  "opd": "Dinas Pendidikan",
+  "dokumen": "A",
+  "sumber_file": "DHV SANTRI DALAM DAERAH 2025.xlsx (sheet DHV SANTRI DALAM DAERAH 2025)",
+  "catatan": "AGREGAT KEAMANAN: hanya jumlah penerima & total bantuan per lembaga. Baris nama/NIK/alamat/HP TIDAK diikutsertakan (UU PDP).",
+  "ringkasan": {
+    "total_penerima": 100,
+    "total_bantuan_rp": 200000000
+  },
+  "per_lembaga": [
+    {
+      "lembaga": "Darul Mukhlisin",
+      "penerima": 28,
+      "total_bantuan_rp": 56000000
+    },
+    {
+      "lembaga": "Al Azhar",
+      "penerima": 26,
+      "total_bantuan_rp": 52000000
+    },
+    {
+      "lembaga": "Ulumul Qur'an",
+      "penerima": 8,
+      "total_bantuan_rp": 16000000
+    },
+    {
+      "lembaga": "Nurul Huda",
+      "penerima": 7,
+      "total_bantuan_rp": 14000000
+    },
+    {
+      "lembaga": "Al-Azhar",
+      "penerima": 6,
+      "total_bantuan_rp": 12000000
+    },
+    {
+      "lembaga": "Al Fatah",
+      "penerima": 6,
+      "total_bantuan_rp": 12000000
+    },
+    {
+      "lembaga": "Muhammad Al-Khalifi",
+      "penerima": 4,
+      "total_bantuan_rp": 8000000
+    },
+    {
+      "lembaga": "Maqamam Mahmuda",
+      "penerima": 3,
+      "total_bantuan_rp": 6000000
+    },
+    {
+      "lembaga": "Darul Ulum",
+      "penerima": 3,
+      "total_bantuan_rp": 6000000
+    },
+    {
+      "lembaga": "Bustanul Ulum",
+      "penerima": 2,
+      "total_bantuan_rp": 4000000
+    },
+    {
+      "lembaga": "Ar Rahman",
+      "penerima": 2,
+      "total_bantuan_rp": 4000000
+    },
+    {
+      "lembaga": "Ar-Rahman",
+      "penerima": 1,
+      "total_bantuan_rp": 2000000
+    },
+    {
+      "lembaga": "Ihsanul Fata",
+      "penerima": 1,
+      "total_bantuan_rp": 2000000
+    },
+    {
+      "lembaga": "Mahqamah Mahmuda",
+      "penerima": 1,
+      "total_bantuan_rp": 2000000
+    },
+    {
+      "lembaga": "Ikhwanul Yaqin",
+      "penerima": 1,
+      "total_bantuan_rp": 2000000
+    },
+    {
+      "lembaga": "Fatimah Al-Madaniyy",
+      "penerima": 1,
+      "total_bantuan_rp": 2000000
+    }
+  ],
+  "metadata": {
+    "tahun": 2025,
+    "satuan": "orang / Rp"
+  }
+}

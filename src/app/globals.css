@@ -1,0 +1,211 @@
+@import "tailwindcss";
+
+/* ═══════════════════════════════════════════════════════════
+   cc-acehtengah — Gayo Highlands Light Theme
+   Based on cc.acehtengahkab.go.id official palette
+   Light body (#F5F3EC), dark header (#0F2A1E), forest green primary
+   ═══════════════════════════════════════════════════════════ */
+
+:root {
+  --background: #F5F3EC;
+  --foreground: #1E2420;
+  --primary: #1B4332;
+  --primary-container: #2D6A4F;
+  --on-primary: #FFFFFF;
+  --secondary: #8A6E1D;
+  --secondary-container: #F1E4C2;
+  --tertiary: #A15C38;
+  --tertiary-container: #C97A4A;
+  --surface: #F5F3EC;
+  --surface-container: #E9E6DA;
+  --surface-container-low: #EFEDE3;
+  --surface-container-lowest: #FFFFFF;
+  --surface-container-high: #E1DDCD;
+  --outline: #767D6F;
+  --outline-variant: #C6C3B4;
+  --accent: #D9C284;
+  --accent-light: #C9D4C7;
+  --header-bg: #0F2A1E;
+  --success: #2D6A4F;
+  --success-light: #DCE8DE;
+  --warning: #D9C284;
+  --danger: #B3261E;
+  --danger-light: #FBE3DE;
+  --error: #B3261E;
+  --error-container: #FBE3DE;
+
+  /* ── Token semantik (dari 170fda4, tanpa color-scheme paksa) ──
+     Dipakai perbaikan UI header/sidebar/GIS/mainpage agar konsisten
+     dan bisa diaudit kontras terpusat. */
+  --surface-card: #FFFFFF;       /* kartu */
+  --surface-muted: #E9E6DA;      /* blok sekunder */
+  --surface-muted-2: #E1DDCD;
+  --text: #1E2420;
+  --text-body: #4B5249;
+  --text-muted: #5C6358;
+  --border: #9A9683;
+  --border-strong: #7E7A6A;
+  --brand: #1B4332;
+  --brand-soft: #2D6A4F;
+  --brand-deep: #0F2A1E;         /* header */
+  --brand-tint: #DCE8DE;
+  --on-brand: #FFFFFF;
+  --on-brand-muted: #E3E0D2;
+  --danger-tint: #FBE3DE;
+  --warning-tint: #F1E4C2;
+  --accent-tint: #F3DCC9;
+  /* alias agar token lama & baru sama */
+  --background: var(--surface);
+  --foreground: var(--text);
+  --primary: var(--brand);
+  --on-primary: var(--on-brand);
+  --outline: var(--text-muted);
+  --outline-variant: var(--border);
+  --success: var(--brand-soft);
+}
+
+/* ── Tema gelap (opsional, videotron) ── */
+[data-theme='dark'] {
+  --surface: #10150F;
+  --surface-card: #1A211A;
+  --surface-muted: #232B22;
+  --surface-muted-2: #2C352B;
+  --text: #F2F0E6;
+  --text-body: #D7D3C4;
+  --text-muted: #ABA694;
+  --border: #3D473C;
+  --border-strong: #6E7A6C;
+  --brand: #7FD1A4;
+  --brand-soft: #52B788;
+  --brand-deep: #0B1810;
+  --brand-tint: #1E3327;
+  --on-brand: #08120C;
+  --on-brand-muted: #C9D4C7;
+  --danger: #F2A9A2;
+  --danger-tint: #3A1D1A;
+  --warning: #E7CD8A;
+  --warning-tint: #33290F;
+  --accent: #E0A379;
+  --accent-tint: #3A2419;
+  --background: var(--surface);
+  --foreground: var(--text);
+  --primary: var(--brand);
+  --on-primary: var(--on-brand);
+  --outline: var(--text-muted);
+  --outline-variant: var(--border);
+  --success: var(--brand-soft);
+  --error: var(--danger);
+}
+
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --font-sans: 'Inter', var(--font-geist-sans), system-ui, sans-serif;
+  --font-mono: 'JetBrains Mono', var(--font-geist-mono), monospace;
+}
+
+body {
+  background: var(--background);
+  color: var(--foreground);
+  font-family: 'Inter', system-ui, sans-serif;
+}
+
+/* Custom Scrollbar — warm themed */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: #E9E6DA;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #C6C3B4;
+  border-radius: 3px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #767D6F;
+}
+
+/* Animations */
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(8px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes slideIn {
+  from { opacity: 0; transform: translateX(-12px); }
+  to { opacity: 1; transform: translateX(0); }
+}
+
+@keyframes shimmer {
+  0% { background-position: -200% 0; }
+  100% { background-position: 200% 0; }
+}
+
+.animate-fadeIn {
+  animation: fadeIn 0.4s ease-out;
+}
+
+.animate-slideIn {
+  animation: slideIn 0.3s ease-out;
+}
+
+/* Loading skeleton */
+.skeleton {
+  background: linear-gradient(90deg, #E9E6DA 25%, #E1DDCD 50%, #E9E6DA 75%);
+  background-size: 200% 100%;
+  animation: shimmer 1.5s infinite;
+  border-radius: 0.5rem;
+}
+
+/* Card hover effects */
+.card-hover {
+  transition: all 0.2s ease;
+}
+
+.card-hover:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 25px -5px rgba(15, 42, 30, 0.12);
+}
+
+/* Recharts tooltip styling — light themed */
+.recharts-tooltip-wrapper {
+  outline: none !important;
+}
+
+.recharts-default-tooltip {
+  background: #FFFFFF !important;
+  border: 1px solid #C6C3B4 !important;
+  border-radius: 0.75rem !important;
+  box-shadow: 0 10px 25px -5px rgba(15, 42, 30, 0.15) !important;
+}
+
+.recharts-tooltip-label {
+  color: #767D6F !important;
+  font-size: 11px !important;
+}
+
+.recharts-tooltip-item {
+  color: #1E2420 !important;
+  font-size: 12px !important;
+}
+
+/* ─── Cetak Laporan Eksekutif (PR-3) ───
+   Saat window.print(): sidebar/header dashboard disembunyikan (print:hidden),
+   kontainer scroll dibuka supaya seluruh halaman laporan tercetak multi-halaman. */
+@media print {
+  body,
+  body * {
+    overflow: visible !important;
+  }
+  html,
+  body,
+  main {
+    height: auto !important;
+    max-height: none !important;
+    background: #ffffff !important;
+  }
+}

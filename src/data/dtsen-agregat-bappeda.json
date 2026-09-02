@@ -1,0 +1,2636 @@
+{
+  "sumber": "DTSEN Versi 4 (Desember 2025) — BAPPEDA Aceh Tengah (KABUPATEN_ACEH_TENGAH_050_3264_BAPPEDA)",
+  "kabupaten": "KABUPATEN ACEH TENGAH",
+  "tingkat": "keluarga",
+  "total": {
+    "keluarga": 71370,
+    "jiwa": 234740
+  },
+  "per_kecamatan": [
+    {
+      "kecamatan": "ATU LINTANG",
+      "keluarga": 2494,
+      "jiwa": 7951
+    },
+    {
+      "kecamatan": "BEBESEN",
+      "keluarga": 12737,
+      "jiwa": 43070
+    },
+    {
+      "kecamatan": "BIES",
+      "keluarga": 2816,
+      "jiwa": 8984
+    },
+    {
+      "kecamatan": "BINTANG",
+      "keluarga": 3560,
+      "jiwa": 11738
+    },
+    {
+      "kecamatan": "CELALA",
+      "keluarga": 3517,
+      "jiwa": 11394
+    },
+    {
+      "kecamatan": "JAGONG JEGET",
+      "keluarga": 3483,
+      "jiwa": 11216
+    },
+    {
+      "kecamatan": "KEBAYAKAN",
+      "keluarga": 5969,
+      "jiwa": 19996
+    },
+    {
+      "kecamatan": "KETOL",
+      "keluarga": 5150,
+      "jiwa": 16551
+    },
+    {
+      "kecamatan": "KUTE PANANG",
+      "keluarga": 2799,
+      "jiwa": 9292
+    },
+    {
+      "kecamatan": "LAUT TAWAR",
+      "keluarga": 6105,
+      "jiwa": 20159
+    },
+    {
+      "kecamatan": "LINGE",
+      "keluarga": 3776,
+      "jiwa": 12311
+    },
+    {
+      "kecamatan": "PEGASING",
+      "keluarga": 7623,
+      "jiwa": 25304
+    },
+    {
+      "kecamatan": "RUSIP ANTARA",
+      "keluarga": 2943,
+      "jiwa": 9869
+    },
+    {
+      "kecamatan": "SILIH NARA",
+      "keluarga": 8398,
+      "jiwa": 26905
+    }
+  ],
+  "per_kecamatan_desil": [
+    {
+      "kecamatan": "ATU LINTANG",
+      "desil": 1,
+      "keluarga": 383,
+      "jiwa": 1358
+    },
+    {
+      "kecamatan": "ATU LINTANG",
+      "desil": 2,
+      "keluarga": 394,
+      "jiwa": 1339
+    },
+    {
+      "kecamatan": "ATU LINTANG",
+      "desil": 3,
+      "keluarga": 261,
+      "jiwa": 813
+    },
+    {
+      "kecamatan": "ATU LINTANG",
+      "desil": 4,
+      "keluarga": 164,
+      "jiwa": 497
+    },
+    {
+      "kecamatan": "ATU LINTANG",
+      "desil": 5,
+      "keluarga": 477,
+      "jiwa": 1469
+    },
+    {
+      "kecamatan": "ATU LINTANG",
+      "desil": 6,
+      "keluarga": 455,
+      "jiwa": 1468
+    },
+    {
+      "kecamatan": "ATU LINTANG",
+      "desil": 7,
+      "keluarga": 299,
+      "jiwa": 911
+    },
+    {
+      "kecamatan": "BEBESEN",
+      "desil": 1,
+      "keluarga": 834,
+      "jiwa": 3044
+    },
+    {
+      "kecamatan": "BEBESEN",
+      "desil": 2,
+      "keluarga": 891,
+      "jiwa": 3325
+    },
+    {
+      "kecamatan": "BEBESEN",
+      "desil": 3,
+      "keluarga": 943,
+      "jiwa": 3376
+    },
+    {
+      "kecamatan": "BEBESEN",
+      "desil": 4,
+      "keluarga": 993,
+      "jiwa": 3548
+    },
+    {
+      "kecamatan": "BEBESEN",
+      "desil": 5,
+      "keluarga": 1694,
+      "jiwa": 5709
+    },
+    {
+      "kecamatan": "BEBESEN",
+      "desil": 6,
+      "keluarga": 1691,
+      "jiwa": 5874
+    },
+    {
+      "kecamatan": "BEBESEN",
+      "desil": 7,
+      "keluarga": 4641,
+      "jiwa": 15706
+    },
+    {
+      "kecamatan": "BIES",
+      "desil": 1,
+      "keluarga": 218,
+      "jiwa": 704
+    },
+    {
+      "kecamatan": "BIES",
+      "desil": 2,
+      "keluarga": 253,
+      "jiwa": 917
+    },
+    {
+      "kecamatan": "BIES",
+      "desil": 3,
+      "keluarga": 259,
+      "jiwa": 892
+    },
+    {
+      "kecamatan": "BIES",
+      "desil": 4,
+      "keluarga": 284,
+      "jiwa": 900
+    },
+    {
+      "kecamatan": "BIES",
+      "desil": 5,
+      "keluarga": 500,
+      "jiwa": 1705
+    },
+    {
+      "kecamatan": "BIES",
+      "desil": 6,
+      "keluarga": 453,
+      "jiwa": 1479
+    },
+    {
+      "kecamatan": "BIES",
+      "desil": 7,
+      "keluarga": 711,
+      "jiwa": 2168
+    },
+    {
+      "kecamatan": "BINTANG",
+      "desil": 1,
+      "keluarga": 603,
+      "jiwa": 2256
+    },
+    {
+      "kecamatan": "BINTANG",
+      "desil": 2,
+      "keluarga": 659,
+      "jiwa": 2440
+    },
+    {
+      "kecamatan": "BINTANG",
+      "desil": 3,
+      "keluarga": 598,
+      "jiwa": 2128
+    },
+    {
+      "kecamatan": "BINTANG",
+      "desil": 4,
+      "keluarga": 399,
+      "jiwa": 1275
+    },
+    {
+      "kecamatan": "BINTANG",
+      "desil": 5,
+      "keluarga": 435,
+      "jiwa": 1321
+    },
+    {
+      "kecamatan": "BINTANG",
+      "desil": 6,
+      "keluarga": 322,
+      "jiwa": 945
+    },
+    {
+      "kecamatan": "BINTANG",
+      "desil": 7,
+      "keluarga": 401,
+      "jiwa": 1124
+    },
+    {
+      "kecamatan": "CELALA",
+      "desil": 1,
+      "keluarga": 945,
+      "jiwa": 3319
+    },
+    {
+      "kecamatan": "CELALA",
+      "desil": 2,
+      "keluarga": 755,
+      "jiwa": 2684
+    },
+    {
+      "kecamatan": "CELALA",
+      "desil": 3,
+      "keluarga": 491,
+      "jiwa": 1611
+    },
+    {
+      "kecamatan": "CELALA",
+      "desil": 4,
+      "keluarga": 329,
+      "jiwa": 1013
+    },
+    {
+      "kecamatan": "CELALA",
+      "desil": 5,
+      "keluarga": 396,
+      "jiwa": 1112
+    },
+    {
+      "kecamatan": "CELALA",
+      "desil": 6,
+      "keluarga": 244,
+      "jiwa": 659
+    },
+    {
+      "kecamatan": "CELALA",
+      "desil": 7,
+      "keluarga": 260,
+      "jiwa": 832
+    },
+    {
+      "kecamatan": "JAGONG JEGET",
+      "desil": 1,
+      "keluarga": 402,
+      "jiwa": 1459
+    },
+    {
+      "kecamatan": "JAGONG JEGET",
+      "desil": 2,
+      "keluarga": 519,
+      "jiwa": 1828
+    },
+    {
+      "kecamatan": "JAGONG JEGET",
+      "desil": 3,
+      "keluarga": 409,
+      "jiwa": 1309
+    },
+    {
+      "kecamatan": "JAGONG JEGET",
+      "desil": 4,
+      "keluarga": 292,
+      "jiwa": 921
+    },
+    {
+      "kecamatan": "JAGONG JEGET",
+      "desil": 5,
+      "keluarga": 621,
+      "jiwa": 2004
+    },
+    {
+      "kecamatan": "JAGONG JEGET",
+      "desil": 6,
+      "keluarga": 574,
+      "jiwa": 1784
+    },
+    {
+      "kecamatan": "JAGONG JEGET",
+      "desil": 7,
+      "keluarga": 577,
+      "jiwa": 1759
+    },
+    {
+      "kecamatan": "KEBAYAKAN",
+      "desil": 1,
+      "keluarga": 370,
+      "jiwa": 1317
+    },
+    {
+      "kecamatan": "KEBAYAKAN",
+      "desil": 2,
+      "keluarga": 424,
+      "jiwa": 1562
+    },
+    {
+      "kecamatan": "KEBAYAKAN",
+      "desil": 3,
+      "keluarga": 477,
+      "jiwa": 1680
+    },
+    {
+      "kecamatan": "KEBAYAKAN",
+      "desil": 4,
+      "keluarga": 488,
+      "jiwa": 1729
+    },
+    {
+      "kecamatan": "KEBAYAKAN",
+      "desil": 5,
+      "keluarga": 776,
+      "jiwa": 2514
+    },
+    {
+      "kecamatan": "KEBAYAKAN",
+      "desil": 6,
+      "keluarga": 853,
+      "jiwa": 2979
+    },
+    {
+      "kecamatan": "KEBAYAKAN",
+      "desil": 7,
+      "keluarga": 2213,
+      "jiwa": 7432
+    },
+    {
+      "kecamatan": "KETOL",
+      "desil": 1,
+      "keluarga": 518,
+      "jiwa": 1857
+    },
+    {
+      "kecamatan": "KETOL",
+      "desil": 2,
+      "keluarga": 543,
+      "jiwa": 1955
+    },
+    {
+      "kecamatan": "KETOL",
+      "desil": 3,
+      "keluarga": 489,
+      "jiwa": 1644
+    },
+    {
+      "kecamatan": "KETOL",
+      "desil": 4,
+      "keluarga": 409,
+      "jiwa": 1303
+    },
+    {
+      "kecamatan": "KETOL",
+      "desil": 5,
+      "keluarga": 1021,
+      "jiwa": 3261
+    },
+    {
+      "kecamatan": "KETOL",
+      "desil": 6,
+      "keluarga": 975,
+      "jiwa": 3127
+    },
+    {
+      "kecamatan": "KETOL",
+      "desil": 7,
+      "keluarga": 984,
+      "jiwa": 3056
+    },
+    {
+      "kecamatan": "KUTE PANANG",
+      "desil": 1,
+      "keluarga": 410,
+      "jiwa": 1576
+    },
+    {
+      "kecamatan": "KUTE PANANG",
+      "desil": 2,
+      "keluarga": 377,
+      "jiwa": 1389
+    },
+    {
+      "kecamatan": "KUTE PANANG",
+      "desil": 3,
+      "keluarga": 321,
+      "jiwa": 1086
+    },
+    {
+      "kecamatan": "KUTE PANANG",
+      "desil": 4,
+      "keluarga": 240,
+      "jiwa": 763
+    },
+    {
+      "kecamatan": "KUTE PANANG",
+      "desil": 5,
+      "keluarga": 489,
+      "jiwa": 1606
+    },
+    {
+      "kecamatan": "KUTE PANANG",
+      "desil": 6,
+      "keluarga": 447,
+      "jiwa": 1392
+    },
+    {
+      "kecamatan": "KUTE PANANG",
+      "desil": 7,
+      "keluarga": 432,
+      "jiwa": 1351
+    },
+    {
+      "kecamatan": "LAUT TAWAR",
+      "desil": 1,
+      "keluarga": 570,
+      "jiwa": 2139
+    },
+    {
+      "kecamatan": "LAUT TAWAR",
+      "desil": 2,
+      "keluarga": 609,
+      "jiwa": 2357
+    },
+    {
+      "kecamatan": "LAUT TAWAR",
+      "desil": 3,
+      "keluarga": 483,
+      "jiwa": 1786
+    },
+    {
+      "kecamatan": "LAUT TAWAR",
+      "desil": 4,
+      "keluarga": 499,
+      "jiwa": 1701
+    },
+    {
+      "kecamatan": "LAUT TAWAR",
+      "desil": 5,
+      "keluarga": 744,
+      "jiwa": 2459
+    },
+    {
+      "kecamatan": "LAUT TAWAR",
+      "desil": 6,
+      "keluarga": 723,
+      "jiwa": 2367
+    },
+    {
+      "kecamatan": "LAUT TAWAR",
+      "desil": 7,
+      "keluarga": 1980,
+      "jiwa": 6307
+    },
+    {
+      "kecamatan": "LINGE",
+      "desil": 1,
+      "keluarga": 756,
+      "jiwa": 2764
+    },
+    {
+      "kecamatan": "LINGE",
+      "desil": 2,
+      "keluarga": 705,
+      "jiwa": 2512
+    },
+    {
+      "kecamatan": "LINGE",
+      "desil": 3,
+      "keluarga": 529,
+      "jiwa": 1729
+    },
+    {
+      "kecamatan": "LINGE",
+      "desil": 4,
+      "keluarga": 354,
+      "jiwa": 1071
+    },
+    {
+      "kecamatan": "LINGE",
+      "desil": 5,
+      "keluarga": 548,
+      "jiwa": 1629
+    },
+    {
+      "kecamatan": "LINGE",
+      "desil": 6,
+      "keluarga": 402,
+      "jiwa": 1367
+    },
+    {
+      "kecamatan": "LINGE",
+      "desil": 7,
+      "keluarga": 332,
+      "jiwa": 1001
+    },
+    {
+      "kecamatan": "PEGASING",
+      "desil": 1,
+      "keluarga": 1245,
+      "jiwa": 4683
+    },
+    {
+      "kecamatan": "PEGASING",
+      "desil": 2,
+      "keluarga": 1192,
+      "jiwa": 4358
+    },
+    {
+      "kecamatan": "PEGASING",
+      "desil": 3,
+      "keluarga": 821,
+      "jiwa": 2859
+    },
+    {
+      "kecamatan": "PEGASING",
+      "desil": 4,
+      "keluarga": 592,
+      "jiwa": 1956
+    },
+    {
+      "kecamatan": "PEGASING",
+      "desil": 5,
+      "keluarga": 1211,
+      "jiwa": 3845
+    },
+    {
+      "kecamatan": "PEGASING",
+      "desil": 6,
+      "keluarga": 1122,
+      "jiwa": 3469
+    },
+    {
+      "kecamatan": "PEGASING",
+      "desil": 7,
+      "keluarga": 1115,
+      "jiwa": 3488
+    },
+    {
+      "kecamatan": "RUSIP ANTARA",
+      "desil": 1,
+      "keluarga": 784,
+      "jiwa": 2975
+    },
+    {
+      "kecamatan": "RUSIP ANTARA",
+      "desil": 2,
+      "keluarga": 580,
+      "jiwa": 2073
+    },
+    {
+      "kecamatan": "RUSIP ANTARA",
+      "desil": 3,
+      "keluarga": 388,
+      "jiwa": 1297
+    },
+    {
+      "kecamatan": "RUSIP ANTARA",
+      "desil": 4,
+      "keluarga": 270,
+      "jiwa": 853
+    },
+    {
+      "kecamatan": "RUSIP ANTARA",
+      "desil": 5,
+      "keluarga": 333,
+      "jiwa": 1034
+    },
+    {
+      "kecamatan": "RUSIP ANTARA",
+      "desil": 6,
+      "keluarga": 261,
+      "jiwa": 790
+    },
+    {
+      "kecamatan": "RUSIP ANTARA",
+      "desil": 7,
+      "keluarga": 250,
+      "jiwa": 727
+    },
+    {
+      "kecamatan": "SILIH NARA",
+      "desil": 1,
+      "keluarga": 1304,
+      "jiwa": 4545
+    },
+    {
+      "kecamatan": "SILIH NARA",
+      "desil": 2,
+      "keluarga": 1182,
+      "jiwa": 4187
+    },
+    {
+      "kecamatan": "SILIH NARA",
+      "desil": 3,
+      "keluarga": 1128,
+      "jiwa": 3703
+    },
+    {
+      "kecamatan": "SILIH NARA",
+      "desil": 4,
+      "keluarga": 753,
+      "jiwa": 2318
+    },
+    {
+      "kecamatan": "SILIH NARA",
+      "desil": 5,
+      "keluarga": 1231,
+      "jiwa": 3816
+    },
+    {
+      "kecamatan": "SILIH NARA",
+      "desil": 6,
+      "keluarga": 1108,
+      "jiwa": 3479
+    },
+    {
+      "kecamatan": "SILIH NARA",
+      "desil": 7,
+      "keluarga": 1313,
+      "jiwa": 4177
+    }
+  ],
+  "per_desa": [
+    {
+      "kecamatan": "ATU LINTANG",
+      "desa": "ATU LINTANG",
+      "keluarga": 407,
+      "jiwa": 1308
+    },
+    {
+      "kecamatan": "ATU LINTANG",
+      "desa": "BINTANG KEKELIP",
+      "keluarga": 87,
+      "jiwa": 321
+    },
+    {
+      "kecamatan": "ATU LINTANG",
+      "desa": "DAMAR MULYO",
+      "keluarga": 380,
+      "jiwa": 1067
+    },
+    {
+      "kecamatan": "ATU LINTANG",
+      "desa": "GAYO MURNI",
+      "keluarga": 176,
+      "jiwa": 541
+    },
+    {
+      "kecamatan": "ATU LINTANG",
+      "desa": "KEPALA AKAL",
+      "keluarga": 120,
+      "jiwa": 403
+    },
+    {
+      "kecamatan": "ATU LINTANG",
+      "desa": "MERAH JERNANG",
+      "keluarga": 235,
+      "jiwa": 736
+    },
+    {
+      "kecamatan": "ATU LINTANG",
+      "desa": "MERAH MEGE",
+      "keluarga": 291,
+      "jiwa": 954
+    },
+    {
+      "kecamatan": "ATU LINTANG",
+      "desa": "MERAH MUYANG",
+      "keluarga": 242,
+      "jiwa": 853
+    },
+    {
+      "kecamatan": "ATU LINTANG",
+      "desa": "MERAH PUPUK",
+      "keluarga": 192,
+      "jiwa": 589
+    },
+    {
+      "kecamatan": "ATU LINTANG",
+      "desa": "PANTAN DAMAR",
+      "keluarga": 205,
+      "jiwa": 654
+    },
+    {
+      "kecamatan": "ATU LINTANG",
+      "desa": "TANOH ABU",
+      "keluarga": 159,
+      "jiwa": 525
+    },
+    {
+      "kecamatan": "BEBESEN",
+      "desa": "ATU GAJAH REJE GURU",
+      "keluarga": 128,
+      "jiwa": 438
+    },
+    {
+      "kecamatan": "BEBESEN",
+      "desa": "ATU TULU",
+      "keluarga": 162,
+      "jiwa": 519
+    },
+    {
+      "kecamatan": "BEBESEN",
+      "desa": "BAHGIE",
+      "keluarga": 180,
+      "jiwa": 582
+    },
+    {
+      "kecamatan": "BEBESEN",
+      "desa": "BEBESAN",
+      "keluarga": 556,
+      "jiwa": 1849
+    },
+    {
+      "kecamatan": "BEBESEN",
+      "desa": "BLANG GELE",
+      "keluarga": 420,
+      "jiwa": 1329
+    },
+    {
+      "kecamatan": "BEBESEN",
+      "desa": "BLANG KOLAK I",
+      "keluarga": 1042,
+      "jiwa": 3455
+    },
+    {
+      "kecamatan": "BEBESEN",
+      "desa": "BLANG KOLAK II",
+      "keluarga": 1235,
+      "jiwa": 4241
+    },
+    {
+      "kecamatan": "BEBESEN",
+      "desa": "BURBIAH",
+      "keluarga": 174,
+      "jiwa": 597
+    },
+    {
+      "kecamatan": "BEBESEN",
+      "desa": "COLO BLANG GELE",
+      "keluarga": 74,
+      "jiwa": 242
+    },
+    {
+      "kecamatan": "BEBESEN",
+      "desa": "DALING",
+      "keluarga": 167,
+      "jiwa": 544
+    },
+    {
+      "kecamatan": "BEBESEN",
+      "desa": "EMPUS TALU",
+      "keluarga": 386,
+      "jiwa": 1279
+    },
+    {
+      "kecamatan": "BEBESEN",
+      "desa": "GELE LAH",
+      "keluarga": 142,
+      "jiwa": 442
+    },
+    {
+      "kecamatan": "BEBESEN",
+      "desa": "KALA KEMILI",
+      "keluarga": 686,
+      "jiwa": 2457
+    },
+    {
+      "kecamatan": "BEBESEN",
+      "desa": "KEBET",
+      "keluarga": 438,
+      "jiwa": 1562
+    },
+    {
+      "kecamatan": "BEBESEN",
+      "desa": "KEMILI",
+      "keluarga": 1559,
+      "jiwa": 5133
+    },
+    {
+      "kecamatan": "BEBESEN",
+      "desa": "KERAMAT MUPAKAT",
+      "keluarga": 785,
+      "jiwa": 2791
+    },
+    {
+      "kecamatan": "BEBESEN",
+      "desa": "LELABU",
+      "keluarga": 191,
+      "jiwa": 584
+    },
+    {
+      "kecamatan": "BEBESEN",
+      "desa": "LEMAH BURBANA",
+      "keluarga": 440,
+      "jiwa": 1514
+    },
+    {
+      "kecamatan": "BEBESEN",
+      "desa": "MAH BENGI",
+      "keluarga": 135,
+      "jiwa": 452
+    },
+    {
+      "kecamatan": "BEBESEN",
+      "desa": "MONGAL",
+      "keluarga": 721,
+      "jiwa": 2503
+    },
+    {
+      "kecamatan": "BEBESEN",
+      "desa": "NUNANG ANTARA",
+      "keluarga": 573,
+      "jiwa": 1985
+    },
+    {
+      "kecamatan": "BEBESEN",
+      "desa": "PENDERE SARIL",
+      "keluarga": 383,
+      "jiwa": 1318
+    },
+    {
+      "kecamatan": "BEBESEN",
+      "desa": "SADONG JURU MUDI",
+      "keluarga": 162,
+      "jiwa": 542
+    },
+    {
+      "kecamatan": "BEBESEN",
+      "desa": "SIMPANG IV",
+      "keluarga": 846,
+      "jiwa": 2802
+    },
+    {
+      "kecamatan": "BEBESEN",
+      "desa": "TAN SARIL",
+      "keluarga": 547,
+      "jiwa": 1917
+    },
+    {
+      "kecamatan": "BEBESEN",
+      "desa": "TENSARAN",
+      "keluarga": 198,
+      "jiwa": 654
+    },
+    {
+      "kecamatan": "BEBESEN",
+      "desa": "ULU NUWIH",
+      "keluarga": 204,
+      "jiwa": 654
+    },
+    {
+      "kecamatan": "BEBESEN",
+      "desa": "UMANG",
+      "keluarga": 203,
+      "jiwa": 685
+    },
+    {
+      "kecamatan": "BIES",
+      "desa": "ARUL LATONG",
+      "keluarga": 260,
+      "jiwa": 845
+    },
+    {
+      "kecamatan": "BIES",
+      "desa": "ATANG JUNGKET",
+      "keluarga": 190,
+      "jiwa": 600
+    },
+    {
+      "kecamatan": "BIES",
+      "desa": "BIES BARU",
+      "keluarga": 202,
+      "jiwa": 670
+    },
+    {
+      "kecamatan": "BIES",
+      "desa": "BIES MULIE",
+      "keluarga": 262,
+      "jiwa": 843
+    },
+    {
+      "kecamatan": "BIES",
+      "desa": "BIES PENENTANAN",
+      "keluarga": 451,
+      "jiwa": 1414
+    },
+    {
+      "kecamatan": "BIES",
+      "desa": "KARANG BAYUR",
+      "keluarga": 147,
+      "jiwa": 459
+    },
+    {
+      "kecamatan": "BIES",
+      "desa": "LENGA",
+      "keluarga": 220,
+      "jiwa": 711
+    },
+    {
+      "kecamatan": "BIES",
+      "desa": "PUCUK DEKU",
+      "keluarga": 148,
+      "jiwa": 451
+    },
+    {
+      "kecamatan": "BIES",
+      "desa": "SIMPANG LUKUP BADAK",
+      "keluarga": 102,
+      "jiwa": 341
+    },
+    {
+      "kecamatan": "BIES",
+      "desa": "SIMPANG UNING NIKEN",
+      "keluarga": 302,
+      "jiwa": 956
+    },
+    {
+      "kecamatan": "BIES",
+      "desa": "TEBES LUES",
+      "keluarga": 365,
+      "jiwa": 1180
+    },
+    {
+      "kecamatan": "BIES",
+      "desa": "UNING PEGANTUNGEN",
+      "keluarga": 167,
+      "jiwa": 514
+    },
+    {
+      "kecamatan": "BINTANG",
+      "desa": "ATU PAYUNG",
+      "keluarga": 85,
+      "jiwa": 290
+    },
+    {
+      "kecamatan": "BINTANG",
+      "desa": "BALE NOSAR",
+      "keluarga": 120,
+      "jiwa": 377
+    },
+    {
+      "kecamatan": "BINTANG",
+      "desa": "BAMIL NOSAR",
+      "keluarga": 58,
+      "jiwa": 179
+    },
+    {
+      "kecamatan": "BINTANG",
+      "desa": "BEWANG",
+      "keluarga": 112,
+      "jiwa": 369
+    },
+    {
+      "kecamatan": "BINTANG",
+      "desa": "DEDAMAR",
+      "keluarga": 287,
+      "jiwa": 929
+    },
+    {
+      "kecamatan": "BINTANG",
+      "desa": "GEGARANG",
+      "keluarga": 68,
+      "jiwa": 258
+    },
+    {
+      "kecamatan": "BINTANG",
+      "desa": "GELE PULO",
+      "keluarga": 173,
+      "jiwa": 563
+    },
+    {
+      "kecamatan": "BINTANG",
+      "desa": "GENUREN",
+      "keluarga": 142,
+      "jiwa": 494
+    },
+    {
+      "kecamatan": "BINTANG",
+      "desa": "JAMUR KONYEL",
+      "keluarga": 111,
+      "jiwa": 374
+    },
+    {
+      "kecamatan": "BINTANG",
+      "desa": "KALA BINTANG",
+      "keluarga": 129,
+      "jiwa": 447
+    },
+    {
+      "kecamatan": "BINTANG",
+      "desa": "KALA SEGI",
+      "keluarga": 129,
+      "jiwa": 446
+    },
+    {
+      "kecamatan": "BINTANG",
+      "desa": "KEJURUN SYIAH UTAMA",
+      "keluarga": 73,
+      "jiwa": 235
+    },
+    {
+      "kecamatan": "BINTANG",
+      "desa": "KELITU SINTEP",
+      "keluarga": 151,
+      "jiwa": 513
+    },
+    {
+      "kecamatan": "BINTANG",
+      "desa": "KUALA I",
+      "keluarga": 278,
+      "jiwa": 874
+    },
+    {
+      "kecamatan": "BINTANG",
+      "desa": "KUALA II",
+      "keluarga": 300,
+      "jiwa": 1003
+    },
+    {
+      "kecamatan": "BINTANG",
+      "desa": "LINUNG BULEN I",
+      "keluarga": 212,
+      "jiwa": 659
+    },
+    {
+      "kecamatan": "BINTANG",
+      "desa": "LINUNG BULEN II",
+      "keluarga": 247,
+      "jiwa": 831
+    },
+    {
+      "kecamatan": "BINTANG",
+      "desa": "MENGAYA",
+      "keluarga": 145,
+      "jiwa": 515
+    },
+    {
+      "kecamatan": "BINTANG",
+      "desa": "MERODOT",
+      "keluarga": 108,
+      "jiwa": 348
+    },
+    {
+      "kecamatan": "BINTANG",
+      "desa": "MUDE NOSAR",
+      "keluarga": 122,
+      "jiwa": 369
+    },
+    {
+      "kecamatan": "BINTANG",
+      "desa": "SERULE",
+      "keluarga": 163,
+      "jiwa": 523
+    },
+    {
+      "kecamatan": "BINTANG",
+      "desa": "SINTEP",
+      "keluarga": 74,
+      "jiwa": 252
+    },
+    {
+      "kecamatan": "BINTANG",
+      "desa": "WAKIL JALIL",
+      "keluarga": 195,
+      "jiwa": 649
+    },
+    {
+      "kecamatan": "BINTANG",
+      "desa": "WIHLAH SETIE",
+      "keluarga": 78,
+      "jiwa": 241
+    },
+    {
+      "kecamatan": "CELALA",
+      "desa": "ARUL GADING",
+      "keluarga": 182,
+      "jiwa": 589
+    },
+    {
+      "kecamatan": "CELALA",
+      "desa": "BELANG KEKUMUR",
+      "keluarga": 232,
+      "jiwa": 721
+    },
+    {
+      "kecamatan": "CELALA",
+      "desa": "BERAWANG GADING",
+      "keluarga": 254,
+      "jiwa": 823
+    },
+    {
+      "kecamatan": "CELALA",
+      "desa": "BLANG DELEM",
+      "keluarga": 180,
+      "jiwa": 607
+    },
+    {
+      "kecamatan": "CELALA",
+      "desa": "CELALA",
+      "keluarga": 201,
+      "jiwa": 606
+    },
+    {
+      "kecamatan": "CELALA",
+      "desa": "CIBRO",
+      "keluarga": 209,
+      "jiwa": 671
+    },
+    {
+      "kecamatan": "CELALA",
+      "desa": "DEPET INDAH",
+      "keluarga": 100,
+      "jiwa": 341
+    },
+    {
+      "kecamatan": "CELALA",
+      "desa": "KUYUN",
+      "keluarga": 342,
+      "jiwa": 1149
+    },
+    {
+      "kecamatan": "CELALA",
+      "desa": "KUYUN TOA",
+      "keluarga": 151,
+      "jiwa": 503
+    },
+    {
+      "kecamatan": "CELALA",
+      "desa": "KUYUN UKEN",
+      "keluarga": 311,
+      "jiwa": 973
+    },
+    {
+      "kecamatan": "CELALA",
+      "desa": "MAKMUR",
+      "keluarga": 94,
+      "jiwa": 297
+    },
+    {
+      "kecamatan": "CELALA",
+      "desa": "MELALA",
+      "keluarga": 294,
+      "jiwa": 986
+    },
+    {
+      "kecamatan": "CELALA",
+      "desa": "PAYA KOLAK",
+      "keluarga": 436,
+      "jiwa": 1452
+    },
+    {
+      "kecamatan": "CELALA",
+      "desa": "RAMUNG ARA",
+      "keluarga": 114,
+      "jiwa": 365
+    },
+    {
+      "kecamatan": "CELALA",
+      "desa": "SEPAKAT",
+      "keluarga": 125,
+      "jiwa": 393
+    },
+    {
+      "kecamatan": "CELALA",
+      "desa": "TANOH DEPET",
+      "keluarga": 184,
+      "jiwa": 593
+    },
+    {
+      "kecamatan": "CELALA",
+      "desa": "UNING BERAWANG RAMUNG",
+      "keluarga": 108,
+      "jiwa": 325
+    },
+    {
+      "kecamatan": "JAGONG JEGET",
+      "desa": "BERAWANG DEWAL",
+      "keluarga": 382,
+      "jiwa": 1266
+    },
+    {
+      "kecamatan": "JAGONG JEGET",
+      "desa": "BUKIT KEMUNING",
+      "keluarga": 412,
+      "jiwa": 1249
+    },
+    {
+      "kecamatan": "JAGONG JEGET",
+      "desa": "BUKIT SARI",
+      "keluarga": 163,
+      "jiwa": 521
+    },
+    {
+      "kecamatan": "JAGONG JEGET",
+      "desa": "GEGARANG",
+      "keluarga": 366,
+      "jiwa": 1196
+    },
+    {
+      "kecamatan": "JAGONG JEGET",
+      "desa": "JAGONG JEGET",
+      "keluarga": 441,
+      "jiwa": 1436
+    },
+    {
+      "kecamatan": "JAGONG JEGET",
+      "desa": "JEGET AYU",
+      "keluarga": 611,
+      "jiwa": 1978
+    },
+    {
+      "kecamatan": "JAGONG JEGET",
+      "desa": "MERAH SAID",
+      "keluarga": 115,
+      "jiwa": 438
+    },
+    {
+      "kecamatan": "JAGONG JEGET",
+      "desa": "PAYA DEDEP",
+      "keluarga": 255,
+      "jiwa": 826
+    },
+    {
+      "kecamatan": "JAGONG JEGET",
+      "desa": "PAYA TUNGEL",
+      "keluarga": 468,
+      "jiwa": 1442
+    },
+    {
+      "kecamatan": "JAGONG JEGET",
+      "desa": "TELEGE SARI",
+      "keluarga": 270,
+      "jiwa": 864
+    },
+    {
+      "kecamatan": "KEBAYAKAN",
+      "desa": "BUKIT",
+      "keluarga": 175,
+      "jiwa": 559
+    },
+    {
+      "kecamatan": "KEBAYAKAN",
+      "desa": "BUKIT EWIH TAMI DELEM",
+      "keluarga": 262,
+      "jiwa": 864
+    },
+    {
+      "kecamatan": "KEBAYAKAN",
+      "desa": "BUKIT SAMA",
+      "keluarga": 143,
+      "jiwa": 459
+    },
+    {
+      "kecamatan": "KEBAYAKAN",
+      "desa": "GUNUNG BAHGIE",
+      "keluarga": 177,
+      "jiwa": 561
+    },
+    {
+      "kecamatan": "KEBAYAKAN",
+      "desa": "GUNUNG BALOHEN",
+      "keluarga": 268,
+      "jiwa": 847
+    },
+    {
+      "kecamatan": "KEBAYAKAN",
+      "desa": "GUNUNG BUKIT",
+      "keluarga": 386,
+      "jiwa": 1326
+    },
+    {
+      "kecamatan": "KEBAYAKAN",
+      "desa": "JONGKOK BATHIN",
+      "keluarga": 166,
+      "jiwa": 559
+    },
+    {
+      "kecamatan": "KEBAYAKAN",
+      "desa": "JONGOK MELUEM",
+      "keluarga": 351,
+      "jiwa": 1170
+    },
+    {
+      "kecamatan": "KEBAYAKAN",
+      "desa": "KALA LENGKIO",
+      "keluarga": 233,
+      "jiwa": 791
+    },
+    {
+      "kecamatan": "KEBAYAKAN",
+      "desa": "KELUPAK MATA",
+      "keluarga": 236,
+      "jiwa": 718
+    },
+    {
+      "kecamatan": "KEBAYAKAN",
+      "desa": "KUTE LOT",
+      "keluarga": 599,
+      "jiwa": 2089
+    },
+    {
+      "kecamatan": "KEBAYAKAN",
+      "desa": "LOT KALA",
+      "keluarga": 524,
+      "jiwa": 1792
+    },
+    {
+      "kecamatan": "KEBAYAKAN",
+      "desa": "MENDALE",
+      "keluarga": 296,
+      "jiwa": 938
+    },
+    {
+      "kecamatan": "KEBAYAKAN",
+      "desa": "PAYA REJE TAMI DELEM",
+      "keluarga": 159,
+      "jiwa": 526
+    },
+    {
+      "kecamatan": "KEBAYAKAN",
+      "desa": "PAYA TUMPI",
+      "keluarga": 244,
+      "jiwa": 804
+    },
+    {
+      "kecamatan": "KEBAYAKAN",
+      "desa": "PAYA TUMPI BARU",
+      "keluarga": 299,
+      "jiwa": 947
+    },
+    {
+      "kecamatan": "KEBAYAKAN",
+      "desa": "PAYA TUMPI I",
+      "keluarga": 203,
+      "jiwa": 726
+    },
+    {
+      "kecamatan": "KEBAYAKAN",
+      "desa": "PINANGAN",
+      "keluarga": 685,
+      "jiwa": 2327
+    },
+    {
+      "kecamatan": "KEBAYAKAN",
+      "desa": "TELEGE ATU",
+      "keluarga": 60,
+      "jiwa": 200
+    },
+    {
+      "kecamatan": "KEBAYAKAN",
+      "desa": "TIMANGAN GADING",
+      "keluarga": 503,
+      "jiwa": 1793
+    },
+    {
+      "kecamatan": "KETOL",
+      "desa": "BAH",
+      "keluarga": 194,
+      "jiwa": 679
+    },
+    {
+      "kecamatan": "KETOL",
+      "desa": "BERGANG",
+      "keluarga": 161,
+      "jiwa": 506
+    },
+    {
+      "kecamatan": "KETOL",
+      "desa": "BINTANG PEPARA",
+      "keluarga": 87,
+      "jiwa": 238
+    },
+    {
+      "kecamatan": "KETOL",
+      "desa": "BLANG MANCUNG",
+      "keluarga": 595,
+      "jiwa": 1861
+    },
+    {
+      "kecamatan": "KETOL",
+      "desa": "BLANG MANCUNG BAWAH",
+      "keluarga": 252,
+      "jiwa": 757
+    },
+    {
+      "kecamatan": "KETOL",
+      "desa": "BUGE ARA",
+      "keluarga": 148,
+      "jiwa": 511
+    },
+    {
+      "kecamatan": "KETOL",
+      "desa": "BURLAH",
+      "keluarga": 98,
+      "jiwa": 337
+    },
+    {
+      "kecamatan": "KETOL",
+      "desa": "BUTER",
+      "keluarga": 189,
+      "jiwa": 617
+    },
+    {
+      "kecamatan": "KETOL",
+      "desa": "CANG DURI",
+      "keluarga": 212,
+      "jiwa": 724
+    },
+    {
+      "kecamatan": "KETOL",
+      "desa": "GELUMPANG PAYUNG",
+      "keluarga": 187,
+      "jiwa": 615
+    },
+    {
+      "kecamatan": "KETOL",
+      "desa": "GENTING BULEN",
+      "keluarga": 134,
+      "jiwa": 419
+    },
+    {
+      "kecamatan": "KETOL",
+      "desa": "JALAN TENGAH",
+      "keluarga": 291,
+      "jiwa": 912
+    },
+    {
+      "kecamatan": "KETOL",
+      "desa": "JALUK",
+      "keluarga": 299,
+      "jiwa": 955
+    },
+    {
+      "kecamatan": "KETOL",
+      "desa": "JERATA",
+      "keluarga": 116,
+      "jiwa": 387
+    },
+    {
+      "kecamatan": "KETOL",
+      "desa": "KALA KETOL",
+      "keluarga": 151,
+      "jiwa": 487
+    },
+    {
+      "kecamatan": "KETOL",
+      "desa": "KARANG AMPAR",
+      "keluarga": 167,
+      "jiwa": 512
+    },
+    {
+      "kecamatan": "KETOL",
+      "desa": "KEKUYANG",
+      "keluarga": 357,
+      "jiwa": 1195
+    },
+    {
+      "kecamatan": "KETOL",
+      "desa": "KUTE GELIME",
+      "keluarga": 220,
+      "jiwa": 683
+    },
+    {
+      "kecamatan": "KETOL",
+      "desa": "PANTAN PENYO",
+      "keluarga": 115,
+      "jiwa": 388
+    },
+    {
+      "kecamatan": "KETOL",
+      "desa": "PANTAN REDUK",
+      "keluarga": 167,
+      "jiwa": 435
+    },
+    {
+      "kecamatan": "KETOL",
+      "desa": "PONDOK BALIK",
+      "keluarga": 289,
+      "jiwa": 961
+    },
+    {
+      "kecamatan": "KETOL",
+      "desa": "REJEWALI",
+      "keluarga": 282,
+      "jiwa": 954
+    },
+    {
+      "kecamatan": "KETOL",
+      "desa": "SELON",
+      "keluarga": 166,
+      "jiwa": 526
+    },
+    {
+      "kecamatan": "KETOL",
+      "desa": "SEREMPAH",
+      "keluarga": 123,
+      "jiwa": 412
+    },
+    {
+      "kecamatan": "KETOL",
+      "desa": "SIMPANG JULI",
+      "keluarga": 150,
+      "jiwa": 480
+    },
+    {
+      "kecamatan": "KUTE PANANG",
+      "desa": "ATU GOGOP",
+      "keluarga": 163,
+      "jiwa": 556
+    },
+    {
+      "kecamatan": "KUTE PANANG",
+      "desa": "BALIK",
+      "keluarga": 183,
+      "jiwa": 539
+    },
+    {
+      "kecamatan": "KUTE PANANG",
+      "desa": "BLANG BALIK",
+      "keluarga": 107,
+      "jiwa": 342
+    },
+    {
+      "kecamatan": "KUTE PANANG",
+      "desa": "BUKIT RATA",
+      "keluarga": 55,
+      "jiwa": 173
+    },
+    {
+      "kecamatan": "KUTE PANANG",
+      "desa": "BUTER BALIK",
+      "keluarga": 131,
+      "jiwa": 452
+    },
+    {
+      "kecamatan": "KUTE PANANG",
+      "desa": "DEDINGIN",
+      "keluarga": 83,
+      "jiwa": 277
+    },
+    {
+      "kecamatan": "KUTE PANANG",
+      "desa": "EMPU BALIK",
+      "keluarga": 145,
+      "jiwa": 469
+    },
+    {
+      "kecamatan": "KUTE PANANG",
+      "desa": "KALA NONGKAL",
+      "keluarga": 48,
+      "jiwa": 155
+    },
+    {
+      "kecamatan": "KUTE PANANG",
+      "desa": "KUTE PANANG",
+      "keluarga": 83,
+      "jiwa": 270
+    },
+    {
+      "kecamatan": "KUTE PANANG",
+      "desa": "LUKUB SABUN",
+      "keluarga": 148,
+      "jiwa": 520
+    },
+    {
+      "kecamatan": "KUTE PANANG",
+      "desa": "LUKUB SABUN BARAT",
+      "keluarga": 128,
+      "jiwa": 417
+    },
+    {
+      "kecamatan": "KUTE PANANG",
+      "desa": "LUKUB SABUN TENGAH",
+      "keluarga": 94,
+      "jiwa": 291
+    },
+    {
+      "kecamatan": "KUTE PANANG",
+      "desa": "LUKUB SABUN TIMUR",
+      "keluarga": 131,
+      "jiwa": 479
+    },
+    {
+      "kecamatan": "KUTE PANANG",
+      "desa": "PANTAN JERIK",
+      "keluarga": 102,
+      "jiwa": 341
+    },
+    {
+      "kecamatan": "KUTE PANANG",
+      "desa": "PANTAN SILE",
+      "keluarga": 136,
+      "jiwa": 474
+    },
+    {
+      "kecamatan": "KUTE PANANG",
+      "desa": "RATAWALI",
+      "keluarga": 151,
+      "jiwa": 505
+    },
+    {
+      "kecamatan": "KUTE PANANG",
+      "desa": "SEGENE BALIK",
+      "keluarga": 134,
+      "jiwa": 418
+    },
+    {
+      "kecamatan": "KUTE PANANG",
+      "desa": "TAPAK MOGE",
+      "keluarga": 127,
+      "jiwa": 415
+    },
+    {
+      "kecamatan": "KUTE PANANG",
+      "desa": "TAPAK MOGE TIMUR",
+      "keluarga": 128,
+      "jiwa": 436
+    },
+    {
+      "kecamatan": "KUTE PANANG",
+      "desa": "TAWAR MIKO",
+      "keluarga": 105,
+      "jiwa": 385
+    },
+    {
+      "kecamatan": "KUTE PANANG",
+      "desa": "TAWARDI",
+      "keluarga": 100,
+      "jiwa": 326
+    },
+    {
+      "kecamatan": "KUTE PANANG",
+      "desa": "TIMANG RASA",
+      "keluarga": 123,
+      "jiwa": 383
+    },
+    {
+      "kecamatan": "KUTE PANANG",
+      "desa": "WIH NONGKAL",
+      "keluarga": 69,
+      "jiwa": 239
+    },
+    {
+      "kecamatan": "KUTE PANANG",
+      "desa": "WIH NONGKAL TOA",
+      "keluarga": 125,
+      "jiwa": 430
+    },
+    {
+      "kecamatan": "LAUT TAWAR",
+      "desa": "ASIR ASIR",
+      "keluarga": 638,
+      "jiwa": 2195
+    },
+    {
+      "kecamatan": "LAUT TAWAR",
+      "desa": "ASIR ASIR ASIA",
+      "keluarga": 424,
+      "jiwa": 1368
+    },
+    {
+      "kecamatan": "LAUT TAWAR",
+      "desa": "BALE ATU",
+      "keluarga": 588,
+      "jiwa": 1892
+    },
+    {
+      "kecamatan": "LAUT TAWAR",
+      "desa": "BUJANG",
+      "keluarga": 215,
+      "jiwa": 665
+    },
+    {
+      "kecamatan": "LAUT TAWAR",
+      "desa": "GUNUNG SUKU",
+      "keluarga": 151,
+      "jiwa": 517
+    },
+    {
+      "kecamatan": "LAUT TAWAR",
+      "desa": "HAKIM BALE BUJANG",
+      "keluarga": 584,
+      "jiwa": 1876
+    },
+    {
+      "kecamatan": "LAUT TAWAR",
+      "desa": "KENAWAT",
+      "keluarga": 398,
+      "jiwa": 1284
+    },
+    {
+      "kecamatan": "LAUT TAWAR",
+      "desa": "KUTENI REJE",
+      "keluarga": 247,
+      "jiwa": 838
+    },
+    {
+      "kecamatan": "LAUT TAWAR",
+      "desa": "MERAH MERSA",
+      "keluarga": 150,
+      "jiwa": 474
+    },
+    {
+      "kecamatan": "LAUT TAWAR",
+      "desa": "PEDEMUN ONE ONE",
+      "keluarga": 130,
+      "jiwa": 427
+    },
+    {
+      "kecamatan": "LAUT TAWAR",
+      "desa": "RAWE",
+      "keluarga": 112,
+      "jiwa": 368
+    },
+    {
+      "kecamatan": "LAUT TAWAR",
+      "desa": "TAKENGON BARAT",
+      "keluarga": 264,
+      "jiwa": 862
+    },
+    {
+      "kecamatan": "LAUT TAWAR",
+      "desa": "TAKENGON TIMUR",
+      "keluarga": 1438,
+      "jiwa": 4867
+    },
+    {
+      "kecamatan": "LAUT TAWAR",
+      "desa": "TELUK ONE-ONE",
+      "keluarga": 124,
+      "jiwa": 415
+    },
+    {
+      "kecamatan": "LAUT TAWAR",
+      "desa": "TOWEREN ANTARA",
+      "keluarga": 183,
+      "jiwa": 584
+    },
+    {
+      "kecamatan": "LAUT TAWAR",
+      "desa": "TOWEREN TOA",
+      "keluarga": 153,
+      "jiwa": 534
+    },
+    {
+      "kecamatan": "LAUT TAWAR",
+      "desa": "TOWEREN UKEN",
+      "keluarga": 172,
+      "jiwa": 537
+    },
+    {
+      "kecamatan": "LAUT TAWAR",
+      "desa": "WAQ TOWEREN",
+      "keluarga": 134,
+      "jiwa": 456
+    },
+    {
+      "kecamatan": "LINGE",
+      "desa": "ANTARA",
+      "keluarga": 204,
+      "jiwa": 685
+    },
+    {
+      "kecamatan": "LINGE",
+      "desa": "ARUL ITEM",
+      "keluarga": 286,
+      "jiwa": 980
+    },
+    {
+      "kecamatan": "LINGE",
+      "desa": "DELUNG SEKINEL",
+      "keluarga": 106,
+      "jiwa": 341
+    },
+    {
+      "kecamatan": "LINGE",
+      "desa": "DESPOT LINGE",
+      "keluarga": 189,
+      "jiwa": 607
+    },
+    {
+      "kecamatan": "LINGE",
+      "desa": "GELAMPANG GADING",
+      "keluarga": 105,
+      "jiwa": 302
+    },
+    {
+      "kecamatan": "LINGE",
+      "desa": "GEMBOYAH",
+      "keluarga": 329,
+      "jiwa": 1179
+    },
+    {
+      "kecamatan": "LINGE",
+      "desa": "GEWAT",
+      "keluarga": 69,
+      "jiwa": 221
+    },
+    {
+      "kecamatan": "LINGE",
+      "desa": "ISE-ISE",
+      "keluarga": 80,
+      "jiwa": 278
+    },
+    {
+      "kecamatan": "LINGE",
+      "desa": "JAMAT",
+      "keluarga": 135,
+      "jiwa": 423
+    },
+    {
+      "kecamatan": "LINGE",
+      "desa": "KEMERLENG",
+      "keluarga": 132,
+      "jiwa": 430
+    },
+    {
+      "kecamatan": "LINGE",
+      "desa": "KUTE BARU",
+      "keluarga": 96,
+      "jiwa": 287
+    },
+    {
+      "kecamatan": "LINGE",
+      "desa": "KUTE KERAMIL",
+      "keluarga": 138,
+      "jiwa": 444
+    },
+    {
+      "kecamatan": "LINGE",
+      "desa": "KUTE RAYANG",
+      "keluarga": 81,
+      "jiwa": 266
+    },
+    {
+      "kecamatan": "LINGE",
+      "desa": "KUTE REJE",
+      "keluarga": 91,
+      "jiwa": 288
+    },
+    {
+      "kecamatan": "LINGE",
+      "desa": "KUTE RIYEM",
+      "keluarga": 103,
+      "jiwa": 326
+    },
+    {
+      "kecamatan": "LINGE",
+      "desa": "KUTE ROBEL",
+      "keluarga": 107,
+      "jiwa": 334
+    },
+    {
+      "kecamatan": "LINGE",
+      "desa": "LINGE",
+      "keluarga": 120,
+      "jiwa": 358
+    },
+    {
+      "kecamatan": "LINGE",
+      "desa": "LUMUT",
+      "keluarga": 286,
+      "jiwa": 892
+    },
+    {
+      "kecamatan": "LINGE",
+      "desa": "MUNGKUR",
+      "keluarga": 154,
+      "jiwa": 498
+    },
+    {
+      "kecamatan": "LINGE",
+      "desa": "OWAQ",
+      "keluarga": 256,
+      "jiwa": 819
+    },
+    {
+      "kecamatan": "LINGE",
+      "desa": "PANTAN NANGKA",
+      "keluarga": 230,
+      "jiwa": 760
+    },
+    {
+      "kecamatan": "LINGE",
+      "desa": "PANTAN REDUK",
+      "keluarga": 125,
+      "jiwa": 412
+    },
+    {
+      "kecamatan": "LINGE",
+      "desa": "PENARUN",
+      "keluarga": 103,
+      "jiwa": 320
+    },
+    {
+      "kecamatan": "LINGE",
+      "desa": "REJE PAYUNG",
+      "keluarga": 90,
+      "jiwa": 308
+    },
+    {
+      "kecamatan": "LINGE",
+      "desa": "SIMPANG TIGE UNING",
+      "keluarga": 65,
+      "jiwa": 223
+    },
+    {
+      "kecamatan": "LINGE",
+      "desa": "UMANG",
+      "keluarga": 96,
+      "jiwa": 330
+    },
+    {
+      "kecamatan": "PEGASING",
+      "desa": "ARUL BADAK",
+      "keluarga": 252,
+      "jiwa": 878
+    },
+    {
+      "kecamatan": "PEGASING",
+      "desa": "BELANG BEBANGKA",
+      "keluarga": 221,
+      "jiwa": 756
+    },
+    {
+      "kecamatan": "PEGASING",
+      "desa": "BERAWANG BARO",
+      "keluarga": 173,
+      "jiwa": 648
+    },
+    {
+      "kecamatan": "PEGASING",
+      "desa": "GELELUNGI",
+      "keluarga": 406,
+      "jiwa": 1267
+    },
+    {
+      "kecamatan": "PEGASING",
+      "desa": "IE RELOP",
+      "keluarga": 295,
+      "jiwa": 906
+    },
+    {
+      "kecamatan": "PEGASING",
+      "desa": "JEJEM",
+      "keluarga": 72,
+      "jiwa": 246
+    },
+    {
+      "kecamatan": "PEGASING",
+      "desa": "JURUSEN",
+      "keluarga": 141,
+      "jiwa": 448
+    },
+    {
+      "kecamatan": "PEGASING",
+      "desa": "KALA PEGASING",
+      "keluarga": 215,
+      "jiwa": 722
+    },
+    {
+      "kecamatan": "PEGASING",
+      "desa": "KAYU KUL",
+      "keluarga": 428,
+      "jiwa": 1488
+    },
+    {
+      "kecamatan": "PEGASING",
+      "desa": "KEDELAH",
+      "keluarga": 188,
+      "jiwa": 588
+    },
+    {
+      "kecamatan": "PEGASING",
+      "desa": "KUNG",
+      "keluarga": 448,
+      "jiwa": 1454
+    },
+    {
+      "kecamatan": "PEGASING",
+      "desa": "KUTE LINTANG",
+      "keluarga": 334,
+      "jiwa": 1083
+    },
+    {
+      "kecamatan": "PEGASING",
+      "desa": "LELUMU",
+      "keluarga": 177,
+      "jiwa": 593
+    },
+    {
+      "kecamatan": "PEGASING",
+      "desa": "LINUNG AYU",
+      "keluarga": 83,
+      "jiwa": 268
+    },
+    {
+      "kecamatan": "PEGASING",
+      "desa": "PANANGAN MATA",
+      "keluarga": 72,
+      "jiwa": 245
+    },
+    {
+      "kecamatan": "PEGASING",
+      "desa": "PANTAN MUSARA",
+      "keluarga": 236,
+      "jiwa": 780
+    },
+    {
+      "kecamatan": "PEGASING",
+      "desa": "PAYA JEGET",
+      "keluarga": 246,
+      "jiwa": 846
+    },
+    {
+      "kecamatan": "PEGASING",
+      "desa": "PEDEKOK",
+      "keluarga": 176,
+      "jiwa": 602
+    },
+    {
+      "kecamatan": "PEGASING",
+      "desa": "PEGASING",
+      "keluarga": 160,
+      "jiwa": 527
+    },
+    {
+      "kecamatan": "PEGASING",
+      "desa": "PEPALANG",
+      "keluarga": 216,
+      "jiwa": 756
+    },
+    {
+      "kecamatan": "PEGASING",
+      "desa": "SIMPANG KELAPING",
+      "keluarga": 895,
+      "jiwa": 3055
+    },
+    {
+      "kecamatan": "PEGASING",
+      "desa": "SUKA DAMAI",
+      "keluarga": 140,
+      "jiwa": 448
+    },
+    {
+      "kecamatan": "PEGASING",
+      "desa": "TEBUK",
+      "keluarga": 281,
+      "jiwa": 938
+    },
+    {
+      "kecamatan": "PEGASING",
+      "desa": "TERANG ULEN",
+      "keluarga": 187,
+      "jiwa": 622
+    },
+    {
+      "kecamatan": "PEGASING",
+      "desa": "UJUNG GELE",
+      "keluarga": 263,
+      "jiwa": 892
+    },
+    {
+      "kecamatan": "PEGASING",
+      "desa": "UNING",
+      "keluarga": 212,
+      "jiwa": 695
+    },
+    {
+      "kecamatan": "PEGASING",
+      "desa": "URING",
+      "keluarga": 146,
+      "jiwa": 447
+    },
+    {
+      "kecamatan": "PEGASING",
+      "desa": "WIH ILANG",
+      "keluarga": 384,
+      "jiwa": 1265
+    },
+    {
+      "kecamatan": "PEGASING",
+      "desa": "WIH LAH",
+      "keluarga": 130,
+      "jiwa": 392
+    },
+    {
+      "kecamatan": "PEGASING",
+      "desa": "WIH NAREH",
+      "keluarga": 280,
+      "jiwa": 921
+    },
+    {
+      "kecamatan": "PEGASING",
+      "desa": "WIH TERJUN",
+      "keluarga": 166,
+      "jiwa": 528
+    },
+    {
+      "kecamatan": "RUSIP ANTARA",
+      "desa": "ARUL PERTIK",
+      "keluarga": 201,
+      "jiwa": 660
+    },
+    {
+      "kecamatan": "RUSIP ANTARA",
+      "desa": "ATU SINGKIH",
+      "keluarga": 214,
+      "jiwa": 717
+    },
+    {
+      "kecamatan": "RUSIP ANTARA",
+      "desa": "KERAWANG",
+      "keluarga": 121,
+      "jiwa": 423
+    },
+    {
+      "kecamatan": "RUSIP ANTARA",
+      "desa": "KUALA RAWA",
+      "keluarga": 201,
+      "jiwa": 633
+    },
+    {
+      "kecamatan": "RUSIP ANTARA",
+      "desa": "LUT JAYA",
+      "keluarga": 142,
+      "jiwa": 476
+    },
+    {
+      "kecamatan": "RUSIP ANTARA",
+      "desa": "MEKAR MAJU",
+      "keluarga": 90,
+      "jiwa": 290
+    },
+    {
+      "kecamatan": "RUSIP ANTARA",
+      "desa": "MERANDEH PAYA",
+      "keluarga": 132,
+      "jiwa": 414
+    },
+    {
+      "kecamatan": "RUSIP ANTARA",
+      "desa": "PANTAN BENER",
+      "keluarga": 78,
+      "jiwa": 257
+    },
+    {
+      "kecamatan": "RUSIP ANTARA",
+      "desa": "PANTAN TENGAH",
+      "keluarga": 398,
+      "jiwa": 1402
+    },
+    {
+      "kecamatan": "RUSIP ANTARA",
+      "desa": "PAYA TAMPU",
+      "keluarga": 246,
+      "jiwa": 765
+    },
+    {
+      "kecamatan": "RUSIP ANTARA",
+      "desa": "PILAR",
+      "keluarga": 224,
+      "jiwa": 766
+    },
+    {
+      "kecamatan": "RUSIP ANTARA",
+      "desa": "PILAR JAYA",
+      "keluarga": 179,
+      "jiwa": 642
+    },
+    {
+      "kecamatan": "RUSIP ANTARA",
+      "desa": "PILAR WIH KIRI",
+      "keluarga": 178,
+      "jiwa": 617
+    },
+    {
+      "kecamatan": "RUSIP ANTARA",
+      "desa": "RUSIP",
+      "keluarga": 265,
+      "jiwa": 920
+    },
+    {
+      "kecamatan": "RUSIP ANTARA",
+      "desa": "TANJUNG",
+      "keluarga": 125,
+      "jiwa": 364
+    },
+    {
+      "kecamatan": "RUSIP ANTARA",
+      "desa": "TIRMI ARA",
+      "keluarga": 149,
+      "jiwa": 523
+    },
+    {
+      "kecamatan": "SILIH NARA",
+      "desa": "ARUL GELE",
+      "keluarga": 339,
+      "jiwa": 1097
+    },
+    {
+      "kecamatan": "SILIH NARA",
+      "desa": "ARUL KUMER",
+      "keluarga": 268,
+      "jiwa": 784
+    },
+    {
+      "kecamatan": "SILIH NARA",
+      "desa": "ARUL KUMER BARAT",
+      "keluarga": 321,
+      "jiwa": 1015
+    },
+    {
+      "kecamatan": "SILIH NARA",
+      "desa": "ARUL KUMER SELATAN",
+      "keluarga": 330,
+      "jiwa": 1072
+    },
+    {
+      "kecamatan": "SILIH NARA",
+      "desa": "ARUL KUMER TIMUR",
+      "keluarga": 237,
+      "jiwa": 769
+    },
+    {
+      "kecamatan": "SILIH NARA",
+      "desa": "ARUL PUTIH",
+      "keluarga": 233,
+      "jiwa": 718
+    },
+    {
+      "kecamatan": "SILIH NARA",
+      "desa": "ARUL RELEM",
+      "keluarga": 281,
+      "jiwa": 931
+    },
+    {
+      "kecamatan": "SILIH NARA",
+      "desa": "BIUS UTAMA",
+      "keluarga": 128,
+      "jiwa": 431
+    },
+    {
+      "kecamatan": "SILIH NARA",
+      "desa": "BURNI BIUS",
+      "keluarga": 319,
+      "jiwa": 1007
+    },
+    {
+      "kecamatan": "SILIH NARA",
+      "desa": "BURNI BIUS BARU",
+      "keluarga": 195,
+      "jiwa": 646
+    },
+    {
+      "kecamatan": "SILIH NARA",
+      "desa": "GENTING GERBANG",
+      "keluarga": 499,
+      "jiwa": 1587
+    },
+    {
+      "kecamatan": "SILIH NARA",
+      "desa": "GUNUNG SINGIT",
+      "keluarga": 197,
+      "jiwa": 605
+    },
+    {
+      "kecamatan": "SILIH NARA",
+      "desa": "JERATA",
+      "keluarga": 269,
+      "jiwa": 914
+    },
+    {
+      "kecamatan": "SILIH NARA",
+      "desa": "MEKAR INDAH",
+      "keluarga": 122,
+      "jiwa": 357
+    },
+    {
+      "kecamatan": "SILIH NARA",
+      "desa": "MULIE JADI",
+      "keluarga": 356,
+      "jiwa": 1135
+    },
+    {
+      "kecamatan": "SILIH NARA",
+      "desa": "PAYA BEKE",
+      "keluarga": 270,
+      "jiwa": 907
+    },
+    {
+      "kecamatan": "SILIH NARA",
+      "desa": "PAYA PELU",
+      "keluarga": 101,
+      "jiwa": 314
+    },
+    {
+      "kecamatan": "SILIH NARA",
+      "desa": "PEPAYUNGEN ANGKUP",
+      "keluarga": 711,
+      "jiwa": 2444
+    },
+    {
+      "kecamatan": "SILIH NARA",
+      "desa": "REBE GEDUNG",
+      "keluarga": 99,
+      "jiwa": 304
+    },
+    {
+      "kecamatan": "SILIH NARA",
+      "desa": "REMESEN",
+      "keluarga": 263,
+      "jiwa": 857
+    },
+    {
+      "kecamatan": "SILIH NARA",
+      "desa": "REREMAL",
+      "keluarga": 167,
+      "jiwa": 479
+    },
+    {
+      "kecamatan": "SILIH NARA",
+      "desa": "RUTIH",
+      "keluarga": 212,
+      "jiwa": 683
+    },
+    {
+      "kecamatan": "SILIH NARA",
+      "desa": "SANEHEN",
+      "keluarga": 178,
+      "jiwa": 607
+    },
+    {
+      "kecamatan": "SILIH NARA",
+      "desa": "SEMELIT MUTIARA",
+      "keluarga": 404,
+      "jiwa": 1241
+    },
+    {
+      "kecamatan": "SILIH NARA",
+      "desa": "SIMPANG KEMILI",
+      "keluarga": 277,
+      "jiwa": 923
+    },
+    {
+      "kecamatan": "SILIH NARA",
+      "desa": "TENEBUK KAMPUNG BARU",
+      "keluarga": 238,
+      "jiwa": 760
+    },
+    {
+      "kecamatan": "SILIH NARA",
+      "desa": "TERANG ENGON",
+      "keluarga": 60,
+      "jiwa": 197
+    },
+    {
+      "kecamatan": "SILIH NARA",
+      "desa": "WIH BERSIH",
+      "keluarga": 99,
+      "jiwa": 330
+    },
+    {
+      "kecamatan": "SILIH NARA",
+      "desa": "WIH PESAM",
+      "keluarga": 319,
+      "jiwa": 990
+    },
+    {
+      "kecamatan": "SILIH NARA",
+      "desa": "WIH PORAK",
+      "keluarga": 130,
+      "jiwa": 371
+    },
+    {
+      "kecamatan": "SILIH NARA",
+      "desa": "WIH SAGI INDAH",
+      "keluarga": 148,
+      "jiwa": 490
+    },
+    {
+      "kecamatan": "SILIH NARA",
+      "desa": "WIHNI BAKONG",
+      "keluarga": 332,
+      "jiwa": 1009
+    },
+    {
+      "kecamatan": "SILIH NARA",
+      "desa": "WIHNI DURIN",
+      "keluarga": 296,
+      "jiwa": 931
+    }
+  ],
+  "per_desil": [
+    {
+      "desil": 1,
+      "keluarga": 9342,
+      "jiwa": 33996
+    },
+    {
+      "desil": 2,
+      "keluarga": 9083,
+      "jiwa": 32926
+    },
+    {
+      "desil": 3,
+      "keluarga": 7597,
+      "jiwa": 25913
+    },
+    {
+      "desil": 4,
+      "keluarga": 6066,
+      "jiwa": 19848
+    },
+    {
+      "desil": 5,
+      "keluarga": 10476,
+      "jiwa": 33484
+    },
+    {
+      "desil": 6,
+      "keluarga": 9630,
+      "jiwa": 31179
+    },
+    {
+      "desil": 7,
+      "keluarga": 15508,
+      "jiwa": 50039
+    }
+  ],
+  "bansos_per_kecamatan": [
+    {
+      "kecamatan": "ATU LINTANG",
+      "pbi_nas": {
+        "keluarga": 1457,
+        "jiwa": 4778
+      },
+      "pbi_pemda": {
+        "keluarga": 1000,
+        "jiwa": 3404
+      }
+    },
+    {
+      "kecamatan": "BEBESEN",
+      "pbi_nas": {
+        "keluarga": 4117,
+        "jiwa": 14398
+      },
+      "pbi_pemda": {
+        "keluarga": 4920,
+        "jiwa": 18250
+      }
+    },
+    {
+      "kecamatan": "BIES",
+      "pbi_nas": {
+        "keluarga": 1421,
+        "jiwa": 4694
+      },
+      "pbi_pemda": {
+        "keluarga": 1112,
+        "jiwa": 3818
+      }
+    },
+    {
+      "kecamatan": "BINTANG",
+      "pbi_nas": {
+        "keluarga": 2558,
+        "jiwa": 8771
+      },
+      "pbi_pemda": {
+        "keluarga": 883,
+        "jiwa": 3194
+      }
+    },
+    {
+      "kecamatan": "CELALA",
+      "pbi_nas": {
+        "keluarga": 2604,
+        "jiwa": 8724
+      },
+      "pbi_pemda": {
+        "keluarga": 890,
+        "jiwa": 3050
+      }
+    },
+    {
+      "kecamatan": "JAGONG JEGET",
+      "pbi_nas": {
+        "keluarga": 1978,
+        "jiwa": 6479
+      },
+      "pbi_pemda": {
+        "keluarga": 1423,
+        "jiwa": 4875
+      }
+    },
+    {
+      "kecamatan": "KEBAYAKAN",
+      "pbi_nas": {
+        "keluarga": 1983,
+        "jiwa": 6767
+      },
+      "pbi_pemda": {
+        "keluarga": 2308,
+        "jiwa": 8438
+      }
+    },
+    {
+      "kecamatan": "KETOL",
+      "pbi_nas": {
+        "keluarga": 2315,
+        "jiwa": 7752
+      },
+      "pbi_pemda": {
+        "keluarga": 2774,
+        "jiwa": 9519
+      }
+    },
+    {
+      "kecamatan": "KUTE PANANG",
+      "pbi_nas": {
+        "keluarga": 1516,
+        "jiwa": 5234
+      },
+      "pbi_pemda": {
+        "keluarga": 1226,
+        "jiwa": 4268
+      }
+    },
+    {
+      "kecamatan": "LAUT TAWAR",
+      "pbi_nas": {
+        "keluarga": 2131,
+        "jiwa": 7338
+      },
+      "pbi_pemda": {
+        "keluarga": 2518,
+        "jiwa": 9235
+      }
+    },
+    {
+      "kecamatan": "LINGE",
+      "pbi_nas": {
+        "keluarga": 2295,
+        "jiwa": 7675
+      },
+      "pbi_pemda": {
+        "keluarga": 1359,
+        "jiwa": 4835
+      }
+    },
+    {
+      "kecamatan": "PEGASING",
+      "pbi_nas": {
+        "keluarga": 4176,
+        "jiwa": 14393
+      },
+      "pbi_pemda": {
+        "keluarga": 2767,
+        "jiwa": 9862
+      }
+    },
+    {
+      "kecamatan": "RUSIP ANTARA",
+      "pbi_nas": {
+        "keluarga": 2051,
+        "jiwa": 7100
+      },
+      "pbi_pemda": {
+        "keluarga": 951,
+        "jiwa": 3443
+      }
+    },
+    {
+      "kecamatan": "SILIH NARA",
+      "pbi_nas": {
+        "keluarga": 4515,
+        "jiwa": 14927
+      },
+      "pbi_pemda": {
+        "keluarga": 3188,
+        "jiwa": 11101
+      }
+    }
+  ]
+}

@@ -1,0 +1,228 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+/// This model contains an expression index which requires additional setup for migrations. Visit https://pris.ly/d/expression-indexes for more info.
+model ChatSession {
+  id         String   @id @default(cuid())
+  userId     String?
+  query      String
+  intent     String?
+  aiResponse Json?
+  metadata   Json?
+  createdAt  DateTime @default(now())
+
+  @@index([createdAt(sort: Desc)])
+  @@index([intent])
+}
+
+model Admin {
+  id        String    @id @default(dbgenerated("gen_random_uuid()"))
+  username  String    @unique
+  password  String
+  nama      String
+  role      AdminRole @default(ADMIN)
+  isActive  Boolean   @default(true)
+  createdAt DateTime  @default(now())
+}
+
+model EwsAlert {
+  id          String   @id @default(cuid())
+  indicatorId String
+  nilaiAktual Float
+  threshold   Float
+  pesan       String
+  severity    Severity @default(WARNING)
+  resolvedAt  DateTime?
+  createdAt   DateTime @default(now())
+  indicator   Indicator @relation(fields: [indicatorId], references: [id], onDelete: Cascade, onUpdate: NoAction)
+
+  @@index([indicatorId])
+  @@index([resolvedAt, createdAt(sort: Desc)])
+}
+
+model Indicator {
+  id        String   @id @default(dbgenerated("gen_random_uuid()"))
+  datasetId String
+  nama      String
+  satuan    String
+  threshold Float?
+  direction String   @default("STABLE")
+  isKunci   Boolean  @default(false)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @default(now())
+  EwsAlert  EwsAlert[]
+  dataset   Dataset    @relation(fields: [datasetId], references: [id], onDelete: Cascade, onUpdate: NoAction)
+
+  @@index([datasetId])
+  @@unique([datasetId, nama, satuan])
+}
+
+model Skpd {
+  id        String   @id @default(dbgenerated("gen_random_uuid()"))
+  kode      String   @unique
+  nama      String
+  kategori  String   @default("LAINNYA")
+  alamat    String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @default(now())
+  Dataset   Dataset[]
+}
+
+model Dataset {
+  id              String          @id @default(dbgenerated("gen_random_uuid()"))
+  skpdId          String
+  nama            String
+  slug            String          @unique
+  deskripsi       String?
+  schema          Json            @default("{}")
+  endpointSplp    String?
+  refreshInterval Int?
+  isActive        Boolean         @default(true)
+  lastSync        DateTime?
+  createdAt       DateTime        @default(now())
+  updatedAt       DateTime        @default(now())
+  DatasetRecord   DatasetRecord[]
+  Indicator       Indicator[]
+  Skpd            Skpd            @relation(fields: [skpdId], references: [id], onDelete: Cascade, onUpdate: NoAction)
+}
+
+model DatasetRecord {
+  id        String   @id @default(dbgenerated("gen_random_uuid()"))
+  datasetId String
+  data      Json
+  periode   String
+  checksum  String?
+  fetchedAt DateTime @default(now())
+  Dataset   Dataset  @relation(fields: [datasetId], references: [id], onDelete: Cascade, onUpdate: NoAction)
+
+  @@index([datasetId])
+}
+
+model SapaSnapshot {
+  id           String   @id @default(dbgenerated("gen_random_uuid()"))
+  origin       String
+  totalRecords Int
+  checksum     String
+  createdAt    DateTime @default(now())
+  SapaIndicatorValue SapaIndicatorValue[]
+
+  @@index([createdAt(sort: Desc)])
+}
+
+model SapaIndicatorValue {
+  id                 String  @id @default(dbgenerated("gen_random_uuid()"))
+  snapshotId         String
+  idKodeIndikator    Int
+  kodeIndikator      String?
+  indikator          String
+  opd                String
+  idOpd              Int
+  nilai              String
+  nilaiNumber        Float?
+  satuan             String
+  tahun              String?
+  tahunNumber        Int?
+  jadwalPemutakhiran String?
+  SapaSnapshot       SapaSnapshot @relation(fields: [snapshotId], references: [id], onDelete: Cascade, onUpdate: NoAction)
+
+  @@index([snapshotId])
+  @@index([idKodeIndikator, snapshotId])
+  @@index([opd])
+}
+
+enum AdminRole {
+  ADMIN
+  SUPERADMIN
+  DTSEN_ANALYST
+  DTSEN_LOOKUP
+  DTSEN_ROOT
+}
+
+enum Severity {
+  INFO
+  WARNING
+  CRITICAL
+}
+
+model DataSource {
+  id              String   @id @default(cuid())
+  slug            String   @unique
+  nama            String
+  sensitivity     String   @default("PUBLIC")
+  provenanceLabel String?
+  ownerInstansi   String?
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+}
+
+model DtsenRelease {
+  id            String    @id
+  releaseNumber String
+  status        String    @default("STAGING")
+  metadata      Json?
+  publishedAt   DateTime?
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+
+  individu      DtsenIndividu[]
+  aggregat      DtsenAgregatWilayah[]
+}
+
+model DtsenIndividu {
+  id           String   @id @default(cuid())
+  releaseId    String
+  nikHash      String
+  // @hotfix 29-Agu-2026: nama asli & NIK lengkap disimpan TERENKRIPSI (AES-256-GCM)
+  // dengan DTSEN_DATA_KEY — hanya role DTSEN_ROOT yang bisa mendekripsi.
+  // Role lain tetap memakai namaMasked (nama pribadi tidak pernah plaintext).
+  namaAsliEnc  String?
+  nikEnc       String?
+  namaMasked   String
+  kecamatan    String?
+  desa         String?
+  desil        Int?
+  bansos       Boolean  @default(false)
+  createdAt    DateTime @default(now())
+
+  release      DtsenRelease @relation(fields: [releaseId], references: [id], onDelete: Cascade)
+
+  @@index([releaseId, nikHash])
+}
+
+model DtsenAgregatWilayah {
+  id               String   @id @default(cuid())
+  releaseId        String
+  kecamatan        String?
+  desa             String?
+  desil            Int?
+  jiwa             Int?
+  kk               Int?
+  pkh              Int?
+  bpnt             Int?
+  pbi_kredit       Int?
+  pbi_nonkredit    Int?
+  createdAt        DateTime @default(now())
+
+  release          DtsenRelease @relation(fields: [releaseId], references: [id], onDelete: Cascade)
+
+  @@index([releaseId, kecamatan])
+}
+
+model DataAccessAudit {
+  id         String   @id @default(cuid())
+  adminId    String?
+  action     String
+  detail     String   @default("")
+  rowCount   Int      @default(0)
+  ip         String?
+  createdAt  DateTime @default(now())
+
+  @@index([adminId, createdAt(sort: Desc)])
+  @@index([createdAt(sort: Desc)])
+}

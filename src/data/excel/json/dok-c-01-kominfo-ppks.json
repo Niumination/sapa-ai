@@ -1,0 +1,77 @@
+{
+  "judul": "Data Penerima Bantuan Sosial PPKS (Diskominfo) Kab. Aceh Tengah",
+  "opd": "Diskominfo",
+  "dokumen": "C",
+  "sumber_file": "data kominfo.xlsx (Sheet1)",
+  "catatan": "AGREGAT KEAMANAN: hanya jumlah penerima per kriteria PPKS & kecamatan. Baris nama/NIK/alamat/disabilitas per-orang TIDAK diikutsertakan (UU PDP).",
+  "ringkasan": {
+    "total_penerima": 71
+  },
+  "per_kriteria_ppks": [
+    {
+      "kriteria": "Lanjut Usia",
+      "jumlah": 51
+    },
+    {
+      "kriteria": "Disabilitas",
+      "jumlah": 18
+    },
+    {
+      "kriteria": "Anak",
+      "jumlah": 2
+    }
+  ],
+  "per_kecamatan": [
+    {
+      "kecamatan": "Linge",
+      "jumlah": 12
+    },
+    {
+      "kecamatan": "Kebayakan",
+      "jumlah": 10
+    },
+    {
+      "kecamatan": "Bebesen",
+      "jumlah": 8
+    },
+    {
+      "kecamatan": "Jagong Jeget",
+      "jumlah": 8
+    },
+    {
+      "kecamatan": "Bintang",
+      "jumlah": 7
+    },
+    {
+      "kecamatan": "Silih Nara",
+      "jumlah": 6
+    },
+    {
+      "kecamatan": "Kute Panang",
+      "jumlah": 6
+    },
+    {
+      "kecamatan": "Bies",
+      "jumlah": 4
+    },
+    {
+      "kecamatan": "Lut Tawar",
+      "jumlah": 3
+    },
+    {
+      "kecamatan": "Atu Lintang",
+      "jumlah": 3
+    },
+    {
+      "kecamatan": "Pegasing",
+      "jumlah": 2
+    },
+    {
+      "kecamatan": "Ketol",
+      "jumlah": 2
+    }
+  ],
+  "metadata": {
+    "satuan": "penerima"
+  }
+}

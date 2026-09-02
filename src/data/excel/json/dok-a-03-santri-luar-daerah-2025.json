@@ -1,0 +1,332 @@
+{
+  "judul": "DHV Santri Luar Daerah Kab. Aceh Tengah 2025",
+  "opd": "Dinas Pendidikan",
+  "dokumen": "A",
+  "sumber_file": "DHV SANTRI LUAR DAERAH 2025.xlsx (sheet DHV SANTRI LUAR DAERAH)",
+  "catatan": "AGREGAT KEAMANAN: hanya jumlah penerima & total bantuan per lembaga. Baris nama/NIK/alamat/HP TIDAK diikutsertakan (UU PDP).",
+  "ringkasan": {
+    "total_penerima": 100,
+    "total_bantuan_rp": 200000000
+  },
+  "per_lembaga": [
+    {
+      "lembaga": "Tauthatuth Thullab",
+      "penerima": 10,
+      "total_bantuan_rp": 20000000
+    },
+    {
+      "lembaga": "Darul Mukhlasin",
+      "penerima": 5,
+      "total_bantuan_rp": 10000000
+    },
+    {
+      "lembaga": "Darul Munawarah",
+      "penerima": 5,
+      "total_bantuan_rp": 10000000
+    },
+    {
+      "lembaga": "Bustanul Arifin",
+      "penerima": 5,
+      "total_bantuan_rp": 10000000
+    },
+    {
+      "lembaga": "Nurul Islam",
+      "penerima": 4,
+      "total_bantuan_rp": 8000000
+    },
+    {
+      "lembaga": "Ummahatul Mukminin",
+      "penerima": 4,
+      "total_bantuan_rp": 8000000
+    },
+    {
+      "lembaga": "Misbahul Ulum",
+      "penerima": 3,
+      "total_bantuan_rp": 6000000
+    },
+    {
+      "lembaga": "SMPS Asd Foundation",
+      "penerima": 2,
+      "total_bantuan_rp": 4000000
+    },
+    {
+      "lembaga": "Al-Zahrah",
+      "penerima": 2,
+      "total_bantuan_rp": 4000000
+    },
+    {
+      "lembaga": "YAPENA Madrasah Tsanawiyah",
+      "penerima": 2,
+      "total_bantuan_rp": 4000000
+    },
+    {
+      "lembaga": "Al Zahrah",
+      "penerima": 2,
+      "total_bantuan_rp": 4000000
+    },
+    {
+      "lembaga": "Bustanul Ulum",
+      "penerima": 2,
+      "total_bantuan_rp": 4000000
+    },
+    {
+      "lembaga": "Al Madinatuddiniyah Babussalam",
+      "penerima": 2,
+      "total_bantuan_rp": 4000000
+    },
+    {
+      "lembaga": "Haqqul Mubin",
+      "penerima": 2,
+      "total_bantuan_rp": 4000000
+    },
+    {
+      "lembaga": "Athar Hayyan Quranic",
+      "penerima": 2,
+      "total_bantuan_rp": 4000000
+    },
+    {
+      "lembaga": "SMA Plus Al-Athiyah",
+      "penerima": 1,
+      "total_bantuan_rp": 2000000
+    },
+    {
+      "lembaga": "Tsanawiyah Swasta Raudhatul Ulum",
+      "penerima": 1,
+      "total_bantuan_rp": 2000000
+    },
+    {
+      "lembaga": "MTsS Nurul Muslim",
+      "penerima": 1,
+      "total_bantuan_rp": 2000000
+    },
+    {
+      "lembaga": "Ummul Ayyan",
+      "penerima": 1,
+      "total_bantuan_rp": 2000000
+    },
+    {
+      "lembaga": "YTI Al Muhajirin",
+      "penerima": 1,
+      "total_bantuan_rp": 2000000
+    },
+    {
+      "lembaga": "Hidayatussalikin Almusthafawiyah",
+      "penerima": 1,
+      "total_bantuan_rp": 2000000
+    },
+    {
+      "lembaga": "Tauthiatul Amilin",
+      "penerima": 1,
+      "total_bantuan_rp": 2000000
+    },
+    {
+      "lembaga": "Babussalam Al Aziziyah",
+      "penerima": 1,
+      "total_bantuan_rp": 2000000
+    },
+    {
+      "lembaga": "Tahfizul Qur'an",
+      "penerima": 1,
+      "total_bantuan_rp": 2000000
+    },
+    {
+      "lembaga": "Madinatuddiniyah Darussalam",
+      "penerima": 1,
+      "total_bantuan_rp": 2000000
+    },
+    {
+      "lembaga": "SMPS Ummul Ayman Samalanga",
+      "penerima": 1,
+      "total_bantuan_rp": 2000000
+    },
+    {
+      "lembaga": "Fajar Hidayah",
+      "penerima": 1,
+      "total_bantuan_rp": 2000000
+    },
+    {
+      "lembaga": "SMPS Muslimat Samalanga",
+      "penerima": 1,
+      "total_bantuan_rp": 2000000
+    },
+    {
+      "lembaga": "Al Muslim Peusangan",
+      "penerima": 1,
+      "total_bantuan_rp": 2000000
+    },
+    {
+      "lembaga": "Tauthiatuth Thullab",
+      "penerima": 1,
+      "total_bantuan_rp": 2000000
+    },
+    {
+      "lembaga": "Darul Hasanah",
+      "penerima": 1,
+      "total_bantuan_rp": 2000000
+    },
+    {
+      "lembaga": "Bustanul Arifin 2",
+      "penerima": 1,
+      "total_bantuan_rp": 2000000
+    },
+    {
+      "lembaga": "Raudhatul Ulum",
+      "penerima": 1,
+      "total_bantuan_rp": 2000000
+    },
+    {
+      "lembaga": "Tauthiatuth Thullab Putri",
+      "penerima": 1,
+      "total_bantuan_rp": 2000000
+    },
+    {
+      "lembaga": "Ummul Ayman",
+      "penerima": 1,
+      "total_bantuan_rp": 2000000
+    },
+    {
+      "lembaga": "Istiqamatuddin  Serambi Aceh",
+      "penerima": 1,
+      "total_bantuan_rp": 2000000
+    },
+    {
+      "lembaga": "Jami'ah Azzanjabil",
+      "penerima": 1,
+      "total_bantuan_rp": 2000000
+    },
+    {
+      "lembaga": "Jamiah Al Aziziyah",
+      "penerima": 1,
+      "total_bantuan_rp": 2000000
+    },
+    {
+      "lembaga": "Ihdal Ulum Al Aziziyah",
+      "penerima": 1,
+      "total_bantuan_rp": 2000000
+    },
+    {
+      "lembaga": "Al Manar",
+      "penerima": 1,
+      "total_bantuan_rp": 2000000
+    },
+    {
+      "lembaga": "Tauthiah Arongan",
+      "penerima": 1,
+      "total_bantuan_rp": 2000000
+    },
+    {
+      "lembaga": "Riyadhul Mubarak Al Idrisiyah",
+      "penerima": 1,
+      "total_bantuan_rp": 2000000
+    },
+    {
+      "lembaga": "Darul Musthafa",
+      "penerima": 1,
+      "total_bantuan_rp": 2000000
+    },
+    {
+      "lembaga": "Misbahul Ulum Diniyah Al Aziziah",
+      "penerima": 1,
+      "total_bantuan_rp": 2000000
+    },
+    {
+      "lembaga": "Al Fatah",
+      "penerima": 1,
+      "total_bantuan_rp": 2000000
+    },
+    {
+      "lembaga": "Al Munir",
+      "penerima": 1,
+      "total_bantuan_rp": 2000000
+    },
+    {
+      "lembaga": "Lirboyo",
+      "penerima": 1,
+      "total_bantuan_rp": 2000000
+    },
+    {
+      "lembaga": "Bustanul arifin",
+      "penerima": 1,
+      "total_bantuan_rp": 2000000
+    },
+    {
+      "lembaga": "MA Muhammadiyah",
+      "penerima": 1,
+      "total_bantuan_rp": 2000000
+    },
+    {
+      "lembaga": "Fatahillah",
+      "penerima": 1,
+      "total_bantuan_rp": 2000000
+    },
+    {
+      "lembaga": "Istiqamatuddin Babul Jannah Serambi",
+      "penerima": 1,
+      "total_bantuan_rp": 2000000
+    },
+    {
+      "lembaga": "Darussa'adah",
+      "penerima": 1,
+      "total_bantuan_rp": 2000000
+    },
+    {
+      "lembaga": "Dayah Ummul Ayman",
+      "penerima": 1,
+      "total_bantuan_rp": 2000000
+    },
+    {
+      "lembaga": "Ahlussunnah Wal Jama'ah",
+      "penerima": 1,
+      "total_bantuan_rp": 2000000
+    },
+    {
+      "lembaga": "Al Madinatuddiniyah Syamsudduha",
+      "penerima": 1,
+      "total_bantuan_rp": 2000000
+    },
+    {
+      "lembaga": "Darul Ulum Al-Fatah",
+      "penerima": 1,
+      "total_bantuan_rp": 2000000
+    },
+    {
+      "lembaga": "SMPS Maryam Binti Ibrahim",
+      "penerima": 1,
+      "total_bantuan_rp": 2000000
+    },
+    {
+      "lembaga": "Darul Ulum Al Fatah",
+      "penerima": 1,
+      "total_bantuan_rp": 2000000
+    },
+    {
+      "lembaga": "Al Muslim",
+      "penerima": 1,
+      "total_bantuan_rp": 2000000
+    },
+    {
+      "lembaga": "Darun Nuraini Waliyah",
+      "penerima": 1,
+      "total_bantuan_rp": 2000000
+    },
+    {
+      "lembaga": "Athiyah",
+      "penerima": 1,
+      "total_bantuan_rp": 2000000
+    },
+    {
+      "lembaga": "Muslimat Samalanga",
+      "penerima": 1,
+      "total_bantuan_rp": 2000000
+    },
+    {
+      "lembaga": "Babussalam Al Hanafiyah",
+      "penerima": 1,
+      "total_bantuan_rp": 2000000
+    }
+  ],
+  "metadata": {
+    "tahun": 2025,
+    "satuan": "orang / Rp"
+  }
+}

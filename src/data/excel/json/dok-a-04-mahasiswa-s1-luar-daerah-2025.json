@@ -1,0 +1,107 @@
+{
+  "judul": "DHV Mahasiswa S1 Luar Daerah Kab. Aceh Tengah 2025",
+  "opd": "Dinas Pendidikan",
+  "dokumen": "A",
+  "sumber_file": "DHV TA S1 LUAR DAERAH 2025.xlsx (sheet DHV TA S1 LUAR DAERAH)",
+  "catatan": "AGREGAT KEAMANAN: hanya jumlah penerima & total bantuan per lembaga. Baris nama/NIK/alamat/HP TIDAK diikutsertakan (UU PDP).",
+  "ringkasan": {
+    "total_penerima": 50,
+    "total_bantuan_rp": 0
+  },
+  "per_lembaga": [
+    {
+      "lembaga": "Universitas Al Muslim",
+      "penerima": 17,
+      "total_bantuan_rp": 0
+    },
+    {
+      "lembaga": "UIN Ar- Raniry",
+      "penerima": 8,
+      "total_bantuan_rp": 0
+    },
+    {
+      "lembaga": "Universitas Syiah Kuala",
+      "penerima": 6,
+      "total_bantuan_rp": 0
+    },
+    {
+      "lembaga": "Universitas Malikussaleh",
+      "penerima": 4,
+      "total_bantuan_rp": 0
+    },
+    {
+      "lembaga": "IAIN Lhokseumawe",
+      "penerima": 2,
+      "total_bantuan_rp": 0
+    },
+    {
+      "lembaga": "STIKes Darussalam",
+      "penerima": 1,
+      "total_bantuan_rp": 0
+    },
+    {
+      "lembaga": "Universitas Muhammadiyah Aceh",
+      "penerima": 1,
+      "total_bantuan_rp": 0
+    },
+    {
+      "lembaga": "STIKes Payung Negeri",
+      "penerima": 1,
+      "total_bantuan_rp": 0
+    },
+    {
+      "lembaga": "Universitas Negeri Medan",
+      "penerima": 1,
+      "total_bantuan_rp": 0
+    },
+    {
+      "lembaga": "Telkom University",
+      "penerima": 1,
+      "total_bantuan_rp": 0
+    },
+    {
+      "lembaga": "Institut Pertanian Bogor",
+      "penerima": 1,
+      "total_bantuan_rp": 0
+    },
+    {
+      "lembaga": "Sekolah Tinggi Ilmu Syariah Ummul Ayman",
+      "penerima": 1,
+      "total_bantuan_rp": 0
+    },
+    {
+      "lembaga": "Universitas Islam Aceh",
+      "penerima": 1,
+      "total_bantuan_rp": 0
+    },
+    {
+      "lembaga": "Poltekkes Aceh",
+      "penerima": 1,
+      "total_bantuan_rp": 0
+    },
+    {
+      "lembaga": "Universitas Sumatera Utara",
+      "penerima": 1,
+      "total_bantuan_rp": 0
+    },
+    {
+      "lembaga": "Universitas Ibnu Khaldun",
+      "penerima": 1,
+      "total_bantuan_rp": 0
+    },
+    {
+      "lembaga": "UIN Maulana Malik Ibrahim",
+      "penerima": 1,
+      "total_bantuan_rp": 0
+    },
+    {
+      "lembaga": "Universitas Haji Sumatera Utara",
+      "penerima": 1,
+      "total_bantuan_rp": 0
+    }
+  ],
+  "metadata": {
+    "tahun": 2025,
+    "satuan": "orang / Rp"
+  }
+}

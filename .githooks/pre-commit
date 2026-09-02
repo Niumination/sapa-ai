@@ -1,0 +1,35 @@
+#!/usr/bin/env bash
+# Pre-commit guard (WP0.00 + WP0.5):
+#   1) pii-gate.sh  — memindai SELURUH tree (bukan hanya src/data/excel)
+#   2) typecheck.sh — tsc --noEmit dengan .next dibersihkan (cegah error hantu)
+# Override darurat (TIDAK disarankan): git commit --no-verify
+set -euo pipefail
+
+ROOT="$(git rev-parse --show-toplevel)"
+SCRIPT="$ROOT/scripts/pii-gate.sh"
+TYPECHECK="$ROOT/scripts/typecheck.sh"
+
+# Lewati bila tidak ada perubahan pada tree yang dipantau (seluruh repo).
+if ! git diff --cached --name-only --diff-filter=ACMR | grep -qE '\.(ts|tsx|md|json|sql|js|mjs|prisma)$'; then
+  exit 0
+fi
+
+if [ -f "$SCRIPT" ]; then
+  echo "[pre-commit] memeriksa kebocoran PII (seluruh tree) ..."
+  if ! bash "$SCRIPT" "$ROOT"; then
+    echo "[pre-commit] GAGAL: terdeteksi PII/kredensial. Batalkan atau bersihkan."
+    echo "[pre-commit] Override darurat (TIDAK disarankan): git commit --no-verify"
+    exit 1
+  fi
+  echo "[pre-commit] OK: tidak ada kebocoran PII."
+fi
+
+if [ -f "$TYPECHECK" ]; then
+  echo "[pre-commit] typecheck ..."
+  if ! bash "$TYPECHECK"; then
+    echo "[pre-commit] GAGAL typecheck. Perbaiki dulu."
+    exit 1
+  fi
+fi
+
+exit 0

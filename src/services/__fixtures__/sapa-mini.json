@@ -1,0 +1,98 @@
+[
+  {
+    "id": 1,
+    "id_kode_indikator": 101,
+    "kode_indikator_kode_indikator": "K001",
+    "kode_indikator_nama_indikator": "Jumlah ASN",
+    "id_opds": 10,
+    "opds_nama_opd": "BKPSDM",
+    "jadwal_pemutakhiran": "tahunan",
+    "satuan": "orang",
+    "tahun": "2024",
+    "variabel": "9610"
+  },
+  {
+    "id": 2,
+    "id_kode_indikator": 101,
+    "kode_indikator_kode_indikator": "K001",
+    "kode_indikator_nama_indikator": "Jumlah ASN",
+    "id_opds": 10,
+    "opds_nama_opd": "BKPSDM",
+    "jadwal_pemutakhiran": "tahunan",
+    "satuan": "orang",
+    "tahun": "2023",
+    "variabel": "9400"
+  },
+  {
+    "id": 3,
+    "id_kode_indikator": 102,
+    "kode_indikator_kode_indikator": "K002",
+    "kode_indikator_nama_indikator": "Prevalensi Stunting Balita",
+    "id_opds": 11,
+    "opds_nama_opd": "Dinas Kesehatan",
+    "jadwal_pemutakhiran": "tahunan",
+    "satuan": "persen",
+    "tahun": "2024",
+    "variabel": "12.5"
+  },
+  {
+    "id": 4,
+    "id_kode_indikator": 103,
+    "kode_indikator_kode_indikator": "K003",
+    "kode_indikator_nama_indikator": "Angka Stunting Kecamatan Bebesen",
+    "id_opds": 11,
+    "opds_nama_opd": "Dinas Kesehatan",
+    "jadwal_pemutakhiran": "tahunan",
+    "satuan": "persen",
+    "tahun": null,
+    "variabel": "9.2"
+  },
+  {
+    "id": 5,
+    "id_kode_indikator": 104,
+    "kode_indikator_kode_indikator": "K004",
+    "kode_indikator_nama_indikator": "Jumlah Guru ASN",
+    "id_opds": 12,
+    "opds_nama_opd": "Dinas Pendidikan",
+    "jadwal_pemutakhiran": "tahunan",
+    "satuan": "orang",
+    "tahun": "2024",
+    "variabel": "1200"
+  },
+  {
+    "id": 6,
+    "id_kode_indikator": 105,
+    "kode_indikator_kode_indikator": "K005",
+    "kode_indikator_nama_indikator": "Produksi Kopi Arabika Gayo",
+    "id_opds": 13,
+    "opds_nama_opd": "Dinas Perkebunan",
+    "jadwal_pemutakhiran": "tahunan",
+    "satuan": "ton",
+    "tahun": "2024",
+    "variabel": "4500"
+  },
+  {
+    "id": 7,
+    "id_kode_indikator": 106,
+    "kode_indikator_kode_indikator": "K006",
+    "kode_indikator_nama_indikator": "Panjang Jalan Kabupaten Kondisi Baik",
+    "id_opds": 14,
+    "opds_nama_opd": "Dinas PUPR",
+    "jadwal_pemutakhiran": "tahunan",
+    "satuan": "km",
+    "tahun": "2024",
+    "variabel": "320"
+  },
+  {
+    "id": 8,
+    "id_kode_indikator": 107,
+    "kode_indikator_kode_indikator": "K007",
+    "kode_indikator_nama_indikator": "Jumlah UMKM Aktif",
+    "id_opds": 15,
+    "opds_nama_opd": "Dinas Koperasi dan UKM",
+    "jadwal_pemutakhiran": "semesteran",
+    "satuan": "unit",
+    "tahun": "2024",
+    "variabel": "850"
+  }
+]

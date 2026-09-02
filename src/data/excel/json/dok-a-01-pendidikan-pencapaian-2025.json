@@ -1,0 +1,59 @@
+{
+  "judul": "Pencapaian Bantuan Siswa Miskin Pendidikan Kab. Aceh Tengah 2025",
+  "opd": "Dinas Pendidikan",
+  "dokumen": "A",
+  "sumber_file": "2025 MISKIN PENDIDIKAN.xlsx (sheet PENCAPAIAN)",
+  "catatan": "Data agregat resmi (tanpa PII).",
+  "kolom": [
+    "Jenjang",
+    "Target (Orang)",
+    "Realisasi (Orang)",
+    "Sisa (Orang)",
+    "Target (Rp)",
+    "Realisasi (Rp)",
+    "Sisa (Rp)"
+  ],
+  "baris": [
+    {
+      "jenjang": "SD",
+      "target_orang": 300,
+      "realisasi_orang": 212,
+      "sisa_orang": 88,
+      "target_rp": 150000000,
+      "realisasi_rp": 106000000,
+      "sisa_rp": 44000000
+    },
+    {
+      "jenjang": "SMP",
+      "target_orang": 300,
+      "realisasi_orang": 202,
+      "sisa_orang": 98,
+      "target_rp": 225000000,
+      "realisasi_rp": 151500000,
+      "sisa_rp": 73500000
+    },
+    {
+      "jenjang": "SMA",
+      "target_orang": 330,
+      "realisasi_orang": 185,
+      "sisa_orang": 145,
+      "target_rp": 330000000,
+      "realisasi_rp": 185000000,
+      "sisa_rp": 145000000
+    },
+    {
+      "jenjang": "TOTAL",
+      "target_orang": 930,
+      "realisasi_orang": 599,
+      "sisa_orang": 331,
+      "target_rp": 705000000,
+      "realisasi_rp": 442500000,
+      "sisa_rp": 262500000
+    }
+  ],
+  "metadata": {
+    "tahun": 2025,
+    "satuan_orang": "orang",
+    "satuan_rp": "Rp"
+  }
+}

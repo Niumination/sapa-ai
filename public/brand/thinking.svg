@@ -1,0 +1,16 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 96 40" role="img" aria-label="AI sedang berpikir">
+  <!-- Animasi SMIL: berjalan di <img> tanpa JS/network -->
+  <rect width="96" height="40" rx="20" fill="#FFFFFF" stroke="#C6C3B4" stroke-width="1.5"/>
+  <circle cx="32" cy="20" r="4.5" fill="#2D6A4F">
+    <animate attributeName="cy" values="20;13;20" dur="0.9s" begin="0s" repeatCount="indefinite" calcMode="spline" keySplines="0.4 0 0.2 1;0.4 0 0.2 1"/>
+    <animate attributeName="fill" values="#2D6A4F;#D4A853;#2D6A4F" dur="0.9s" begin="0s" repeatCount="indefinite"/>
+  </circle>
+  <circle cx="48" cy="20" r="4.5" fill="#2D6A4F">
+    <animate attributeName="cy" values="20;13;20" dur="0.9s" begin="0.15s" repeatCount="indefinite" calcMode="spline" keySplines="0.4 0 0.2 1;0.4 0 0.2 1"/>
+    <animate attributeName="fill" values="#2D6A4F;#D4A853;#2D6A4F" dur="0.9s" begin="0.15s" repeatCount="indefinite"/>
+  </circle>
+  <circle cx="64" cy="20" r="4.5" fill="#2D6A4F">
+    <animate attributeName="cy" values="20;13;20" dur="0.9s" begin="0.3s" repeatCount="indefinite" calcMode="spline" keySplines="0.4 0 0.2 1;0.4 0 0.2 1"/>
+    <animate attributeName="fill" values="#2D6A4F;#D4A853;#2D6A4F" dur="0.9s" begin="0.3s" repeatCount="indefinite"/>
+  </circle>
+</svg>

@@ -1,0 +1,41 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 200" role="img" aria-label="Ilustrasi: tanyakan data Anda">
+  <!-- Latar lembut -->
+  <rect width="320" height="200" rx="16" fill="#F5F3EC"/>
+  <!-- Matahari -->
+  <circle cx="248" cy="52" r="18" fill="#E9CF8F"/>
+  <circle cx="248" cy="52" r="18" fill="none" stroke="#D4A853" stroke-width="2" stroke-dasharray="2 4"/>
+  <!-- Pegunungan Gayo berlapis -->
+  <path d="M0 132 L52 74 L96 132 Z" fill="#DCE8DE"/>
+  <path d="M52 74 L96 132 L74 132 L44 92 Z" fill="#C9DCCE"/>
+  <path d="M56 132 L120 56 L184 132 Z" fill="#BFD2C3"/>
+  <path d="M120 56 L184 132 L158 132 L110 74 Z" fill="#ACC7B4"/>
+  <path d="M160 132 L236 64 L320 132 Z" fill="#DCE8DE"/>
+  <path d="M236 64 L320 132 L292 132 L224 84 Z" fill="#C9DCCE"/>
+  <!-- Puncak emas -->
+  <path d="M120 56 L132 70 L120 66 L108 70 Z" fill="#D4A853"/>
+  <!-- Danau -->
+  <rect x="0" y="132" width="320" height="68" fill="#DCE8DE"/>
+  <path d="M30 146 q8 -4 16 0 t16 0 t16 0" fill="none" stroke="#7FB5A8" stroke-width="2.5" stroke-linecap="round"/>
+  <path d="M210 158 q8 -4 16 0 t16 0 t16 0" fill="none" stroke="#9BC7B8" stroke-width="2.5" stroke-linecap="round"/>
+  <path d="M120 170 q8 -4 16 0 t16 0 t16 0 t16 0" fill="none" stroke="#7FB5A8" stroke-width="2.5" stroke-linecap="round" opacity="0.8"/>
+  <!-- Gelembung tanya (speech bubble) -->
+  <g>
+    <rect x="96" y="26" width="128" height="64" rx="16" fill="#FFFFFF" stroke="#C6C3B4" stroke-width="2"/>
+    <path d="M150 90 L150 104 L166 90 Z" fill="#FFFFFF" stroke="#C6C3B4" stroke-width="2" stroke-linejoin="round"/>
+    <rect x="150.5" y="91" width="15" height="3" fill="#FFFFFF"/>
+    <!-- Tiga garis "sedang mengetik" + tanda tanya emas -->
+    <rect x="112" y="42" width="64" height="7" rx="3.5" fill="#E9E6DA"/>
+    <rect x="112" y="56" width="88" height="7" rx="3.5" fill="#E9E6DA"/>
+    <rect x="112" y="70" width="40" height="7" rx="3.5" fill="#E9E6DA"/>
+    <text x="196" y="74" font-family="ui-sans-serif, system-ui, Arial, sans-serif" font-size="34" font-weight="800" fill="#D4A853">?</text>
+  </g>
+  <!-- Dua biji kopi -->
+  <g transform="translate(52 168) rotate(-18)">
+    <ellipse rx="9" ry="6.5" fill="#D4A853"/>
+    <path d="M0 -6 Q 3.5 0 0 6" fill="none" stroke="#8A6E1D" stroke-width="1.6" stroke-linecap="round"/>
+  </g>
+  <g transform="translate(272 176) rotate(24)">
+    <ellipse rx="9" ry="6.5" fill="#D4A853"/>
+    <path d="M0 -6 Q 3.5 0 0 6" fill="none" stroke="#8A6E1D" stroke-width="1.6" stroke-linecap="round"/>
+  </g>
+</svg>

@@ -1,0 +1,18 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64">
+  <!-- Next.js App Router: file ini otomatis menjadi favicon situs -->
+  <defs>
+    <linearGradient id="icoBg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#10221A"/>
+      <stop offset="0.55" stop-color="#1B4332"/>
+      <stop offset="1" stop-color="#244B38"/>
+    </linearGradient>
+  </defs>
+  <rect width="64" height="64" rx="14" fill="url(#icoBg)"/>
+  <circle cx="43" cy="19" r="8.5" fill="#D4A853"/>
+  <path d="M6 46 L22 18 L34 46 Z" fill="#1E3A2C"/>
+  <path d="M22 46 L39 14 L56 46 Z" fill="#2D6A4F"/>
+  <path d="M39 14 L43.4 22 L39 20 L34.6 22 Z" fill="#D4A853"/>
+  <path d="M10 50 q4 -3 8 0 t8 0" fill="none" stroke="#9BC7B8" stroke-width="2.2" stroke-linecap="round"/>
+  <path d="M28 53.5 q4 -3 8 0 t8 0 t8 0" fill="none" stroke="#7FB5A8" stroke-width="2.2" stroke-linecap="round"/>
+  <path d="M14 57 q4 -3 8 0 t8 0 t8 0" fill="none" stroke="#D4A853" stroke-width="2.2" stroke-linecap="round" opacity="0.9"/>
+</svg>
