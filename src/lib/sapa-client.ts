@@ -1,24 +1,13 @@
-// ─── SAPA Client — Direct API (OAuth) + SPLP fallback ───
-// Prioritas: Direct API (sapa.acehtengahkab.go.id) dengan OAuth token.
-// Fallback: SPLP nasional (api-splp.layanan.go.id) jika direct gagal.
+// ─── SAPA Client — SPLP only ───
+// Source: api-splp.layanan.go.id
 
 import { parseNumericId } from './parse-numeric';
 
-const DIRECT_TOKEN_URL = process.env.SAPA_TOKEN_URL ?? 'https://sapa.acehtengahkab.go.id/oauth/token';
-const DIRECT_API_URL = process.env.SAPA_API_URL ?? 'https://sapa.acehtengahkab.go.id/api';
 const SPLP_BASE = 'https://api-splp.layanan.go.id/sapa/1.0/api';
 
 const BROWSER_UA =
   'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/126.0 Safari/537.36';
 
-// ─── OAuth Token Cache ───
-let tokenCache: { token: string; expiresAt: number } | null = null;
-
-async function getOAuthToken(): Promise<string> {
-  // Gunakan cache jika masih valid (kurangi 60s margin)
-  if (tokenCache && tokenCache.expiresAt > Date.now() + 60000) {
-    return tokenCache.token;
-  }
 
   const clientId = process.env.SAPA_CLIENT_ID ?? '3';
   const clientSecret = process.env.SAPA_CLIENT_SECRET ?? '';
@@ -32,7 +21,7 @@ async function getOAuthToken(): Promise<string> {
   form.set('client_id', clientId);
   form.set('client_secret', clientSecret);
 
-  const res = await fetch(DIRECT_TOKEN_URL, {
+  const res = await fetch('https://sapa.acehtengahkab.go.id/oauth/token', {
     method: 'POST',
     headers: { 'Content-Type': 'application/x-www-form-urlencoded', 'User-Agent': BROWSER_UA },
     body: form.toString(),
@@ -48,14 +37,6 @@ async function getOAuthToken(): Promise<string> {
   if (!data.access_token) {
     throw new Error('SAPA OAuth response tanpa access_token');
   }
-
-  tokenCache = {
-    token: data.access_token,
-    expiresAt: Date.now() + (data.expires_in ?? 3600) * 1000,
-  };
-  return tokenCache.token;
-}
-
 // ─── Types ───
 
 export interface SapaRecord {
@@ -108,31 +89,9 @@ export function dataSourceFromEvidence(evidence: { opd?: string }[]): string {
   return Array.from(opds).join(' + ');
 }
 
-// ─── Fetch: Direct API (OAuth) dengan fallback SPLP ───
+// ─── Fetch: SPLP only ───
 
-export async function fetchSapaData(): Promise<{ records: SapaRecord[]; origin: SapaDataOrigin }> {
-  // 1. Coba Direct API dengan OAuth token
-  try {
-    const token = await getOAuthToken();
-    const res = await fetch(`${DIRECT_API_URL}/daftar_data`, {
-      headers: { Authorization: `Bearer ${token}`, Accept: 'application/json', 'User-Agent': BROWSER_UA },
-      signal: AbortSignal.timeout(30000),
-    });
-
-    if (!res.ok) {
-      throw new Error(`Direct SAPA API error ${res.status}`);
-    }
-
-    const json: SapaResponse = await res.json();
-    if (json.api_status !== 1 || !Array.isArray(json.data)) {
-      throw new Error(`Direct SAPA API failed: ${json.api_message}`);
-    }
-    return { records: json.data, origin: 'direct' };
-  } catch (directErr) {
-    console.warn('[SAPA] Direct API gagal, fallback ke SPLP:', directErr instanceof Error ? directErr.message : directErr);
-  }
-
-  // 2. Fallback: SPLP nasional
+export async function fetchSapaData(): Promise<{ records: SapaRecord[]; origin: 'splp' }> {
   const res = await fetch(`${SPLP_BASE}/daftar_data`, {
     headers: { 'Content-Type': 'application/json', 'User-Agent': BROWSER_UA },
     signal: AbortSignal.timeout(30000),

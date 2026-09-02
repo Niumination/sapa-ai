@@ -142,7 +142,7 @@ export default function GisPage() {
   useEffect(() => {
     let cancelled = false;
 
-    fetch('/api/geodata')
+    fetch('/api/sapa')
       .then(async (res) => ({ ok: res.ok, json: await res.json() }))
       .then(({ ok, json }) => {
         if (cancelled) return;

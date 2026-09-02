@@ -95,7 +95,7 @@ export default function AnalyticsPage() {
   const fetchData = async () => {
     try {
       setLoading(true); setError(null);
-      const res = await fetch('/api/analytics');
+      const res = await fetch('/api/sapa');
       if (!res.ok) throw new Error(`HTTP ${res.status}`);
       const json = await res.json();
       if (json.error) throw new Error(json.error);

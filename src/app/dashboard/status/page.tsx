@@ -7,7 +7,7 @@ export default function StatusPage() {
   const [busy, setBusy] = useState(true);
 
   useEffect(() => {
-    fetch('/api/health')
+    fetch('/api/sapa')
       .then(r => r.ok ? r.json() : Promise.reject())
       .then(d => { setStatus(d); setBusy(false); })
       .catch(() => { setError('Gagal memuat status sumber.'); setBusy(false); });
