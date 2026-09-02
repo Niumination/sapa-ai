@@ -11,8 +11,6 @@ const NAV_ITEMS = [
   { href: '/dashboard/gis', label: 'Peta GIS', icon: '🗺️', desc: 'Peta Interaktif', public: true },
   { href: '/dashboard/laporan', label: 'Laporan AI', icon: '📋', desc: 'Laporan & Riwayat', public: false },
   { href: '/dashboard/status', label: 'Status Sumber', icon: '🗂️', desc: 'Sumber & relasi data', public: false },
-  { href: '/dashboard/admin/dtsen', label: 'Admin DTSEN', icon: '🔐', desc: 'Rilis data terbatas', public: false },
-  { href: '#', label: '', icon: '👤', desc: 'Password & sesi', public: false },
 ];
 
 interface SidebarProps {

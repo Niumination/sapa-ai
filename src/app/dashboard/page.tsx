@@ -151,12 +151,7 @@ export default function DashboardPage() {
   return (
     <div className="space-y-5">
       {/* Query Bar — ALWAYS visible */}
-      <QueryBar
-        onQuery={handleQuery}
-        isLoading={isLoading}
-        onReset={handleReset}
-        isDefaultMode={mode === 'default'}
-      />
+      <QueryBar onQuery={handleQuery} />
 
       {/* Content Area — switches between default and AI response */}
       {mode === 'default' && (
