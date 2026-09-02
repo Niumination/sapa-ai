@@ -69,6 +69,8 @@ export interface ExecutivePresentation {
     fetchedAt: string;
     evidenceCount: number;
   };
+  buckets: Record<string, ExecutiveEvidence[]>;
+  bucketSummary: string;
 }
 
 export interface HybridResponse {

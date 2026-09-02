@@ -2,6 +2,7 @@
 // Pure, backward-compatible adapter dari HybridResponse lama ke model presentasi
 // eksekutif. Tidak melakukan fetch, LLM, Prisma, atau mengubah angka.
 
+import { normalizeText } from '@/lib/sapa-client';
 import type {
   ExecutiveAnswerType,
   ExecutiveEvidence,
@@ -471,6 +472,44 @@ function detectOrigin(dataSource: string): 'direct' | 'splp' | 'unknown' {
   return 'unknown';
 }
 
+
+// ─── Rekons: Bucket grouping (Tahap 3) ───
+// 4 bucket: A Masalah, B Pemantauan, C Intervensi, D Dukungan
+function bucketGroup(evidence: ExecutiveEvidence[]): Record<string, ExecutiveEvidence[]> {
+  const buckets: Record<string, ExecutiveEvidence[]> = { A: [], B: [], C: [], D: [] };
+  for (const e of evidence) {
+    const ind = normalizeText(e.indikator);
+    const sat = (e.satuan ?? '').toLowerCase();
+    if (ind.includes('stunting') || ind.includes('kurus') || ind.includes('gizi') || ind.includes('kurus')) {
+      buckets.A.push(e); // Masalah Kesehatan
+    } else if (ind.includes('dipantau') || ind.includes('seluruh') || ind.includes('populasi') || ind.includes('total') || ind.includes('jumlah')) {
+      buckets.B.push(e); // Cakupan Pemantauan
+    } else if (ind.includes('vitamin') || ind.includes('vaksin') || ind.includes('imunisasi') || ind.includes('pemeriksaan') || ind.includes('penerima')) {
+      buckets.C.push(e); // Intervensi Medis
+    } else if (ind.includes('bkb') || ind.includes('sarana') || ind.includes('materi') || ind.includes('kelompok') || ind.includes('paket')) {
+      buckets.D.push(e); // Dukungan Sosial/BKB
+    } else {
+      // Default: masuk ke B jika satuan Orang, C jika Persen, D jika lain
+      if (sat === 'orang') buckets.B.push(e);
+      else if (sat === 'persen' || sat === '%') buckets.C.push(e);
+      else buckets.D.push(e);
+    }
+  }
+  return buckets;
+}
+
+function buildBucketSummary(buckets: Record<string, ExecutiveEvidence[]>): string {
+  const labels: Record<string, string> = {
+    A: 'Masalah Kesehatan', B: 'Cakupan Pemantauan', C: 'Intervensi Medis', D: 'Dukungan Sosial',
+  };
+  const parts = Object.entries(buckets).map(([k, items]) => {
+    if (items.length === 0) return '';
+    const summary = items.map((i) => `${i.nilai} ${i.satuan}`).join(', ');
+    return `${labels[k]}: ${summary}`;
+  }).filter(Boolean);
+  return parts.join(' · ');
+}
+
 export function buildExecutivePresentation(response: HybridResponse): ExecutivePresentation {
   let metrics = buildMetrics(response);
   const visual = buildVisual(response);
@@ -509,13 +548,23 @@ export function buildExecutivePresentation(response: HybridResponse): ExecutiveP
       metrics = evidence.slice(0, 6).map((e) => ({ label: e.indikator, value: e.nilai, unit: e.satuan, opd: e.opd, tahun: e.tahun }));
     }
   }
-  const lead = buildLead(evidence, answerType, primaryLead);
+  // ─── Rekons: Bucket grouping (Tahap 3) ───
+  const buckets = bucketGroup(evidence);
+  const bucketSummary = buildBucketSummary(buckets);
+
+  // Bersihkan narasi: hapus metadata teknis "Dari X record SAPA, topik mencakup Y indikator"
+  const cleanNarasi = (primaryLead ?? '').replace(/\.\s*Dari\s*\d+[,\d]*\s*record SAPA.*?\./, '.').trim();
+  const cleanNarrative = cleanNarasi ? cleanNarasi : (primaryLead ?? 'Tidak ada narasi yang dapat ditampilkan.');
+
+  const lead = buildLead(evidence, answerType, cleanNarrative);
   const presentation: ExecutivePresentation = {
     version: 'v1',
     answerType,
     title,
     lead,
-    narrative: primaryLead || 'Tidak ada narasi yang dapat ditampilkan.',
+    narrative: cleanNarrative,
+    buckets,
+    bucketSummary,
     metrics,
     visual,
     insights: buildInsights(response, answerType, evidence.length, evidence),
