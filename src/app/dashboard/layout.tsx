@@ -16,7 +16,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
     const timer = setInterval(() => {
       setCurrentTime(new Date().toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit', second: '2-digit' }));
     }, 1000);
-    // @hotfix 29-Agu-2026: tombol Akun/Logout hanya tampil saat SESI AKTIF.
+    // @hotfix 29-Agu-2026: tombol / hanya tampil saat SESI AKTIF.
     // Sebelumnya tombol selalu render → setelah logout (client-side redirect)
     // tombol masih terlihat sebentar/setelah navigasi. Cek /api/auth/me di mount.
     fetch('/api/auth/me')
@@ -86,7 +86,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
               </span>
             </div>
 
-            {/* Akun & Logout — @hotfix 29-Agu: hanya tampil saat SESI AKTIF.
+            {/*  &  — @hotfix 29-Agu: hanya tampil saat SESI AKTIF.
                 Publik (belum login) melihat tombol LOGIN sebagai gantinya. */}
             {isAuthed ? (
               <div className="flex items-center gap-2 border-l border-[#2D6A4F]/40 pl-3">
@@ -96,12 +96,12 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
                   </span>
                 )}
                 <a
-                  href="/dashboard/akun"
+                  href="#"
                   title="Pengaturan akun"
                   className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg bg-[#2D6A4F]/30 hover:bg-[#2D6A4F]/50 border border-[#2D6A4F]/50 transition-colors"
                 >
                   <span className="text-sm">👤</span>
-                  <span className="text-[11px] font-medium text-[#52B788]">Akun</span>
+                  <span className="text-[11px] font-medium text-[#52B788]"></span>
                 </a>
                 <button
                   onClick={async () => {
@@ -114,17 +114,17 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
                   className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg bg-[#B3261E]/30 hover:bg-[#B3261E]/50 border border-[#B3261E]/50 transition-colors"
                 >
                   <span className="text-sm">🚪</span>
-                  <span className="text-[11px] font-medium text-[#E58B7F]">Logout</span>
+                  <span className="text-[11px] font-medium text-[#E58B7F]"></span>
                 </button>
               </div>
             ) : (
               <a
-                href="/login"
+                href="#"
                 title="Masuk sebagai admin"
                 className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-[#2D6A4F]/30 hover:bg-[#2D6A4F]/50 border border-[#2D6A4F]/50 transition-colors"
               >
                 <span className="text-sm">🔐</span>
-                <span className="text-[11px] font-medium text-[#52B788]">Login</span>
+                <span className="text-[11px] font-medium text-[#52B788]"></span>
               </a>
             )}
           </div>
