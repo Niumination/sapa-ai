@@ -15,7 +15,7 @@ import {
   YAxis,
   type TooltipContentProps,
 } from 'recharts';
-import type { ExecutivePresentation, HybridResponse } from '@/types';
+import type { ExecutivePresentation, HybridResponse, ExecutiveEvidence } from "@/types";
 import { getExecutivePresentation } from '@/services/executive-presentation';
 
 interface Props {
@@ -110,19 +110,59 @@ function AnswerBadge({ presentation }: { presentation: ExecutivePresentation }) 
 function PrimaryMetric({ presentation }: { presentation: ExecutivePresentation }) {
   const metric = presentation.metrics[0];
   const unavailable = presentation.answerType === 'not_available';
+  const { buckets, bucketSummary } = presentation;
+  const bucketA: ExecutiveEvidence[] = buckets?.A ?? [];
+  const primaryEvidence = bucketA.length > 0 ? bucketA[0] : null;
+  const metricValue = metric?.value;
+  const primaryNilai = primaryEvidence?.nilai ?? (typeof metricValue === 'string' ? metricValue : metricValue?.toString() ?? '—');
+  const prevalenceItem = buckets?.C?.find((e) => e.indikator.toLowerCase().includes('prevalensi') || e.satuan === 'Persen');
+  const prevalenceValue = prevalenceItem ? parseNilaiFloat(prevalenceItem.nilai) : null;
   return (
     <div className="mt-5 flex flex-wrap items-end gap-3">
       <div>
         <p className="text-[10px] font-bold uppercase tracking-[0.14em] text-[var(--text-muted)]">Headline</p>
         <p className={`mt-1 text-4xl font-black tracking-[-0.06em] md:text-6xl ${unavailable ? 'text-[#A15C38]' : 'text-[var(--brand)]'}`}>
-          {unavailable ? 'Belum tersedia' : metric ? formatCell(metric.value) : '—'}
+          {unavailable ? 'Belum tersedia' : formatCell(primaryNilai ?? '—')}
         </p>
+        {primaryEvidence?.satuan && <p className="pb-1 text-sm font-bold text-[var(--text-body)]">{primaryEvidence.satuan}</p>}
       </div>
-      {metric?.unit && !unavailable && <p className="pb-1 text-sm font-bold text-[var(--text-body)]">{metric.unit}</p>}
+      {prevalenceValue !== null && !unavailable && (
+        <span className="inline-flex items-center rounded-full bg-[var(--brand-tint)] px-2.5 py-1 text-xs font-bold text-[var(--brand)]">
+          Prevalensi: ~{prevalenceValue}%
+        </span>
+      )}
       <div className="ml-0 rounded-xl border border-[var(--border)] bg-[var(--surface)] px-3 py-2 md:ml-auto">
         <p className="text-[9px] text-[var(--text-muted)]">Tipe jawaban</p>
         <p className="mt-0.5 text-xs font-bold text-[var(--brand)]">{TYPE_LABEL[presentation.answerType]}</p>
       </div>
+    </div>
+  );
+}
+function parseNilaiFloat(s: string | null | undefined): number | null {
+  if (!s || s === '—' || s === '-') return null;
+  const n = Number(s.replace(/\./g, '').replace(',', '.'));
+  return Number.isFinite(n) ? n : null;
+}
+function ContextKPICards({ presentation }: { presentation: ExecutivePresentation }) {
+  const { buckets } = presentation;
+  const basis = buckets?.B?.[0];
+  const risiko = buckets?.A?.find((e) => !e.indikator.toLowerCase().includes('stunting'));
+  const intervensi = buckets?.C?.find((e) => e.indikator.toLowerCase().includes('vitamin'));
+  if (!basis && !risiko && !intervensi) return null;
+  const cards = [];
+  if (basis) cards.push({ label: 'Basis Data', value: basis.nilai, unit: basis.satuan, desc: 'Balita Dipantau' });
+  if (risiko) cards.push({ label: 'Tingkat Risiko', value: risiko.nilai, unit: risiko.satuan, desc: 'Balita Kurus' });
+  if (intervensi) cards.push({ label: 'Intervensi Utama', value: intervensi.nilai, unit: intervensi.satuan, desc: 'Cakupan Vitamin A' });
+  if (cards.length === 0) return null;
+  return (
+    <div className="mt-4 grid grid-cols-3 gap-3">
+      {cards.map((c, i) => (
+        <div key={i} className="rounded-xl border border-[var(--border)] bg-[var(--surface-container-low)] p-3">
+          <p className="text-[9px] font-semibold uppercase tracking-wide text-[var(--text-muted)]">{c.label}</p>
+          <p className="mt-1 text-xl font-black text-[var(--brand)]">{formatCell(c.value)} <span className="text-[10px] font-normal text-[var(--text-muted)]">{c.unit}</span></p>
+          <p className="mt-0.5 text-[10px] text-[var(--text-muted)]">{c.desc}</p>
+        </div>
+      ))}
     </div>
   );
 }
@@ -332,8 +372,8 @@ export default function ExecutiveAnswerRenderer({ response, onFollowUp }: Props)
       <div className="flex flex-wrap items-center justify-between gap-3"><div className="flex items-center gap-2"><div className="grid h-9 w-9 place-items-center rounded-xl bg-gradient-to-br from-[var(--brand-deep)] to-[var(--brand-soft)] text-base text-white shadow-lg">✦</div><div><h2 className="text-sm font-black uppercase tracking-[0.08em] text-[var(--brand)]">Executive answer</h2><p className="text-[10px] text-[var(--text-muted)]">Visual dan narasi disesuaikan dengan bentuk evidence</p></div></div><AnswerBadge presentation={presentation} /></div>
       <div className="grid items-start gap-4 xl:grid-cols-[minmax(0,1fr)_320px]">
         <article className="overflow-hidden rounded-2xl border border-[var(--border)] bg-[var(--surface-card)] shadow-sm">
-          <div className="border-b border-[var(--border)] p-5 md:p-6"><div className="mb-4 flex items-start justify-between gap-3"><div className="text-[10px] font-bold uppercase tracking-[0.16em] text-[var(--text-muted)]">Jawaban AI · {TYPE_LABEL[presentation.answerType]}</div><div className="text-right text-[10px] text-[var(--text-muted)]">{presentation.provenance.evidenceCount} evidence<br />{formatTimestamp(presentation.provenance.fetchedAt)}</div></div><h3 className="max-w-4xl text-2xl font-black leading-tight tracking-[-0.035em] text-[var(--brand-deep)] md:text-3xl">{presentation.title}</h3><p className="mt-3 max-w-4xl text-sm leading-relaxed text-[var(--text-body)]">{presentation.lead}</p><PrimaryMetric presentation={presentation} /></div>
-          <div className="p-5 md:p-6"><div className="mb-2 flex items-center justify-between gap-3"><h3 className="text-xs font-bold uppercase tracking-[0.11em] text-[var(--brand)]">Executive narrative</h3><span className="text-[10px] text-[var(--text-muted)]">Berdasarkan response ter-grounding</span></div><div className="relative overflow-hidden rounded-xl bg-gradient-to-br from-[var(--brand-deep)] to-[var(--brand)] p-4 text-[var(--on-brand)] md:p-5"><div className="absolute -right-10 -top-10 h-32 w-32 rounded-full border border-[#D9C284]/20" /><p className="relative text-sm leading-relaxed text-[#F0F6EE]">{presentation.narrative}</p><p className="relative mt-3 text-[10px] text-[#B8CBBE]">Sumber: {presentation.provenance.source}</p></div>{presentation.visual.type !== 'metric' && <MetricGrid presentation={presentation} />}<section className="mt-5 rounded-xl border border-[var(--border)] bg-[var(--surface-container-low)] p-4"><div className="mb-3 flex items-start justify-between gap-3"><div><h3 className="text-xs font-bold text-[var(--brand)]">{presentation.visual.title}</h3>{presentation.visual.subtitle && <p className="mt-1 text-[10px] text-[var(--text-muted)]">{presentation.visual.subtitle}</p>}</div><span className="rounded-full border border-[#D4E6D6] bg-[var(--surface-card)] px-2 py-1 text-[9px] font-bold uppercase tracking-wide text-[var(--brand)]">{TYPE_LABEL[presentation.answerType]}</span></div><VisualSection presentation={presentation} /></section><InsightGrid presentation={presentation} /><EvidenceSummary presentation={presentation} /></div>
+          <div className="border-b border-[var(--border)] p-5 md:p-6"><div className="mb-4 flex items-start justify-between gap-3"><div className="text-[10px] font-bold uppercase tracking-[0.16em] text-[var(--text-muted)]">Jawaban AI · {TYPE_LABEL[presentation.answerType]}</div><div className="text-right text-[10px] text-[var(--text-muted)]">{presentation.provenance.evidenceCount} evidence<br />{formatTimestamp(presentation.provenance.fetchedAt)}</div></div><h3 className="max-w-4xl text-2xl font-black leading-tight tracking-[-0.035em] text-[var(--brand-deep)] md:text-3xl">{presentation.title}</h3><p className="mt-3 max-w-4xl text-sm leading-relaxed text-[var(--text-body)]">{presentation.lead}</p><PrimaryMetric presentation={presentation} /><ContextKPICards presentation={presentation} /></div>
+          <div className="p-5 md:p-6"><div className="mb-2 flex items-center justify-between gap-3"><h3 className="text-xs font-bold uppercase tracking-[0.11em] text-[var(--brand)]">Executive narrative</h3><span className="text-[10px] text-[var(--text-muted)]">Berdasarkan response ter-grounding</span></div><div className="relative overflow-hidden rounded-xl bg-gradient-to-br from-[var(--brand-deep)] to-[var(--brand)] p-4 text-[var(--on-brand)] md:p-5"><div className="absolute -right-10 -top-10 h-32 w-32 rounded-full border border-[#D9C284]/20" /><p className="relative text-sm leading-relaxed text-[#F0F6EE]">{presentation.narrative}</p><p className="relative mt-3 text-[10px] text-[#B8CBBE]">Sumber: {presentation.provenance.source}</p></div>{presentation.visual.type !== 'metric' && <MetricGrid presentation={presentation} />}<section className="mt-5 rounded-xl border border-[var(--border)] bg-[var(--surface-container-low)] p-4"><div className="mb-3 flex items-start justify-between gap-3"><div><h3 className="text-xs font-bold text-[var(--brand)]">Evidence per Kategori</h3><p className="mt-1 text-[10px] text-[var(--text-muted)]">{presentation.bucketSummary ?? 'Evidence terstruktur'}</p></div><span className="rounded-full border border-[#D4E6D6] bg-[var(--surface-card)] px-2 py-1 text-[9px] font-bold uppercase tracking-wide text-[var(--brand)]">{TYPE_LABEL[presentation.answerType]}</span></div><div className="flex gap-2 mb-3 flex-wrap">{[['A','Masalah Kesehatan'],['B','Pemantauan'],['C','Intervensi'],['D','Dukungan']].map(([k,l]) => { const items = presentation.buckets?.[k] ?? []; if (items.length === 0) return null; return <button key={k} type="button" className="rounded-lg border border-[var(--border)] bg-[var(--surface-card)] px-2 py-1 text-[9px] font-bold text-[var(--brand)]">{l} ({items.length})</button>; })}</div><div className="overflow-x-auto"><table className="w-full min-w-[560px] text-xs"><thead className="bg-[var(--surface-muted)]"><tr className="border-b border-[var(--border)]"><th className="px-3 py-2 text-left text-[10px] font-bold uppercase tracking-wide text-[var(--text-muted)]">Indikator</th><th className="px-3 py-2 text-left text-[10px] font-bold uppercase tracking-wide text-[var(--text-muted)]">Nilai</th><th className="px-3 py-2 text-left text-[10px] font-bold uppercase tracking-wide text-[var(--text-muted)]">Satuan</th><th className="px-3 py-2 text-left text-[10px] font-bold uppercase tracking-wide text-[var(--text-muted)]">OPD</th><th className="px-3 py-2 text-left text-[10px] font-bold uppercase tracking-wide text-[var(--text-muted)]">Tahun</th><th className="px-3 py-2 text-left text-[10px] font-bold uppercase tracking-wide text-[var(--text-muted)]">Kategori</th></tr></thead><tbody>{Object.entries(presentation.buckets ?? {}).flatMap(([k, items]) => items.slice(0, 10).map((row, i) => <tr key={k + '-' + i} className="border-b border-[var(--surface-muted)] hover:bg-[var(--surface-container-low)]"><td className="px-3 py-2.5 text-[var(--text-body)]">{row.indikator}</td><td className="px-3 py-2.5 font-bold text-[var(--brand)]">{row.nilai}</td><td className="px-3 py-2.5 text-[var(--text-body)]">{row.satuan}</td><td className="px-3 py-2.5 text-[var(--text-muted)]">{row.opd}</td><td className="px-3 py-2.5 text-[var(--text-muted)]">{row.tahun}</td><td className="px-3 py-2.5 text-[10px] font-semibold text-[var(--brand)]">{k === 'A' ? 'Masalah' : k === 'B' ? 'Pemantauan' : k === 'C' ? 'Intervensi' : 'Dukungan'}</td></tr>))}</tbody></table></div></section><InsightGrid presentation={presentation} /><EvidenceSummary presentation={presentation} /></div>
         </article>
         <aside className="sticky top-4 rounded-2xl border border-[var(--border)] bg-[var(--surface-card)] p-4 shadow-sm"><div className="mb-1 flex items-start justify-between gap-3"><div><h3 className="text-sm font-black text-[var(--brand-deep)]">Panel keputusan</h3><p className="mt-1 text-[10px] leading-relaxed text-[var(--text-muted)]">Jembatan dari data menuju aksi yang aman.</p></div><span className="text-lg text-[var(--accent)]">✦</span></div><div className="mt-4"><QuickWins presentation={presentation} /><QualityPanel presentation={presentation} /><ProvenancePanel presentation={presentation} onFollowUp={onFollowUp} /></div></aside>
       </div>
