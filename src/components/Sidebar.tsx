@@ -10,7 +10,7 @@ const NAV_ITEMS = [
   { href: '/dashboard/analytics', label: 'Analitik', icon: '📈', desc: 'Tren & Analitik', public: true },
   { href: '/dashboard/gis', label: 'Peta GIS', icon: '🗺️', desc: 'Peta Interaktif', public: true },
   { href: '/dashboard/laporan', label: 'Laporan AI', icon: '📋', desc: 'Laporan & Riwayat', public: false },
-  { href: '/dashboard/status', label: 'Status Sumber', icon: '🗂️', desc: 'Sumber & relasi data', public: false },
+  { href: '/dashboard/status', label: 'Status & Tentang', icon: '🗂️', desc: 'Sumber & info', public: false },
 ];
 
 interface SidebarProps {

@@ -50,7 +50,36 @@ export default function DashboardPage() {
         throw new Error(errBody?.error ?? `HTTP ${res.status}`);
       }
 
-      // SSE stream reader
+      // Non-stream JSON mode (current /api/query returns JSON directly)
+      const contentType = res.headers.get('content-type') || '';
+      if (contentType.includes('application/json')) {
+        const json = await res.json();
+        if (timeoutRef.current) clearTimeout(timeoutRef.current);
+        // Map JSON -> HybridResponse for renderer
+        const hybrid: HybridResponse = {
+          narasi: json.answer || json.narasi || 'Tidak ada jawaban.',
+          visualisasi: json.visualisasi || (json.aggregated ? { tipe: 'table', konfigurasi: {}, data: json.aggregated } : { tipe: 'none', konfigurasi: {} }),
+          rekomendasi: json.rekomendasi || [],
+          dataSource: json.source || 'SAPA SPLP',
+          timestamp: json.timestamp || new Date().toISOString(),
+        };
+        // Simpan ke riwayat lokal untuk /dashboard/laporan tab Riwayat
+        try {
+          const item = { id: `${Date.now()}-${Math.random().toString(36).slice(2,6)}`, query, answer: hybrid.narasi, source: hybrid.dataSource, matched: json.matched ?? 0, count: json.count ?? 0, timestamp: new Date().toISOString() };
+          const key = 'sapa-ai-history';
+          const cur = JSON.parse(localStorage.getItem(key) || '[]');
+          const next = [item, ...cur].slice(0, 50);
+          localStorage.setItem(key, JSON.stringify(next));
+          window.dispatchEvent(new CustomEvent('sapa-history-update', { detail: item } as any));
+        } catch {}
+        setAiResponse(hybrid);
+        setStatusText(null);
+        liveNarasiRef.current = '';
+        setLiveNarasi('');
+        return;
+      }
+
+      // SSE stream reader (fallback if server sends event-stream)
       const reader = res.body?.getReader();
       if (!reader) throw new Error('Streaming tidak tersedia');
 
