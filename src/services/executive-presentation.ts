@@ -230,20 +230,69 @@ function buildVisual(response: HybridResponse): ExecutiveVisual {
   return { type: 'none', title: 'Visual belum tersedia', subtitle: 'Evidence belum cukup untuk visual yang aman', data: [], series: [], columns: [], rows: [] };
 }
 
-function buildInsights(response: HybridResponse, answerType: ExecutiveAnswerType, evidenceCount: number): ExecutiveInsight[] {
+// ── Helpers untuk P1+P2 ──
+
+function distinct(values: (string | undefined | null)[]): string[] {
+  const seen = new Set<string>();
+  const out: string[] = [];
+  for (const v of values) {
+    const t = (v ?? '').trim();
+    if (!t || t === '—' || t === '-') continue;
+    // Normalisasi singkat OPD: "Dinas Kesehatan" tetap, "Badan Perencanaan Pembangunan Daerah." → "Bappeda"
+    const short = t.replace(/^Badan Perencanaan Pembangunan Daerah\.?$/i, 'Bappeda')
+      .replace(/^Dinas Komunikasi dan Informatika$/i, 'Diskominfo');
+    if (!seen.has(short)) { seen.add(short); out.push(short); }
+  }
+  return out;
+}
+
+function tahunSummary(evidence: ExecutiveEvidence[]): string {
+  const tahuns = distinct(evidence.map((e) => e.tahun));
+  if (tahuns.length === 0) return 'tanpa tahun eksplisit';
+  if (tahuns.length === 1) return tahuns[0]!;
+  const sorted = [...tahuns].sort();
+  return sorted.join(', ');
+}
+
+function buildLead(evidence: ExecutiveEvidence[], answerType: ExecutiveAnswerType, narrative: string): string {
+  if (answerType === 'not_available' || evidence.length === 0) {
+    // Ambil kalimat pertama narasi sebagai lead (bukan 320 char blind cut)
+    const first = narrative.split(/\. +/)[0]?.trim();
+    return first ? `${first}.` : 'Data belum dapat disimpulkan — evidence spesifik belum cukup.';
+  }
+  const opds = distinct(evidence.map((e) => e.opd));
+  const tahun = tahunSummary(evidence);
+  const opdPart = opds.length === 0 ? 'lintas OPD' : opds.length <= 2 ? opds.join(' & ') : `${opds.slice(0, 2).join(', ')} +${opds.length - 2} OPD`;
+  const coverage = evidence.filter((e) => e.tahun && e.tahun !== '—').length;
+  const tahunExtra = coverage < evidence.length ? ` · ${coverage}/${evidence.length} bertahun` : '';
+  return `${evidence.length} indikator terstruktur — ${opdPart} · ${tahun}${tahunExtra}`;
+}
+
+function buildInsights(response: HybridResponse, answerType: ExecutiveAnswerType, evidenceCount: number, evidence: ExecutiveEvidence[]): ExecutiveInsight[] {
   const insights: ExecutiveInsight[] = [];
   if (evidenceCount > 0) {
-    insights.push({ tone: 'ok', label: 'Terjawab', text: 'Jawaban dirakit dari evidence yang terstruktur, bukan dari angka bebas.' });
+    const withTahun = evidence.filter((e) => e.tahun && e.tahun !== '—').length;
+    if (withTahun === evidenceCount) {
+      insights.push({ tone: 'ok', label: 'Keriangan tahun', text: `Semua ${evidenceCount} evidence mencantumkan tahun (${tahunSummary(evidence)}).` });
+    } else if (withTahun > 0) {
+      insights.push({ tone: 'info', label: 'Keriangan tahun', text: `${withTahun}/${evidenceCount} evidence bertahun (${tahunSummary(evidence)}); ${evidenceCount - withTahun} tanpa tahun — tafsirkan sebagai snapshot terbaru.` });
+    } else {
+      insights.push({ tone: 'warn', label: 'Keriangan tahun', text: 'Tidak ada evidence yang mencantumkan tahun — perlakukan sebagai potret terbaru, bukan tren.' });
+    }
   } else {
     insights.push({ tone: 'warn', label: 'Batas data', text: 'Evidence spesifik belum cukup; AI menahan kesimpulan yang berisiko menyesatkan.' });
   }
 
+  // Bentuk analisis — spesifik satuan/OPD
   if (answerType === 'trend') {
     insights.push({ tone: 'info', label: 'Bentuk analisis', text: 'Data disajikan sebagai perubahan antar-periode; periksa kesamaan indikator dan satuan.' });
-  } else if (answerType === 'distribution') {
-    insights.push({ tone: 'info', label: 'Bentuk analisis', text: 'Data dikelompokkan sebagai distribusi, bukan peringkat kinerja.' });
-  } else if (answerType === 'comparison') {
-    insights.push({ tone: 'info', label: 'Bentuk analisis', text: 'Nilai ditampilkan untuk membantu perbandingan pada dimensi yang sama.' });
+  } else if (evidenceCount > 1) {
+    const satuans = distinct(evidence.map((e) => e.satuan));
+    if (satuans.length > 1) {
+      insights.push({ tone: 'warn', label: 'Satuan campur', text: `Evidence memakai ${satuans.length} satuan berbeda (${satuans.slice(0, 3).join(', ')}). Bandingkan hanya yang satuannya sama.` });
+    } else {
+      insights.push({ tone: 'info', label: 'Bentuk analisis', text: `Perbandingan ${evidenceCount} indikator dengan satuan seragam (${satuans[0] ?? '—'}).` });
+    }
   } else if (answerType === 'not_available') {
     insights.push({ tone: 'info', label: 'Langkah data', text: 'Ajukan periode, indikator, atau wilayah yang lebih spesifik untuk memperkaya evidence.' });
   } else {
@@ -258,47 +307,72 @@ function buildInsights(response: HybridResponse, answerType: ExecutiveAnswerType
   return insights.slice(0, 3);
 }
 
-function buildQuickWins(response: HybridResponse, answerType: ExecutiveAnswerType): ExecutiveQuickWin[] {
+function buildQuickWins(response: HybridResponse, answerType: ExecutiveAnswerType, evidence: ExecutiveEvidence[]): ExecutiveQuickWin[] {
   const existing = Array.isArray(response.rekomendasi)
     ? response.rekomendasi.filter((item) => typeof item === 'string' && item.trim()).slice(0, 3)
     : [];
+
+  // P2: perkaya dengan OPD aktual dari evidence, bukan "OPD pengampu" generik
+  const opds = distinct(evidence.map((e) => e.opd));
+  const primaryOpd = opds[0] ?? 'OPD pengampu';
+  const secondaryOpd = opds[1];
 
   if (existing.length > 0) {
     return existing.map((action, index) => ({
       title: `Tindak lanjut ${index + 1}`,
       action,
-      owner: 'OPD pengampu',
+      owner: index === 0 ? primaryOpd : index === 1 && secondaryOpd ? secondaryOpd : 'Tim terkait',
       horizon: 'Tindak lanjut terdekat',
     }));
   }
 
   if (answerType === 'not_available') {
     return [
-      { title: 'Minta evidence pembanding', action: 'Lengkapi indikator, periode, atau wilayah yang dibutuhkan sebelum menarik kesimpulan.', owner: 'OPD pengampu', horizon: 'Brief berikutnya' },
+      { title: 'Minta evidence pembanding', action: 'Lengkapi indikator, periode, atau wilayah yang dibutuhkan sebelum menarik kesimpulan.', owner: primaryOpd, horizon: 'Brief berikutnya' },
       { title: 'Simpan alasan belum tersedia', action: 'Jadikan batas data sebagai agenda tindak lanjut, bukan sebagai angka nol.', owner: 'Pengelola data', horizon: 'Tindak lanjut terdekat' },
       { title: 'Jalankan ulang query setelah data masuk', action: 'Gunakan pertanyaan yang sama agar perubahan dapat ditelusuri secara konsisten.', owner: 'Tim data', horizon: 'Siklus berikutnya' },
     ];
   }
 
+  // Deterministik: quick wins kontekstual berdasarkan OPD & tahun
+  const tahun = tahunSummary(evidence);
   return [
-    { title: 'Validasi definisi indikator', action: 'Pastikan nama indikator, satuan, produsen, dan periode dipahami sama sebelum dipakai dalam rapat.', owner: 'OPD pengampu', horizon: '0–7 hari' },
-    { title: 'Jadikan jawaban sebagai baseline', action: 'Simpan snapshot ini dan bandingkan dengan pembaruan SAPA berikutnya.', owner: 'Pengelola data', horizon: 'Siklus berikutnya' },
-    { title: 'Telusuri evidence sumber', action: 'Buka rincian evidence bila diperlukan untuk klarifikasi atau bahan laporan.', owner: 'Tim analitik', horizon: 'Saat dibutuhkan' },
+    { title: `Validasi dengan ${primaryOpd}`, action: `Konfirmasi definisi indikator & satuan dengan ${primaryOpd} sebelum dipakai di rapat pimpinan.`, owner: primaryOpd, horizon: '0–7 hari' },
+    { title: 'Jadikan baseline', action: `Simpan snapshot ${tahun} ini sebagai baseline; bandingkan saat SAPA update berikutnya.`, owner: secondaryOpd ?? 'Pengelola data', horizon: 'Siklus berikutnya' },
+    { title: 'Telusuri evidence sumber', action: 'Buka rincian Indikator/Nilai/OPD/Tahun di tabel untuk klarifikasi atau bahan laporan.', owner: 'Tim analitik', horizon: 'Saat dibutuhkan' },
   ];
 }
 
-function buildDataQuality(response: HybridResponse, answerType: ExecutiveAnswerType, evidenceCount: number) {
+function buildDataQuality(response: HybridResponse, answerType: ExecutiveAnswerType, evidenceCount: number, evidence: ExecutiveEvidence[]) {
+  const withTahun = evidence.filter((e) => e.tahun && e.tahun !== '—').length;
+  const tahunText = evidenceCount === 0 ? '—'
+    : withTahun === 0 ? 'Tanpa tahun'
+    : withTahun === evidenceCount ? `${withTahun}/${evidenceCount} · ${tahunSummary(evidence)}`
+    : `${withTahun}/${evidenceCount} bertahun · ${tahunSummary(evidence)}`;
+  const tahunStatus: 'ok' | 'info' | 'warn' = withTahun === evidenceCount ? 'ok' : withTahun === 0 ? 'warn' : 'info';
   return [
-    { label: 'Evidence', status: evidenceCount > 0 ? 'ok' as const : 'warn' as const, text: evidenceCount > 0 ? 'Tersedia' : 'Belum cukup' },
+    { label: 'Evidence', status: evidenceCount > 0 ? 'ok' as const : 'warn' as const, text: evidenceCount > 0 ? `${evidenceCount} baris` : 'Belum cukup' },
     { label: 'Sumber', status: response.dataSource ? 'ok' as const : 'warn' as const, text: response.dataSource ? 'Tercantum' : 'Tidak tercantum' },
     { label: 'Visual', status: answerType === 'not_available' ? 'info' as const : 'ok' as const, text: answerType === 'not_available' ? 'Ditahan dengan alasan' : 'Sesuai bentuk data' },
-    { label: 'Tahun/periode', status: 'info' as const, text: 'Ikuti metadata evidence' },
+    { label: 'Tahun/periode', status: tahunStatus, text: tahunText },
   ];
 }
 
-function buildFollowUps(answerType: ExecutiveAnswerType): string[] {
+function buildFollowUps(answerType: ExecutiveAnswerType, evidence: ExecutiveEvidence[]): string[] {
+  const opds = distinct(evidence.map((e) => e.opd));
+  const tahuns = distinct(evidence.map((e) => e.tahun)).sort();
+  if (answerType === 'not_available') {
+    return opds.length > 0
+      ? [`Coba: ${opds[0]}`, 'Tampilkan indikator terkait', 'Persempit periode pertanyaan']
+      : ['Tampilkan snapshot yang tersedia', 'Data apa yang masih kurang?', 'Persempit periode pertanyaan'];
+  }
+  if (opds.length > 1 && tahuns.length > 1) return [`Filter hanya ${opds[0]}`, `Bandingkan ${tahuns[0]} vs ${tahuns[tahuns.length - 1]}`, 'Buat ringkasan satu halaman'];
+  if (opds.length > 1) return [`Filter hanya ${opds[0]}`, `Bandingkan ${opds[0]} vs ${opds[1]}`, 'Tampilkan tren per tahun'];
+  if (tahuns.length > 1) return [`Fokus tahun ${tahuns[tahuns.length - 1]}`, `Bandingkan ${tahuns[0]} vs ${tahuns[tahuns.length - 1]}`, 'Tampilkan per OPD'];
+  // Default kontekstual: sisipkan indikator utama bila ada
+  const hint = evidence[0]?.indikator ? evidence[0].indikator.slice(0, 28) : '';
+  if (hint) return [`Tampilkan rincian: ${hint}`, 'Periksa tahun dan satuan', 'Buat ringkasan satu halaman'];
   switch (answerType) {
-    case 'not_available': return ['Tampilkan snapshot yang tersedia', 'Data apa yang masih kurang?', 'Persempit periode pertanyaan'];
     case 'trend': return ['Tampilkan tabel per periode', 'Periksa indikator pembanding', 'Buat ringkasan satu halaman'];
     case 'distribution': return ['Tampilkan rincian per OPD', 'Cari metadata yang kosong', 'Buat agenda perbaikan data'];
     case 'comparison': return ['Tampilkan evidence detail', 'Filter berdasarkan tahun', 'Buat ringkasan satu halaman'];
@@ -329,20 +403,20 @@ export function buildExecutivePresentation(response: HybridResponse): ExecutiveP
     ? visual.title
     : metrics[0]?.label ?? (answerType === 'not_available' ? 'Data belum dapat disimpulkan' : 'Ringkasan jawaban SAPA');
   const primaryLead = (response.narasi ?? '').trim();
-  const lead = primaryLead.length > 320 ? `${primaryLead.slice(0, 317)}…` : primaryLead;
+  const lead = buildLead(evidence, answerType, primaryLead);
   const presentation: ExecutivePresentation = {
     version: 'v1',
     answerType,
     title,
-    lead: lead || 'Ringkasan data belum tersedia.',
+    lead,
     narrative: primaryLead || 'Tidak ada narasi yang dapat ditampilkan.',
     metrics,
     visual,
-    insights: buildInsights(response, answerType, evidence.length),
-    quickWins: buildQuickWins(response, answerType),
-    dataQuality: buildDataQuality(response, answerType, evidence.length),
+    insights: buildInsights(response, answerType, evidence.length, evidence),
+    quickWins: buildQuickWins(response, answerType, evidence),
+    dataQuality: buildDataQuality(response, answerType, evidence.length, evidence),
     evidence,
-    followUps: buildFollowUps(answerType),
+    followUps: buildFollowUps(answerType, evidence),
     provenance: {
       source: response.dataSource || 'Sumber tidak tercantum',
       origin: detectOrigin(response.dataSource || ''),
