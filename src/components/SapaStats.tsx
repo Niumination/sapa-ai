@@ -115,16 +115,24 @@ export default function SapaStats() {
 
   if (!data) return null;
 
-  const sortedOpds = [...data.opds].sort((a, b) => b.jumlahIndikator - a.jumlahIndikator);
-  const top10 = [...data.topIndicators].slice(0, 10).map(ind => ({
+  const sortedOpds = [...((data.opds ?? []) ?? [])].sort((a, b) => b.jumlahIndikator - a.jumlahIndikator);
+  const top10 = [...((data.topIndicators ?? []) ?? [])].slice(0, 10).map(ind => ({
     ...ind,
     shortName: truncateName(ind.nama, 32),
   }));
-  const years = [...data.dataByYear].sort((a, b) => a.year.localeCompare(b.year));
+  const years = [...((data.dataByYear ?? []) ?? [])].sort((a, b) => a.year.localeCompare(b.year));
 
-  // Format lastFetched as readable date
-  const lastFetchedStr = data.overview.lastFetched
-    ? new Date(data.overview.lastFetched).toLocaleDateString('id-ID', {
+  // Safe overview accessor
+  const overview = data?.overview ?? {
+    totalRecords: 0,
+    totalOpd: 0,
+    totalIndicators: 0,
+    latestUpdate: null,
+    lastFetched: null,
+  };
+
+  const lastFetchedStr = overview.lastFetched
+    ? new Date(overview.lastFetched).toLocaleDateString('id-ID', {
         day: 'numeric', month: 'short', year: 'numeric', hour: '2-digit', minute: '2-digit',
       })
     : '-';
@@ -139,7 +147,7 @@ export default function SapaStats() {
         <div>
           <h2 className="text-sm font-bold text-[#1B4332]">Data SAPA Real-Time</h2>
           <p className="text-[11px] text-[#767D6F]">
-            Sumber: api-splp.layanan.go.id · {data.overview.totalRecords} records
+            Sumber: api-splp.layanan.go.id · {overview.totalRecords} records
           </p>
         </div>
       </div>
@@ -152,7 +160,7 @@ export default function SapaStats() {
             <span className="text-lg">📦</span>
           </div>
           <p className="text-3xl font-black text-[#1B4332]">
-            {data.overview.totalRecords.toLocaleString('id-ID')}
+            {overview.totalRecords.toLocaleString('id-ID')}
           </p>
           <p className="text-[10px] text-[#1B4332] mt-1">Data indikator SAPA</p>
         </div>
@@ -163,7 +171,7 @@ export default function SapaStats() {
             <span className="text-lg">🏛️</span>
           </div>
           <p className="text-3xl font-black text-[#2D6A4F]">
-            {data.overview.totalOpd}
+            {overview.totalOpd}
           </p>
           <p className="text-[10px] text-[#767D6F] mt-1">Organisasi Perangkat Daerah</p>
         </div>
@@ -174,7 +182,7 @@ export default function SapaStats() {
             <span className="text-lg">📈</span>
           </div>
           <p className="text-3xl font-black text-[#1B4332]">
-            {data.overview.totalIndicators}
+            {overview.totalIndicators}
           </p>
           <p className="text-[10px] text-[#767D6F] mt-1">Jenis indikator unik</p>
         </div>
@@ -185,7 +193,7 @@ export default function SapaStats() {
             <span className="text-lg">🔄</span>
           </div>
           <p className="text-sm font-bold text-[#1B4332]">
-            {data.overview.latestUpdate || '-'}
+            {overview.latestUpdate || '-'}
           </p>
           <p className="text-[10px] text-[#767D6F] mt-1">Terakhir diambil: {lastFetchedStr}</p>
         </div>
@@ -294,7 +302,7 @@ export default function SapaStats() {
           <ResponsiveContainer width="100%" height={280}>
             <PieChart>
               <Pie
-                data={data.kategoriDistribusi}
+                data={(data.kategoriDistribusi ?? [])}
                 cx="50%"
                 cy="50%"
                 innerRadius={50}
@@ -305,7 +313,7 @@ export default function SapaStats() {
                 label={({ name, value }) => `${name}: ${value}`}
                 labelLine={{ stroke: '#475569', strokeWidth: 1 }}
               >
-                {data.kategoriDistribusi.map((_, i) => (
+                {(data.kategoriDistribusi ?? []).map((_, i) => (
                   <Cell key={i} fill={CHART_COLORS[i % CHART_COLORS.length]} />
                 ))}
               </Pie>

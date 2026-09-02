@@ -12,7 +12,7 @@ const NAV_ITEMS = [
   { href: '/dashboard/laporan', label: 'Laporan AI', icon: '📋', desc: 'Laporan & Riwayat', public: false },
   { href: '/dashboard/status', label: 'Status Sumber', icon: '🗂️', desc: 'Sumber & relasi data', public: false },
   { href: '/dashboard/admin/dtsen', label: 'Admin DTSEN', icon: '🔐', desc: 'Rilis data terbatas', public: false },
-  { href: '/dashboard/akun', label: 'Akun', icon: '👤', desc: 'Password & sesi', public: false },
+  { href: '#', label: '', icon: '👤', desc: 'Password & sesi', public: false },
 ];
 
 interface SidebarProps {
@@ -26,7 +26,7 @@ export default function Sidebar({ collapsed = false, onToggle }: SidebarProps) {
 
   useEffect(() => {
     // @hotfix 29-Agu-2026: publik hanya lihat Beranda/Analitik/GIS (public: true).
-    // Semua akun yang login melihat SEMUA halaman (termasuk Laporan/Status/Admin DTSEN/Akun).
+    // Semua akun yang login melihat SEMUA halaman (termasuk Laporan/Status/Admin DTSEN/).
     fetch('/api/auth/me')
       .then((r) => (r.ok ? r.json() : null))
       .then((d) => setIsAuthed(!!(d?.authenticated && d?.admin)))
