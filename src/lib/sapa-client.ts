@@ -39,6 +39,18 @@ const BROWSER_UA =
   }
 // ─── Types ───
 
+/** Metadata untuk tiap record — dipakai scoring intent & dedup. */
+export interface RecordMeta {
+  id: number;
+  indikator: string;
+  nilai: number | null;
+  satuan: string;
+  opd: string;
+  tahun: string | null;
+  isAggregate: boolean;
+  _score?: number;
+}
+
 export interface SapaRecord {
   id: number;
   id_kode_indikator: number;
@@ -433,4 +445,98 @@ export function getSapaSummary(records: SapaRecord[]) {
     topOpd: opds[0],
     tahun: [...new Set(records.map((r) => r.tahun?.trim() || '').filter(Boolean))],
   };
+}
+// ─── Rekons: Intent Scoring + Dedup ───
+
+/** Kata agregat umum yang harus diberi penalti (-50) — bukan primary headline. */
+const AGGREGATE_TERMS = new Set([
+  'seluruh', 'total', 'jumlah seluruh', 'pemeriksaan', 'penerima', 'pengadaan',
+  'pemindahan', 'penambahan', 'pengurangan', 'perubahan', 'penyesuaian',
+  'penetapan', 'pengesahan', 'penunjukan', 'pengangkatan',
+]);
+
+/** Apakah nama indikator mengandung agregat umum? */
+function isAggregateIndicator(indicatorName: string): boolean {
+  const n = normalizeText(indicatorName);
+  return [...AGGREGATE_TERMS].some((term) => n.includes(term));
+}
+
+/** Indikator yang mengandung kata topik utama — dapat +100. */
+function indicatorContainsTopic(indicatorName: string, topic: string): boolean {
+  const n = normalizeText(indicatorName);
+  const t = normalizeText(topic);
+  if (n.includes(t)) return true;
+  const topicWords = t.split(/\s+/).filter(Boolean);
+  if (topicWords.length >= 2) return topicWords.every((w) => n.includes(w));
+  return false;
+}
+
+/**
+ * Scoring intent: pilih primary headline indicator berdasarkan keyword matching.
+ * +100 exact match topik, +50 sinonim, -50 agregat umum.
+ */
+export interface ScoredRecordMeta extends RecordMeta {
+  _score: number;
+}
+
+export function scoreIntent(records: RecordMeta[], topic: string): ScoredRecordMeta[] {
+  if (records.length === 0) return [];
+  const scored = records.map((m) => {
+    let score = 0;
+    if (indicatorContainsTopic(m.indikator, topic)) score += 100;
+    const sinonimBonus = ['kurus', 'gizi', 'gizi buruk', 'vitamin', 'vaksin', 'bkb', 'sarana', 'materi'];
+    const lowerInd = normalizeText(m.indikator).toLowerCase();
+    sinonimBonus.forEach((syn) => { if (lowerInd.includes(syn)) score += 50; });
+    if (m.isAggregate) score -= 50;
+    return { ...m, _score: score } as ScoredRecordMeta;
+  });
+  scored.sort((a, b) => b._score - a._score || (a.isAggregate ? 1 : -1));
+  return scored;
+}
+
+/** Dedup: jika ada duplikat nilai & satuan & opd, jadikan satu (pilih yang lebih spesifik). */
+export function dedupIndicators(records: RecordMeta[]): RecordMeta[] {
+  if (records.length <= 1) return records;
+  const seen = new Map<string, RecordMeta>();
+  const result: RecordMeta[] = [];
+  for (const r of records) {
+    const key = `${r.nilai}-${r.satuan}-${r.opd}`;
+    const existing = seen.get(key);
+    if (existing) {
+      const existingAgg = isAggregateIndicator(existing.indikator);
+      const currentAgg = isAggregateIndicator(r.indikator);
+      const existingSpec = existing.indikator.length * (existingAgg ? 0.5 : 1);
+      const currentSpec = r.indikator.length * (currentAgg ? 0.5 : 1);
+      if (currentSpec > existingSpec) {
+        seen.set(key, r);
+        const idx = result.findIndex((x) => x.nilai === r.nilai && x.satuan === r.satuan && x.opd === r.opd);
+        if (idx >= 0) result[idx] = r;
+      }
+    } else {
+      seen.set(key, r);
+      result.push(r);
+    }
+  }
+  return result;
+}
+
+/** Buat RecordMeta[] dari baris tabel visualisasi. */
+export function toRecordMetasFromRows(
+  rows: (string | number | null | undefined)[][],
+  columns: { key: string }[],
+): RecordMeta[] {
+  const indicIdx = columns.findIndex((c) => c.key === 'Indikator' || c.key === 'indikator');
+  const nilaiIdx = columns.findIndex((c) => c.key === 'Nilai' || c.key === 'nilai');
+  const satIdx = columns.findIndex((c) => c.key === 'Satuan' || c.key === 'satuan');
+  const opdIdx = columns.findIndex((c) => c.key === 'OPD' || c.key === 'opd');
+  const thnIdx = columns.findIndex((c) => c.key === 'Tahun' || c.key === 'tahun');
+  return rows.map((row) => {
+    const indicator = (row[indicIdx] ?? '') as string;
+    const nilaiStr = (row[nilaiIdx] ?? '') as string;
+    const nilai = parseNumericId(nilaiStr.replace(/\./g, '').replace(',', '.'));
+    const satuan = (row[satIdx] ?? '—') as string;
+    const opd = (row[opdIdx] ?? '—') as string;
+    const tahun = (row[thnIdx] ?? null) as string | null;
+    return { id: Math.random(), indikator: indicator, nilai, satuan, opd, tahun, isAggregate: isAggregateIndicator(indicator) };
+  });
 }
