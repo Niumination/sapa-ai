@@ -275,40 +275,80 @@ function shortLabel(indikator: string): string {
   return t;
 }
 
+function parseNilaiNum(s: string): number | null {
+  if (!s || s === '—' || s === '-') return null;
+  const n = Number(s.replace(/\./g, '').replace(',', '.').replace(/[^0-9.\-]/g, ''));
+  return Number.isFinite(n) ? n : null;
+}
+
+function rankEvidence(evidence: ExecutiveEvidence[], topic: string | null): ExecutiveEvidence[] {
+  if (!topic) return evidence;
+  const toks = topic.toLowerCase().split(/\s+/).filter((w) => w.length >= 3);
+  if (toks.length === 0) return evidence;
+  const scored = evidence.map((e, idx) => {
+    const ind = e.indikator.toLowerCase();
+    let hits = 0;
+    for (const t of toks) if (ind.includes(t)) hits++;
+    return { e, hits, idx };
+  });
+  // Prioritaskan yang mengandung topik, baru urutan asli (nilai desc sudah ada)
+  scored.sort((a, b) => b.hits - a.hits || a.idx - b.idx);
+  return scored.map((s) => s.e);
+}
+
+function headlineRekomendasi(topic: string | null, evidence: ExecutiveEvidence[]): string | null {
+  const t = (topic ?? '').toLowerCase();
+  // Rekomendasi deterministik, tidak mengarang angka — hanya tafsir dari evidence yang ada
+  if (t.includes('stunting')) {
+    const prev = evidence.find((e) => e.satuan.toLowerCase().includes('persen') && e.indikator.toLowerCase().includes('prevalensi'));
+    const n = prev ? parseNilaiNum(prev.nilai) : null;
+    if (n !== null && n > 20) return 'prevalensi di atas ambang 20% — rekomendasikan percepatan intervensi gizi spesifik & sensitif bersama Dinkes & Bappeda';
+    if (n !== null) return 'prevalensi terkendali — pertahankan intervensi 1000 HPK dan pemantauan rutin';
+    return 'rekomendasikan validasi lapangan & pendampingan keluarga berisiko bersama Dinkes';
+  }
+  if (t.includes('kopi')) return 'potensi ekspor & luas areal kuat — dorong hilirisasi, kemitraan eksportir, dan peremajaan kebun bersama Disbun/Disdag';
+  if (t.includes('ipm')) return 'IPM kategori tinggi — pertahankan capaian pendidikan, kesehatan, dan daya beli';
+  if (t.includes('pdrb')) return 'dorong diversifikasi sektor dan penguatan PAD berbasis data PDRB terbaru';
+  if (t.includes('kemiskinan') || t.includes('miskin')) return 'rekomendasikan pemutakhiran DTKS dan intervensi bantuan tepat sasaran';
+  if (t.includes('jalan')) return 'rekomendasikan prioritisasi pemeliharaan & pembangunan jalan sesuai OPD pengampu';
+  if (t.includes('putus sekolah') || t.includes('pendidikan')) return 'rekomendasikan intervensi pencegahan putus sekolah & pemantauan APK/APM';
+  return null;
+}
+
 function buildLead(evidence: ExecutiveEvidence[], answerType: ExecutiveAnswerType, narrative: string): string {
   if (answerType === 'not_available' || evidence.length === 0) {
     const first = narrative.split(/\. +/)[0]?.trim();
     return first ? `${first}.` : 'Data belum dapat disimpulkan — evidence spesifik belum cukup.';
   }
   const topic = extractTopic(narrative);
-  // Kesimpulan ringkas dari evidence — menjawab pertanyaan user secara padat
-  const primary = evidence[0]!;
-  const secondary = evidence.find((e) => e.satuan && e.satuan !== primary.satuan && e.nilai !== '—' && e.nilai !== primary.nilai) ?? null;
+  // Ranking: jangan ambil evidence[0] mentah (sorted by nilai desc = 16.936 bisa di atas 730 bila query balita+stunting)
+  const ranked = rankEvidence(evidence, topic);
+  const primary = ranked[0]!;
+  // Secondary: satuan berbeda yang juga relevan dengan topik, bukan sekadar baris ke-2
+  const secondary = ranked.slice(1).find((e) => e.satuan && e.satuan !== primary.satuan && e.nilai !== '—' && e.nilai !== primary.nilai) ?? null;
   const pLabel = shortLabel(primary.indikator);
   const sLabel = secondary ? shortLabel(secondary.indikator) : '';
-  // Format: "730 Orang — balita stunting (2025)"
   const pPart = `${primary.nilai} ${primary.satuan}`.trim() + ` — ${pLabel}` + (primary.tahun ? ` (${primary.tahun})` : '');
   let conclusion = pPart;
   if (secondary) {
     const sPart = `${secondary.nilai} ${secondary.satuan}`.trim() + ` — ${sLabel}` + (secondary.tahun ? ` (${secondary.tahun})` : '');
     conclusion = `${pPart} · ${sPart}`;
-  } else if (evidence.length > 1 && !secondary) {
-    // Single satuan tapi multi indikator — sebutkan jumlahnya
-    conclusion = `${pPart} — ${evidence.length} indikator terkait`;
+  } else if (ranked.length > 1 && !secondary) {
+    conclusion = `${pPart} — ${ranked.length} indikator terkait`;
   }
   if (topic) {
-    // Kapitalisasi ringan topik
     const topicCap = topic.length <= 30 ? topic : topic.slice(0, 30);
     conclusion = `${topicCap}: ${conclusion}`;
   }
-  // Metadata ringkas (OPD + tahun coverage) — tetap tapi setelah kesimpulan
-  const opds = distinct(evidence.map((e) => e.opd));
+  // Kesimpulan + rekomendasi tindak lanjut (baru): headline menjawab apa adanya, lalu memberi arah aksi
+  const rekom = headlineRekomendasi(topic, ranked);
+  if (rekom) conclusion = `${conclusion} — ${rekom}`;
+  const opds = distinct(ranked.map((e) => e.opd));
   const opdPart = opds.length === 0 ? 'lintas OPD' : opds.length <= 2 ? opds.join(' & ') : `${opds.slice(0, 2).join(', ')} +${opds.length - 2} OPD`;
-  const coverage = evidence.filter((e) => e.tahun && e.tahun !== '—').length;
-  const tahunExtra = coverage < evidence.length ? ` · ${coverage}/${evidence.length} bertahun` : '';
-  // Jaga panjang lead < 220 char untuk headline
-  let lead = `${conclusion} — ${evidence.length} indikator · ${opdPart}${tahunExtra}`;
-  if (lead.length > 220) lead = `${lead.slice(0, 217)}…`;
+  const coverage = ranked.filter((e) => e.tahun && e.tahun !== '—').length;
+  const tahunExtra = coverage < ranked.length ? ` · ${coverage}/${ranked.length} bertahun` : '';
+  let lead = `${conclusion} — ${ranked.length} indikator · ${opdPart}${tahunExtra}`;
+  if (lead.length > 320) lead = `${lead.slice(0, 317)}…`;
   return lead;
 }
 
