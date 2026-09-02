@@ -1,16 +1,87 @@
 // ─── Shared Types ───
 
+export type ExecutiveAnswerType =
+  | 'metric'
+  | 'comparison'
+  | 'distribution'
+  | 'trend'
+  | 'not_available'
+  | 'table'
+  | 'map';
+
+export interface ExecutiveMetric {
+  label: string;
+  value: string | number;
+  unit?: string;
+  opd?: string;
+  tahun?: string | null;
+}
+
+export interface ExecutiveEvidence {
+  id: number | string;
+  indikator: string;
+  nilai: string;
+  satuan: string;
+  opd?: string;
+  tahun?: string | null;
+}
+
+export interface ExecutiveInsight {
+  tone: 'ok' | 'info' | 'warn';
+  label: string;
+  text: string;
+}
+
+export interface ExecutiveQuickWin {
+  title: string;
+  action: string;
+  owner?: string;
+  horizon?: string;
+}
+
+export interface ExecutiveVisual {
+  type: 'metric' | 'bar' | 'line' | 'area' | 'table' | 'map' | 'none';
+  title: string;
+  subtitle?: string;
+  data: Record<string, unknown>[];
+  xKey?: string;
+  series: { key: string; name: string; color: string }[];
+  columns: { key: string; name: string }[];
+  rows: Record<string, unknown>[];
+}
+
+export interface ExecutivePresentation {
+  version: 'v1';
+  answerType: ExecutiveAnswerType;
+  title: string;
+  lead: string;
+  narrative: string;
+  metrics: ExecutiveMetric[];
+  visual: ExecutiveVisual;
+  insights: ExecutiveInsight[];
+  quickWins: ExecutiveQuickWin[];
+  dataQuality: Array<{ label: string; status: 'ok' | 'warn' | 'info'; text: string }>;
+  evidence: ExecutiveEvidence[];
+  followUps: string[];
+  provenance: {
+    source: string;
+    origin: 'direct' | 'splp' | 'unknown';
+    fetchedAt: string;
+    evidenceCount: number;
+  };
+}
+
 export interface HybridResponse {
   narasi: string;
   visualisasi: {
     tipe: 'chart' | 'table' | 'map' | 'metric' | 'none';
-    konfigurasi: Record<string, any>;
-    data?: any; // Bapokting response raw data
+    konfigurasi: Record<string, unknown>;
   };
   rekomendasi: string[];
   dataSource: string;
   timestamp: string;
-  analysis?: string; // WP5 — insight terukur + caveat ringkas (opsional)
+  /** Optional presentation layer; legacy fields remain the source-compatible contract. */
+  presentation?: ExecutivePresentation;
 }
 
 export interface IntentResult {
