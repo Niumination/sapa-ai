@@ -77,16 +77,10 @@ export interface SapaResponse {
   data: SapaRecord[];
 }
 
-export type SapaDataOrigin = 'direct' | 'splp' | 'bapokting' | 'dtsen';
+export type SapaDataOrigin = 'splp';
 
-export function dataSourceLabel(origin: SapaDataOrigin): string {
-  switch (origin) {
-    case 'direct': return 'SAPA Aceh Tengah (sapa.acehtengahkab.go.id)';
-    case 'splp': return 'SAPA Aceh Tengah (api-splp.layanan.go.id)';
-    case 'bapokting': return 'Bapokting Aceh Tengah (SPLP API)';
-    case 'dtsen': return 'DTSEN (Kemensos/BPS via SPLP API)';
-    default: return 'SAPA Aceh Tengah (api-splp.layanan.go.id)';
-  }
+export function dataSourceLabel(_origin: SapaDataOrigin): string {
+  return 'SAPA Aceh Tengah (api-splp.layanan.go.id)';
 }
 
 /**
