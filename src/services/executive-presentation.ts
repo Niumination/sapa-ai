@@ -254,18 +254,62 @@ function tahunSummary(evidence: ExecutiveEvidence[]): string {
   return sorted.join(', ');
 }
 
+function extractTopic(narrative: string): string | null {
+  const m = narrative.match(/untuk\s+"([^"]+)"/i) ?? narrative.match(/untuk\s+“([^”]+)”/);
+  if (m?.[1]) return m[1].trim();
+  const m2 = narrative.match(/Berdasarkan data SAPA untuk\s+([^\.,:]+)/i);
+  return m2?.[1] ? m2[1].trim().replace(/\s+menurut.*$/i, '') : null;
+}
+
+function shortLabel(indikator: string): string {
+  let t = indikator.trim();
+  t = t.replace(/^Jumlah\s+/i, '');
+  t = t.replace(/\s*\(JAB[^)]*\)\s*/gi, ' ');
+  t = t.replace(/\s+/g, ' ').trim();
+  // Ambil segmen sebelum koma panjang bila ada
+  if (t.length > 44) {
+    const cut = t.slice(0, 43);
+    const lastSpace = cut.lastIndexOf(' ');
+    return `${cut.slice(0, lastSpace > 20 ? lastSpace : 43).trim()}…`;
+  }
+  return t;
+}
+
 function buildLead(evidence: ExecutiveEvidence[], answerType: ExecutiveAnswerType, narrative: string): string {
   if (answerType === 'not_available' || evidence.length === 0) {
-    // Ambil kalimat pertama narasi sebagai lead (bukan 320 char blind cut)
     const first = narrative.split(/\. +/)[0]?.trim();
     return first ? `${first}.` : 'Data belum dapat disimpulkan — evidence spesifik belum cukup.';
   }
+  const topic = extractTopic(narrative);
+  // Kesimpulan ringkas dari evidence — menjawab pertanyaan user secara padat
+  const primary = evidence[0]!;
+  const secondary = evidence.find((e) => e.satuan && e.satuan !== primary.satuan && e.nilai !== '—' && e.nilai !== primary.nilai) ?? null;
+  const pLabel = shortLabel(primary.indikator);
+  const sLabel = secondary ? shortLabel(secondary.indikator) : '';
+  // Format: "730 Orang — balita stunting (2025)"
+  const pPart = `${primary.nilai} ${primary.satuan}`.trim() + ` — ${pLabel}` + (primary.tahun ? ` (${primary.tahun})` : '');
+  let conclusion = pPart;
+  if (secondary) {
+    const sPart = `${secondary.nilai} ${secondary.satuan}`.trim() + ` — ${sLabel}` + (secondary.tahun ? ` (${secondary.tahun})` : '');
+    conclusion = `${pPart} · ${sPart}`;
+  } else if (evidence.length > 1 && !secondary) {
+    // Single satuan tapi multi indikator — sebutkan jumlahnya
+    conclusion = `${pPart} — ${evidence.length} indikator terkait`;
+  }
+  if (topic) {
+    // Kapitalisasi ringan topik
+    const topicCap = topic.length <= 30 ? topic : topic.slice(0, 30);
+    conclusion = `${topicCap}: ${conclusion}`;
+  }
+  // Metadata ringkas (OPD + tahun coverage) — tetap tapi setelah kesimpulan
   const opds = distinct(evidence.map((e) => e.opd));
-  const tahun = tahunSummary(evidence);
   const opdPart = opds.length === 0 ? 'lintas OPD' : opds.length <= 2 ? opds.join(' & ') : `${opds.slice(0, 2).join(', ')} +${opds.length - 2} OPD`;
   const coverage = evidence.filter((e) => e.tahun && e.tahun !== '—').length;
   const tahunExtra = coverage < evidence.length ? ` · ${coverage}/${evidence.length} bertahun` : '';
-  return `${evidence.length} indikator terstruktur — ${opdPart} · ${tahun}${tahunExtra}`;
+  // Jaga panjang lead < 220 char untuk headline
+  let lead = `${conclusion} — ${evidence.length} indikator · ${opdPart}${tahunExtra}`;
+  if (lead.length > 220) lead = `${lead.slice(0, 217)}…`;
+  return lead;
 }
 
 function buildInsights(response: HybridResponse, answerType: ExecutiveAnswerType, evidenceCount: number, evidence: ExecutiveEvidence[]): ExecutiveInsight[] {
