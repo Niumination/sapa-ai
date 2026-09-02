@@ -4,6 +4,7 @@ import { useState, useCallback, useRef } from 'react';
 import QueryBar from '@/components/QueryBar';
 import DefaultDashboard from '@/components/SapaStats';
 import AIResponseRenderer from '@/components/AIResponseRenderer';
+import KpiPanel from '@/components/KpiPanel';
 import { HybridResponse } from '@/types';
 
 type DashboardMode = 'default' | 'ai-response';
@@ -153,7 +154,10 @@ export default function DashboardPage() {
 
       {/* Content Area — switches between default and AI response */}
       {mode === 'default' && (
-        <DefaultDashboard />
+        <>
+          <KpiPanel />
+          <DefaultDashboard />
+        </>
       )}
 
       {mode === 'ai-response' && !isLoading && error && (
