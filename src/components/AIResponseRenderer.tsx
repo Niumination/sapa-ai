@@ -6,7 +6,6 @@ import {
 } from 'recharts';
 import { HybridResponse } from '@/types';
 import AIDataWidget, { toAIDataPayload } from './AIDataWidget';
-import BreakdownExplorer from './BreakdownExplorer';
 
 const COLORS = ['#1B4332', '#2D6A4F', '#A15C38', '#B3261E', '#767D6F', '#2D6A4F', '#A15C38', '#C6C3B4', '#1B4332', '#4B5249'];
 
@@ -18,15 +17,6 @@ export default function AIResponseRenderer({ response }: Props) {
   const { narasi, visualisasi, rekomendasi } = response;
   const sdiPayload = visualisasi && visualisasi.tipe !== 'none' ? toAIDataPayload(response) : null;
   const useSdi = !!sdiPayload && sdiPayload.table.rows.length > 0;
-
-  // @hotfix 29-Agu-2026: tombol "Pecah Jawaban" muncul untuk jawaban berangka
-  // (metric/table) — eksplorasi deterministik tanpa LLM (hemat usage model AI).
-  // Deteksi program PBI otomatis dari narasi (chip PBI → metric "Penerima PBI").
-  const isDtsen = (response.dataSource ?? '').toLowerCase().includes('dtsen');
-  const programHint = /pbi|jaminan kesehatan|bantuan iuran|bantuan inisiatif/i.test(narasi ?? '') ? 'pbi' : null;
-  const showBreakdown = (isDtsen || programHint) && visualisasi && visualisasi.tipe !== 'none';
-
-  // @hotfix 31-Agu-2026: deteksi bapokting data dan render agregat siklus
 
   return (
     <div className="space-y-5 animate-in fade-in slide-in-from-bottom-4 duration-500">
@@ -42,12 +32,6 @@ export default function AIResponseRenderer({ response }: Props) {
           </p>
         </div>
       </div>
-
-      {/* Pecah Jawaban — @hotfix 29-Agu-2026: PALING ATAS (setelah judul),
-          eksplorasi deterministik tanpa LLM (hemat usage model AI). */}
-      {showBreakdown && (
-        <BreakdownExplorer sourceLabel={response.dataSource} program={programHint} />
-      )}
 
       {/* Dynamic Visualization — SDI widget for table, else metric/chart */}
       {useSdi && sdiPayload ? (

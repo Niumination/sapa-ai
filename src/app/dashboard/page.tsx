@@ -4,8 +4,6 @@ import { useState, useCallback, useRef } from 'react';
 import QueryBar from '@/components/QueryBar';
 import DefaultDashboard from '@/components/SapaStats';
 import AIResponseRenderer from '@/components/AIResponseRenderer';
-import KpiPanel from '@/components/KpiPanel';
-import EwsPanel from '@/components/EwsPanel';
 import { HybridResponse } from '@/types';
 
 type DashboardMode = 'default' | 'ai-response';
@@ -155,14 +153,7 @@ export default function DashboardPage() {
 
       {/* Content Area — switches between default and AI response */}
       {mode === 'default' && (
-        <>
-          {/* PR Lapis 2: KPI pimpinan + EWS di atas beranda statistik portal */}
-          <KpiPanel />
-          <div className="bg-[var(--surface-card)] border border-[#C6C3B4] rounded-2xl p-4">
-            <EwsPanel />
-          </div>
-          <DefaultDashboard />
-        </>
+        <DefaultDashboard />
       )}
 
       {mode === 'ai-response' && !isLoading && error && (
