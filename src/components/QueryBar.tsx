@@ -4,9 +4,9 @@ import { useState } from 'react';
 
 interface QueryBarProps {
   onQuery: (query: string) => void;
-  isLoading: boolean;
-  onReset: () => void;
-  isDefaultMode: boolean;
+  isLoading?: boolean;
+  onReset?: () => void;
+  isDefaultMode?: boolean;
 }
 
 interface Chip {
