@@ -22,18 +22,9 @@ interface SidebarProps {
 
 export default function Sidebar({ collapsed = false, onToggle }: SidebarProps) {
   const pathname = usePathname();
-  const [isAuthed, setIsAuthed] = useState(false);
 
-  useEffect(() => {
-    // @hotfix 29-Agu-2026: publik hanya lihat Beranda/Analitik/GIS (public: true).
-    // Semua akun yang login melihat SEMUA halaman (termasuk Laporan/Status/Admin DTSEN/).
-    fetch('/api/auth/me')
-      .then((r) => (r.ok ? r.json() : null))
-      .then((d) => setIsAuthed(!!(d?.authenticated && d?.admin)))
-      .catch(() => setIsAuthed(false));
-  }, []);
 
-  const visibleItems = NAV_ITEMS.filter((item) => item.public || isAuthed);
+  const visibleItems = NAV_ITEMS;
 
   return (
     <aside
