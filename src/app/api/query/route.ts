@@ -1,5 +1,6 @@
 import { NextRequest } from 'next/server';
 import { fetchSapaData, retrieveRelevant, aggregateByIndicator, getUniqueOpd, dataSourceLabel } from '@/lib/sapa-client';
+import { scoreIntent, dedupIndicators, toRecordMetasFromRows, normalizeText } from '@/lib/sapa-client';
 import { buildDeterministicNarasi, buildVizFromEvidence, formatAngkaPresentasi, type EvidenceItem } from '@/services/grounding';
 import type { HybridResponse } from '@/types';
 
@@ -75,6 +76,32 @@ export async function POST(req: NextRequest) {
     }));
 
     const narasiRaw = buildEnrichedNarasi(evidence, queryRaw, records.length);
+
+    // ─── Rekons: Kalkulasi Derivatif (Tahap 2) ───
+    const topicMatch = narasiRaw.match(/untuk\s+"([^"]+)"/);
+    const topic = topicMatch?.[1] ?? queryRaw;
+    const recordMetas = toRecordMetasFromRows(
+      evidence.map(e => [e.indikator, e.nilai, e.satuan, e.opd, e.tahun ?? '—']),
+      [{ key: 'Indikator' }, { key: 'Nilai' }, { key: 'Satuan' }, { key: 'OPD' }, { key: 'Tahun' }],
+    );
+    const scored = scoreIntent(recordMetas, topic);
+    const deduped = dedupIndicators(scored);
+    const denominator = deduped.find((m) =>
+      normalizeText(m.indikator).includes('dipantau') ||
+      normalizeText(m.indikator).includes('seluruh') ||
+      normalizeText(m.indikator).includes('total') ||
+      normalizeText(m.indikator).includes('jumlah')
+    );
+    const primary = deduped.find((m) => normalizeText(m.indikator).includes(normalizeText(topic)));
+    let derivedContext: { prevalencePct?: number; denominatorNilai?: string; denominatorLabel?: string } | undefined;
+    if (denominator && primary && primary.nilai !== null && denominator.nilai !== null && denominator.nilai > 0) {
+      const prevalence = (primary.nilai / denominator.nilai) * 100;
+      derivedContext = {
+        prevalencePct: Math.round(prevalence * 100) / 100,
+        denominatorNilai: denominator.nilai.toString(),
+        denominatorLabel: denominator.indikator,
+      };
+    }
     const visualisasi = buildVizFromEvidence(evidence);
     const rekomendasi: string[] = [
       `Tindak lanjuti temuan "${queryRaw}" dengan OPD pengampu (${opds.slice(0,2).map(o=>o.nama).join(' / ') || 'lihat OPD pada tabel'}) untuk verifikasi data terbaru.`,
