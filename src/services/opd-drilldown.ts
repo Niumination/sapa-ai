@@ -37,8 +37,11 @@ export interface OpdDetail {
 
 /** Parse angka berformat Indonesia: titik ribuan, koma desimal ("1.234,56").
  *  Mengembalikan null untuk teks non-numerik (bukan mengarang angka).
- *  Didelegasikan ke parseNilaiSapa agar ekor ".00" dibaca desimal. */
+ *  Didelegasikan ke parseNilaiSapa agar ekor ".00" dibaca desimal, tapi
+ *  string yang mengandung huruf ("12a", "n/a") ditolak dulu — parseNilaiSapa
+ *  melonggarkan itu menjadi angka, yang berbahaya untuk deret tren. */
 export function parseNumericId(value: string): number | null {
+  if (/[A-Za-z]/.test(value)) return null;
   return parseNilaiSapa(value);
 }
 
