@@ -44,8 +44,8 @@ npm run start -- -p 3104          # serve lokal (setelah build)
 
 ## Known drift (follow-up, bukan blokir)
 
-- `package.json` masih bernama `cc-acehtengah`; deps `prisma/bcryptjs/jose/next-auth` + `postinstall prisma generate`
-  menganggur (tak ada importer). Prune + rename = task terpisah (butuh `npm install` ulang).
+- `package.json` kini bernama `sapa-ai`; deps `prisma/bcryptjs/jose/next-auth` + `postinstall prisma generate`
+  masih menganggur (tak ada importer). Prune = task terpisah (butuh `npm install` ulang).
 - `rekons.md` (untracked, scratch lama) belum dibuang — di luar scope task ini.
 - `.agents/skills/` autoskills v0.3.6 (20 skill generik, 1.4M); 3 duplikat bank pusat
   (frontend-design, accessibility, seo) — drop bila single-home ditegakkan.

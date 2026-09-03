@@ -4,7 +4,7 @@ import { computeKpis } from '@/services/kpi';
 import { buildReport } from '@/services/report-generator';
 
 // SAPA-only: tanpa warehouse/DB/EWS — seksi EWS & perubahan menjawab jujur "belum aktif"
-// (seperti cc-acehtengah saat tabel warehouse belum ada)
+// Catatan: tabel warehouse tidak ada di sapa-ai (SPLP-only) — riwayat dibaca dari localStorage klien.
 
 export const dynamic = 'force-dynamic';
 export const runtime = 'nodejs';

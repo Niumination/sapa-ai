@@ -15,7 +15,7 @@ export interface SystemStatus {
  * - SAPA: active bila SPLP bisa diambil (memakai LRU server yang sama dengan /api/query).
  * - AI: active hanya bila env AI_MODEL diisi DAN ada jalur kode yang memakainya
  *   (AI_WIRED). sapa-ai saat ini 100% deterministik tanpa LLM, jadi default =
- *   inactive walau env model terisi (mis. sisa .env.local cc-acehtengah).
+ *   inactive walau env model terisi (mis. sisa export shell dari proyek lain).
  *   Saat wiring LLM mendarat, set AI_WIRED=true — status ikut berubah otomatis.
  */
 const AI_WIRED = false;

@@ -84,7 +84,7 @@ export default function StatusPage() {
       <div className="bg-[var(--surface-card)] border border-[var(--border)] rounded-2xl p-5 space-y-3">
         <h2 className="font-bold text-[var(--brand)]">🔓 Akses Publik</h2>
         <p className="text-sm text-[var(--text-body)]">Aplikasi ini berjalan <strong>tanpa autentikasi</strong>. Semua fitur dashboard, analitik, GIS, laporan, dan AI Smart Query dapat diakses siapa saja. Tidak ada manajemen akun atau reset password di versi publik.</p>
-        <p className="text-xs text-[var(--text-muted)]">Versi terbatas dari <code className="px-1 py-0.5 bg-[var(--surface-muted)] rounded">cc-acehtengah</code> yang di-strip menjadi SAPA-only untuk transparansi data.</p>
+        <p className="text-xs text-[var(--text-muted)]">sapa-ai adalah aplikasi SAPA-only: seluruh jawaban dihitung deterministik dari data SAPA SPLP, tanpa model AI/LLM dan tanpa database.</p>
       </div>
 
       <div className="bg-[var(--surface-card)] border border-[var(--border)] rounded-2xl p-5 space-y-3">
@@ -107,7 +107,7 @@ export default function StatusPage() {
       </div>
 
       <div className="bg-[var(--brand-tint)] border border-[var(--brand)]/20 rounded-2xl p-4 text-sm text-[var(--text-body)]">
-        <strong>Butuh akses terbatas (DTSEN/Bapokting)?</strong> Gunakan instance <code className="px-1 py-0.5 bg-white/60 rounded">cc-acehtengah</code> dengan role-gated auth, bukan sapa-ai publik.
+        Data sensitif (mis. DTSEN/Bapokting) tidak dicakup sapa-ai publik — aplikasi ini hanya menyajikan data SAPA terbuka.
       </div>
     </div>
   );

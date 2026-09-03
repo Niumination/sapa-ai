@@ -1,63 +1,55 @@
-# SAPA Smart AI — Satu Pintu Akses Data Aceh Tengah
+# sapa-ai — Satu Pintu Akses Data Aceh Tengah
 
-> Dashboard AI-powered untuk Pemerintah Kabupaten Aceh Tengah
-> Integrasi data SAPA (Satu Pintu Akses Data) dengan AI assistant
+Dashboard publik deterministik untuk data SAPA (Satu Pintu Akses Data) Kabupaten Aceh Tengah.
+Seluruh jawaban dihitung langsung dari data SAPA SPLP — tanpa model AI/LLM, tanpa database, tanpa login.
 
-**Live:** https://cc-acehtengah.vercel.app
-**Reference:** https://cc.acehtengahkab.go.id
+**Repo:** https://github.com/Niumination/sapa-ai
 
-## Features
+## Fitur
 
-- 🤖 **AI Smart Query** — Tanya data SAPA + DTSEN + Bapokting + Dokumen A/B/C (Excel) dalam bahasa natural
-- 🔗 **Fusi Multi-Sumber** — topik yang muncul di beberapa sumber (mis. stunting di SAPA + Dokumen B) digabung jadi SATU jawaban deterministik
-- 📊 **Dashboard Analytics** — Visualisasi data OPD, indikator, tren
-- 🗺️ **Peta GIS** — Peta interaktif kabupaten Aceh Tengah
-- 📋 **Laporan AI** — Log otomatis setiap query AI (auth required)
-- ⚠️ **Early Warning System** — Monitoring threshold indikator
-- 🔐 **Admin Auth** — JWT-based login untuk akses laporan
+- **AI Smart Query (deterministik)** — tanya data SAPA dalam bahasa natural; lead, headline, narasi eksekutif, dan kartu KPI memakai satu format angka singkat yang selaras
+- **10 chip keyword terverifikasi** — stunting, IPM, PDRB, kopi arabika, ASN, kesehatan, pendidikan, Belanja APBD, dst. (sumber SAPA SPLP)
+- **KPI Prioritas Daerah** — 8 kartu indikator terkurasi (stunting, IPM, ASN, kemiskinan, kopi, PDRB, jalan, putus sekolah) + delta antar-tahun
+- **Top 10 OPD + drill-down per OPD** — tren tahunan per indikator, tabel nilai terakhir, provenance jujur (record tanpa tahun dilaporkan, bukan dipaksakan jadi tren)
+- **Analitik, GIS 14 kecamatan, Laporan eksekutif + riwayat lokal**
+- **Status sistem jujur** — `/api/status`: SAPA aktif/mati dari SPLP asli; AI nonaktif sampai wiring LLM benar-benar dipasang
 
 ## Tech Stack
 
 | Layer | Technology |
 |-------|-----------|
-| Frontend | Next.js 16, React 19, Tailwind CSS, Recharts, Leaflet |
-| Backend | Next.js API Routes, Prisma 6 |
-| Database | Supabase PostgreSQL (Supavisor pooler) |
-| Auth | bcryptjs + jose (JWT) + httpOnly cookie |
-| AI | OpenAI-compatible API (OpenCode Zen / OpenRouter / Groq) |
-| Data Source | SAPA public API (api-splp.layanan.go.id), DTSEN + Bapokting (SPLP API), Dokumen A/B/C (agregat Excel bebas-PII di `src/data/excel`) |
+| Frontend | Next.js 16, React 19, Tailwind CSS 4, Recharts, Leaflet |
+| Backend | Next.js API Routes (Node.js), tanpa ORM/database |
+| Data Source | SAPA SPLP API (`api-splp.layanan.go.id/sapa/1.0/api/daftar_data`), cache LRU server 10 menit |
+| Test | Vitest (36 test, offline-safe) |
 
 ## Quick Start
 
 ```bash
-# Install dependencies
 npm install
-
-# Setup database
-npx prisma generate
-
-# Create admin account (first time)
-curl -X POST http://localhost:3000/api/setup/admin
-
-# Start dev server
 npm run dev
 
 # Open http://localhost:3000/dashboard
 ```
 
-## Admin Account
+Verifikasi sebelum commit:
 
-Akun admin **tidak** ada default. Dibuat via bootstrap terkunci (`ADMIN_BOOTSTRAP_PASSWORD` di env), lalu ganti password di `/dashboard/akun` setelah login pertama.
+```bash
+npx vitest run   # wajib 36/36 hijau
+npm run build    # wajib compiled successfully
+```
+
+Tidak ada setup database, tidak ada akun admin, tidak ada migrasi.
 
 ## Environment Variables
 
-See `VERCEL_ENV.md` for full configuration. Key variables:
+Lihat `.env.example`. Kunci:
 
 ```env
-DATABASE_URL=postgresql://postgres.xxx:***@aws-0-ap-northeast-1.pooler.supabase.com:6543/postgres?pgbouncer=true&prepared_statements=false
-AI_BASE_URL=https://opencode.ai/zen/v1
-AI_API_KEY=sk-...
-AI_MODEL=x-preview-f-free   # Production: Ox Alpha Free (OpenCode Zen). Di llm-client.ts, nemotron-3-ultra-free di-override ke ini.
+# AI model (opsional — tanpa ini status sidebar = Nonaktif, jawaban deterministik).
+# Isi keduanya untuk mengaktifkan penanda status; wiring LLM mengikuti.
+AI_PROVIDER="OpenRouter"
+AI_MODEL=""
 ```
 
 ## Project Structure
@@ -65,17 +57,22 @@ AI_MODEL=x-preview-f-free   # Production: Ox Alpha Free (OpenCode Zen). Di llm-c
 ```
 src/
 ├── app/
-│   ├── api/auth/         # Login, logout, session
-│   ├── api/chat-logs/    # AI query logs
-│   ├── api/query/        # AI Smart Query
-│   ├── dashboard/        # Main dashboard
-│   └── login/            # Login page
-├── components/           # UI components
-├── lib/                  # Auth, Prisma, SAPA client
-├── middleware.ts          # Route protection
-└── services/             # AI pipeline, data sync
+│   ├── api/query/        # POST query bahasa natural → jawaban deterministik
+│   ├── api/sapa/         # GET agregat SAPA (grafik, GIS, Top OPD)
+│   ├── api/kpi/          # GET 8 KPI terkurasi + delta
+│   ├── api/status/       # GET status sistem jujur (sidebar)
+│   ├── api/report/       # GET/POST laporan eksekutif
+│   └── dashboard/        # beranda, analytics (+?opd= drill-down), gis, laporan, status
+├── components/           # QueryBar, KpiPanel, TopOpdWidget, OpdDrilldown, ExecutiveAnswerRenderer, ...
+├── lib/                  # sapa-client (SPLP + retrieval v2), format-singkat (satu sumber format angka)
+└── services/             # grounding, executive-presentation, kpi, report-generator, opd-drilldown
 ```
+
+## Aturan repo
+
+Lihat `AGENTS.md` (aturan agen + known drift) dan `BACKLOG.md` (prioritas).
+Dokumen era stack lama (auth/DB/DTSEN/warehouse) diarsipkan di `docs/archive/` — sejarah, bukan acuan aktif.
 
 ## License
 
-Internal — Diskominfo Kabupaten Aceh Tengah
+Private — Pemerintah Kabupaten Aceh Tengah / Niumination.
