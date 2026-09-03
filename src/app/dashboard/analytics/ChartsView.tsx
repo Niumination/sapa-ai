@@ -1,11 +1,12 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
+import dynamic from 'next/dynamic';
 import { useSearchParams } from 'next/navigation';
 import {
   BarChart, Bar, PieChart, Pie, Cell, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer,
 } from 'recharts';
-import OpdDrilldown from '@/components/OpdDrilldown';
+const OpdDrilldown = dynamic(() => import('@/components/OpdDrilldown'), { ssr: false });
 
 // Palet kategorikal — setiap warna UNIK.
 // Palet lama mengulang #2D6A4F, #A15C38, dan #1B4332 masing-masing dua kali,
@@ -137,19 +138,19 @@ export default function ChartsView() {
 
   if (!data) return null;
 
-  const opdData = [...data.opdBreakdown]
+  const opdData = useMemo(() => [...data.opdBreakdown]
     .sort((a, b) => b.jumlahIndikator - a.jumlahIndikator)
-    .map(opd => ({ ...opd, nama: opd.nama.length > 35 ? opd.nama.substring(0, 32) + '...' : opd.nama }));
+    .map(opd => ({ ...opd, nama: opd.nama.length > 35 ? opd.nama.substring(0, 32) + '...' : opd.nama })), [data.opdBreakdown]);
 
-  const compData = [...data.completeness]
+  const compData = useMemo(() => [...data.completeness]
     .sort((a, b) => b.completeness - a.completeness)
-    .map(opd => ({ ...opd, nama: opd.nama.length > 35 ? opd.nama.substring(0, 32) + '...' : opd.nama }));
+    .map(opd => ({ ...opd, nama: opd.nama.length > 35 ? opd.nama.substring(0, 32) + '...' : opd.nama })), [data.completeness]);
 
-  const satData = [...data.satuanDistribusi].sort((a, b) => b.count - a.count).slice(0, 10);
+  const satData = useMemo(() => [...data.satuanDistribusi].sort((a, b) => b.count - a.count).slice(0, 10), [data.satuanDistribusi]);
 
-  const topInd = [...data.indicatorFrequency]
+  const topInd = useMemo(() => [...data.indicatorFrequency]
     .sort((a, b) => b.jumlah - a.jumlah).slice(0, 20)
-    .map(ind => ({ ...ind, nama: ind.nama?.length > 40 ? ind.nama.substring(0, 37) + '...' : (ind.nama || 'Unknown') }));
+    .map(ind => ({ ...ind, nama: ind.nama?.length > 40 ? ind.nama.substring(0, 37) + '...' : (ind.nama || 'Unknown') })), [data.indicatorFrequency]);
 
   return (
     <div className="space-y-6">
