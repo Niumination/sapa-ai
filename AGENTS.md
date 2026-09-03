@@ -2,22 +2,26 @@
 
 > **Next.js 16 + SPLP API langsung (tanpa DB, tanpa auth/login, tanpa DTSEN, tanpa warehouse)**
 > **Path:** `services/sapa-ai/` · **Repo:** `Niumination/sapa-ai` (`main`)
-> **Status:** 🟢 Active — Hardening selesai (smoke test, 503 SPLP, dynamic charts, dead code dibersihkan)
+> **Status:** 🟢 Active — Perf RSC+ISR 10m (analytics/dashboard server-fetch, kpi/stats/report/sapa cache terdistribusi, revalidate endpoint)
 > **Backlog priority:** P2
 
 ## Arsitektur
 
 ```
-SPLP API (api-splp.layanan.go.id/sapa) ──→ sapa-client.ts (fetch + LRU 10 mnt)
-  ├── /api/query  → retrieval + intent + narasi deterministik (grounding.ts) → HybridResponse
-  ├── /api/kpi    → KPI deterministik (services/kpi.ts)
-  ├── /api/report → narasi "belum aktif" yang jujur (tanpa warehouse)
-  ├── /api/sapa   → daftar_data mentah
-  └── /api/stats  → agregat ringan
+SPLP API (api-splp.layanan.go.id/sapa) ──→ sapa-client.ts (fetch + LRU 10 mnt per-instance)
+  ├── services/analytics-data.ts → unstable_cache 600s tags sapa-analytics (terdistribusi)
+  ├── services/kpi-data.ts → unstable_cache 600s tags kpi
+  ├── /api/query  → retrieval + intent + narasi deterministik (grounding.ts) → HybridResponse (ƒ Dynamic)
+  ├── /api/kpi    → KPI deterministik (○ 10m, revalidate 600)
+  ├── /api/report → narasi "belum aktif" jujur (○ 10m)
+  ├── /api/sapa   → agregat dashboard/gis/analytics (○ 10m)
+  ├── /api/stats  → agregat ringan (○ 10m)
+  ├── /api/revalidate → POST {tag|tags|all} → revalidateTag() (ƒ Dynamic, REVALIDATE_SECRET opsional)
+  └── /api/status → status jujur SPLP (ƒ Dynamic, tidak di-cache)
 ```
 
-Halaman: `/` (QueryBar chip SAPA-only) · `/dashboard` (SapaStats + KpiPanel + AIResponseRenderer) ·
-`/dashboard/analytics` (recharts, dynamic ssr:false) · `/dashboard/gis` (leaflet, dynamic) ·
+Halaman: `/` (QueryBar chip SAPA-only) · `/dashboard` (RSC revalidate 600 → DashboardClient + KpiPanel initialData) ·
+`/dashboard/analytics` (RSC revalidate 600 → AnalyticsClient → ChartsView ssr:false + OpdDrilldown lazy) · `/dashboard/gis` (leaflet, dynamic) ·
 `/dashboard/laporan` (ExecutiveReport + riwayat localStorage) · `/dashboard/status` (gabungan konten akun) ·
 `error.tsx` + `not-found.tsx` boundaries.
 
@@ -27,8 +31,9 @@ Halaman: `/` (QueryBar chip SAPA-only) · `/dashboard` (SapaStats + KpiPanel + A
   sudah dihapus (`prisma.ts`, `auth.ts`, `splp-bridge.ts`, `data-source.ts`, `audit-log.ts`,
   `EwsPanel`, `BreakdownExplorer`, `TrendChart`). Jangan reintroduce tanpa diskusi.
 - **SPLP mati → 503 graceful** (`{error ID, stage:'splp'}`), bukan 500. Dijaga `route.test.ts` (vitest 4/4, mock `fetchSapaData`).
-- **Charts dynamic ssr:false** (`dashboard/page`, `analytics/ChartsView`) — recharts tidak masuk bundle awal.
-  `KpiPanel` tanpa recharts, boleh statis.
+- **Charts dynamic ssr:false** (`analytics/ChartsView` via `AnalyticsClient`, `dashboard` via `DashboardClient`) — recharts tidak masuk bundle awal analytics; `ChartsView` derivasi via `useMemo`, `OpdDrilldown` lazy.
+  `KpiPanel` tanpa recharts, boleh RSC (`initialData`).
+- **Cache 10m terdistribusi:** `sapa-client.ts` LRU per-instance 10 mnt + `unstable_cache` 600s (`sapa-analytics|kpi|stats|report`) terdistribusi (ISR `revalidate 600` untuk `/api/sapa|kpi|stats|report` & `/dashboard|/dashboard/analytics`). Bust via `POST /api/revalidate` (tag `all` atau spesifik). `/api/query|status|revalidate` & `/api/analytics/opd/[slug]` tetap `force-dynamic`.
 - **localStorage hanya di client:** init `useState([])` + load di `useEffect` (laporan), atau event handler (dashboard).
 - **Chip QueryBar wajib `matched>0`** terhadap SPLP sebelum merge (cek via `/api/query`).
 - **Rollback UI eksekutif:** `NEXT_PUBLIC_AI_EXECUTIVE_UI=false`.
@@ -54,4 +59,5 @@ npm run start -- -p 3104          # serve lokal (setelah build)
 
 Chip SAPA-only 10 chip terverifikasi → LRU SPLP 10 mnt + error boundary → label stunting hanya bila
 evidence stunting → smoke test + 503 SPLP → cron mati + `.env.example` minimal + dead code −284 baris →
-header DOX diluruskan → push SSH pulih (rotasi ed25519) → recharts dynamic + hapus 5 file mati.
+header DOX diluruskan → push SSH pulih (rotasi ed25519) → recharts dynamic + hapus 5 file mati →
+perf audit (recharts memo/lazy) → RSC analytics/dashboard (server-fetch 600s) → ISR 10m kpi/stats/report/sapa + revalidate endpoint → merge ke main (af93476).

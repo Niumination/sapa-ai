@@ -18,9 +18,9 @@ Seluruh jawaban dihitung langsung dari data SAPA SPLP — tanpa model AI/LLM, ta
 
 | Layer | Technology |
 |-------|-----------|
-| Frontend | Next.js 16, React 19, Tailwind CSS 4, Recharts, Leaflet |
-| Backend | Next.js API Routes (Node.js), tanpa ORM/database |
-| Data Source | SAPA SPLP API (`api-splp.layanan.go.id/sapa/1.0/api/daftar_data`), cache LRU server 10 menit |
+| Frontend | Next.js 16, React 19, Tailwind CSS 4, Recharts, Leaflet (RSC revalidate 600 untuk `/dashboard` & `/dashboard/analytics`) |
+| Backend | Next.js API Routes (Node.js), tanpa ORM/database — ISR 10m (`revalidate 600`) untuk `/api/sapa|kpi|stats|report` |
+| Data Source | SAPA SPLP API (`api-splp.layanan.go.id/sapa/1.0/api/daftar_data`), cache LRU server 10 mnt + `unstable_cache` terdistribusi 10 mnt |
 | Test | Vitest (36 test, offline-safe) |
 
 ## Quick Start
@@ -57,15 +57,17 @@ AI_MODEL=""
 ```
 src/
 ├── app/
-│   ├── api/query/        # POST query bahasa natural → jawaban deterministik
-│   ├── api/sapa/         # GET agregat SAPA (grafik, GIS, Top OPD)
-│   ├── api/kpi/          # GET 8 KPI terkurasi + delta
-│   ├── api/status/       # GET status sistem jujur (sidebar)
-│   ├── api/report/       # GET/POST laporan eksekutif
-│   └── dashboard/        # beranda, analytics (+?opd= drill-down), gis, laporan, status
-├── components/           # QueryBar, KpiPanel, TopOpdWidget, OpdDrilldown, ExecutiveAnswerRenderer, ...
-├── lib/                  # sapa-client (SPLP + retrieval v2), format-singkat (satu sumber format angka)
-└── services/             # grounding, executive-presentation, kpi, report-generator, opd-drilldown
+│   ├── api/query/        # POST query bahasa natural → jawaban deterministik (ƒ Dynamic)
+│   ├── api/sapa/         # GET agregat SAPA (○ 10m, tags sapa-analytics)
+│   ├── api/kpi/          # GET 8 KPI terkurasi + delta (○ 10m, tags kpi)
+│   ├── api/stats/        # GET agregat ringan (○ 10m, tags stats)
+│   ├── api/report/       # GET laporan eksekutif (○ 10m, tags report)
+│   ├── api/status/       # GET status sistem jujur (ƒ Dynamic, tidak di-cache)
+│   ├── api/revalidate/   # POST bust cache {tag|tags|all} (ƒ Dynamic, REVALIDATE_SECRET)
+│   └── dashboard/        # beranda RSC 10m (KpiPanel initialData), analytics RSC 10m (+?opd= drill-down), gis, laporan, status
+├── components/           # QueryBar, KpiPanel (initialData), TopOpdWidget, OpdDrilldown (lazy), ExecutiveAnswerRenderer, ...
+├── lib/                  # sapa-client (SPLP + retrieval v2 + LRU 10m), format-singkat (satu sumber format angka)
+└── services/             # grounding, executive-presentation, kpi, report-generator, opd-drilldown, analytics-data, kpi-data
 ```
 
 ## Aturan repo
