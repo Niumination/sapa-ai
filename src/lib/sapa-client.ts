@@ -95,9 +95,18 @@ export function dataSourceFromEvidence(evidence: { opd?: string }[]): string {
   return Array.from(opds).join(' + ');
 }
 
-// ─── Fetch: SPLP only ───
+// ─── Fetch: SPLP only (LRU 10 mnt — audit autoskills 2026-09-03) ───
+// Route memakai `force-dynamic` sehingga fetch cache Next tidak berlaku;
+// cache manual di sini. Data publik statis + TTL = aman dibagikan lintas request.
+
+const SPLP_TTL_MS = 10 * 60 * 1000;
+let splpCache: { at: number; records: SapaRecord[] } | null = null;
 
 export async function fetchSapaData(): Promise<{ records: SapaRecord[]; origin: 'splp' }> {
+  if (splpCache && Date.now() - splpCache.at < SPLP_TTL_MS) {
+    return { records: splpCache.records, origin: 'splp' };
+  }
+
   const res = await fetch(`${SPLP_BASE}/daftar_data`, {
     headers: { 'Content-Type': 'application/json', 'User-Agent': BROWSER_UA },
     signal: AbortSignal.timeout(30000),
@@ -111,6 +120,7 @@ export async function fetchSapaData(): Promise<{ records: SapaRecord[]; origin: 
   if (json.api_status !== 1) {
     throw new Error(`SPLP API failed: ${json.api_message}`);
   }
+  splpCache = { at: Date.now(), records: json.data };
   return { records: json.data, origin: 'splp' };
 }
 

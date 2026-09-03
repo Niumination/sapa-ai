@@ -257,3 +257,7 @@ flags kosong). Canonical: `.agents/skills/` (1.4M) · symlink: `.claude/skills/`
 lockfile: `skills-lock.json`. Tiga skill (frontend-design, accessibility, seo) duplikat
 dengan bank pusat — bila single-home ditegakkan, drop 3 itu dan pakai bank. Catatan:
 `composition-patterns/SKILL.md` baris `description:` kosong (upstream).
+
+Audit kode 2026-09-03 (next/react-best-practices): LRU SPLP 10 mnt di
+`sapa-client.ts` (force-dynamic mematikan fetch cache Next) + `error.tsx` /
+`not-found.tsx`. Sisa: recharts dynamic, next/image logo, localStorage envelope.
