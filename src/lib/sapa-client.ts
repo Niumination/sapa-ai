@@ -9,34 +9,28 @@ const BROWSER_UA =
   'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/126.0 Safari/537.36';
 
 
+async function getSapaAccessToken(): Promise<string> {
   const clientId = process.env.SAPA_CLIENT_ID ?? '3';
   const clientSecret = process.env.SAPA_CLIENT_SECRET ?? '';
-
-  if (!clientSecret) {
-    throw new Error('SAPA_CLIENT_SECRET tidak dikonfigurasi');
-  }
-
+  if (!clientSecret) throw new Error('SAPA_CLIENT_SECRET tidak dikonfigurasi');
   const form = new URLSearchParams();
   form.set('grant_type', 'client_credentials');
   form.set('client_id', clientId);
   form.set('client_secret', clientSecret);
-
   const res = await fetch('https://sapa.acehtengahkab.go.id/oauth/token', {
     method: 'POST',
     headers: { 'Content-Type': 'application/x-www-form-urlencoded', 'User-Agent': BROWSER_UA },
     body: form.toString(),
     signal: AbortSignal.timeout(15000),
   });
-
   if (!res.ok) {
     const errBody = await res.text().catch(() => '');
     throw new Error(`SAPA OAuth error ${res.status}: ${errBody.slice(0, 200)}`);
   }
-
-  const data = await res.json();
-  if (!data.access_token) {
-    throw new Error('SAPA OAuth response tanpa access_token');
-  }
+  const data = await res.json() as { access_token?: string };
+  if (!data.access_token) throw new Error('SAPA OAuth response tanpa access_token');
+  return data.access_token;
+}
 // ─── Types ───
 
 /** Metadata untuk tiap record — dipakai scoring intent & dedup. */

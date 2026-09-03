@@ -258,7 +258,7 @@ function tahunSummary(evidence: ExecutiveEvidence[]): string {
 function extractTopic(narrative: string): string | null {
   const m = narrative.match(/untuk\s+"([^"]+)"/i) ?? narrative.match(/untuk\s+“([^”]+)”/);
   if (m?.[1]) return m[1].trim();
-  const m2 = narrative.match(/Berdasarkan data SAPA untuk\s+([^\.,:]+)/i);
+  const m2 = narrative.match(/Berdasarkan data SAPA untuk\s+([^.,:]+)/i);
   return m2?.[1] ? m2[1].trim().replace(/\s+menurut.*$/i, '') : null;
 }
 
@@ -474,22 +474,32 @@ function detectOrigin(dataSource: string): 'direct' | 'splp' | 'unknown' {
 
 
 // ─── Rekons: Bucket grouping (Tahap 3) ───
-// 4 bucket: A Masalah, B Pemantauan, C Intervensi, D Dukungan
+// 4 bucket: A Masalah (stunting/kurus/gizi Orang), B Pemantauan (dipantau/seluruh/pop), C Intervensi+Prevalensi (vitamin/vaksin/prevalensi %), D Dukungan (BKB/sarana)
 function bucketGroup(evidence: ExecutiveEvidence[]): Record<string, ExecutiveEvidence[]> {
   const buckets: Record<string, ExecutiveEvidence[]> = { A: [], B: [], C: [], D: [] };
   for (const e of evidence) {
     const ind = normalizeText(e.indikator);
     const sat = (e.satuan ?? '').toLowerCase();
-    if (ind.includes('stunting') || ind.includes('kurus') || ind.includes('gizi') || ind.includes('kurus')) {
-      buckets.A.push(e); // Masalah Kesehatan
-    } else if (ind.includes('dipantau') || ind.includes('seluruh') || ind.includes('populasi') || ind.includes('total') || ind.includes('jumlah')) {
-      buckets.B.push(e); // Cakupan Pemantauan
-    } else if (ind.includes('vitamin') || ind.includes('vaksin') || ind.includes('imunisasi') || ind.includes('pemeriksaan') || ind.includes('penerima')) {
-      buckets.C.push(e); // Intervensi Medis
+    // C dulu: prevalensi % harus di Intervensi, bukan Masalah (walau mengandung stunting)
+    if (ind.includes('prevalensi')) {
+      buckets.C.push(e);
+    } else if (ind.includes('stunting') && (sat === 'orang' || sat === '')) {
+      buckets.A.push(e);
+    } else if (ind.includes('stunting')) {
+      buckets.C.push(e);
+    } else if (ind.includes('kurus') || ind.includes('gizi buruk') || ind.includes('gizi')) {
+      buckets.A.push(e);
+    } else if (ind.includes('vitamin a') || ind.includes('vaksin') || ind.includes('imunisasi')) {
+      buckets.C.push(e);
+    } else if (ind.includes('pemeriksaan') || ind.includes('penerima paket')) {
+      buckets.C.push(e);
+    } else if (ind.includes('dipantau') || ind.includes('ditimbang')) {
+      buckets.B.push(e);
+    } else if (ind.includes('seluruh anak balita') || ind.includes('populasi')) {
+      buckets.B.push(e);
     } else if (ind.includes('bkb') || ind.includes('sarana') || ind.includes('materi') || ind.includes('kelompok') || ind.includes('paket')) {
-      buckets.D.push(e); // Dukungan Sosial/BKB
+      buckets.D.push(e);
     } else {
-      // Default: masuk ke B jika satuan Orang, C jika Persen, D jika lain
       if (sat === 'orang') buckets.B.push(e);
       else if (sat === 'persen' || sat === '%') buckets.C.push(e);
       else buckets.D.push(e);

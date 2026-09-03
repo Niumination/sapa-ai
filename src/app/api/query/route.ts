@@ -86,11 +86,11 @@ export async function POST(req: NextRequest) {
     );
     const scored = scoreIntent(recordMetas, topic);
     const deduped = dedupIndicators(scored);
+    // denominator KHUSUS dipantau/seluruh/pop, bukan generic "jumlah" (coba luas)
     const denominator = deduped.find((m) =>
       normalizeText(m.indikator).includes('dipantau') ||
-      normalizeText(m.indikator).includes('seluruh') ||
-      normalizeText(m.indikator).includes('total') ||
-      normalizeText(m.indikator).includes('jumlah')
+      normalizeText(m.indikator).includes('seluruh anak balita') ||
+      normalizeText(m.indikator).includes('populasi')
     );
     const primary = deduped.find((m) => normalizeText(m.indikator).includes(normalizeText(topic)));
     let derivedContext: { prevalencePct?: number; denominatorNilai?: string; denominatorLabel?: string } | undefined;
@@ -102,6 +102,7 @@ export async function POST(req: NextRequest) {
         denominatorLabel: denominator.indikator,
       };
     }
+    void derivedContext;
     const visualisasi = buildVizFromEvidence(evidence);
     const rekomendasi: string[] = [
       `Tindak lanjuti temuan "${queryRaw}" dengan OPD pengampu (${opds.slice(0,2).map(o=>o.nama).join(' / ') || 'lihat OPD pada tabel'}) untuk verifikasi data terbaru.`,
