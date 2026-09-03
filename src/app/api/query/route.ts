@@ -35,7 +35,16 @@ export async function POST(req: NextRequest) {
       return Response.json({ error: 'Query tidak valid (minimal 3 karakter)' }, { status: 400 });
     }
 
-    const { records, origin } = await fetchSapaData();
+    // Hardening: SPLP mati → 503 graceful, bukan 500 mentah (test: route.test.ts)
+    const fetched = await fetchSapaData().catch((err: unknown) => ({ splpError: err }));
+    if ('splpError' in fetched) {
+      const detail = fetched.splpError instanceof Error ? fetched.splpError.message : String(fetched.splpError);
+      return Response.json(
+        { error: 'Sumber data SAPA (SPLP) tidak dapat dijangkau. Coba lagi beberapa saat.', stage: 'splp', detail },
+        { status: 503 },
+      );
+    }
+    const { records, origin } = fetched;
 
     const hits = retrieveRelevant(records, queryRaw, 80);
 
