@@ -42,7 +42,8 @@ export function parseNilaiSapa(value: unknown): number | null {
   return Number.isFinite(n) ? n : null;
 }
 
-/** "1438857592538.6" → "1,44 Triliun" · "6285" → "6,29 Ribu" · "4,47" → "4,47". */
+/** "1438857592538.6" → "1,44 Triliun" · "6285" → "6.285" · "4,47" → "4,47".
+ *  Singkatan mulai dari jutaan; ribuan tampil penuh ("9.610"). */
 export function formatSingkat(value: unknown): string | null {
   const n = parseNilaiSapa(value);
   if (n === null) return null;
@@ -51,7 +52,6 @@ export function formatSingkat(value: unknown): string | null {
   if (a >= 1e12) return `${fmt(n / 1e12)} Triliun`;
   if (a >= 1e9) return `${fmt(n / 1e9)} Miliar`;
   if (a >= 1e6) return `${fmt(n / 1e6)} Juta`;
-  if (a >= 1e3) return `${fmt(n / 1e3)} Ribu`;
   if (a >= 1 || a === 0) return fmt(n);
   return fmt(n, 4);
 }
@@ -75,7 +75,7 @@ export function headlineParts(nilai: unknown, satuan?: string | null): HeadlineP
   };
   const short = formatSingkat(nilai);
   if (short === null) return fallback;
-  const hasScale = /Triliun|Miliar|Juta|Ribu/.test(short);
+  const hasScale = /Triliun|Miliar|Juta/.test(short);
   const unit = satuan?.trim() ?? '';
   if (!unit) return { text: short, unit: null };
   if (SCALE_WORDS.has(unit.toLowerCase())) {

@@ -26,8 +26,16 @@ describe('formatSingkat', () => {
   it('kasus user: PDRB', () => {
     expect(formatSingkat('11.503.360.000.000')).toBe('11,5 Triliun');
   });
+  it('ribuan tampil penuh (kasus ASN)', () => {
+    expect(formatSingkat('9610')).toBe('9.610');
+    expect(formatSingkat('6285')).toBe('6.285');
+    expect(formatSingkat('999999')).toBe('999.999');
+  });
+  it('singkatan mulai sejuta', () => {
+    expect(formatSingkat('1000000')).toBe('1 Juta');
+    expect(formatSingkat('2500000')).toBe('2,5 Juta');
+  });
   it('skala kecil', () => {
-    expect(formatSingkat('6285')).toBe('6,29 Ribu');
     expect(formatSingkat('432')).toBe('432');
     expect(formatSingkat('4,47')).toBe('4,47');
     expect(formatSingkat('0,003593496')).toBe('0,0036');
