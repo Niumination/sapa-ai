@@ -4,6 +4,7 @@
 // Data dari /api/kpi: dihitung deterministik dari SAPA (tanpa LLM).
 
 import { useEffect, useState } from 'react';
+import { headlineParts } from '@/lib/format-singkat';
 
 interface Kpi {
   id: string;
@@ -81,7 +82,10 @@ export default function KpiPanel() {
         <span className="text-[10px] text-[#767D6F]">deterministik dari SAPA · {source}</span>
       </div>
       <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
-        {kpis.map((k) => (
+        {kpis.map((k) => {
+          // Angka singkat selaras headline/lead ("11,5 Triliun", bukan "11.503.360.000.000 Milyar")
+          const h = headlineParts(k.nilai, k.satuan);
+          return (
           <div
             key={k.id}
             className="bg-[#FFFFFF] border border-[#C6C3B4] rounded-2xl p-4 hover:border-[#2D6A4F]/50 hover:shadow-lg hover:shadow-[#1B4332]/5 transition-all"
@@ -94,8 +98,8 @@ export default function KpiPanel() {
               </span>
             </div>
             <p className="text-xl font-bold text-[#1B4332] leading-tight">
-              {k.nilai}
-              {k.satuan && <span className="text-xs font-medium text-[#767D6F] ml-1">{k.satuan}</span>}
+              {h.text}
+              {h.unit && <span className="text-xs font-medium text-[#767D6F] ml-1">{h.unit}</span>}
             </p>
             <p className="text-[10px] text-[#767D6F] mt-0.5 truncate">
               {k.tahun ? `Tahun ${k.tahun}` : 'Tahun tidak tercantum'} · {k.opd}
@@ -104,7 +108,8 @@ export default function KpiPanel() {
               <DeltaBadge kpi={k} />
             </div>
           </div>
-        ))}
+          );
+        })}
       </div>
     </section>
   );

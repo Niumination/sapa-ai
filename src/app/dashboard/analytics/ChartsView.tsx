@@ -1,9 +1,11 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
+import { useSearchParams } from 'next/navigation';
 import {
   BarChart, Bar, PieChart, Pie, Cell, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer,
 } from 'recharts';
+import OpdDrilldown from '@/components/OpdDrilldown';
 
 // Palet kategorikal — setiap warna UNIK.
 // Palet lama mengulang #2D6A4F, #A15C38, dan #1B4332 masing-masing dua kali,
@@ -91,6 +93,9 @@ export default function ChartsView() {
   const [data, setData] = useState<AnalyticsData | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  // Drill-down per OPD via ?opd=Nama%20OPD (dari TopOpdWidget di beranda)
+  const searchParams = useSearchParams();
+  const selectedOpd = searchParams.get('opd');
 
   const fetchData = async () => {
     try {
@@ -157,6 +162,11 @@ export default function ChartsView() {
           </p>
         </div>
       </div>
+
+      {/* Drill-down OPD bila ?opd= terisi */}
+      {selectedOpd && (
+        <OpdDrilldown key={selectedOpd} opd={selectedOpd} />
+      )}
 
       {/* Summary Cards */}
       <div className="grid grid-cols-3 gap-4">

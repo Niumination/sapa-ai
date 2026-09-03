@@ -15,6 +15,11 @@ const AIResponseRenderer = dynamic(() => import('@/components/AIResponseRenderer
 import KpiPanel from '@/components/KpiPanel';
 import { HybridResponse } from '@/types';
 
+const TopOpdWidget = dynamic(() => import('@/components/TopOpdWidget'), {
+  ssr: false,
+  loading: () => <p className="text-sm text-[#767D6F]">Memuat Top OPD…</p>,
+});
+
 type DashboardMode = 'default' | 'ai-response';
 
 export default function DashboardPage() {
@@ -199,6 +204,7 @@ export default function DashboardPage() {
       {mode === 'default' && (
         <>
           <KpiPanel />
+          <TopOpdWidget />
           <DefaultDashboard />
         </>
       )}
