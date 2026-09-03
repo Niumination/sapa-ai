@@ -1,10 +1,10 @@
-# cc-acehtengah — SAPA Smart AI Aceh Tengah
+# sapa-ai — SAPA Smart AI Aceh Tengah (SPLP-only, publik)
 
-> **Next.js 16 + Prisma 6 + LLM + RAG** — Integrasi SAPA → SPLP → SAPA Smart AI
-> **Path:** `services/cc-acehtengah/`
-> **Status:** 🟢 **Active — Fase 5: Theme/Accessibility + Security Hardening**
-> **Deploy:** GitHub + Vercel (https://cc-acehtengah.vercel.app)
-> Status terkini cc-acehtengah: baca `services/cc-acehtengah/docs/STATUS-CC.md` sebelum menyentuh config/deploy. Aturan inti (Pecah Jawaban, BNBA role matrix, DTSEN_ROOT/SUPERADMIN) tetap di sini.
+> **Next.js 16 + SPLP API langsung (tanpa Prisma/DB, tanpa DTSEN, tanpa login)** — Duplikat cc-acehtengah yang di-strip.
+> **Path:** `services/sapa-ai/`
+> **Status:** 🟢 **Active — Hardening (autoskills install + audit + LRU + error boundary)**
+> **Deploy:** GitHub + Vercel (cek `vercel.json`)
+> ⚠️ **Doc drift:** sebagian besar isi file ini masih warisan cc-acehtengah (DTSEN/Bapokting/Excel/Prisma/auth) dan BELUM berlaku untuk sapa-ai. Aturan yang sah untuk repo ini: skill `sapa-ai-ops` + seksi `AI Skills` di bawah. Rewrite penuh = follow-up.
 > **Backlog priority:** P2
 
 > **✅ EWS SUDAH FUNGSIONAL (PR Lapis 2):**
