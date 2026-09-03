@@ -29,12 +29,12 @@ describe('GET /api/status', () => {
     expect(body.ai.state).toBe('inactive');
   });
 
-  it('AI active + provider/model tampil bila env diisi', async () => {
+  it('AI inactive walau env terisi (belum ada wiring LLM)', async () => {
     mockedFetch.mockResolvedValue({ records: [], origin: 'splp' } as never);
     process.env.AI_MODEL = 'test-model-1';
     process.env.AI_PROVIDER = 'TestProvider';
     const res = await GET();
     const body = await res.json();
-    expect(body.ai).toEqual({ state: 'active', provider: 'TestProvider', model: 'test-model-1' });
+    expect(body.ai).toEqual({ state: 'inactive', provider: 'TestProvider', model: 'test-model-1' });
   });
 });

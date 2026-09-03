@@ -124,7 +124,9 @@ export default function Sidebar({ collapsed = false, onToggle }: SidebarProps) {
                 ? undefined
                 : status.ai.state === 'active'
                   ? [status.ai.provider, status.ai.model].filter(Boolean).join(' · ') || undefined
-                  : 'model belum dikonfigurasi'
+                  : [status.ai.provider, status.ai.model].filter(Boolean).join(' · ')
+                    ? `${[status.ai.provider, status.ai.model].filter(Boolean).join(' · ')} — belum dipakai`
+                    : 'model belum dikonfigurasi'
             }
             collapsed={collapsed}
           />
