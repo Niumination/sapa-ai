@@ -4,6 +4,7 @@ import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { useState, useEffect } from 'react';
 import { LogoMark } from '@/components/brand/Logo';
+import type { SystemStatus } from '@/app/api/status/route';
 
 const NAV_ITEMS = [
   { href: '/dashboard', label: 'Beranda', icon: '📊', desc: 'Overview SAPA', public: true },
@@ -20,6 +21,20 @@ interface SidebarProps {
 
 export default function Sidebar({ collapsed = false, onToggle }: SidebarProps) {
   const pathname = usePathname();
+  const [status, setStatus] = useState<SystemStatus | null>(null);
+
+  useEffect(() => {
+    let cancelled = false;
+    fetch('/api/status')
+      .then((r) => (r.ok ? r.json() : null))
+      .then((s) => {
+        if (!cancelled && s) setStatus(s as SystemStatus);
+      })
+      .catch(() => {});
+    return () => {
+      cancelled = true;
+    };
+  }, [pathname]);
 
 
   const visibleItems = NAV_ITEMS;
@@ -91,12 +106,28 @@ export default function Sidebar({ collapsed = false, onToggle }: SidebarProps) {
         })}
       </nav>
 
-      {/* System Status */}
+      {/* System Status — live dari /api/status, bukan hardcode */}
       <div className={`border-t border-[#C6C3B4] ${collapsed ? 'px-2 py-3' : 'px-4 py-4 space-y-2'}`}>
         {!collapsed && <p className="text-[9px] font-bold text-[#767D6F] uppercase tracking-widest">Sistem</p>}
         <div className="space-y-1.5">
-          <StatusRow label="SAPA" status="●" color="text-[#2D6A4F]" collapsed={collapsed} />
-          <StatusRow label="AI" status="●" color="text-[#1B4332]" collapsed={collapsed} />
+          <StatusRow
+            label="SAPA"
+            state={status ? (status.sapa.state === 'active' ? 'active' : 'down') : 'loading'}
+            detail={status && status.sapa.state === 'active' ? `${status.sapa.records.toLocaleString('id-ID')} record` : undefined}
+            collapsed={collapsed}
+          />
+          <StatusRow
+            label="AI"
+            state={status ? (status.ai.state === 'active' ? 'active' : 'inactive') : 'loading'}
+            detail={
+              !status
+                ? undefined
+                : status.ai.state === 'active'
+                  ? [status.ai.provider, status.ai.model].filter(Boolean).join(' · ') || undefined
+                  : 'model belum dikonfigurasi'
+            }
+            collapsed={collapsed}
+          />
         </div>
         {!collapsed && <p className="text-[10px] text-[#767D6F] pt-2">Diskominfo Aceh Tengah</p>}
       </div>
@@ -104,21 +135,34 @@ export default function Sidebar({ collapsed = false, onToggle }: SidebarProps) {
   );
 }
 
-function StatusRow({ label, status, color, collapsed }: { label: string; status: string; color: string; collapsed: boolean }) {
+type StatusState = 'active' | 'inactive' | 'down' | 'loading';
+
+const STATE_STYLE: Record<StatusState, { dot: string; text: string; label: string }> = {
+  active: { dot: 'bg-[#2D6A4F]', text: 'text-[#2D6A4F]', label: 'Active' },
+  inactive: { dot: 'bg-[#767D6F]', text: 'text-[#767D6F]', label: 'Nonaktif' },
+  down: { dot: 'bg-[#B3261E]', text: 'text-[#B3261E]', label: 'Down' },
+  loading: { dot: 'bg-[#C6C3B4]', text: 'text-[#767D6F]', label: '…' },
+};
+
+function StatusRow({ label, state, detail, collapsed }: { label: string; state: StatusState; detail?: string; collapsed: boolean }) {
+  const style = STATE_STYLE[state];
   if (collapsed) {
     return (
-      <div className="flex justify-center" title={`${label}: Active`}>
-        <span className={`w-2 h-2 rounded-full ${color.replace('text-', 'bg-')}`} />
+      <div className="flex justify-center" title={`${label}: ${style.label}${detail ? ` — ${detail}` : ''}`}>
+        <span className={`w-2 h-2 rounded-full ${style.dot}`} />
       </div>
     );
   }
   return (
-    <div className="flex items-center justify-between text-[10px]">
-      <span className="text-[#767D6F]">{label}</span>
-      <div className="flex items-center gap-1.5">
-        <span className={`w-1.5 h-1.5 rounded-full ${color.replace('text-', 'bg-')}`} />
-        <span className={`font-medium ${color}`}>Active</span>
+    <div className="text-[10px]">
+      <div className="flex items-center justify-between">
+        <span className="text-[#767D6F]">{label}</span>
+        <div className="flex items-center gap-1.5">
+          <span className={`w-1.5 h-1.5 rounded-full ${style.dot}`} />
+          <span className={`font-medium ${style.text}`}>{style.label}</span>
+        </div>
       </div>
+      {detail && <p className="mt-0.5 truncate text-right text-[9px] text-[#767D6F]" title={detail}>{detail}</p>}
     </div>
   );
 }
