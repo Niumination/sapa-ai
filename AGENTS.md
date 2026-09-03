@@ -250,3 +250,10 @@ Kompatibilitas: cherry-pick `7c342e7` ke atas v3 teruji tanpa konflik (test gabu
 yang sama hingga 257x per query (~180KB terbuang) setelah field JSON tertutup —
 kini di-guard agar hanya terkirim saat snapshot berubah. Tidak berdampak ke tampilan
 (frontend menimpa state), murni efisiensi bandwidth.
+
+## AI Skills (autoskills v0.3.6 — 2026-09-03)
+20 skill generik terinstall via `midudev/autoskills --dry-run` + `-y` (20/20 approved,
+flags kosong). Canonical: `.agents/skills/` (1.4M) · symlink: `.claude/skills/` ·
+lockfile: `skills-lock.json`. Tiga skill (frontend-design, accessibility, seo) duplikat
+dengan bank pusat — bila single-home ditegakkan, drop 3 itu dan pakai bank. Catatan:
+`composition-patterns/SKILL.md` baris `description:` kosong (upstream).
