@@ -1,9 +1,17 @@
 'use client';
 
 import { useState, useCallback, useRef } from 'react';
+import dynamic from 'next/dynamic';
 import QueryBar from '@/components/QueryBar';
-import DefaultDashboard from '@/components/SapaStats';
-import AIResponseRenderer from '@/components/AIResponseRenderer';
+// Recharts-heavy: dynamic ssr:false agar tidak masuk bundle awal home
+const DefaultDashboard = dynamic(() => import('@/components/SapaStats'), {
+  ssr: false,
+  loading: () => <p className="text-sm text-[#767D6F]">Memuat dashboard…</p>,
+});
+const AIResponseRenderer = dynamic(() => import('@/components/AIResponseRenderer'), {
+  ssr: false,
+  loading: () => <p className="text-sm text-[#767D6F]">Memuat jawaban…</p>,
+});
 import KpiPanel from '@/components/KpiPanel';
 import { HybridResponse } from '@/types';
 
