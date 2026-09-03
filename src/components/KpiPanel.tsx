@@ -37,12 +37,13 @@ function DeltaBadge({ kpi }: { kpi: Kpi }) {
   );
 }
 
-export default function KpiPanel() {
-  const [kpis, setKpis] = useState<Kpi[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [source, setSource] = useState<string>('');
+export default function KpiPanel({ initialData = null }: { initialData?: { kpis: Kpi[]; source: string } | null }) {
+  const [kpis, setKpis] = useState<Kpi[]>(initialData?.kpis ?? []);
+  const [loading, setLoading] = useState(!initialData);
+  const [source, setSource] = useState<string>(initialData?.source ?? '');
 
   useEffect(() => {
+    if (initialData) return;
     let alive = true;
     fetch('/api/kpi')
       .then((r) => (r.ok ? r.json() : Promise.reject(new Error(`HTTP ${r.status}`))))
@@ -59,7 +60,7 @@ export default function KpiPanel() {
     return () => {
       alive = false;
     };
-  }, []);
+  }, [initialData]);
 
   if (loading) {
     return (
