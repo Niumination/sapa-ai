@@ -62,7 +62,7 @@ export default function QueryBar({ onQuery, isLoading, onReset, isDefaultMode }:
 
   return (
     <div className="bg-[#FFFFFF] border border-[#C6C3B4] rounded-2xl overflow-hidden">
-      <div className="px-5 pt-5 pb-3 flex flex-col items-center text-center">
+      <div className="px-5 pt-5 pb-3 flex flex-col items-center text-center relative">
         <div className="flex items-center gap-2 mb-1">
           <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-[#1B4332] to-[#2D6A4F] flex items-center justify-center text-sm shadow-lg">🤖</div>
           <span className="text-base font-bold text-[#1B4332]">SAPA Smart AI</span>
@@ -79,10 +79,6 @@ export default function QueryBar({ onQuery, isLoading, onReset, isDefaultMode }:
       <div className="px-5 py-3 space-y-2">
         {CHIP_GROUPS.map((group) => (
           <div key={group.id} className="flex flex-wrap items-center justify-center gap-x-2 gap-y-1.5" role="group" aria-label={`Chip sumber ${group.source}`}>
-            <span className="mr-1 inline-flex items-baseline gap-1.5" title={group.hint}>
-              <span className="text-[9px] font-black uppercase tracking-widest text-[#2D6A4F]">{group.source}</span>
-              <span className="hidden text-[9px] text-[#767D6F] sm:inline">· {group.hint}</span>
-            </span>
             {group.chips.map((chip) => (
               <button
                 key={chip.label}

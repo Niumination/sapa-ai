@@ -27,11 +27,14 @@ export default function DashboardPage() {
   const abortRef = useRef<AbortController | null>(null);
   const timeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const liveNarasiRef = useRef('');
+  // Generasi request: cegah respons/abort basi menimpa state setelah Beranda diklik
+  const genRef = useRef(0);
 
   const handleQuery = useCallback(async (query: string) => {
     // Abort previous request if any
     abortRef.current?.abort();
     if (timeoutRef.current) clearTimeout(timeoutRef.current);
+    const gen = ++genRef.current;
 
     try {
       setIsLoading(true);
@@ -158,6 +161,8 @@ export default function DashboardPage() {
       setLiveNarasi('');
     } catch (err: any) {
       if (timeoutRef.current) clearTimeout(timeoutRef.current);
+      // Respons basi (Beranda sudah diklik) → jangan timpa state
+      if (gen !== genRef.current) return;
       const errMsg = err?.name === 'AbortError'
         ? 'AI membutuhkan waktu terlalu lama (65 detik). Coba pertanyaan yang lebih singkat.'
         : `Terjadi kesalahan: ${err?.message ?? 'Unknown'}`;
@@ -174,6 +179,7 @@ export default function DashboardPage() {
   }, []);
 
   const handleReset = useCallback(() => {
+    genRef.current++; // batalkan generasi berjalan agar catch-nya diabaikan
     abortRef.current?.abort();
     if (timeoutRef.current) clearTimeout(timeoutRef.current);
     setMode('default');

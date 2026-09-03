@@ -17,6 +17,7 @@ import {
 } from 'recharts';
 import type { ExecutivePresentation, HybridResponse, ExecutiveEvidence } from "@/types";
 import { getExecutivePresentation } from '@/services/executive-presentation';
+import { headlineParts } from '@/lib/format-singkat';
 
 interface Props {
   response: HybridResponse;
@@ -117,14 +118,16 @@ function PrimaryMetric({ presentation }: { presentation: ExecutivePresentation }
   const primaryNilai = primaryEvidence?.nilai ?? (typeof metricValue === 'string' ? metricValue : metricValue?.toString() ?? '—');
   const prevalenceItem = buckets?.C?.find((e) => e.indikator.toLowerCase().includes('prevalensi'));
   const prevalenceValue = prevalenceItem ? parseNilaiFloat(prevalenceItem.nilai) : null;
+  // Headline = angka singkat ("1,44 Triliun"); detail penuh tetap di evidence/tabel.
+  const headline = unavailable ? null : headlineParts(primaryNilai, primaryEvidence?.satuan);
   return (
     <div className="mt-5 flex flex-wrap items-end gap-3">
       <div>
         <p className="text-[10px] font-bold uppercase tracking-[0.14em] text-[var(--text-muted)]">Headline</p>
         <p className={`mt-1 text-4xl font-black tracking-[-0.06em] md:text-6xl ${unavailable ? 'text-[#A15C38]' : 'text-[var(--brand)]'}`}>
-          {unavailable ? 'Belum tersedia' : formatCell(primaryNilai ?? '—')}
+          {unavailable ? 'Belum tersedia' : (headline?.text ?? '—')}
         </p>
-        {primaryEvidence?.satuan && <p className="pb-1 text-sm font-bold text-[var(--text-body)]">{primaryEvidence.satuan}</p>}
+        {headline?.unit && <p className="pb-1 text-sm font-bold text-[var(--text-body)]">{headline.unit}</p>}
       </div>
       {prevalenceValue !== null && !unavailable && (
         <span className="inline-flex items-center rounded-full bg-[var(--brand-tint)] px-2.5 py-1 text-xs font-bold text-[var(--brand)]">
