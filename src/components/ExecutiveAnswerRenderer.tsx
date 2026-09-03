@@ -115,7 +115,7 @@ function PrimaryMetric({ presentation }: { presentation: ExecutivePresentation }
   const primaryEvidence = bucketA.length > 0 ? bucketA[0] : null;
   const metricValue = metric?.value;
   const primaryNilai = primaryEvidence?.nilai ?? (typeof metricValue === 'string' ? metricValue : metricValue?.toString() ?? '—');
-  const prevalenceItem = buckets?.C?.find((e) => e.indikator.toLowerCase().includes('prevalensi') || e.satuan === 'Persen');
+  const prevalenceItem = buckets?.C?.find((e) => e.indikator.toLowerCase().includes('prevalensi'));
   const prevalenceValue = prevalenceItem ? parseNilaiFloat(prevalenceItem.nilai) : null;
   return (
     <div className="mt-5 flex flex-wrap items-end gap-3">
@@ -143,14 +143,26 @@ function parseNilaiFloat(s: string | null | undefined): number | null {
   const n = Number(s.replace(/\./g, '').replace(',', '.'));
   return Number.isFinite(n) ? n : null;
 }
+
+// Konteks stunting dari evidence aktual — label/badge balita hanya bila relevan.
+// Mencegah chip non-kesehatan (mis. ASN) berbingkai "Balita Dipantau"/"Prevalensi".
+function isStuntingEvidence(evidence: { indikator: string }[] | undefined): boolean {
+  return (evidence ?? []).some((e) => /stunt|gizi|balita|bkb|posyandu|hamil|bayi|1000 hpk/i.test(e.indikator ?? ''));
+}
+
+function shortDesc(indikator: string, max = 42): string {
+  const t = (indikator ?? '').replace(/\s+/g, ' ').trim();
+  return t.length > max ? `${t.slice(0, max - 1).trim()}…` : t;
+}
 function ContextKPICards({ presentation }: { presentation: ExecutivePresentation }) {
   const { buckets } = presentation;
   const basis = buckets?.B?.[0];
+  const stuntingCtx = isStuntingEvidence(presentation.evidence);
   const risiko = buckets?.A?.find((e) => !e.indikator.toLowerCase().includes('stunting'));
   const intervensi = buckets?.C?.find((e) => e.indikator.toLowerCase().includes('vitamin'));
   if (!basis && !risiko && !intervensi) return null;
   const cards = [];
-  if (basis) cards.push({ label: 'Basis Data', value: basis.nilai, unit: basis.satuan, desc: 'Balita Dipantau' });
+  if (basis) cards.push({ label: 'Basis Data', value: basis.nilai, unit: basis.satuan, desc: stuntingCtx ? 'Balita Dipantau' : shortDesc(basis.indikator) });
   if (risiko) cards.push({ label: 'Tingkat Risiko', value: risiko.nilai, unit: risiko.satuan, desc: 'Balita Kurus' });
   if (intervensi) cards.push({ label: 'Intervensi Utama', value: intervensi.nilai, unit: intervensi.satuan, desc: 'Cakupan Vitamin A' });
   if (cards.length === 0) return null;
