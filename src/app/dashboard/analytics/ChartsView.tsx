@@ -90,9 +90,9 @@ function StatCard({ icon, label, value, color }: { icon: string; label: string; 
   );
 }
 
-export default function ChartsView() {
-  const [data, setData] = useState<AnalyticsData | null>(null);
-  const [loading, setLoading] = useState(true);
+export default function ChartsView({ initialData = null }: { initialData?: AnalyticsData | null }) {
+  const [data, setData] = useState<AnalyticsData | null>(initialData);
+  const [loading, setLoading] = useState(!initialData);
   const [error, setError] = useState<string | null>(null);
   // Drill-down per OPD via ?opd=Nama%20OPD (dari TopOpdWidget di beranda)
   const searchParams = useSearchParams();
@@ -111,10 +111,11 @@ export default function ChartsView() {
   };
 
   useEffect(() => {
+    if (initialData) return;
     const id = setTimeout(() => { void fetchData(); }, 0);
     return () => clearTimeout(id);
-     
-  }, []);
+    
+  }, [initialData]);
 
   if (loading) {
     return (
