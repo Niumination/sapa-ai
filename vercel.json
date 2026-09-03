@@ -3,11 +3,5 @@
     "src/app/api/query/route.ts": {
       "maxDuration": 60
     }
-  },
-  "crons": [
-    {
-      "path": "/api/cron/sync-sapa",
-      "schedule": "0 22 * * *"
-    }
-  ]
+  }
 }
