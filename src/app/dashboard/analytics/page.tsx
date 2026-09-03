@@ -5,7 +5,7 @@ import AnalyticsClient from './AnalyticsClient';
 // Server component — fetch agregat SAPA server-side (RSC pilot)
 // agar tidak roundtrip client→/api/sapa. ChartsView tetap client
 // (recharts) tapi menerima initialData via wrapper.
-export const dynamic = 'force-dynamic';
+export const revalidate = 600;
 
 export default async function AnalyticsPage() {
   try {

@@ -1,9 +1,8 @@
 // Shared analytics agregat — dipakai server (RSC) dan API route.
 // Diekstrak dari src/app/api/sapa/route.ts agar /dashboard/analytics
 // bisa fetch server-side tanpa roundtrip client→API (RSC pilot, audit #3).
-// Cache: masih pakai LRU di sapa-client.ts (10 mnt). Eksperimen
-// cacheComponents (use cache/cacheTag) ditunda ke branch ini tahap 4
-// karena butuh hapus `export const dynamic = 'force-dynamic'` di semua route.
+// 4A: cache stabil — unstable_cache terdistribusi 600s + LRU 10 mnt di sapa-client
+import { unstable_cache } from 'next/cache';
 import { fetchSapaData } from '@/lib/sapa-client';
 
 export const KECAMATAN_ACEH_TENGAH = [
@@ -41,7 +40,7 @@ export interface AnalyticsData {
   sumber: { nama: { label: string; url: string }[]; koordinat: { label: string; url: string }[]; peta: { label: string; url: string }[] };
 }
 
-export async function getAnalyticsData(): Promise<AnalyticsData> {
+async function fetchAnalyticsData(): Promise<AnalyticsData> {
   const { records } = await fetchSapaData();
   const opdMap = new Map<string, { nama: string; count: number; uniqueInd: Set<string> }>();
   const indFreq = new Map<string, { nama: string; count: number; opds: Set<string> }>();
@@ -82,3 +81,8 @@ export async function getAnalyticsData(): Promise<AnalyticsData> {
     sumber: { nama: [{ label: 'SAPA Aceh Tengah', url: 'https://sapa.acehtengahkab.go.id' }], koordinat: [{ label: 'OpenStreetMap', url: 'https://www.openstreetmap.org' }], peta: [{ label: 'Leaflet.js', url: 'https://leafletjs.com' }] },
   };
 }
+
+export const getAnalyticsData = unstable_cache(fetchAnalyticsData, ['sapa-analytics'], {
+  revalidate: 600,
+  tags: ['sapa-analytics'],
+});

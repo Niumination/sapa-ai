@@ -1,7 +1,7 @@
 import { NextResponse } from 'next/server';
 import { getAnalyticsData } from '@/services/analytics-data';
 
-export const dynamic = 'force-dynamic';
+export const revalidate = 600;
 export const runtime = 'nodejs';
 export const maxDuration = 60;
 
