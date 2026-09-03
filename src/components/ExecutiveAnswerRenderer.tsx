@@ -171,13 +171,16 @@ function ContextKPICards({ presentation }: { presentation: ExecutivePresentation
   if (cards.length === 0) return null;
   return (
     <div className="mt-4 grid grid-cols-3 gap-3">
-      {cards.map((c, i) => (
+      {cards.map((c, i) => {
+        const h = headlineParts(c.value, c.unit);
+        return (
         <div key={i} className="rounded-xl border border-[var(--border)] bg-[var(--surface-container-low)] p-3">
           <p className="text-[9px] font-semibold uppercase tracking-wide text-[var(--text-muted)]">{c.label}</p>
-          <p className="mt-1 text-xl font-black text-[var(--brand)]">{formatCell(c.value)} <span className="text-[10px] font-normal text-[var(--text-muted)]">{c.unit}</span></p>
+          <p className="mt-1 text-xl font-black text-[var(--brand)]">{h.text} <span className="text-[10px] font-normal text-[var(--text-muted)]">{h.unit ?? ''}</span></p>
           <p className="mt-0.5 text-[10px] text-[var(--text-muted)]">{c.desc}</p>
         </div>
-      ))}
+        );
+      })}
     </div>
   );
 }
@@ -186,13 +189,16 @@ function MetricGrid({ presentation }: { presentation: ExecutivePresentation }) {
   if (presentation.metrics.length === 0) return null;
   return (
     <div className="mt-5 grid grid-cols-1 gap-3 sm:grid-cols-2 xl:grid-cols-3">
-      {presentation.metrics.slice(0, 6).map((metric, index) => (
+      {presentation.metrics.slice(0, 6).map((metric, index) => {
+        const h = headlineParts(metric.value, metric.unit);
+        return (
         <div key={`${metric.label}-${index}`} className="rounded-xl border border-[var(--border)] bg-[var(--surface-container-low)] p-3.5">
           <p className="line-clamp-2 text-[10px] font-semibold uppercase tracking-wide text-[var(--text-muted)]">{metric.label}</p>
-          <p className="mt-2 text-xl font-black tracking-tight text-[var(--brand)]">{formatCell(metric.value)}</p>
-          {metric.unit && <p className="mt-1 text-[10px] text-[var(--text-muted)]">{metric.unit}</p>}
+          <p className="mt-2 text-xl font-black tracking-tight text-[var(--brand)]">{h.text}</p>
+          {h.unit && <p className="mt-1 text-[10px] text-[var(--text-muted)]">{h.unit}</p>}
         </div>
-      ))}
+        );
+      })}
     </div>
   );
 }

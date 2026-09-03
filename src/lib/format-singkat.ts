@@ -33,7 +33,11 @@ export function parseNilaiSapa(value: unknown): number | null {
   } else if (comma >= 0) {
     normalized = raw.replace(',', '.');
   } else if ((raw.match(/\./g) ?? []).length > 1) {
-    normalized = raw.replace(/\./g, '');
+    // Ekor ".00" setelah grup ribuan = desimal ID ("618.700.433.221.00" → 618,7 Miliar,
+    // bukan 61,87 Triliun). Tanpa ekor desimal = semua titik pemisah ribuan.
+    const decimals = raw.match(/\.(\d{1,2})$/)?.[1] ?? null;
+    const digits = raw.replace(/\./g, '');
+    normalized = decimals !== null ? `${digits.slice(0, -decimals.length)}.${decimals}` : digits;
   } else if (/^\d{1,3}\.\d{3}$/.test(raw)) {
     // Titik tunggal + 3 digit = pemisah ribuan ID ("12.500" → 12500)
     normalized = raw.replace(/\./g, '');
@@ -61,7 +65,6 @@ export interface HeadlineParts {
   /** null = satuan diserap ke angka ("11,5 Triliun" tanpa label "Milyar" ganda). */
   unit: string | null;
 }
-
 /**
  * Headline = angka singkat + satuan jujur.
  * - Satuan skala ("Milyar") disembunyikan bila angka sudah berskala ("11,5 Triliun"),
@@ -82,4 +85,25 @@ export function headlineParts(nilai: unknown, satuan?: string | null): HeadlineP
     return hasScale ? { text: short, unit: null } : { text: short, unit: SCALE_NORMALIZED[unit.toLowerCase()] ?? unit };
   }
   return { text: short, unit };
+}
+
+/**
+ * Singkatkan angka besar di dalam kalimat narasi ("…11.503.360.000.000 Milyar…"
+ * → "…11,5 Triliun…"). Kosmetik pasca-grounding seperti formatRibuan.
+ * - Hanya nilai >= 1 juta; tahun plausibel (1900–2100) dan angka kecil tak disentuh.
+ * - Kata skala yang menempel ("Milyar") dibuang bila skala sudah ada di angka;
+ *   satuan non-skala ("rupiah", "persen") dipertahankan.
+ */
+export function singkatNarasi(text: string): string {
+  if (!text) return text;
+  const replaced = text.replace(/\d[\d.]*(?:,\d+)?/g, (tok) => {
+    const n = parseNilaiSapa(tok);
+    if (n === null || Math.abs(n) < 1e6) return tok;
+    if (/^\d{4}$/.test(tok) && n >= 1900 && n <= 2100) return tok;
+    return formatSingkat(n) ?? tok;
+  });
+  return replaced.replace(
+    /\b(Triliun|Miliar|Juta)\s+(Milyar|Miliar|Juta|Ribu|Triliun)\b/gi,
+    '$1',
+  );
 }

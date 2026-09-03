@@ -3,6 +3,7 @@
 // eksekutif. Tidak melakukan fetch, LLM, Prisma, atau mengubah angka.
 
 import { normalizeText } from '@/lib/sapa-client';
+import { headlineParts, singkatNarasi } from '@/lib/format-singkat';
 import type {
   ExecutiveAnswerType,
   ExecutiveEvidence,
@@ -329,10 +330,18 @@ function buildLead(evidence: ExecutiveEvidence[], answerType: ExecutiveAnswerTyp
   const secondary = ranked.slice(1).find((e) => e.satuan && e.satuan !== primary.satuan && e.nilai !== '—' && e.nilai !== primary.nilai) ?? null;
   const pLabel = shortLabel(primary.indikator);
   const sLabel = secondary ? shortLabel(secondary.indikator) : '';
-  const pPart = `${primary.nilai} ${primary.satuan}`.trim() + ` — ${pLabel}` + (primary.tahun ? ` (${primary.tahun})` : '');
+  // Nilai singkat agar selaras headline ("11,5 Triliun", bukan "11.503.360.000.000 Milyar")
+  const fmtPair = (e: ExecutiveEvidence): string => {
+    const h = headlineParts(e.nilai, e.satuan);
+    return `${h.text}${h.unit ? ` ${h.unit}` : ''}`;
+  };
+  // '-'/'—' = tahun tak tercantum (jangan render "(-)")
+  const fmtTahun = (t: string | null | undefined): string =>
+    t && t !== '-' && t !== '—' ? ` (${t})` : '';
+  const pPart = `${fmtPair(primary)} — ${pLabel}` + fmtTahun(primary.tahun);
   let conclusion = pPart;
   if (secondary) {
-    const sPart = `${secondary.nilai} ${secondary.satuan}`.trim() + ` — ${sLabel}` + (secondary.tahun ? ` (${secondary.tahun})` : '');
+    const sPart = `${fmtPair(secondary)} — ${sLabel}` + fmtTahun(secondary.tahun);
     conclusion = `${pPart} · ${sPart}`;
   } else if (ranked.length > 1 && !secondary) {
     conclusion = `${pPart} — ${ranked.length} indikator terkait`;
@@ -514,7 +523,10 @@ function buildBucketSummary(buckets: Record<string, ExecutiveEvidence[]>): strin
   };
   const parts = Object.entries(buckets).map(([k, items]) => {
     if (items.length === 0) return '';
-    const summary = items.map((i) => `${i.nilai} ${i.satuan}`).join(', ');
+    const summary = items.map((i) => {
+      const h = headlineParts(i.nilai, i.satuan);
+      return `${h.text}${h.unit ? ` ${h.unit}` : ''}`;
+    }).join(', ');
     return `${labels[k]}: ${summary}`;
   }).filter(Boolean);
   return parts.join(' · ');
@@ -564,7 +576,7 @@ export function buildExecutivePresentation(response: HybridResponse): ExecutiveP
 
   // Bersihkan narasi: hapus metadata teknis "Dari X record SAPA, topik mencakup Y indikator"
   const cleanNarasi = (primaryLead ?? '').replace(/\.\s*Dari\s*\d+[,\d]*\s*record SAPA.*?\./, '.').trim();
-  const cleanNarrative = cleanNarasi ? cleanNarasi : (primaryLead ?? 'Tidak ada narasi yang dapat ditampilkan.');
+  const cleanNarrative = singkatNarasi(cleanNarasi ? cleanNarasi : (primaryLead ?? 'Tidak ada narasi yang dapat ditampilkan.'));
 
   const lead = buildLead(evidence, answerType, cleanNarrative);
   const presentation: ExecutivePresentation = {
