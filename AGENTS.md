@@ -261,3 +261,8 @@ dengan bank pusat — bila single-home ditegakkan, drop 3 itu dan pakai bank. Ca
 Audit kode 2026-09-03 (next/react-best-practices): LRU SPLP 10 mnt di
 `sapa-client.ts` (force-dynamic mematikan fetch cache Next) + `error.tsx` /
 `not-found.tsx`. Sisa: recharts dynamic, next/image logo, localStorage envelope.
+
+Fix render 2026-09-03 (chip ASN → bingkai stunting): badge Prevalensi hanya bila
+indikator mengandung 'prevalensi' (fallback `satuan==='Persen'` yang menjerat
+"Persentasi Guru ASN" dihapus); desc kartu Basis Data dinamis via `isStuntingEvidence`
+('Balita Dipantau' hanya bila evidence stunting, else nama indikator).
