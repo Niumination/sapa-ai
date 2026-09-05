@@ -33,3 +33,44 @@ jobs:
 
       - name: Build
         run: npm run build
+
+  eval:
+    name: Gerbang regresi — 78 item
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    # SENGAJA BUKAN required check. Job ini memanggil API SPLP eksternal
+    # (2.055 record hidup); bila SPLP sedang tidak tersedia, job gagal karena
+    # sebab di luar PR ini. Jadikan required hanya setelah terbukti stabil
+    # beberapa pekan. Sampai saat itu, ia penanda — bukan gerbang.
+    continue-on-error: true
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version-file: .nvmrc
+          cache: npm
+
+      - name: Pasang dependensi
+        run: npm ci
+
+      - name: Build
+        run: npm run build
+
+      - name: Jalankan server
+        run: |
+          npm start -- -p 3000 &
+          echo $! > /tmp/next.pid
+
+      - name: Tunggu server siap
+        run: npx --yes wait-on http://127.0.0.1:3000/api/status --timeout 120000
+
+      # Menjalankan 78 butir terhadap korpus SPLP yang hidup dan membandingkan
+      # dengan data/eval-baseline.json. Keluar 1 bila ada regresi atau
+      # pelanggaran invarians (halu, token bocor, jargon, sumber hilang, echo NIK).
+      #
+      # Perhatian: job ini bergantung pada API SPLP eksternal. Bila API itu
+      # sedang tidak tersedia, job gagal karena sebab di luar PR. Setelah
+      # terbukti stabil beberapa pekan, jadikan job ini wajib (required check).
+      - name: Eval 78 item
+        run: SAPA_EVAL_URL=http://127.0.0.1:3000 npm run eval

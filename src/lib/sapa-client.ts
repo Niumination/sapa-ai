@@ -1,7 +1,7 @@
 // ─── SAPA Client — SPLP only ───
 // Source: api-splp.layanan.go.id
 
-import { parseNumericId } from './parse-numeric';
+import { normalisasiNilai, parseNumericId } from './parse-numeric';
 
 const SPLP_BASE = 'https://api-splp.layanan.go.id/sapa/1.0/api';
 
@@ -70,30 +70,6 @@ export function dataSourceLabel(_origin: SapaDataOrigin): string {
   return 'SAPA Aceh Tengah (api-splp.layanan.go.id)';
 }
 
-/**
- * Build dataSource label secara dinamis berdasarkan evidence yang ditemukan.
- * Jika evidence berasal dari campuran sumber, gabungkan semua.
- */
-export function dataSourceFromEvidence(evidence: { opd?: string }[]): string {
-  const sources: string[] = [];
-  const opds = new Set<string>();
-
-  for (const e of evidence) {
-    const opd = e.opd || '';
-    if (opd.includes('Bapokting')) opds.add('Bapokting Aceh Tengah (SPLP API)');
-    // @hotfix 28 Agu 2026: label jujur untuk DTSEN demo — jangan klaim "via SPLP API"
-    // padahal data simulasi (user: jawaban DTSEN muncul padahal API masih 401).
-    else if (opd.includes('DTSEN Demo') || opd.includes('DTSEN (Demo')) opds.add('DTSEN (data demo — simulasi)');
-    // @hotfix 29 Agu 2026: sumber dibedakan dari opd yang dikirim planner:
-    else if (opd.includes('BAPPEDA') || opd.includes('offline')) opds.add('DTSEN (BAPPEDA Des 2025 — offline)');
-    else if (opd.includes('SPLP')) opds.add('DTSEN (Kemensos/BPS via SPLP API)');
-    else if (opd.includes('DTSEN')) opds.add('DTSEN (Kemensos/BPS)');
-    else if (opd.includes('Dokumen')) opds.add(opd); // label "Dokumen A — <OPD>"
-    else opds.add('SAPA Aceh Tengah');
-  }
-
-  return Array.from(opds).join(' + ');
-}
 
 // ─── Fetch: SPLP only (LRU 10 mnt — audit autoskills 2026-09-03) ───
 // Route memakai `force-dynamic` sehingga fetch cache Next tidak berlaku;
@@ -154,9 +130,21 @@ export function tokenizeQuery(query: string): string[] {
     'banding', 'versus', 'vs', 'per', 'terkini', 'terbaru', 'kondisi',
     'profil', 'gambaran', 'statistik', 'periode', 'wilayah', 'daerah',
     'nilai', 'satuan', 'kategori', 'sektor',
+    // pengisi kalimat (reviu 2026-09-04): kata-kata ini tidak pernah muncul
+    // di nama indikator, jadi selalu df = 0. Bila tidak dibuang, pertanyaan
+    // wajar ("berapa sih jumlah koperasi?") dianggap menanyakan konsep yang
+    // tidak ada di SAPA dan ditolak hanya karena pengisi kalimatnya.
+    'tiap', 'setiap', 'sih', 'dong', 'nih', 'pun', 'juga', 'serta',
+    'dalam', 'pada', 'ke', 'oleh', 'apakah', 'adakah', 'tersebut',
+    'sebuah', 'masing', 'macam', 'seluruh', 'semua', 'antara', 'sampai',
+    'menjadi', 'merupakan', 'yakni', 'yaitu',
   ]);
   return normalizeText(query)
     .split(' ')
+    // Reviu 2026-09-04: tanpa ini, tanda tanya menempel pada kata terakhir —
+    // "…di tiap kecamatan?" menghasilkan token "kecamatan?" yang tidak pernah
+    // cocok dengan nama indikator, sehingga pertanyaan wajar berujung 0 hasil.
+    .map((w) => w.replace(/^[^a-z0-9]+|[^a-z0-9]+$/g, ''))
     .filter((w) => w.length >= 3 && !stopWords.has(w) && !/^\d+$/.test(w));
 }
 
@@ -251,21 +239,32 @@ export interface ScoredRecord {
  * +3 per grup cocok di INDIKATOR, +1 per grup cocok hanya di OPD,
  * +4 bila semua grup cocok, +2 bila semua grup cocok di indikator.
  */
-export function scoreRecord(record: SapaRecord, groups: MatchGroup[]): ScoredRecord {
+export function scoreRecord(record: SapaRecord, groups: MatchGroup[], bobot?: number[]): ScoredRecord {
   const indWords = stemSet(record.kode_indikator_nama_indikator);
   const opdWords = stemSet(record.opds_nama_opd);
   let indHits = 0;
   let opdHits = 0;
-  for (const g of groups) {
+  let skorInd = 0;
+  let skorOpd = 0;
+  groups.forEach((g, i) => {
+    // Bobot IDF (bila diberikan): kata langka ("miskin") lebih menentukan
+    // topik daripada kata umum ("penduduk"). Tanpa ini, "Jumlah penduduk
+    // miskin?" selalu dimenangkan "Jumlah Data Penduduk" — dua-duanya cocok
+    // satu kata, lalu pemutus seri memilih nilai terbesar.
+    const w = bobot?.[i] ?? 3;
     const inInd = g.alternatives.some((alt) => alternativeHit(alt, indWords));
     if (inInd) {
       indHits++;
-      continue;
+      skorInd += w;
+      return;
     }
     const inOpd = g.alternatives.some((alt) => alternativeHit(alt, opdWords));
-    if (inOpd) opdHits++;
-  }
-  let score = indHits * 3 + opdHits * 1;
+    if (inOpd) {
+      opdHits++;
+      skorOpd += w * 0.34; // cocok di nama OPD tetap lebih lemah
+    }
+  });
+  let score = skorInd + skorOpd;
   if (groups.length > 0 && indHits + opdHits === groups.length) score += 4;
   if (groups.length > 0 && indHits === groups.length) score += 2;
   return { record, score, indHits, opdHits };
@@ -281,15 +280,132 @@ export function retrieveRelevant(records: SapaRecord[], query: string, cap = 80)
   const tokens = tokenizeQuery(query);
   if (tokens.length === 0) return [];
   const groups = buildMatchGroups(tokens);
-  // Precisi untuk query panjang: ≥3 kata topik menuntut minimal 2 grup cocok,
+
+  // Reviu 2026-09-04: ambang dihitung dari grup yang MUNGKIN cocok, bukan dari
+  // jumlah kata yang diketik. Pengisi kalimat ("tiap", "sebaran", "prediksi")
+  // tidak ada di nama indikator mana pun; bila tetap dihitung, pertanyaan
+  // "Berapa jumlah koperasi di tiap kecamatan?" menuntut 2 kecocokan sementara
+  // hanya 1 yang mungkin terjadi → hasilnya kosong.
+  const kataRecord = records.map((r) => ({
+    ind: stemSet(r.kode_indikator_nama_indikator),
+    opd: stemSet(r.opds_nama_opd),
+  }));
+  // df = jumlah record yang memuat grup ini. df = 0 berarti kata tersebut
+  // tidak pernah muncul di korpus SAPA sama sekali.
+  const df = groups.map(
+    (g) =>
+      kataRecord.filter((k) =>
+        g.alternatives.some((alt) => alternativeHit(alt, k.ind) || alternativeHit(alt, k.opd)),
+      ).length,
+  );
+  const grupMungkin = df.filter((d) => d > 0).length;
+
+  // Presisi untuk query panjang: ≥3 kata topik menuntut minimal 2 grup cocok,
   // supaya 1 kata umum (mis. "harga" pada pertanyaan "saham") tidak menyeret
   // data tak relevan. Query 1–2 kata cukup 1 grup.
-  const minIndHits = groups.length >= 3 ? 2 : 1;
-  return records
-    .map((r) => scoreRecord(r, groups))
+  const minIndHits = grupMungkin >= 3 ? 2 : 1;
+
+  // Bobot IDF per grup: 1 + ln(N / df). Kata langka ("miskin") lebih menentukan
+  // topik daripada kata umum ("penduduk"), sehingga "Jumlah penduduk miskin?"
+  // tidak lagi dimenangkan "Jumlah Data Penduduk" yang nilainya lebih besar.
+  const bobot = df.map((d) => 1 + Math.log((records.length + 1) / Math.max(d, 1)));
+
+  // Nilai dihitung sekali untuk pemutus seri: skor sama → tampilkan nilai
+  // lebih besar dulu (kebiasaan "yang terbanyak" lebih informatif).
+  const nilai = (r: SapaRecord): number => parseNumericId(normalisasiNilai(r.variabel)) ?? 0;
+
+  const hits = records
+    .map((r, i) => ({ ...scoreRecord(r, groups, bobot), record: r, nilai: nilai(r), urut: i }))
     .filter((s) => s.indHits >= minIndHits)
-    .sort((a, b) => b.score - a.score)
+    .sort((a, b) => b.score - a.score || b.nilai - a.nilai || a.urut - b.urut)
     .slice(0, cap);
+
+  // Penjaga kejujuran (reviu 2026-09-04). Bila pertanyaan menyinggung konsep
+  // yang TIDAK PERNAH tercatat di SAPA (df = 0), sedangkan kandidat terbaik
+  // hanya cocok SATU konsep, maka yang tampil pasti data lain yang kebetulan
+  // mirip — itu menyesatkan. Lebih baik mengaku tidak punya data.
+  // Terukur pada 78 item eval: +3 item lulus, tanpa mengorbankan satu pun
+  // pertanyaan yang datanya benar-benar ada.
+  const adaKonsepAsing = df.some((d) => d === 0);
+  if (adaKonsepAsing && (hits[0]?.indHits ?? 0) < 2) return [];
+
+  return hits;
+}
+
+/**
+ * Kata MAKSUD — menandai CARA menjawab (superlatif, pengelompokan, hubungan
+ * antar-variabel), bukan topik data. Bila kata ini tidak termuat pada
+ * indikator terbaik, itu bukan keterbatasan data: "tiga kecamatan dengan
+ * koperasi terbanyak" tetap terjawab oleh data koperasi per kecamatan meski
+ * kata "terbanyak" tidak ada di nama indikator mana pun.
+ */
+const KATA_MAKSUD = new Set([
+  // superlatif & urutan
+  'terbanyak', 'terbesar', 'terendah', 'tertinggi', 'terbaik', 'terburuk',
+  'terakhir', 'pertama', 'teratas', 'terbawah', 'ranking', 'peringkat',
+  'urut', 'urutan', 'urutkan', 'menurut',
+  // pengelompokan & penyajian
+  'sebaran', 'persebaran', 'penyebaran', 'distribusi', 'rincian', 'uraian',
+  'komposisi', 'porsi', 'proporsi', 'share', 'bagian',
+  // hubungan & sebab-akibat
+  'kaitan', 'hubungan', 'berhubungan', 'korelasi', 'pengaruh', 'pengaruhi',
+  'memengaruhi', 'berpengaruh', 'penyebab', 'sebab', 'dampak', 'efek',
+  // perkiraan ke depan
+  'prediksi', 'ramalan', 'ramalkan', 'proyeksi', 'perkiraan', 'forecast',
+]);
+
+/**
+ * Kata kunci pertanyaan yang ADA di korpus, tetapi TIDAK termuat pada record
+ * terbaik yang ditemukan. Artinya: SAPA punya data tentang kata itu, namun
+ * tidak ada satu indikator pun yang menggabungkannya dengan kata kunci lain
+ * dalam pertanyaan. Dipakai untuk mengakui keterbatasan itu secara terbuka,
+ * bukan untuk menebak isi data.
+ */
+export function konsepTakTermuat(records: SapaRecord[], terbaik: SapaRecord, query: string): string[] {
+  const groups = buildMatchGroups(tokenizeQuery(query));
+  if (groups.length === 0) return [];
+  const kataRecord = records.map((r) => ({
+    ind: stemSet(r.kode_indikator_nama_indikator),
+    opd: stemSet(r.opds_nama_opd),
+  }));
+  const ind = stemSet(terbaik.kode_indikator_nama_indikator);
+  const opd = stemSet(terbaik.opds_nama_opd);
+  return groups
+    .filter((g, i) => {
+      const adaDiKorpus = kataRecord.some((k) =>
+        g.alternatives.some((alt) => alternativeHit(alt, k.ind) || alternativeHit(alt, k.opd)),
+      );
+      const adaDiTerbaik = g.alternatives.some(
+        (alt) => alternativeHit(alt, ind) || alternativeHit(alt, opd),
+      );
+      // Hanya kata yang dikenal korpus: kalau kata itu sendiri tidak pernah
+      // ada di SAPA, penjelasannya sudah ditangani penjaga kejujuran.
+      // Kata maksud (superlatif, pengelompokan, hubungan) dilewati: tidak
+      // termuatnya kata itu bukan berarti data yang diminta tidak ada.
+      return adaDiKorpus && !adaDiTerbaik && !KATA_MAKSUD.has(g.token);
+    })
+    .map((g) => g.token);
+}
+
+/**
+ * Kata kunci pertanyaan yang sama sekali tidak ada di korpus SAPA.
+ * Dipakai untuk MENJELASKAN jawaban kosong — bukan menebak isi data.
+ */
+export function konsepTidakDikenal(records: SapaRecord[], query: string): string[] {
+  const groups = buildMatchGroups(tokenizeQuery(query));
+  if (groups.length === 0) return [];
+  const kataRecord = records.map((r) => ({
+    ind: stemSet(r.kode_indikator_nama_indikator),
+    opd: stemSet(r.opds_nama_opd),
+  }));
+  return groups
+    .filter(
+      (g) =>
+        !kataRecord.some((k) =>
+          g.alternatives.some((alt) => alternativeHit(alt, k.ind) || alternativeHit(alt, k.opd)),
+        ),
+    )
+    .map((g) => g.token);
 }
 
 /** Ekstrak tahun eksplisit dari query (mis. "produksi kopi 2024"). */
@@ -384,7 +500,16 @@ function parseYear(tahun: string | null): number | null {
  * Pilih tahun numerik maksimum per id_kode_indikator (order-independent).
  * Jika semua tahun null/non-numerik → keep first. Sorted by nilaiNumber desc.
  */
-export function aggregateByIndicator(records: SapaRecord[]): {
+/**
+ * `urut: 'relevansi'` mempertahankan urutan masukan (yang sudah diurutkan
+ * menurut skor retrieval). Bawaan lama `'nilai'` mengurutkan berdasarkan nilai
+ * terbesar — itu yang membuat evidence[0] berisi angka terbesar, bukan yang
+ * paling relevan (T-12). Bawaan dipertahankan agar pemanggil lama tidak berubah.
+ */
+export function aggregateByIndicator(
+  records: SapaRecord[],
+  opsi: { urut?: 'nilai' | 'relevansi' } = {},
+): {
   id: number;
   nama: string;
   opd: string;
@@ -401,7 +526,8 @@ export function aggregateByIndicator(records: SapaRecord[]): {
   for (const r of records) {
     const nama = r.kode_indikator_nama_indikator?.trim();
     if (!nama) continue;
-    const nilaiNumber = parseNumericId(String(r.variabel ?? ''));
+    const variabel = normalisasiNilai(r.variabel);
+    const nilaiNumber = parseNumericId(String(variabel ?? ''));
     if (nilaiNumber == null) continue;
 
     const existing = map.get(r.id_kode_indikator);
@@ -410,7 +536,7 @@ export function aggregateByIndicator(records: SapaRecord[]): {
         id: r.id_kode_indikator,
         nama,
         opd: r.opds_nama_opd.trim(),
-        nilai: r.variabel,
+        nilai: variabel,
         nilaiNumber,
         satuan: r.satuan,
         tahun: r.tahun || null,
@@ -426,7 +552,7 @@ export function aggregateByIndicator(records: SapaRecord[]): {
           id: r.id_kode_indikator,
           nama,
           opd: r.opds_nama_opd.trim(),
-          nilai: r.variabel,
+          nilai: variabel,
           nilaiNumber,
           satuan: r.satuan,
           tahun: r.tahun,
@@ -435,7 +561,9 @@ export function aggregateByIndicator(records: SapaRecord[]): {
     }
   }
 
-  return [...map.values()].sort((a, b) => b.nilaiNumber - a.nilaiNumber);
+  const semua = [...map.values()];
+  if (opsi.urut === 'relevansi') return semua;
+  return semua.sort((a, b) => b.nilaiNumber - a.nilaiNumber);
 }
 
 /** Summary stats */
@@ -524,6 +652,9 @@ export function dedupIndicators(records: RecordMeta[]): RecordMeta[] {
   return result;
 }
 
+// normalisasiNilai kini hidup di @/lib/parse-numeric (satu pintu parser
+// angka & nilai). Diekspor ulang agar pemanggil lama tidak berubah.
+
 /** Buat RecordMeta[] dari baris tabel visualisasi. */
 export function toRecordMetasFromRows(
   rows: (string | number | null | undefined)[][],
@@ -544,3 +675,5 @@ export function toRecordMetasFromRows(
     return { id: Math.random(), indikator: indicator, nilai, satuan, opd, tahun, isAggregate: isAggregateIndicator(indicator) };
   });
 }
+
+export { normalisasiNilai };
