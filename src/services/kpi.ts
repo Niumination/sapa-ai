@@ -9,6 +9,7 @@ import {
   normalizeText,
   type SapaRecord,
 } from '@/lib/sapa-client';
+import { normalisasiNilai } from '@/lib/parse-numeric';
 import { parseNilaiSapa } from '@/lib/format-singkat';
 
 export interface KpiDef {
@@ -77,7 +78,7 @@ function seriesOf(records: SapaRecord[], idKodeIndikator: number): YearPoint[] {
     const t = (r.tahun ?? '').trim();
     if (!/^\d{4}$/.test(t)) continue;
     // parseNilaiSapa: titik ribuan ID + ekor desimal ".00" khas SPLP.
-    const n = parseNilaiSapa(r.variabel);
+    const n = parseNilaiSapa(normalisasiNilai(r.variabel));
     if (n === null || !Number.isFinite(n)) continue;
     const ty = Number(t);
     if (!byYear.has(ty)) byYear.set(ty, { tahun: ty, nilai: n });

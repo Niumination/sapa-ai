@@ -28,7 +28,20 @@ export async function POST(req: Request) {
       return NextResponse.json({ status: 'error', error: `unknown tag. allowed: ${Array.from(ALLOWED_TAGS).join(', ')}|all` }, { status: 400 });
     }
 
-    for (const t of toRevalidate) (revalidateTag as unknown as (tag: string) => void)(t);
+    // Next 16 mewajibkan argumen kedua: revalidateTag(tag) tanpa profil
+    // memicu peringatan "deprecated". Namun profil bawaan 'max' TIDAK boleh
+    // dipakai di sini — artinya stale 5 mnt · revalidate 30 hari · expire
+    // 1 tahun, yakni entri hanya ditandai basi dan MASIH BOLEH disajikan
+    // selama itu. Itu bertentangan dengan kontrak repo: cache 10 menit
+    // terdistribusi, dan /api/revalidate adalah pembatal KERAS.
+    //
+    // { expire: 0 } = kedaluwarsa SEKETIKA. Handler cache Next lalu menulis
+    // expired = now (identik dengan perilaku revalidateTag(tag) satu argumen
+    // yang dipakai sebelumnya), tanpa memicu peringatan deprecated.
+    const BATAL_SEKETIKA = { expire: 0 };
+    for (const t of toRevalidate) {
+      revalidateTag(t, BATAL_SEKETIKA);
+    }
 
     return NextResponse.json({ status: 'ok', revalidated: toRevalidate });
   } catch (e) {

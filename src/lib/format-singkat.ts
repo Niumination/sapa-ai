@@ -25,6 +25,8 @@ export function parseNilaiSapa(value: unknown): number | null {
   if (typeof value !== 'string') return null;
   const raw = value.trim().replace(/\s/g, '').replace(/[^\d,.-]/g, '');
   if (!raw || raw === '-' || raw === '.' || raw === ',') return null;
+  // Reviu 2026-09-04: tanpa angka sama sekali ("..", "Rp -") jangan jadi 0.
+  if (!/\d/.test(raw)) return null;
   const comma = raw.lastIndexOf(',');
   const dot = raw.lastIndexOf('.');
   let normalized = raw;

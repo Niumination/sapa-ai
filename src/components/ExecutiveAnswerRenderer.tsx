@@ -164,7 +164,7 @@ function ContextKPICards({ presentation }: { presentation: ExecutivePresentation
   const risiko = buckets?.A?.find((e) => !e.indikator.toLowerCase().includes('stunting'));
   const intervensi = buckets?.C?.find((e) => e.indikator.toLowerCase().includes('vitamin'));
   if (!basis && !risiko && !intervensi) return null;
-  const cards = [];
+  const cards: { label: string; value: string; unit: string; desc: string }[] = [];
   if (basis) cards.push({ label: 'Basis Data', value: basis.nilai, unit: basis.satuan, desc: stuntingCtx ? 'Balita Dipantau' : shortDesc(basis.indikator) });
   if (risiko) cards.push({ label: 'Tingkat Risiko', value: risiko.nilai, unit: risiko.satuan, desc: 'Balita Kurus' });
   if (intervensi) cards.push({ label: 'Intervensi Utama', value: intervensi.nilai, unit: intervensi.satuan, desc: 'Cakupan Vitamin A' });

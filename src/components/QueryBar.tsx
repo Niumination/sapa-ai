@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 
 interface QueryBarProps {
   onQuery: (query: string) => void;
@@ -27,7 +27,9 @@ const CHIP_GROUPS: ChipGroup[] = [
   {
     id: 'sapa',
     source: 'SAPA · SPLP',
-    hint: '2.048 record · 38 OPD · SPLP only',
+    // Reviu 2026-09-04 (T-13): sebelumnya "2.048 record · 38 OPD" diketik manual
+    // dan cepat usang (katalog kini 2.055 record). Diisi dari /api/stats.
+    hint: 'SPLP only',
     chips: [
       { label: '👶 Stunting', query: 'stunting' },
       { label: '📈 Prevalensi Stunting', query: 'prevalensi stunting' },
@@ -45,6 +47,24 @@ const CHIP_GROUPS: ChipGroup[] = [
 
 export default function QueryBar({ onQuery, isLoading, onReset, isDefaultMode }: QueryBarProps) {
   const [input, setInput] = useState('');
+  const [katalog, setKatalog] = useState<string | null>(null);
+
+  useEffect(() => {
+    let batal = false;
+    fetch('/api/stats')
+      .then((r) => (r.ok ? r.json() : null))
+      .then((d) => {
+        if (batal || !d?.overview) return;
+        const { totalRecords, totalOpd } = d.overview;
+        setKatalog(
+          `${Number(totalRecords).toLocaleString('id-ID')} record · ${Number(totalOpd).toLocaleString('id-ID')} OPD · SPLP only`,
+        );
+      })
+      .catch(() => {});
+    return () => {
+      batal = true;
+    };
+  }, []);
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -67,7 +87,7 @@ export default function QueryBar({ onQuery, isLoading, onReset, isDefaultMode }:
           <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-[#1B4332] to-[#2D6A4F] flex items-center justify-center text-sm shadow-lg">🤖</div>
           <span className="text-base font-bold text-[#1B4332]">SAPA Smart AI</span>
         </div>
-        <span className="text-xs text-[#767D6F]">Tanya data SAPA Aceh Tengah</span>
+        <span className="text-xs text-[#767D6F]">Tanya data SAPA Aceh Tengah — dihitung dari data SPLP</span>
         {!isDefaultMode && (
           <button onClick={onReset} className="absolute right-5 top-5 text-[10px] text-[#1B4332] hover:text-[#2D6A4F] transition-colors flex items-center gap-1">
             <span>←</span>
@@ -79,6 +99,7 @@ export default function QueryBar({ onQuery, isLoading, onReset, isDefaultMode }:
       <div className="px-5 py-3 space-y-2">
         {CHIP_GROUPS.map((group) => (
           <div key={group.id} className="flex flex-wrap items-center justify-center gap-x-2 gap-y-1.5" role="group" aria-label={`Chip sumber ${group.source}`}>
+            <span className="text-[10px] text-[#767D6F]">{katalog ?? group.hint}</span>
             {group.chips.map((chip) => (
               <button
                 key={chip.label}

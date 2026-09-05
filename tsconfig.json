@@ -9,6 +9,10 @@
     "allowJs": true,
     "skipLibCheck": true,
     "strict": false,
+    // Sprint Fase 0 (reviu 2026-09-04): strictNullChecks diaktifkan walau strict
+    // penuh belum. Tanpa ini, penyempitan union (discriminated union) tidak jalan —
+    // mis. `if (!hasil.ok) hasil.error` dianggap error oleh tsc, padahal aman.
+    "strictNullChecks": true,
     "noEmit": false,
     "esModuleInterop": true,
     "module": "esnext",

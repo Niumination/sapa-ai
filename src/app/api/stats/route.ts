@@ -1,6 +1,7 @@
 import { NextResponse } from 'next/server';
 import { unstable_cache } from 'next/cache';
-import { fetchSapaData } from '@/lib/sapa-client';
+import { fetchSapaData, } from '@/lib/sapa-client';
+import { normalisasiNilai } from '@/lib/parse-numeric';
 
 export const revalidate = 600;
 export const runtime = 'nodejs';
@@ -19,14 +20,16 @@ async function fetchStatsPayload() {
     uniqueOpds.add(opdName);
     const indName = r.kode_indikator_nama_indikator || 'Indikator';
     uniqueIndicators.add(indName);
-    const yr = r.tahun ? String(r.tahun) : '2025';
+    // Reviu 2026-09-04 (T-04): dulu tahun kosong dilabeli '2025' — 797 record
+    // (38,8%) ikut tercatat sebagai 2025. Kini dilaporkan apa adanya.
+    const yr = String(r.tahun ?? '').trim() || 'Tanpa tahun';
     yearCounts[yr] = (yearCounts[yr] || 0) + 1;
     if (!opdCounts[opdName]) opdCounts[opdName] = { id: r.id_opds || 0, nama: opdName, count: 0 };
     opdCounts[opdName].count += 1;
     if (!indicatorCounts[indName]) indicatorCounts[indName] = { count: 0, samples: [] };
     indicatorCounts[indName].count += 1;
     if (r.variabel && indicatorCounts[indName].samples.length < 3) {
-      indicatorCounts[indName].samples.push(`${r.variabel} ${r.satuan || ''}`.trim());
+      indicatorCounts[indName].samples.push(`${normalisasiNilai(r.variabel)} ${r.satuan || ''}`.trim());
     }
   }
 

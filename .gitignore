@@ -11,3 +11,6 @@ next-env.d.ts
 # Data DTSEN mentah BAPPEDA — PII (NIK/nama/alamat). JANGAN commit (UU PDP).
 data/dtsen-raw/
 .env*
+
+# Contoh konfigurasi BOLEH di-commit (berisi placeholder, bukan rahasia).
+!.env.example
