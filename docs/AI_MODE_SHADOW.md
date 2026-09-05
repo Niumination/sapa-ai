@@ -3,13 +3,22 @@
 Ringkasan singkat untuk peninjau kode. Rincian terukur ada pada
 `LAPORAN-MODE-SHADOW-AI.md` di luar repo ini.
 
-## Keadaan saat ini
+## Keadaan saat ini (diperbarui 2026-09-06: AKTIF produksi)
 
-**AI tidak aktif secara bawaan.** `AI_ENABLED` tidak dipasang, jadi aplikasi
-berjalan 100% deterministik dari data SAPA SPLP. Kode di PR ini hanya
-menyiapkan **pipa**-nya: klien model, prompt, pemeriksa grounding, dan mode
-shadow. Tidak ada satu pun kredensial yang dibutuhkan untuk menjalankan
-aplikasi atau menjalankan test.
+**AI aktif di produksi** (`sapa-smart-ai.vercel.app`, `glm-5.3` OpenCode Go,
+`AI_ENABLED=true`). Tanpa env (`AI_API_KEY` kosong) aplikasi tetap 100%
+deterministik — bawaan kode tidak berubah: yang berubah hanya env produksi.
+
+Jejak validasi: gerbang model-sungguhan lolos 2026-09-05 — 78 item, served
+74/78, **47/52 panggilan model (90,4% pass, 9,6% replaced, 0 fail)**; jaring
+pengaman menangkap halusinasi asli (`tahun halu: 2020`, `tahun halu: 1990`).
+
+## Cara membaca sisa dokumen ini
+
+Bagian §§berikut ditulis saat AI masih nonaktif (mode shadow sebagai jalan
+menuju aktivasi). Prosedur shadow-nya tetap berlaku untuk model/pengaturan
+baru; angka-angka mock di bawah adalah **sejarah pra-aktivasi**, bukan klaim
+berjalan. Keadaan aktif kini: lihat "Keadaan saat ini" di atas.
 
 | Mode | `AI_ENABLED` | `AI_SHADOW` | Yang terjadi |
 |---|---|---|---|
@@ -86,10 +95,19 @@ Klien bersifat agnostik dan mendukung tiga dialek:
 
 Daftar 17 variabel lingkungan beserta penjelasnya ada di `.env.example`.
 
-## Yang BELUM terbukti
+## Yang BELUM terbukti (status 2026-09-06: SEBAGIAN TERBUKTI — lihat bawah)
 
 Seluruh angka pada dokumen ini berasal dari **provider tiruan**, yang pada
 dasarnya menyalin evidence. Itu membuktikan pipa dan jaring pengamannya sehat —
 **bukan** bukti model sungguhan akan sebersih itu. Sebelum `AI_ENABLED=true`,
 jalankan model sebenarnya (OpenCode Go; Gemini sebagai alternatif) dalam mode
 shadow dan penuhi gerbang: `pass ≥ 90%`, `replaced ≤ 10%`, `fail = 0`.
+
+> **5 Sep 2026 — TERBUKTI dengan `glm-5.3` OpenCode Go** (78 item,
+> korpus SPLP hidup): served 74/78, **47/52 panggilan (90,4% pass, 9,6%
+> replaced, 0 fail, 0 unknown token)**, regresi 0. Jaring menangkap halusinasi
+> asli (`tahun halu: 2020`, `tahun halu: 1990`). Atas dasar ini + restu
+> Disdukcapil/Dinsos, `AI_ENABLED=true` dipasang di produksi 2026-09-06.
+> Yang TETAP terbuka: kualitas model lain (mis. kandidat hemat
+> `deepseek-v4-flash` — uji shadow sendiri sebelum pakai) dan 4 gagal konsep
+> (C9, D4, D5, M1) ranah Fase 3.

@@ -2,8 +2,9 @@
 
 > **Next.js 16 + SPLP API langsung (tanpa DB, tanpa auth/login, tanpa DTSEN, tanpa warehouse)**
 > **Path:** `services/sapa-ai/` · **Repo:** `Niumination/sapa-ai` (`main`)
+> **Produksi:** https://sapa-smart-ai.vercel.app — AI **AKTIF** (`glm-5.3` OpenCode Go, gerbang 47/52 lolos) + fallback deterministik
 > **Status:** 🟢 Active — Perf RSC+ISR 10m (analytics/dashboard server-fetch, kpi/stats/report/sapa cache terdistribusi, revalidate endpoint)
-> **Backlog priority:** P2
+> **Backlog priority:** P2 — rencana berikut: `docs/RENCANA-TAHAP-BERIKUTNYA.md`
 
 ## Arsitektur
 
@@ -11,7 +12,8 @@
 SPLP API (api-splp.layanan.go.id/sapa) ──→ sapa-client.ts (fetch + LRU 10 mnt per-instance)
   ├── services/analytics-data.ts → unstable_cache 600s tags sapa-analytics (terdistribusi)
   ├── services/kpi-data.ts → unstable_cache 600s tags kpi
-  ├── /api/query  → retrieval + intent + narasi deterministik (grounding.ts) → HybridResponse (ƒ Dynamic)
+  ├── /api/query  → retrieval + intent + narasi AI (`answer-compose`: model → grounding/eject → fallback deterministik) (ƒ Dynamic)
+  ├── /api/query/stream → SSE narasi AI (status → token → result/error)
   ├── /api/kpi    → KPI deterministik (○ 10m, revalidate 600)
   ├── /api/report → narasi "belum aktif" jujur (○ 10m)
   ├── /api/sapa   → agregat dashboard/gis/analytics (○ 10m)
@@ -38,7 +40,8 @@ Halaman: `/` (QueryBar chip SAPA-only) · `/dashboard` (RSC revalidate 600 → D
 - **Chip QueryBar wajib `matched>0`** terhadap SPLP sebelum merge (cek via `/api/query`).
 - **Rollback UI eksekutif:** `NEXT_PUBLIC_AI_EXECUTIVE_UI=false`.
 - **Deploy:** `vercel.json` hanya `maxDuration: 60` (aman di Hobby, maks 300) — tanpa cron, tanpa env wajib.
-  `.env.example` minimal & git-ignored (Upstash opsional → fallback memori).
+  `.env.example` ter-track & terdokumentasi penuh (17 var, semua opsional/komentar; pengecualian `!.env.example` di `.gitignore`). Env produksi (`AI_*`, `REVALIDATE_SECRET`) hanya via Vercel Dashboard, tidak pernah di-commit.
+  (Upstash opsional → fallback memori).
 
 ## Perintah
 
@@ -65,3 +68,7 @@ perf audit (recharts memo/lazy) → RSC analytics/dashboard (server-fetch 600s) 
 ## Riwayat sesi 2026-09-05 (ringkas)
 
 Integrasi arena.ai dev-2 di branch `integrasi-arena-ai` (3 patch `git am` bersih, tree identik `df21ab4`) → verifikasi hijau (typecheck, 145 test, build) → push branch → merge FF ke main → eval deterministik 74/78 regresi 0 → shadow `glm-5.3` OpenCode Go: throttle 403/1010 + budget reasoning → perbaiki (retry 403 + backoff 10 dtk, log `[ai-error]`, flag `ai.attempted`, metrik gagal jujur, `SAPA_EVAL_LLM_GAP_MS`, default budget 800→3000, test retry 5 butir, 150/150) → gerbang model-sungguhan **lolos** (47/52 = 90,4% pass, 5 replaced = 9,6%, 0 fail; jaring tangkap `tahun halu: 2020/1990`) → restu Disdukcapil/Dinsos AMAN → aktivasi produksi `AI_ENABLED=true` + `glm-5.3`.
+
+## Riwayat sesi 2026-09-06 (ringkas)
+
+Default budget 800→1600→**3000** (titik manis terukur 6/6, ~12 dtk) → docs sinkron-penuh (README, AGENTS, AI_MODE_SHADOW, VERCEL_ENV benar, `docs/RENCANA-TAHAP-BERIKUTNYA.md` baru) → proyek Vercel `sapa-ai` (`sapa-smart-ai.vercel.app`), env AI + `REVALIDATE_SECRET` → push `main`, redeploy → `/api/status` produksi `ai: active, glm-5.3` + smoke query grounded. Wart terbuka: duplikasi satuan narasi AI (Tahap A1). Kuota: `glm-5.3` boros ($1,99/$3 per 5 jam) — kandidat `deepseek-v4-flash`, ganti hanya atas perintah eksplisit.
