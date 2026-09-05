@@ -73,6 +73,15 @@ export interface ExecutivePresentation {
   bucketSummary: string;
 }
 
+/** Ringkasan metadata AI yang ikut dikirim ke UI (label kejujuran sumber). */
+export interface AiMetaSummary {
+  used: boolean;
+  shadow: boolean;
+  model: string | null;
+  grounded: 'pass' | 'replaced' | 'skipped';
+  reason?: string;
+}
+
 export interface HybridResponse {
   narasi: string;
   visualisasi: {
@@ -84,6 +93,8 @@ export interface HybridResponse {
   timestamp: string;
   /** Optional presentation layer; legacy fields remain the source-compatible contract. */
   presentation?: ExecutivePresentation;
+  /** Metadata AI — dipakai UI untuk label "dirangkai AI" vs "dihitung deterministik". */
+  ai?: AiMetaSummary;
 }
 
 export interface IntentResult {

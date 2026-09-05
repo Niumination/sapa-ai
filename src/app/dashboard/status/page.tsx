@@ -73,11 +73,11 @@ export default function StatusPage() {
       <div className="bg-[var(--surface-card)] border border-[var(--border)] rounded-2xl p-5 space-y-3">
         <h2 className="font-bold text-[var(--brand)] text-sm">Detail Koneksi</h2>
         <DetailRow label="Endpoint" value="https://api-splp.layanan.go.id/sapa/1.0/api/daftar_data" mono />
-        <DetailRow label="OAuth" value="https://sapa.acehtengahkab.go.id/oauth/token (client_credentials)" mono />
+        <DetailRow label="Autentikasi" value="Tidak ada — endpoint daftar_data SPLP bersifat publik" />
         <DetailRow label="Sumber label" value={data?.source || '—'} />
         <DetailRow label="Terakhir diperbarui" value={data?.lastFetched ? new Date(data.lastFetched).toLocaleString('id-ID', { dateStyle: 'full', timeStyle: 'medium' }) : '—'} />
-        <DetailRow label="Cache" value="Tidak ada — setiap request fetch ulang dari SPLP (deterministik)" />
-        <p className="text-xs text-[var(--text-muted)] pt-2 border-t border-[var(--border)]">Jika Offline, periksa env <code className="px-1 py-0.5 bg-[var(--surface-muted)] rounded">SAPA_CLIENT_SECRET</code> di Vercel dan konektivitas ke api-splp.layanan.go.id</p>
+        <DetailRow label="Cache" value="LRU 10 menit per instance + cache terdistribusi 10 menit (tag: sapa-analytics|kpi|stats|report)" />
+        <p className="text-xs text-[var(--text-muted)] pt-2 border-t border-[var(--border)]">Jika Offline, periksa konektivitas ke api-splp.layanan.go.id. Endpoint ini publik, jadi tidak ada kredensial yang wajib diisi.</p>
       </div>
 
       {/* Tentang aplikasi — gabungan dari /dashboard/akun */}
@@ -92,7 +92,7 @@ export default function StatusPage() {
         <ul className="text-sm text-[var(--text-body)] space-y-2 list-disc list-inside">
           <li><strong>SAPA Aceh Tengah</strong> — <a href="https://sapa.acehtengahkab.go.id" target="_blank" rel="noopener noreferrer" className="text-[var(--brand)] underline">sapa.acehtengahkab.go.id</a> via SPLP API <code className="text-xs">api-splp.layanan.go.id/sapa/1.0/api/daftar_data</code></li>
           <li><strong>Regulasi:</strong> Satu Data Indonesia — 38 OPD pengampu, 1790+ indikator</li>
-          <li><strong>Pembaruan:</strong> Real-time per request (tanpa cache lokal), deterministik</li>
+          <li><strong>Pembaruan:</strong> Maksimal 10 menit yang lalu (cache terdistribusi), dihitung deterministik dari data SPLP</li>
         </ul>
       </div>
 
@@ -107,7 +107,7 @@ export default function StatusPage() {
       </div>
 
       <div className="bg-[var(--brand-tint)] border border-[var(--brand)]/20 rounded-2xl p-4 text-sm text-[var(--text-body)]">
-        Data sensitif (mis. DTSEN/Bapokting) tidak dicakup sapa-ai publik — aplikasi ini hanya menyajikan data SAPA terbuka.
+        Satu sumber data: SAPA Aceh Tengah (api-splp.layanan.go.id). Tidak ada penggabungan sumber lain — setiap angka di aplikasi ini berasal dari katalog SPLP.
       </div>
     </div>
   );

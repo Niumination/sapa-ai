@@ -1,5 +1,6 @@
 import { NextResponse } from 'next/server';
 import { fetchSapaData } from '@/lib/sapa-client';
+import { getAiRuntimeStatus } from '@/services/answer-compose';
 
 export const dynamic = 'force-dynamic';
 export const runtime = 'nodejs';
@@ -7,35 +8,36 @@ export const maxDuration = 60;
 
 export interface SystemStatus {
   sapa: { state: 'active' | 'down'; records: number };
-  ai: { state: 'active' | 'inactive'; provider: string | null; model: string | null };
+  ai: {
+    /** active = narasi AI dikirim ke pengguna; shadow = dievaluasi saja; inactive = deterministik. */
+    state: 'active' | 'shadow' | 'inactive';
+    provider: string | null;
+    model: string | null;
+    reason: string | null;
+    dailyUsed: number;
+  };
 }
 
 /**
- * Status sistem jujur untuk sidebar.
- * - SAPA: active bila SPLP bisa diambil (memakai LRU server yang sama dengan /api/query).
- * - AI: active hanya bila env AI_MODEL diisi DAN ada jalur kode yang memakainya
- *   (AI_WIRED). sapa-ai saat ini 100% deterministik tanpa LLM, jadi default =
- *   inactive walau env model terisi (mis. sisa export shell dari proyek lain).
- *   Saat wiring LLM mendarat, set AI_WIRED=true — status ikut berubah otomatis.
+ * Status sistem jujur untuk sidebar & halaman status.
+ * - SAPA: active bila SPLP bisa diambil (memakai LRU yang sama dengan /api/query).
+ * - AI: state dihitung dari env yang nyata (bukan konstanta hardcode), plus alasan
+ *   bila nonaktif — supaya operator tahu persis apa yang kurang.
  */
-const AI_WIRED = false;
-
 export async function GET() {
-  const model = process.env.AI_MODEL?.trim() || null;
-  const wired = AI_WIRED && !!model;
   const status: SystemStatus = {
     sapa: { state: 'down', records: 0 },
-    ai: {
-      state: wired ? 'active' : 'inactive',
-      provider: process.env.AI_PROVIDER?.trim() || null,
-      model,
-    },
+    ai: { state: 'inactive', provider: null, model: null, reason: null, dailyUsed: 0 },
   };
-  try {
-    const { records } = await fetchSapaData();
-    status.sapa = { state: 'active', records: records.length };
-  } catch {
-    status.sapa = { state: 'down', records: 0 };
-  }
+
+  const [sapa, ai] = await Promise.all([
+    fetchSapaData()
+      .then(({ records }) => ({ state: 'active' as const, records: records.length }))
+      .catch(() => ({ state: 'down' as const, records: 0 })),
+    getAiRuntimeStatus().catch(() => null),
+  ]);
+
+  status.sapa = sapa;
+  if (ai) status.ai = ai;
   return NextResponse.json(status);
 }

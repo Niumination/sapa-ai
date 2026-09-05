@@ -88,8 +88,7 @@ export default function AIResponseRenderer({ response, onFollowUp }: Props) {
 }
 
 // ─── Format angka konsisten id-ID (ribuan pakai titik) ───
-// @hotfix 29-Agu-2026: angka dari seluruh sumber (SAPA/DTSEN/Bapokting/Excel)
-// ditampilkan konsisten "12.345" bukan "12345" — termasuk string numerik.
+// Angka SAPA ditampilkan konsisten id-ID ("12.345" bukan "12345"), termasuk string numerik.
 function formatAngka(v: unknown): string {
   if (v === null || v === undefined) return '-';
   if (typeof v === 'number' && Number.isFinite(v)) return v.toLocaleString('id-ID');
