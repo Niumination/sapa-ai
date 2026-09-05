@@ -2,7 +2,7 @@
 // Satu dialek untuk semua provider (OpenCode Go, Gemini via endpoint
 // OpenAI-compatible, atau gateway apa pun). Pola diwarisi dari llm-client.ts lama
 // (strip thinking, retry 5xx, AbortSignal) dengan anggaran yang jauh lebih ketat:
-// timeout 20 s dan max_tokens 1600 (default) — cukup untuk narasi ber-token
+// timeout 20 s dan max_tokens 3000 (default) — cukup untuk narasi ber-token
 // + ruang berpikir model reasoning, bukan esai.
 
 import type { AiConfig } from './env';
