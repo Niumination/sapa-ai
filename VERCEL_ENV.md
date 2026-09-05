@@ -1,39 +1,23 @@
-# CC Aceh Tengah — Vercel Environment Variables
-# Copy-paste ini ke: Vercel Dashboard → Project → Settings → Environment Variables
+# sapa-ai — Vercel Environment Variables (SPLP-only, publik)
 
-# ─── Database (Supabase — Pooler Transaction Mode) ───
-# ⚠️ PENTING: Pakai pooler, bukan direct! Port 6543, bukan 5432
-# ⚠️ PENTING: Username = postgres.noxaotgovlbjpaufbdsm (bukan postgres)
-DATABASE_URL=postgresql://postgres.noxaotgovlbjpaufbdsm:***@aws-0-ap-northeast-1.pooler.supabase.com:6543/postgres?pgbouncer=true&prepared_statements=false
+> Semua variabel **OPSIONAL**. Tanpa satu pun, aplikasi berjalan 100%
+> deterministik dari SPLP. Jangan pernah commit nilai asli.
 
-# ─── AI Provider (OpenCode Zen - FREE models) ───
-AI_BASE_URL=https://opencode.ai/zen/v1
-AI_API_KEY=«redacted:sk-…»
-AI_MODEL=nemotron-3-ultra-free
+```bash
+# ─── AI narasi (OpenCode Go) — aktif hanya bila SEMUA terisi + gerbang lolos ───
+AI_ENABLED=true
+AI_PROVIDER=opencode-go
+AI_MODEL=glm-5.3
+AI_API_KEY=<isi via Dashboard → Settings → Environment Variables>
+# AI_BASE_URL= (kosongkan = preset bawaan https://opencode.ai/zen/go/v1)
+# AI_MAX_OUTPUT_TOKENS=3000
+# AI_TIMEOUT_MS=20000
 
-# ─── Auth (Optional — auto-generated if not set) ───
-JWT_SECRET=random-secret-string-here
+# ─── Revalidate (WAJIB sebelum produksi — tanpa ini endpoint publik) ───
+REVALIDATE_SECRET=<hex acak 32 byte: openssl rand -hex 32>
 
-# ─── Setup Protection ───
-ADMIN_SETUP_TOKEN=«random-string-≥16-char»
-CRON_SECRET=«random-string-≥16-char»
-DTSEN_NIK_KEY=«random-string-≥16-char»
+# ─── Mode ukur (bukan produksi) ───
+# AI_SHADOW=true   # model dipanggil & diukur, pengguna tetap terima deterministik
+```
 
-# ─── SPLP API Integration (DTSEN + Bapokting) ───
-# Token JWT Bearer untuk header AuthorizationSPLP ke api-splp.layanan.go.id
-# Diperlukan untuk: DTSEN agregat publik + Bapokting harga komoditas
-SPLP_API_KEY=«JWT-token-dari-splp-layanan-go-id»
-
-
-# ─── Mode ───
-USE_MOCK_DATA=false
-
-# ============================================================
-# CATATAN:
-# - DATABASE_URL HARUS pakai pooler (aws-0-ap-northeast-1.pooler.supabase.com:6543)
-# - JANGAN pakai direct connection (db.xxx.supabase.co:5432) — IPv6 only!
-# - prepared_statements=false WAJIB untuk Supavisor transaction mode
-# - Admin table: POST /api/setup/admin (first time only)
-# - Akun admin dibuat via bootstrap terkunci (ADMIN_BOOTSTRAP_PASSWORD),
-#   bukan default admin/admin123. Ganti password di /dashboard/akun.
-# ============================================================
+Catatan: repo ini SPLP-only — tidak ada DATABASE_URL/JWT/cron untuk sapa-ai.
