@@ -62,6 +62,17 @@ beri jeda antar-item ber-evidence:
 ```bash
 SAPA_EVAL_LLM_GAP_MS=15000 SAPA_EVAL_URL=http://127.0.0.1:3104 npm run eval
 ```
+`AI_TIMEOUT_MS` bawaan 20 dtk melindungi UX produksi (lambat → fallback
+deterministik, tercatat `panggilan model gagal: timeout`). Untuk pengukuran
+gerbang yang valid, longgarkan via env (runtime saja, bukan default kode):
+
+```bash
+AI_MAX_OUTPUT_TOKENS=4000 AI_TIMEOUT_MS=60000 \
+AI_SHADOW=true AI_PROVIDER=opencode-go \
+AI_MODEL=glm-5.3 AI_API_KEY=<kunci> \
+npx next start -p 3104
+SAPA_EVAL_LLM_GAP_MS=15000 SAPA_EVAL_URL=http://127.0.0.1:3104 npm run eval
+```
 
 ## Provider
 
