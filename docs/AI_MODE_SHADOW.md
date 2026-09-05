@@ -48,7 +48,20 @@ SAPA_EVAL_URL=http://127.0.0.1:3104 npm run eval
 
 Setiap pemanggilan mencatat satu baris `[ai-shadow]` berisi pertanyaan, model,
 status grounding, alasan, latensi, **dan kedua narasi berdampingan** — sehingga
-selisihnya bisa dibaca langsung.
+selisihnya bisa dibaca langsung. Kegagalan panggil/parse dicatat `[ai-error]`
+(query 120 karakter + tahap + galat, tanpa kredensial).
+
+## Throttle gateway (temuan 2026-09-05)
+
+OpenCode Go men-throttle traffic beruntun (HTTP 403 `error code: 1010`, pulih
+setelah cooldown). Klien me-retry 1x (jeda 10 dtk, `AI_RETRY_BACKOFF_MS`) dan
+kegagalan tercatat jujur di metrik eval sebagai `panggilan model gagal` —
+gerbang dinyatakan **tidak dapat dinilai** bila >0. Untuk pengukuran gerbang,
+beri jeda antar-item ber-evidence:
+
+```bash
+SAPA_EVAL_LLM_GAP_MS=15000 SAPA_EVAL_URL=http://127.0.0.1:3104 npm run eval
+```
 
 ## Provider
 

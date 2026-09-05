@@ -91,7 +91,13 @@ async function kirim(cfg: AiConfig, messages: LlmMessage[], stream: boolean, sig
   return res;
 }
 
-/** Panggil model sekali (tanpa streaming). 1 retry untuk 429/5xx/gangguan jaringan. */
+/** Panggil model sekali (tanpa streaming). Retry 1x untuk throttle (429/403)
+ *  dengan jeda 10 dtk — gateway OpenCode Go men-throttle burst (HTTP 403
+ *  "error code: 1010", terukur 2026-09-05) dan pulih setelah cooldown; jeda
+ *  300 ms sia-sia melawan throttle skala menit. 4xx lain = konfigurasi,
+ *  jangan retry. Total terburuk ≈ 20+10+20 dtk, masih di bawah anggaran
+ *  server 60 dtk; gagal = fallback deterministik, bukan error ke pengguna. */
+const TUNDA_RETRY_MS = Number(process.env.AI_RETRY_BACKOFF_MS ?? '') || 10_000;
 export async function callLlmText(
   cfg: AiConfig,
   messages: LlmMessage[],
@@ -108,10 +114,13 @@ export async function callLlmText(
       const res = await kirim(cfg, messages, false, sig, cfg.jsonMode);
       if (!res.ok) {
         const teks = await res.text().catch(() => '');
-        // 4xx selain 429 = salah konfigurasi/permintaan — jangan retry.
-        if (res.status < 500 && res.status !== 429) {
+        // 403 = throttle gateway (kunci salah = 401) — ikut di-retry seperti
+        // 429/5xx. 4xx lain = salah konfigurasi/permintaan, jangan retry.
+        const bisaRetry = res.status >= 500 || res.status === 429 || res.status === 403;
+        if (!bisaRetry) {
           throw new LlmError(`HTTP ${res.status}: ${teks.slice(0, 200)}`, res.status);
         }
+        if (percobaan < 2) console.warn('[ai-retry]', `HTTP ${res.status}, coba lagi dalam ${TUNDA_RETRY_MS / 1000}d`);
         throw new LlmError(`HTTP ${res.status}: ${teks.slice(0, 200)}`, res.status);
       }
       const json = (await res.json()) as {
@@ -128,7 +137,17 @@ export async function callLlmText(
       };
     } catch (e) {
       terakhirError = e;
-      if (percobaan < 2) await new Promise((r) => setTimeout(r, 300));
+      // Galat non-retryable (4xx selain 429/403) JANGAN dicoba ulang:
+      // kunci salah dicoba 2x hanya membuang 2x timeout.
+      const bolehLanjut =
+        !(e instanceof LlmError) ||
+        e.status === undefined ||
+        e.status >= 500 || e.status === 429 || e.status === 403;
+      if (percobaan >= 2 || !bolehLanjut) break;
+      // Jeda panjang hanya untuk throttle (403/429) — 300 ms sia-sia melawan
+      // cooldown skala menit; untuk galat lain pertahankan jeda singkat.
+      const tunda = e instanceof LlmError && (e.status === 403 || e.status === 429) ? TUNDA_RETRY_MS : 300;
+      await new Promise((r) => setTimeout(r, tunda));
     } finally {
       selesai();
     }

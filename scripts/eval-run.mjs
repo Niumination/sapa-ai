@@ -30,6 +30,8 @@
  *   node scripts/eval-run.mjs --stream              # cek parity SSE vs JSON
  *   node scripts/eval-run.mjs --stability           # tiap query 2x, wajib identik
  *   SAPA_EVAL_URL=http://127.0.0.1:3105 node scripts/eval-run.mjs
+ *   SAPA_EVAL_LLM_GAP_MS=15000 ...   # jeda antar-item ber-evidence (gerbang
+ *                                     # shadow model-sungguhan; 0 = cepat)
  */
 
 import { readFileSync, writeFileSync, existsSync } from 'node:fs';
@@ -50,6 +52,12 @@ const val = (n, d) => {
 const BASE = process.env.SAPA_EVAL_URL || 'http://127.0.0.1:3000';
 const PACE = Number(val('pace', 24)); // permintaan per jendela rate-limit
 const PACE_WINDOW_MS = 62_000;
+// Jeda antar-item ber-evidence agar gateway LLM tidak men-throttle burst
+// (terukur 2026-09-05: OpenCode Go 403 "error code: 1010" pada burst →
+// 50 panggilan hilang diam-diam). 0 = perilaku lama (cepat, untuk target
+// deterministik/mock). Untuk gerbang shadow model-sungguhan: 15000.
+const _gap = Number(process.env.SAPA_EVAL_LLM_GAP_MS ?? 0);
+const LLM_GAP_MS = Number.isFinite(_gap) && _gap > 0 ? _gap : 0;
 const DO_BASELINE = flag('baseline');
 const DO_STREAM = flag('stream');
 const DO_STABILITY = flag('stability');
@@ -284,6 +292,14 @@ for (const [idx, item] of items.entries()) {
   const baris = { id: item.id, grup: item.grup, harus: item.harus, lulus: n.lulus, cara: n.cara, inv: n.inv, nEvidence: n.nEvidence, top1Ok: n.top1Ok };
   if (r.ai && r.ai.used) {
     baris.ai = { grounded: r.ai.grounded, unknownTokens: r.ai.unknownTokens ?? 0, latencyMs: r.ai.latencyMs ?? null, shadow: Boolean(r.ai.shadow) };
+  } else if (r.ai && r.ai.attempted) {
+    // Model dicoba tetapi tidak terpakai (throttle/parse-gagal): JANGAN
+    // disamarkan sebagai "tak dipanggil" — ini metrik kejujuran gerbang.
+    baris.aiUpayaGagal = r.ai.reason ?? 'tanpa alasan';
+  }
+  if (LLM_GAP_MS > 0 && n.nEvidence > 0) {
+    process.stdout.write(`   (jeda LLM ${LLM_GAP_MS / 1000}d — item ber-evidence…)\n`);
+    await sleep(LLM_GAP_MS);
   }
 
   if (DO_STREAM) {
@@ -345,6 +361,14 @@ if (dipanggil.length) {
   console.log(`grounded fail    : ${fail} (${rate(fail)})   → harus 0`);
   console.log(`token tak dikenal: ${dipanggil.reduce((a, h) => a + h.ai.unknownTokens, 0)} → harus 0`);
   console.log(`latensi rata²    : ${rata} ms`);
+}
+// Upaya panggil yang gagal (throttle/parse/timeout): penyebut jujur gerbang.
+// Bila >0, metrik AI di atas dihitung dari sampel kecil → gerbang tak valid.
+const upayaGagal = hasil.filter((h) => h.aiUpayaGagal);
+if (upayaGagal.length) {
+  console.log(`\npanggilan model gagal: ${upayaGagal.length} → ${upayaGagal.map((h) => h.id).join(', ')}`);
+  console.log(`  alasan pertama: ${(upayaGagal[0].aiUpayaGagal ?? '').slice(0, 160)}`);
+  console.log(`  → gerbang AI TIDAK DAPAT DINILAI — atasi pemicu (throttle/jeda/parse) lalu ulangi`);
 }
 
 if (gagal.length) {

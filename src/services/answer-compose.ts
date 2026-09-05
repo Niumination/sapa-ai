@@ -55,6 +55,9 @@ export interface AiMeta {
   unknownTokens?: number;
   finishReason?: string;
   usage?: { promptTokens?: number; completionTokens?: number };
+  /** Model sempat dipanggil (true) vs tidak pernah dicoba (skipped hemat/terbatas).
+   *  Dipakai harness eval untuk membedakan "gagal panggil" dari "sengaja skip". */
+  attempted?: boolean;
 }
 
 export interface ComposeResult {
@@ -241,6 +244,8 @@ export async function composeAnswer(opts: ComposeOptions): Promise<ComposeResult
   let mentah = '';
   let finishReason: string | undefined;
   let usage: AiMeta['usage'];
+  // Tandai: model dicoba (berhasil/gagal) — bedakan dari skip hemat/terbatas.
+  meta.attempted = true;
 
   try {
     if (opts.stream ?? Boolean(opts.onToken)) {
@@ -272,6 +277,13 @@ export async function composeAnswer(opts: ComposeOptions): Promise<ComposeResult
   } catch (e) {
     meta.model = cfg.model || null;
     meta.provider = cfg.provider;
+    // Kegagalan panggil JANGAN diam: tanpa baris ini, throttle gateway hanya
+    // terlihat sebagai "model tak dipanggil" di metrik (terukur 2026-09-05:
+    // 50 panggilan hilang tanpa jejak). Query di sini sudah lewat pagar PII.
+    console.error('[ai-error]', JSON.stringify({
+      query: opts.query.slice(0, 120), tahap: 'panggil',
+      galat: (e instanceof Error ? e.message : String(e)).slice(0, 200),
+    }));
     return selesai(`panggilan model gagal: ${e instanceof Error ? e.message : String(e)}`);
   }
 
@@ -280,6 +292,10 @@ export async function composeAnswer(opts: ComposeOptions): Promise<ComposeResult
   if (!terurai.ok) {
     meta.model = cfg.model || null;
     meta.provider = cfg.provider;
+    console.error('[ai-error]', JSON.stringify({
+      query: opts.query.slice(0, 120), tahap: 'parse',
+      finishReason: finishReason ?? null, mentah: mentah.slice(0, 200),
+    }));
     return selesai(terurai.error);
   }
 
