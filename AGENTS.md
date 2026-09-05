@@ -61,3 +61,7 @@ Chip SAPA-only 10 chip terverifikasi → LRU SPLP 10 mnt + error boundary → la
 evidence stunting → smoke test + 503 SPLP → cron mati + `.env.example` minimal + dead code −284 baris →
 header DOX diluruskan → push SSH pulih (rotasi ed25519) → recharts dynamic + hapus 5 file mati →
 perf audit (recharts memo/lazy) → RSC analytics/dashboard (server-fetch 600s) → ISR 10m kpi/stats/report/sapa + revalidate endpoint → merge ke main (af93476).
+
+## Riwayat sesi 2026-09-05 (ringkas)
+
+Integrasi arena.ai dev-2 di branch `integrasi-arena-ai` (3 patch `git am` bersih, tree identik `df21ab4`) → verifikasi hijau (typecheck, 145 test, build) → push branch → merge FF ke main → eval deterministik 74/78 regresi 0 → shadow `glm-5.3` OpenCode Go: throttle 403/1010 + budget reasoning → perbaiki (retry 403 + backoff 10 dtk, log `[ai-error]`, flag `ai.attempted`, metrik gagal jujur, `SAPA_EVAL_LLM_GAP_MS`, default budget 800→3000, test retry 5 butir, 150/150) → gerbang model-sungguhan **lolos** (47/52 = 90,4% pass, 5 replaced = 9,6%, 0 fail; jaring tangkap `tahun halu: 2020/1990`) → restu Disdukcapil/Dinsos AMAN → aktivasi produksi `AI_ENABLED=true` + `glm-5.3`.
