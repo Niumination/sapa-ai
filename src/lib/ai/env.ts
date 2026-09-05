@@ -81,7 +81,10 @@ export function getAiConfig(): AiConfig {
     apiKey: process.env.AI_API_KEY?.trim() || '',
     model,
     timeoutMs: envNumber('AI_TIMEOUT_MS', 20_000),
-    maxOutputTokens: envNumber('AI_MAX_OUTPUT_TOKENS', 800),
+    // 1600: model reasoning (mis. glm-5.3) menghabiskan ~800 token hanya
+    // untuk berpikir — dengan 800, content kosong + finish length (terukur
+    // 2026-09-05: 5/6 gagal parse). Ukur gerbang pakai 4000 via env.
+    maxOutputTokens: envNumber('AI_MAX_OUTPUT_TOKENS', 1600),
     temperature: Number(process.env.AI_TEMPERATURE ?? '0.2') || 0.2,
     jsonMode: envFlag('AI_JSON_MODE', true),
     dailyCallLimit: Number(process.env.AI_DAILY_CALL_LIMIT ?? '2000') || 0,
