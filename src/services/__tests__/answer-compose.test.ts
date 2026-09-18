@@ -134,16 +134,25 @@ describe('composeAnswer — gerbang toggle admin', () => {
     process.env.AI_MODEL = 'glm-5.2';
   };
 
-  it('deterministik OFF ⇒ layanan tidak dapat diakses, model TIDAK dipanggil', async () => {
-    const fetchMock = vi.fn();
-    vi.stubGlobal('fetch', fetchMock);
+  it('deterministik OFF + AI ON ⇒ jawaban AI tetap disajikan (bukan error)', async () => {
+    vi.stubGlobal('fetch', jawabModel({ narasi: 'Prevalensi stunting tercatat {{511}}.' }));
+    aktifkanEnv();
+    setToggle(true, false);
+
+    const hasil = await composeAnswer({ query: 'stunting', records, stream: false });
+    expect(hasil.ai.used).toBe(true);
+    expect(hasil.ai.limitedBy).toBeUndefined();
+    expect(hasil.response.narasi).not.toContain('Berdasarkan data SAPA');
+  });
+
+  it('deterministik OFF + AI ON + model gagal ⇒ tidak ada fallback template', async () => {
+    vi.stubGlobal('fetch', vi.fn(async () => ({ ok: false, status: 500, text: async () => 'server error' })) as unknown as typeof fetch);
     aktifkanEnv();
     setToggle(true, false);
 
     const hasil = await composeAnswer({ query: 'stunting', records, stream: false });
     expect(hasil.ai.limitedBy).toBe('service-unavailable');
-    expect(hasil.ai.used).toBe(false);
-    expect(fetchMock).not.toHaveBeenCalled();
+    expect(hasil.response.narasi).not.toContain('Berdasarkan data SAPA');
   });
 
   it('AI OFF + deterministik OFF ⇒ layanan tidak dapat diakses', async () => {

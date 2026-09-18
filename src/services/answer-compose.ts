@@ -116,18 +116,22 @@ export async function getAiRuntimeStatus(): Promise<{
 
   // Toggle admin menang atas env: status harus mencerminkan apa yang benar-benar
   // dikirim ke pengguna, bukan sekadar isi AI_ENABLED.
+  //
+  // Semantik (dikoreksi pemilik 2026-09-19): "deterministik" adalah JAWABAN
+  // TEMPLATE. Mematikannya melarang jawaban template, bukan mematikan layanan —
+  // selama AI masih hidup, jawaban AI tetap disajikan (tanpa fallback template).
   const toggle = await readToggleState();
   const backend = toggleBackend();
   const dariEnv = isAiEnabled(cfg) ? 'active' : isAiShadow(cfg) ? 'shadow' : 'inactive';
-  const state: 'active' | 'shadow' | 'inactive' =
-    !toggle.aiEnabled || !toggle.detEnabled ? 'inactive' : dariEnv;
+  const aiHidup = dariEnv !== 'inactive' && toggle.aiEnabled;
+  const state: 'active' | 'shadow' | 'inactive' = aiHidup ? dariEnv : 'inactive';
   const reason =
     !toggle.aiEnabled && !toggle.detEnabled
       ? 'AI dan deterministik dinonaktifkan oleh admin — layanan tidak dapat diakses'
-      : !toggle.detEnabled
-        ? 'Deterministik dinonaktifkan oleh admin — layanan tidak dapat diakses'
-        : !toggle.aiEnabled
-          ? 'AI dinonaktifkan oleh admin — jawaban deterministik saja'
+      : !toggle.aiEnabled
+        ? 'AI dinonaktifkan oleh admin — jawaban deterministik saja'
+        : !toggle.detEnabled
+          ? 'Deterministik dinonaktifkan oleh admin — jawaban AI saja, tanpa fallback template'
           : aiStatusReason(cfg);
 
   // Read metrics
@@ -260,12 +264,13 @@ export async function composeAnswer(opts: ComposeOptions): Promise<ComposeResult
     if (alasan) meta.reason = alasan;
     if (limitedBy) meta.limitedBy = limitedBy;
     if (errorMsg) meta.error = errorMsg.slice(0, 200);
-    // Deterministik dimatikan admin → tidak ada jawaban yang boleh beredar.
-    // Satu funnel di sini menjamin semua jalur (tanpa evidence, rate limit,
-    // model gagal, parse gagal) ikut tertutup, bukan hanya jalur normal.
+    // "Deterministik" = jawaban template. Kalau dimatikan admin, jalur ini
+    // (satu-satunya tempat jawaban template keluar) harus menolak menyajikannya.
+    // Bila AI memang berhasil menjawab, jalur itu TIDAK lewat sini sehingga
+    // jawaban AI tetap normal.
     if (deterministikMati) {
       meta.limitedBy = 'service-unavailable';
-      meta.reason = 'Layanan SAPA-AI tidak dapat diakses. Deterministik dinonaktifkan oleh admin.';
+      meta.reason = `${alasan ? `${alasan} — ` : ''}jawaban deterministik dinonaktifkan admin dan AI tidak menghasilkan jawaban`;
       meta.grounded = 'skipped';
       meta.used = false;
       return selengkap(meta, { ...dasar.response, narasi: meta.reason, rekomendasi: [] });
@@ -273,13 +278,6 @@ export async function composeAnswer(opts: ComposeOptions): Promise<ComposeResult
     recordMetrics('deterministic');
     return selengkap(meta, dasar.response);
   };
-
-  // Deterministik dimatikan admin ⇒ hentikan di sini. Tanpa pagar ini, jalur
-  // LLM sukses tetap mengirim narasi (melewati selesai()), sehingga tabel
-  // kendali di panel admin tidak benar-benar berlaku.
-  if (deterministikMati) {
-    return selesai('Deterministik dinonaktifkan oleh admin', 'service-unavailable');
-  }
 
   // 1. Tanpa evidence → tidak ada yang bisa dirangkai. Hemat 100% panggilan model.
   if (dasar.evidence.length === 0) return selesai('evidence kosong — model tidak dipanggil', 'no-evidence');
@@ -445,6 +443,11 @@ export async function composeAnswer(opts: ComposeOptions): Promise<ComposeResult
         narasiDeterministik: dasar.response.narasi.slice(0, 300),
       }),
     );
+    // Mode shadow juga mengirim jawaban template — bila deterministik dimatikan
+    // admin, jalur ini pun harus menolak (kalau tidak, template tetap bocor).
+    if (deterministikMati) {
+      return selesai('mode shadow — jawaban template tidak diizinkan admin', 'service-unavailable');
+    }
     recordMetrics('deterministic');
     return selengkap(meta, dasar.response);
   }
