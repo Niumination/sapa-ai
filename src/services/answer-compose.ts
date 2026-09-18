@@ -16,6 +16,7 @@ import {
   type EvidenceItem,
 } from '@/services/grounding';
 import { getAiConfig, isAiEnabled, isAiShadow, aiStatusReason, type AiConfig } from '@/lib/ai/env';
+import { isAiToggleEnabled } from '@/lib/ai/toggle';
 import { buildPrompt } from '@/lib/ai/prompt';
 import { parseLlmAnswer } from '@/lib/ai/schema';
 import { ejectTokens, createStreamEjector, dedupUnits } from '@/lib/ai/tokens';
@@ -240,6 +241,12 @@ export async function composeAnswer(opts: ComposeOptions): Promise<ComposeResult
   const aktif = isAiEnabled(cfg);
   const shadow = isAiShadow(cfg);
   if (!aktif && !shadow) return selesai(aiStatusReason(cfg) ?? 'AI nonaktif', 'unconfigured');
+
+  // Admin toggle check - jika admin mematikan AI via panel
+  const aiToggleOn = isAiToggleEnabled();
+  if (aktif && !aiToggleOn) {
+    return selesai('AI dinonaktifkan oleh admin', 'unconfigured');
+  }
 
   // 2. Pagar masuk: panjang & pola data pribadi.
   const dijaga = guardQuery(opts.query);
