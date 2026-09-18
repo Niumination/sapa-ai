@@ -33,9 +33,18 @@ export class LlmError extends Error {
   }
 }
 
+/** Penanda galat timeout/batal. Dipakai untuk memutus retry: mengulang timeout
+ *  hanya membuang anggaran waktu dua kali tanpa peluang berhasil, dan di
+ *  Vercel anggaran itu keras (maxDuration 60 dtk). */
+export function dibatalkan(e: unknown): boolean {
+  return e instanceof Error && (e.name === 'AbortError' || /^timeout( setelah \d+ ms)?$/.test(e.message));
+}
+
 function gabungSignal(eksternal?: AbortSignal, timeoutMs = 20_000): { signal: AbortSignal; selesai: () => void } {
   const controller = new AbortController();
-  const timer = setTimeout(() => controller.abort(new Error('timeout')), timeoutMs);
+  // Sertakan nilainya di pesan: tanpa ini, "timeout" tidak memberi tahu batas
+  // mana yang berlaku di produksi (env bisa menimpa default).
+  const timer = setTimeout(() => controller.abort(new Error(`timeout setelah ${timeoutMs} ms`)), timeoutMs);
   const onAbort = () => controller.abort(eksternal?.reason);
   if (eksternal) {
     if (eksternal.aborted) onAbort();
@@ -142,9 +151,8 @@ export async function callLlmText(
       // Galat non-retryable (4xx selain 429/403) JANGAN dicoba ulang:
       // kunci salah dicoba 2x hanya membuang 2x timeout.
       const bolehLanjut =
-        !(e instanceof LlmError) ||
-        e.status === undefined ||
-        e.status >= 500 || e.status === 429 || e.status === 403;
+        !dibatalkan(e) &&
+        (!(e instanceof LlmError) || e.status === undefined || e.status >= 500 || e.status === 429 || e.status === 403);
       if (percobaan >= 2 || !bolehLanjut) break;
       // Jeda panjang hanya untuk throttle (403/429) — 300 ms sia-sia melawan
       // cooldown skala menit; untuk galat lain pertahankan jeda singkat.

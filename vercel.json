@@ -2,6 +2,9 @@
   "functions": {
     "src/app/api/query/route.ts": {
       "maxDuration": 60
+    },
+    "src/app/api/query/stream/route.ts": {
+      "maxDuration": 60
     }
   }
 }

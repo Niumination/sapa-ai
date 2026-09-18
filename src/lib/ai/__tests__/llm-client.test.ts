@@ -69,4 +69,20 @@ describe('callLlmText retry throttle', () => {
     await expect(callLlmText({ ...cfgDasar }, [{ role: 'user', content: 'hai' }])).rejects.toThrow('HTTP 500');
     expect(fetchMock).toHaveBeenCalledTimes(2);
   });
+
+  it('timeout → TIDAK diulang (mengulang hanya menggandakan waktu tunggu)', async () => {
+    const fetchMock = vi.fn().mockRejectedValue(new Error('timeout setelah 5000 ms'));
+    vi.stubGlobal('fetch', fetchMock);
+    await expect(callLlmText({ ...cfgDasar }, [{ role: 'user', content: 'hai' }])).rejects.toThrow('timeout');
+    expect(fetchMock).toHaveBeenCalledTimes(1);
+  });
+
+  it('pembatalan (AbortError) → TIDAK diulang', async () => {
+    const abortErr = new Error('This operation was aborted');
+    abortErr.name = 'AbortError';
+    const fetchMock = vi.fn().mockRejectedValue(abortErr);
+    vi.stubGlobal('fetch', fetchMock);
+    await expect(callLlmText({ ...cfgDasar }, [{ role: 'user', content: 'hai' }])).rejects.toThrow();
+    expect(fetchMock).toHaveBeenCalledTimes(1);
+  });
 });
