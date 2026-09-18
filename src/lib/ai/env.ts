@@ -81,12 +81,14 @@ export function getAiConfig(): AiConfig {
     dialect: knownNonChat ? 'tidak-didukung' : 'chat-completions',
     apiKey: process.env.AI_API_KEY?.trim() || '',
     model,
-    // 40 dtk, bukan 20: model produksi terukur butuh 13-35 dtk per jawaban
-    // (19 Sep 2026: jawaban sukses 33,5 dtk; banyak query menembus 20 dtk dan
-    // langsung gagal). Anggaran platform 60 dtk, jadi 40 dtk masih menyisakan
-    // ruang untuk retrieval. Retry tidak pernah diulang untuk timeout, sehingga
-    // 40 dtk adalah batas atas, bukan 2x40.
-    timeoutMs: envNumber('AI_TIMEOUT_MS', 40_000),
+    // 48 dtk. Riwayat: 20 dtk (terlalu ketat — jawaban sukses terukur 33 dtk),
+    // lalu 40 dtk (masih ada ekor >40 dtk dari penyedia). Diukur 19 Sep 2026
+    // setelah fungsi dipindah ke sin1: sukses 15,6 dan 28,7 dtk, tetapi 2 dari 4
+    // tetap menembus 40 dtk. Retrieval hanya ~1 dtk, jadi sisa anggaran platform
+    // (60 dtk) memberi ruang sampai 48 dtk tanpa risiko dipotong platform.
+    // Memangkas AI_MAX_OUTPUT_TOKENS BUKAN jalan keluar: pada 1500 model
+    // kehabisan ruang sebelum JSON selesai (3/4 jawaban terpotong).
+    timeoutMs: envNumber('AI_TIMEOUT_MS', 48_000),
     // 3000: titik manis terukur 2026-09-05 (kalibrasi 6 item glm-5.3:
     // 800→1/6, 1600→3/6, 3000→6/6 lolos, latensi ~12 dtk vs ~31 dtk di
     // 4000). Model reasoning menghabiskan mayoritas budget untuk berpikir;
