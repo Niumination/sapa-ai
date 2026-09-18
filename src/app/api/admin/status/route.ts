@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { isAiToggleEnabled } from '../toggle-ai/route';
+import { isAiToggleEnabled } from '@/lib/ai/toggle';
 
 export async function GET(req: NextRequest) {
   // Public endpoint - no auth needed
