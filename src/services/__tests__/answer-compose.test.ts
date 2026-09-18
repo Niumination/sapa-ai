@@ -109,7 +109,7 @@ describe('composeAnswer — jalur deterministik & pengaman', () => {
     expect(hasil.response.narasi).toContain('31,4');
   });
 
-  it('keluaran model tidak sesuai skema ⇒ tidak pernah ditampilkan mentah', async () => {
+  it('keluaran tidak sesuai skema ⇒ tidak pernah ditampilkan mentah', async () => {
     vi.stubGlobal('fetch', jawabModel('saya tidak tahu, maaf'));
     process.env.AI_ENABLED = 'true';
     process.env.AI_API_KEY = 'k';
@@ -119,6 +119,49 @@ describe('composeAnswer — jalur deterministik & pengaman', () => {
     expect(hasil.ai.used).toBe(false);
     expect(hasil.ai.reason).toContain('JSON');
     expect(hasil.response.narasi).not.toContain('maaf, saya');
+  });
+
+  it('skema gagal percobaan 1 → diulang sekali dan berhasil (hemat 1 pertanyaan gagal)', async () => {
+    const balas = (isi: unknown) => ({
+      ok: true,
+      status: 200,
+      json: async () => ({
+        choices: [{ message: { content: typeof isi === 'string' ? isi : JSON.stringify(isi) }, finish_reason: 'stop' }],
+        usage: { prompt_tokens: 900, completion_tokens: 120 },
+      }),
+      text: async () => '',
+    });
+    const fetchMock = vi
+      .fn()
+      .mockResolvedValueOnce(balas('bukan json'))
+      .mockResolvedValueOnce(balas({ narasi: 'Prevalensi stunting tercatat {{511}}.' }));
+    vi.stubGlobal('fetch', fetchMock as unknown as typeof fetch);
+    process.env.AI_ENABLED = 'true';
+    process.env.AI_API_KEY = 'k';
+    process.env.AI_MODEL = 'glm-5.2';
+
+    const hasil = await composeAnswer({ query: 'stunting', records, stream: false });
+    expect(hasil.ai.used).toBe(true);
+    expect(hasil.response.narasi).toContain('31,4');
+    expect(fetchMock).toHaveBeenCalledTimes(2);
+  });
+
+  it('skema gagal dua kali → tetap ditolak, tidak menampilkan mentah', async () => {
+    const fetchMock = vi.fn().mockImplementation(async () => ({
+      ok: true,
+      status: 200,
+      json: async () => ({ choices: [{ message: { content: 'tetap bukan json' }, finish_reason: 'stop' }] }),
+      text: async () => '',
+    }));
+    vi.stubGlobal('fetch', fetchMock as unknown as typeof fetch);
+    process.env.AI_ENABLED = 'true';
+    process.env.AI_API_KEY = 'k';
+    process.env.AI_MODEL = 'glm-5.2';
+
+    const hasil = await composeAnswer({ query: 'stunting', records, stream: false });
+    expect(hasil.ai.used).toBe(false);
+    expect(hasil.response.narasi).not.toContain('bukan json');
+    expect(fetchMock).toHaveBeenCalledTimes(2);
   });
 });
 

@@ -385,12 +385,53 @@ export async function composeAnswer(opts: ComposeOptions): Promise<ComposeResult
   }
 
   // 7. Parse skema — gagal = jatuh ke deterministik, tidak pernah menampilkan mentah.
-  const terurai = parseLlmAnswer(mentah);
+  let terurai = parseLlmAnswer(mentah);
+  if (!terurai.ok) {
+    console.error('[ai-error]', JSON.stringify({
+      query: opts.query.slice(0, 120), tahap: 'parse', percobaan: 1,
+      finishReason: finishReason ?? null, mentah: mentah.slice(0, 200),
+    }));
+
+    // Keluaran tidak sesuai skema bersifat SAMPLING, bukan sistematis: terukur
+    // 19 Sep 2026 pada deepseek-v4.1-flash, 2 dari 8 query gagal parse dan
+    // keduanya berhasil saat diulang. Satu percobaan ulang jauh lebih murah
+    // daripada menolak pertanyaan pengguna.
+    //
+    // Sengaja NON-stream: token percobaan pertama mungkin sudah tampil di klien;
+    // hasil percobaan kedua menggantikannya lewat event `result` (klien mereset
+    // narasi live saat menerima `result`).
+    //
+    // Batas anggaran: hanya bila waktu terpakai masih kecil, dan percobaan kedua
+    // dibatasi 25 dtk. Terburuk 15 + 25 = 40 dtk, masih di bawah 60 dtk platform
+    // dan 55 dtk klien — percobaan ulang boleh, memotong anggaran tidak.
+    const terpakaiMs = Date.now() - mulai;
+    if (terpakaiMs < 15_000) {
+      try {
+        const cfgUlang = { ...cfg, timeoutMs: Math.min(cfg.timeoutMs, 25_000) };
+        const ulang = await callLlmText(cfgUlang, pesan, opts.signal);
+        mentah = ulang.text;
+        finishReason = ulang.finishReason ?? finishReason;
+        usage = ulang.usage ?? usage;
+        terurai = parseLlmAnswer(mentah);
+      } catch (e) {
+        console.error('[ai-error]', JSON.stringify({
+          query: opts.query.slice(0, 120), tahap: 'parse-ulang',
+          galat: (e instanceof Error ? e.message : String(e)).slice(0, 200),
+        }));
+      }
+    } else {
+      console.error('[ai-error]', JSON.stringify({
+        query: opts.query.slice(0, 120), tahap: 'parse-ulang-dilewati',
+        terpakaiMs, alasan: 'anggaran waktu tidak cukup untuk percobaan kedua',
+      }));
+    }
+  }
+
   if (!terurai.ok) {
     meta.model = cfg.model || null;
     meta.provider = cfg.provider;
     console.error('[ai-error]', JSON.stringify({
-      query: opts.query.slice(0, 120), tahap: 'parse',
+      query: opts.query.slice(0, 120), tahap: 'parse', percobaan: 2,
       finishReason: finishReason ?? null, mentah: mentah.slice(0, 200),
     }));
     return selesai(terurai.error, undefined, terurai.error);

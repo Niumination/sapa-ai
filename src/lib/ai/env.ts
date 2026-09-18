@@ -67,7 +67,10 @@ export function getAiConfig(): AiConfig {
   const provider = (process.env.AI_PROVIDER?.trim() || 'opencode-go') as AiProviderId;
   const preset = PRESETS[provider as 'opencode-go' | 'gemini'];
   const baseUrl = process.env.AI_BASE_URL?.trim() || preset?.baseUrl || '';
-  const model = process.env.AI_MODEL?.trim() || '';
+  // Default per-provider: penting agar menghapus/mengganti AI_MODEL di Vercel
+  // tidak pernah meninggalkan model kosong (produksi membaca env saat request).
+  const modelDefault = provider === 'opencode-go' ? 'deepseek-v4.1-flash' : '';
+  const model = process.env.AI_MODEL?.trim() || modelDefault;
   const endpointPath = process.env.AI_ENDPOINT_PATH?.trim() || preset?.endpointPath || '/chat/completions';
 
   const knownNonChat = provider === 'opencode-go' && NON_CHAT_MODELS.test(model);

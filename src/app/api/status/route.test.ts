@@ -20,7 +20,10 @@ describe('GET /api/status', () => {
     const body = await res.json();
     expect(body.sapa).toEqual({ state: 'active', records: 2055 });
     expect(body.ai.state).toBe('inactive');
-    expect(body.ai.model).toBeNull();
+    // Sejak 19 Sep 2026 model punya default per-provider (opencode-go →
+    // deepseek-v4.1-flash) supaya menghapus AI_MODEL di Vercel tidak pernah
+    // meninggalkan model kosong. Status tetap inactive karena AI_API_KEY absen.
+    expect(body.ai.model).toBe('deepseek-v4.1-flash');
     expect(body.ai.reason).toContain('AI_API_KEY');
   });
 
