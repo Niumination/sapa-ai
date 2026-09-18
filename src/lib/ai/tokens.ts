@@ -35,6 +35,40 @@ export interface EjectResult {
   replaced: number;
 }
 
+const COMMON_UNITS = [
+  'persen', 'orang', 'pegawai', 'rupiah', 'jiwa', 'km', 'hektar', 'meter',
+  'kilogram', 'liter', 'unit', 'buah', 'ribu', 'juta', 'miliar', 'triliun',
+  'tahun', 'bulan', 'hari', 'jam', 'menit', 'detik', 'derajat', 'celcius',
+  'kg', 'gr', 'mg', 'cm', 'mm', 'm²', 'm³', 'ha', 'km²', 'mph', 'km/jam',
+  'orang/km²', 'jiwa/km²', 'ekor', 'unit', 'kali', 'persen', '%',
+];
+
+/** Hapus satuan ganda hasil eject token: "31,4 Persen persen" → "31,4 Persen". */
+export function dedupUnits(text: string, evidence: TokenEvidence[]): string {
+  if (!text) return text;
+  // Build set of unit strings from evidence (lowercase)
+  const unitSet = new Set<string>();
+  for (const e of evidence) {
+    if (e.satuan) {
+      unitSet.add(e.satuan.trim().toLowerCase());
+      // Also add without parentheses: "31,4 Persen (2025)" → extract "persen"
+      const base = e.satuan.trim().toLowerCase().replace(/[()]/g, '').trim();
+      unitSet.add(base);
+    }
+  }
+
+  let result = text;
+  for (const unit of unitSet) {
+    // Pattern: "<value> <unit> ... <unit>" → remove trailing duplicate
+    // e.g., "31,4 Persen persen" → "31,4 Persen"
+    const escaped = unit.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+    const re = new RegExp(`(${escaped})\\s+(${escaped})`, 'gi');
+    result = result.replace(re, '$1');
+  }
+
+  return result;
+}
+
 /** Ganti semua {{id}} dengan nilai evidence. Token tak dikenal dihapus. */
 export function ejectTokens(text: string, evidence: TokenEvidence[]): EjectResult {
   const map = new Map<string, TokenEvidence>();

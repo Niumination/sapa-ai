@@ -18,7 +18,7 @@ import {
 import { getAiConfig, isAiEnabled, isAiShadow, aiStatusReason, type AiConfig } from '@/lib/ai/env';
 import { buildPrompt } from '@/lib/ai/prompt';
 import { parseLlmAnswer } from '@/lib/ai/schema';
-import { ejectTokens, createStreamEjector } from '@/lib/ai/tokens';
+import { ejectTokens, createStreamEjector, dedupUnits } from '@/lib/ai/tokens';
 import { guardQuery, cekDataPribadi, cekPermintaanPerOrang } from '@/lib/ai/guard';
 import { callLlmText, streamLlm, extractNarasiPartial } from '@/lib/ai/llm-client';
 import { checkRateLimit } from '@/lib/rate-limit';
@@ -343,7 +343,7 @@ export async function composeAnswer(opts: ComposeOptions): Promise<ComposeResult
   const followUpsAman = terurai.data.followUps.filter((r) => isGroundedText(r, dasar.evidence, { extraAllowedNumbers }).ok);
 
   let responsAi: HybridResponse = {
-    narasi: ejected.text,
+    narasi: dedupUnits(ejected.text, dasar.evidence),
     visualisasi: dasar.response.visualisasi, // visualisasi tetap ditentukan aturan deterministik
     rekomendasi: rekomendasiAman.length > 0 ? rekomendasiAman : dasar.response.rekomendasi,
     dataSource: dasar.response.dataSource,

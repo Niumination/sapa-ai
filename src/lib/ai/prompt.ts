@@ -23,7 +23,8 @@ ATURAN MUTLAK:
 4. Pertanyaan sebab-akibat ("kenapa", "mengapa", "apa penyebab") TIDAK boleh dijawab dengan dugaan. Jelaskan bahwa SAPA menyimpan angka, lalu ringkas angka yang tersedia.
 5. Jangan memberi nasihat medis, hukum, atau politik. Rekomendasi hanya boleh bersifat tata kelola data/koordinasi antar-OPD, maksimal 3 butir, tanpa angka baru.
 6. Bahasa Indonesia baku (EYD). 2–4 kalimat untuk narasi. Hindari kata berlebihan seperti "sangat", "tentu saja", "berikut adalah".
-7. Keluarkan HANYA satu objek JSON sesuai skema. Tidak ada teks lain sebelum atau sesudahnya.`;
+7. Jangan menulis satuan (persen, orang, rupiah, jiwa, km, dll) setelah token {{id}} atau {{id|t}} — satuan sudah otomatis ditambahkan oleh sistem. Menulis satuan lagi menghasilkan duplikasi seperti "31,4 Persen persen".
+8. Keluarkan HANYA satu objek JSON sesuai skema. Tidak ada teks lain sebelum atau sesudahnya.`;
 
 const SCHEMA_HINT = `Skema JSON:
 {"narasi":"...","rekomendasi":["..."],"followUps":["..."],"visualHint":"metric|table|chart|none","confidence":"tinggi|sedang|rendah"}`;

@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { ejectTokens, createStreamEjector } from '../tokens';
+import { ejectTokens, createStreamEjector, dedupUnits } from '../tokens';
 
 const evidence = [
   { id: 511, nilai: '31,4', satuan: 'Persen', tahun: '2025' },
@@ -57,5 +57,27 @@ describe('createStreamEjector', () => {
     const e = createStreamEjector(evidence);
     expect(e.push('Angka {{888}}')).toBe('Angka ');
     expect(e.flush()).toBe('');
+  });
+});
+
+describe('dedupUnits', () => {
+  it('hapus satuan ganda setelah eject token: "31,4 Persen persen" → "31,4 Persen"', () => {
+    expect(dedupUnits('31,4 Persen persen', evidence)).toBe('31,4 Persen');
+  });
+
+  it('hapus satuan ganda case-insensitive: "31,4 Persen PERSEN" → "31,4 Persen"', () => {
+    expect(dedupUnits('31,4 Persen PERSEN', evidence)).toBe('31,4 Persen');
+  });
+
+  it('tidak ubah teks tanpa duplikat', () => {
+    expect(dedupUnits('31,4 Persen', evidence)).toBe('31,4 Persen');
+  });
+
+  it('tangkap duplikat "9.610 pegawai orang"', () => {
+    expect(dedupUnits('9.610 pegawai orang', evidence)).toBe('9.610 pegawai');
+  });
+
+  it('kosongkan input kosong', () => {
+    expect(dedupUnits('', evidence)).toBe('');
   });
 });
