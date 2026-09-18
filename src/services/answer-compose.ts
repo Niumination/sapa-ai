@@ -275,7 +275,7 @@ export async function composeAnswer(opts: ComposeOptions): Promise<ComposeResult
       meta.reason =
         limitedBy === 'no-evidence'
           ? 'Tidak ada data SAPA yang relevan untuk pertanyaan ini, dan jawaban deterministik dinonaktifkan oleh admin'
-          : `${alasan ? `${alasan} — ` : ''}jawaban deterministik dinonaktifkan admin dan AI tidak menghasilkan jawaban`;
+          : `${alasan ? `${alasan} — ` : ''}jawaban deterministik dan AI tidak menghasilkan jawaban`;
       meta.grounded = 'skipped';
       meta.used = false;
       return selengkap(meta, { ...dasar.response, narasi: meta.reason, rekomendasi: [] });
@@ -294,7 +294,7 @@ export async function composeAnswer(opts: ComposeOptions): Promise<ComposeResult
   const shadow = isAiShadow(cfg) && aiToggleOn;
   if (!aktif && !shadow) {
     return selesai(
-      aiToggleOn ? (aiStatusReason(cfg) ?? 'AI nonaktif') : 'AI dinonaktifkan oleh admin',
+      aiToggleOn ? (aiStatusReason(cfg) ?? 'AI nonaktif') : 'AI tidak aktif',
       'unconfigured',
     );
   }

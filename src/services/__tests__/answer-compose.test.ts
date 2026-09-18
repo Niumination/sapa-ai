@@ -206,6 +206,9 @@ describe('composeAnswer — gerbang toggle admin', () => {
 
     const hasil = await composeAnswer({ query: 'stunting', records, stream: false });
     expect(hasil.ai.limitedBy).toBe('service-unavailable');
+    // Pesan yang dilihat pengguna (klien menambahkan awalan "Terjadi kesalahan: ").
+    // Dikunci agar tidak bergeser tanpa disadari — pemilik meminta bahasa ini.
+    expect(hasil.response.narasi).toBe('AI tidak aktif — jawaban deterministik dan AI tidak menghasilkan jawaban');
     expect(fetchMock).not.toHaveBeenCalled();
   });
 
