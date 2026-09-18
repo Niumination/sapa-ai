@@ -83,10 +83,19 @@ Toggle admin AI/Deterministik lahir di sesi ini dan tiga kali salah diperbaiki s
 - **Salah 2:** pagar "deterministik OFF" dipasang di pintu masuk `composeAnswer`, sehingga mematikan SELURUH layanan — AI yang sebenarnya mampu menjawab ikut dibungkam. **Semantik yang benar (dikoreksi pemilik): deterministik = JAWABAN TEMPLATE.** Mematikannya melarang balasan template, bukan mematikan layanan. Pagar harus di `selesai()` — satu-satunya funnel tempat jawaban template keluar — plus jalur shadow yang juga mengirim template. Jalur cache dan jalur sukses LLM memakai `selengkap()` dan memang TIDAK boleh terpagar.
 - **Salah 3:** timeout panggilan model diulang. `callLlmText` me-retry apa pun yang bukan `LlmError`, termasuk timeout — menggandakan waktu tunggu tanpa menambah peluang berhasil (terukur 42,6 dtk untuk jawaban yang sudah pasti gagal). Timeout/pembatalan kini tidak diulang; hanya 403/429/5xx.
 
-**Anggaran waktu (terukur 2026-09-19).** `AI_TIMEOUT_MS` default 20 dtk terlalu ketat: jawaban sukses terukur 33,5 dtk, banyak query menembus 20 dtk lalu gagal. Anggaran lama "20+10+20 < 60" hanya berlaku karena timeout di-retry — begitu retry dimatikan, batas per percobaan adalah batas atas. Default kini **40 dtk**; klien dashboard 45→**55 dtk** (klien adalah jaring terakhir, bukan pertama: server 43 dtk < klien 55 dtk < platform 60 dtk), dan `vercel.json` menyertakan `maxDuration: 60` untuk `/api/query/stream` yang sebelumnya tidak punya entri.
+**Anggaran waktu (terukur 2026-09-19).** `AI_TIMEOUT_MS` default 20 dtk terlalu ketat: jawaban sukses terukur 33,5 dtk, banyak query menembus 20 dtk lalu gagal. Anggaran lama "20+10+20 < 60" hanya berlaku karena timeout di-retry — begitu retry dimatikan, batas per percobaan adalah batas atas. Default kini **48 dtk**; klien dashboard 45→**55 dtk** (klien adalah jaring terakhir, bukan pertama: server 43-49 dtk < klien 55 dtk < platform 60 dtk), dan `vercel.json` menyertakan `maxDuration: 60` untuk `/api/query/stream` yang sebelumnya tidak punya entri.
+
+**AKAR MASALAH LATENSI: fungsi berjalan di iad1 (AS), bukan sin1.** Header produksi `x-vercel-id: sin1::iad1::...` — Vercel menaruh fungsi di Washington DC secara default untuk proyek baru, sementara sumber data (SPLP, Indonesia) dan pengguna (Aceh) jauh dari sana. Setelah `"regions": ["sin1"]` di `vercel.json`, latensi turun dari 38,7-41,9 dtk menjadi 15,6-29,9 dtk. **Cek `x-vercel-id` lebih dulu sebelum menuduh model lambat** — `curl -sI <url> | grep x-vercel-id`.
+
+**Yang diuji dan ditolak (jangan ulangi tanpa data baru).**
+- *Ganti model:* diukur lokal lewat pipeline yang sama, 4 query identik — `glm-5.3` 13,7-23,4 dtk (rata 19,0) vs `deepseek-v4-flash` 10,6-27,6 dtk (rata 21,4); keduanya 4/4 `grounded=pass`. Latensi bukan alasan mengganti model.
+- *Pangkas `AI_MAX_OUTPUT_TOKENS` 3000→1500:* 3 dari 4 jawaban terpotong sebelum JSON selesai (`used=false`, jatuh ke template). 3000 adalah titik manisnya.
+- *Retry timeout:* dihapus — dulu timeout diulang karena bukan `LlmError`, menggandakan tunggu tanpa peluang berhasil.
+
+Hasil akhir: 5/5 query produksi `used=true, grounded=pass` (latensi 18,0-40,3 dtk; 2 sisanya cache <3 dtk).
 
 **Pelajaran DOX.** Dua test A1 (`b9a038f`) masuk dalam keadaan GAGAL karena vitest terblokir saat commit dan tidak pernah dijalankan ulang — satu test menuntut perilaku yang tidak pernah diimplementasikan, satu lagi melanggar test anti-few-shot-fiktif. Repo ini mewajibkan `npm run build && npx vitest run` hijau sebelum commit; jangan commit saat runner tidak bisa dijalankan.
 
 Status akhir sesi: 162 test hijau, `backend: redis`, toggle global terbukti lintas-instance (6/6 permintaan konsisten), metrik deterministik/LLM akurat.
 
-**Wart terbuka:** latensi model `glm-5.3` (13-35 dtk) — dengan deterministik OFF tidak ada jaring pengaman, jadi panggilan lambat berubah menjadi error ke pengguna. Kandidat: `deepseek-v4-flash` (perintah eksplisit pemilik).
+**Wart terbuka:** ekor latensi penyedia (`glm-5.3`) masih bisa menyentuh 40 dtk pada query tertentu; dengan deterministik OFF tidak ada jaring pengaman, jadi panggilan di atas 48 dtk tetap menjadi error. Jika ini mengganggu, opsi berikutnya adalah gerbang kualitas shadow penuh (`npm run eval`, 52 item) untuk `deepseek-v4-flash` — bukan sekadar perbandingan latensi.
