@@ -58,6 +58,7 @@ function headers(cfg: AiConfig): Record<string, string> {
   return {
     'Content-Type': 'application/json',
     Authorization: `Bearer ${cfg.apiKey}`,
+    ...cfg.customHeaders,
   };
 }
 

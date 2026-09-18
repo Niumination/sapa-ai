@@ -31,8 +31,9 @@ export interface AiConfig {
   jsonMode: boolean;
   /** Batas panggilan model per hari (pengaman biaya). 0 = tanpa batas. */
   dailyCallLimit: number;
+  /** Custom headers yang akan ditambahkan ke setiap request (misal: x-opencode-session) */
+  customHeaders?: Record<string, string>;
 }
-
 /** Model OpenCode Go yang TIDAK memakai /chat/completions (dialek Anthropic/Responses). */
 const NON_CHAT_MODELS = /^(minimax-|qwen3\.\d-(max|plus)|grok-|gpt-5\.6-luna|muse-spark)/i;
 
@@ -90,6 +91,7 @@ export function getAiConfig(): AiConfig {
     temperature: Number(process.env.AI_TEMPERATURE ?? '0.2') || 0.2,
     jsonMode: envFlag('AI_JSON_MODE', true),
     dailyCallLimit: Number(process.env.AI_DAILY_CALL_LIMIT ?? '2000') || 0,
+    customHeaders: process.env.AI_CUSTOM_HEADERS ? JSON.parse(process.env.AI_CUSTOM_HEADERS) : undefined,
   };
 }
 
