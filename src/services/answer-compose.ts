@@ -16,7 +16,7 @@ import {
   type EvidenceItem,
 } from '@/services/grounding';
 import { getAiConfig, isAiEnabled, isAiShadow, aiStatusReason, type AiConfig } from '@/lib/ai/env';
-import { isAiToggleEnabled } from '@/lib/ai/toggle';
+import { isAiToggleEnabled, isDetToggleEnabled } from '@/lib/ai/toggle';
 import { buildPrompt } from '@/lib/ai/prompt';
 import { parseLlmAnswer } from '@/lib/ai/schema';
 import { ejectTokens, createStreamEjector, dedupUnits } from '@/lib/ai/tokens';
@@ -58,7 +58,7 @@ export interface AiMeta {
   grounded: 'pass' | 'replaced' | 'skipped';
   reason?: string;
   cached: boolean;
-  limitedBy?: 'no-evidence' | 'rate-limit' | 'daily-limit' | 'unconfigured' | 'guard';
+  limitedBy?: 'no-evidence' | 'rate-limit' | 'daily-limit' | 'unconfigured' | 'guard' | 'service-unavailable';
   unknownTokens?: number;
   finishReason?: string;
   usage?: { promptTokens?: number; completionTokens?: number };
@@ -246,6 +246,12 @@ export async function composeAnswer(opts: ComposeOptions): Promise<ComposeResult
   const aiToggleOn = isAiToggleEnabled();
   if (aktif && !aiToggleOn) {
     return selesai('AI dinonaktifkan oleh admin', 'unconfigured');
+  }
+
+  // Admin toggle check - jika admin mematikan Deterministik via panel
+  const detToggleOn = isDetToggleEnabled();
+  if (!detToggleOn) {
+    return selesai('Layanan SAPA-AI tidak dapat diakses. Deterministik dan AI keduanya dinonaktifkan oleh admin.', 'service-unavailable');
   }
 
   // 2. Pagar masuk: panjang & pola data pribadi.

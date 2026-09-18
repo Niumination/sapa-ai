@@ -4,7 +4,8 @@ import { useState, useEffect } from 'react';
 import styles from './page.module.css';
 
 export default function AdminToggle() {
-  const [enabled, setEnabled] = useState(true);
+  const [aiEnabled, setAiEnabled] = useState(true);
+  const [detEnabled, setDetEnabled] = useState(true);
   const [key, setKey] = useState('');
   const [msg, setMsg] = useState('');
   const [loading, setLoading] = useState(false);
@@ -12,13 +13,19 @@ export default function AdminToggle() {
   useEffect(() => {
     fetch('/api/admin/status')
       .then((r) => r.json())
-      .then((d) => setEnabled(d.aiEnabled))
+      .then((d) => {
+        setAiEnabled(d.aiEnabled);
+        setDetEnabled(d.detEnabled);
+      })
       .catch(() => {});
   }, []);
 
-  async function handleToggle() {
+  async function handleToggle(field: 'aiEnabled' | 'detEnabled', value: boolean) {
     setLoading(true);
     setMsg('');
+    const body = field === 'aiEnabled'
+      ? { aiEnabled: value, detEnabled }
+      : { aiEnabled, detEnabled: value };
     try {
       const res = await fetch('/api/admin/toggle-ai', {
         method: 'POST',
@@ -26,11 +33,21 @@ export default function AdminToggle() {
           'Content-Type': 'application/json',
           'x-admin-key': key,
         },
-        body: JSON.stringify({ aiEnabled: !enabled }),
+        body: JSON.stringify(body),
       });
       if (res.ok) {
-        setEnabled(!enabled);
-        setMsg(`AI ${!enabled ? 'AKTIF' : 'NONAKTIF'} — toggle berhasil`);
+        const data = await res.json();
+        setAiEnabled(data.aiEnabled);
+        setDetEnabled(data.detEnabled);
+        if (!data.aiEnabled && !data.detEnabled) {
+          setMsg('AI & Deterministik DIMATIKAN — layanan tidak dapat diakses');
+        } else if (!data.aiEnabled) {
+          setMsg('AI dimatikan — hanya jawaban deterministik');
+        } else if (!data.detEnabled) {
+          setMsg('Deterministik dimatikan — hanya jawaban AI');
+        } else {
+          setMsg('AI & Deterministik AKTIF');
+        }
       } else if (res.status === 401) {
         setMsg('Key salah — unauthorized');
       } else {
@@ -43,14 +60,22 @@ export default function AdminToggle() {
     }
   }
 
+  const bothOff = !aiEnabled && !detEnabled;
+
   return (
     <main className={styles.main}>
       <h1>Admin Panel — AI Toggle</h1>
       <div className={styles.card}>
         <div className={styles.status}>
-          <span>Status AI:</span>
-          <span className={enabled ? styles.on : styles.off}>
-            {enabled ? 'AKTIF' : 'NONAKTIF'}
+          <span>AI:</span>
+          <span className={aiEnabled ? styles.on : styles.off}>
+            {aiEnabled ? 'AKTIF' : 'OFF'}
+          </span>
+        </div>
+        <div className={styles.status}>
+          <span>Deterministik:</span>
+          <span className={detEnabled ? styles.on : styles.off}>
+            {detEnabled ? 'AKTIF' : 'OFF'}
           </span>
         </div>
         <input
@@ -61,12 +86,25 @@ export default function AdminToggle() {
           className={styles.input}
         />
         <button
-          onClick={handleToggle}
+          onClick={() => handleToggle('aiEnabled', !aiEnabled)}
           disabled={loading || !key}
           className={styles.button}
         >
-          {loading ? '...' : enabled ? 'Matikan AI' : 'Aktifkan AI'}
+          {loading ? '...' : aiEnabled ? 'Matikan AI' : 'Aktifkan AI'}
         </button>
+        <button
+          onClick={() => handleToggle('detEnabled', !detEnabled)}
+          disabled={loading || !key}
+          className={styles.button}
+          style={{ background: detEnabled ? '#444' : '#00aa44', marginTop: '0.5rem' }}
+        >
+          {loading ? '...' : detEnabled ? 'Matikan Deterministik' : 'Aktifkan Deterministik'}
+        </button>
+        {bothOff && (
+          <p className={styles.warning}>
+            ⚠️ Layanan SAPA-AI tidak dapat diakses
+          </p>
+        )}
         {msg && <p className={styles.msg}>{msg}</p>}
       </div>
       <p className={styles.hint}>

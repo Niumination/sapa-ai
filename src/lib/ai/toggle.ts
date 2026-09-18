@@ -5,6 +5,7 @@ const TOGGLE_FILE = join('/tmp', 'sapa-ai-toggle.json');
 
 export interface ToggleState {
   aiEnabled: boolean;
+  detEnabled: boolean;
   updatedAt: string;
   updatedBy: string;
 }
@@ -18,7 +19,7 @@ export function readToggleState(): ToggleState {
   } catch {
     // ignore corrupt file
   }
-  return { aiEnabled: true, updatedAt: new Date().toISOString(), updatedBy: 'default' };
+  return { aiEnabled: true, detEnabled: true, updatedAt: new Date().toISOString(), updatedBy: 'default' };
 }
 
 export function writeToggleState(state: ToggleState): void {
@@ -28,4 +29,9 @@ export function writeToggleState(state: ToggleState): void {
 /** Check if AI is enabled via admin toggle. Default: true (enabled). */
 export function isAiToggleEnabled(): boolean {
   return readToggleState().aiEnabled;
+}
+
+/** Check if Deterministic is enabled via admin toggle. Default: true (enabled). */
+export function isDetToggleEnabled(): boolean {
+  return readToggleState().detEnabled;
 }

@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { isAiToggleEnabled, readToggleState, writeToggleState } from '@/lib/ai/toggle';
+import { readToggleState, writeToggleState } from '@/lib/ai/toggle';
 
 const ADMIN_KEY = process.env.AI_ADMIN_KEY || '';
 
@@ -18,10 +18,14 @@ export async function POST(req: NextRequest) {
   }
 
   const body = await req.json().catch(() => ({}));
-  const aiEnabled = typeof body.aiEnabled === 'boolean' ? body.aiEnabled : true;
+  const currentState = readToggleState();
+  
+  const aiEnabled = typeof body.aiEnabled === 'boolean' ? body.aiEnabled : currentState.aiEnabled;
+  const detEnabled = typeof body.detEnabled === 'boolean' ? body.detEnabled : currentState.detEnabled;
   
   writeToggleState({
     aiEnabled,
+    detEnabled,
     updatedAt: new Date().toISOString(),
     updatedBy: 'admin',
   });
