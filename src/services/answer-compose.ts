@@ -247,33 +247,53 @@ export async function composeAnswer(opts: ComposeOptions): Promise<ComposeResult
     opds: dasar.opds,
   });
 
+  // ─── Toggle admin (menang atas env) ───
+  // Dibaca SEBELUM cek env supaya keputusan pemilik aplikasi tidak bisa
+  // ditimpa oleh AI_ENABLED/AI_SHADOW di Vercel.
+  const aiToggleOn = await isAiToggleEnabled();
+  const detToggleOn = await isDetToggleEnabled();
+  /** true bila jawaban deterministik tidak boleh disajikan lagi. */
+  const deterministikMati = !detToggleOn;
+
   const selesai = (alasan?: string, limitedBy?: AiMeta['limitedBy'], errorMsg?: string): ComposeResult => {
     meta.latencyMs = Date.now() - mulai;
     if (alasan) meta.reason = alasan;
     if (limitedBy) meta.limitedBy = limitedBy;
     if (errorMsg) meta.error = errorMsg.slice(0, 200);
+    // Deterministik dimatikan admin → tidak ada jawaban yang boleh beredar.
+    // Satu funnel di sini menjamin semua jalur (tanpa evidence, rate limit,
+    // model gagal, parse gagal) ikut tertutup, bukan hanya jalur normal.
+    if (deterministikMati) {
+      meta.limitedBy = 'service-unavailable';
+      meta.reason = 'Layanan SAPA-AI tidak dapat diakses. Deterministik dinonaktifkan oleh admin.';
+      meta.grounded = 'skipped';
+      meta.used = false;
+      return selengkap(meta, { ...dasar.response, narasi: meta.reason, rekomendasi: [] });
+    }
     recordMetrics('deterministic');
     return selengkap(meta, dasar.response);
   };
+
+  // Deterministik dimatikan admin ⇒ hentikan di sini. Tanpa pagar ini, jalur
+  // LLM sukses tetap mengirim narasi (melewati selesai()), sehingga tabel
+  // kendali di panel admin tidak benar-benar berlaku.
+  if (deterministikMati) {
+    return selesai('Deterministik dinonaktifkan oleh admin', 'service-unavailable');
+  }
 
   // 1. Tanpa evidence → tidak ada yang bisa dirangkai. Hemat 100% panggilan model.
   if (dasar.evidence.length === 0) return selesai('evidence kosong — model tidak dipanggil', 'no-evidence');
 
   const cfg = getAiConfig();
-  const aktif = isAiEnabled(cfg);
-  const shadow = isAiShadow(cfg);
-  if (!aktif && !shadow) return selesai(aiStatusReason(cfg) ?? 'AI nonaktif', 'unconfigured');
-
-  // Admin toggle check - jika admin mematikan kedua layanan via panel
-  const aiToggleOn = await isAiToggleEnabled();
-  const detToggleOn = await isDetToggleEnabled();
-  if (!aiToggleOn && !detToggleOn) {
-    return selesai('Layanan SAPA-AI tidak dapat diakses. AI dan Deterministik keduanya dinonaktifkan oleh admin.', 'service-unavailable');
-  }
-
-  // Jika admin mematikan AI via panel → jawaban deterministik
-  if (aktif && !aiToggleOn) {
-    return selesai('AI dinonaktifkan oleh admin', 'unconfigured');
+  // Toggle admin menang: AI dinonaktifkan admin ⇒ tidak ada panggilan model,
+  // apa pun isi AI_ENABLED/AI_SHADOW.
+  const aktif = isAiEnabled(cfg) && aiToggleOn;
+  const shadow = isAiShadow(cfg) && aiToggleOn;
+  if (!aktif && !shadow) {
+    return selesai(
+      aiToggleOn ? (aiStatusReason(cfg) ?? 'AI nonaktif') : 'AI dinonaktifkan oleh admin',
+      'unconfigured',
+    );
   }
 
   // 2. Pagar masuk: panjang & pola data pribadi.

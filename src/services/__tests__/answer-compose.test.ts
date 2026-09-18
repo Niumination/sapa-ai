@@ -122,6 +122,64 @@ describe('composeAnswer — jalur deterministik & pengaman', () => {
   });
 });
 
+describe('composeAnswer — gerbang toggle admin', () => {
+  const setToggle = (aiEnabled: boolean, detEnabled: boolean) =>
+    vi.mocked(cacheGet).mockImplementation(async (k: string) =>
+      k === 'sapa:ai:toggle:v1' ? ({ aiEnabled, detEnabled } as never) : (null as never),
+    );
+
+  const aktifkanEnv = () => {
+    process.env.AI_ENABLED = 'true';
+    process.env.AI_API_KEY = 'k';
+    process.env.AI_MODEL = 'glm-5.2';
+  };
+
+  it('deterministik OFF ⇒ layanan tidak dapat diakses, model TIDAK dipanggil', async () => {
+    const fetchMock = vi.fn();
+    vi.stubGlobal('fetch', fetchMock);
+    aktifkanEnv();
+    setToggle(true, false);
+
+    const hasil = await composeAnswer({ query: 'stunting', records, stream: false });
+    expect(hasil.ai.limitedBy).toBe('service-unavailable');
+    expect(hasil.ai.used).toBe(false);
+    expect(fetchMock).not.toHaveBeenCalled();
+  });
+
+  it('AI OFF + deterministik OFF ⇒ layanan tidak dapat diakses', async () => {
+    const fetchMock = vi.fn();
+    vi.stubGlobal('fetch', fetchMock);
+    aktifkanEnv();
+    setToggle(false, false);
+
+    const hasil = await composeAnswer({ query: 'stunting', records, stream: false });
+    expect(hasil.ai.limitedBy).toBe('service-unavailable');
+    expect(fetchMock).not.toHaveBeenCalled();
+  });
+
+  it('AI OFF + deterministik ON ⇒ jawaban deterministik, model tidak dipanggil', async () => {
+    const fetchMock = vi.fn();
+    vi.stubGlobal('fetch', fetchMock);
+    aktifkanEnv();
+    setToggle(false, true);
+
+    const hasil = await composeAnswer({ query: 'stunting', records, stream: false });
+    expect(hasil.ai.limitedBy).toBe('unconfigured');
+    expect(hasil.response.narasi).toContain('31,4');
+    expect(fetchMock).not.toHaveBeenCalled();
+  });
+
+  it('toggle admin menang atas AI_ENABLED: AI OFF ⇒ model tetap tidak dipanggil', async () => {
+    const fetchMock = vi.fn();
+    vi.stubGlobal('fetch', fetchMock);
+    aktifkanEnv();
+    setToggle(false, true);
+
+    await composeAnswer({ query: 'stunting', records, stream: false });
+    expect(fetchMock).not.toHaveBeenCalled();
+  });
+});
+
 describe('composeAnswer — dengan model aktif', () => {
   const aktifkan = () => {
     process.env.AI_ENABLED = 'true';
