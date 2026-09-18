@@ -50,6 +50,14 @@ export async function POST(req: NextRequest) {
 
   const hasil = await composeAnswer({ query: queryRaw, records, ip, stream: false });
 
+  // Jika admin mematikan AI dan Deterministik → 503, bukan 200
+  if (hasil.ai?.limitedBy === 'service-unavailable') {
+    return Response.json(
+      { error: hasil.ai.reason ?? 'Layanan tidak dapat diakses', stage: 'service-unavailable' },
+      { status: 503 },
+    );
+  }
+
   return Response.json(
     {
       ...hasil.response,

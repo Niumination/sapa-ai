@@ -242,16 +242,16 @@ export async function composeAnswer(opts: ComposeOptions): Promise<ComposeResult
   const shadow = isAiShadow(cfg);
   if (!aktif && !shadow) return selesai(aiStatusReason(cfg) ?? 'AI nonaktif', 'unconfigured');
 
-  // Admin toggle check - jika admin mematikan AI via panel
+  // Admin toggle check - jika admin mematikan kedua layanan via panel
   const aiToggleOn = isAiToggleEnabled();
-  if (aktif && !aiToggleOn) {
-    return selesai('AI dinonaktifkan oleh admin', 'unconfigured');
+  const detToggleOn = isDetToggleEnabled();
+  if (!aiToggleOn && !detToggleOn) {
+    return selesai('Layanan SAPA-AI tidak dapat diakses. AI dan Deterministik keduanya dinonaktifkan oleh admin.', 'service-unavailable');
   }
 
-  // Admin toggle check - jika admin mematikan Deterministik via panel
-  const detToggleOn = isDetToggleEnabled();
-  if (!detToggleOn) {
-    return selesai('Layanan SAPA-AI tidak dapat diakses. Deterministik dan AI keduanya dinonaktifkan oleh admin.', 'service-unavailable');
+  // Jika admin mematikan AI via panel → jawaban deterministik
+  if (aktif && !aiToggleOn) {
+    return selesai('AI dinonaktifkan oleh admin', 'unconfigured');
   }
 
   // 2. Pagar masuk: panjang & pola data pribadi.
