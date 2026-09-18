@@ -80,7 +80,9 @@ export interface AiMetaSummary {
   model: string | null;
   grounded: 'pass' | 'replaced' | 'skipped';
   reason?: string;
+  error?: string;
 }
+
 
 export interface HybridResponse {
   narasi: string;

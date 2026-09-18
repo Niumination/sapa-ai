@@ -64,6 +64,8 @@ export interface AiMeta {
   /** Model sempat dipanggil (true) vs tidak pernah dicoba (skipped hemat/terbatas).
    *  Dipakai harness eval untuk membedakan "gagal panggil" dari "sengaja skip". */
   attempted?: boolean;
+  /** Error message dari model call / parse / grounding (untuk debugging) */
+  error?: string;
 }
 
 export interface ComposeResult {
@@ -222,10 +224,11 @@ export async function composeAnswer(opts: ComposeOptions): Promise<ComposeResult
     opds: dasar.opds,
   });
 
-  const selesai = (alasan?: string, limitedBy?: AiMeta['limitedBy']): ComposeResult => {
+  const selesai = (alasan?: string, limitedBy?: AiMeta['limitedBy'], errorMsg?: string): ComposeResult => {
     meta.latencyMs = Date.now() - mulai;
     if (alasan) meta.reason = alasan;
     if (limitedBy) meta.limitedBy = limitedBy;
+    if (errorMsg) meta.error = errorMsg.slice(0, 200);
     recordMetrics('deterministic');
     return selengkap(meta, dasar.response);
   };
@@ -312,14 +315,15 @@ export async function composeAnswer(opts: ComposeOptions): Promise<ComposeResult
   } catch (e) {
     meta.model = cfg.model || null;
     meta.provider = cfg.provider;
+    const errMsg = e instanceof Error ? e.message : String(e);
     // Kegagalan panggil JANGAN diam: tanpa baris ini, throttle gateway hanya
     // terlihat sebagai "model tak dipanggil" di metrik (terukur 2026-09-05:
     // 50 panggilan hilang tanpa jejak). Query di sini sudah lewat pagar PII.
     console.error('[ai-error]', JSON.stringify({
       query: opts.query.slice(0, 120), tahap: 'panggil',
-      galat: (e instanceof Error ? e.message : String(e)).slice(0, 200),
+      galat: errMsg.slice(0, 200),
     }));
-    return selesai(`panggilan model gagal: ${e instanceof Error ? e.message : String(e)}`);
+    return selesai(`panggilan model gagal: ${errMsg}`, undefined, errMsg);
   }
 
   // 7. Parse skema — gagal = jatuh ke deterministik, tidak pernah menampilkan mentah.
@@ -331,7 +335,7 @@ export async function composeAnswer(opts: ComposeOptions): Promise<ComposeResult
       query: opts.query.slice(0, 120), tahap: 'parse',
       finishReason: finishReason ?? null, mentah: mentah.slice(0, 200),
     }));
-    return selesai(terurai.error);
+    return selesai(terurai.error, undefined, terurai.error);
   }
 
   // 8. Eject token {{id}} → nilai asli dari evidence.
