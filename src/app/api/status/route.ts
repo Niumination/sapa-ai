@@ -15,6 +15,11 @@ export interface SystemStatus {
     model: string | null;
     reason: string | null;
     dailyUsed: number;
+    metrics?: {
+      deterministicToday: number;
+      llmToday: number;
+      ratio: { deterministic: number; llm: number };
+    };
   };
 }
 

@@ -22,13 +22,19 @@ import { ejectTokens, createStreamEjector } from '@/lib/ai/tokens';
 import { guardQuery, cekDataPribadi, cekPermintaanPerOrang } from '@/lib/ai/guard';
 import { callLlmText, streamLlm, extractNarasiPartial } from '@/lib/ai/llm-client';
 import { checkRateLimit } from '@/lib/rate-limit';
-import { cacheGet, cacheSet, incrementCounter } from '@/lib/store';
+import { cacheGet, cacheSet, incrementCounter, type CounterResult } from '@/lib/store';
 import { normalizeText, dataSourceLabel, type SapaRecord } from '@/lib/sapa-client';
 import type { HybridResponse } from '@/types';
 
 const CACHE_TTL_MS = 15 * 60 * 1000;
 const RATE_PER_MINUTE = 30;
 const RATE_PER_HOUR = 300;
+
+// ─── Metrics: track deterministic vs LLM output ratio ───
+async function recordMetrics(kind: 'llm' | 'deterministic'): Promise<void> {
+  const key = `metrics:query:${kind}:${tanggalHariIni()}`;
+  await incrementCounter(key, 24 * 60 * 60 * 1000);
+}
 
 export interface ComposeOptions {
   query: string;
@@ -93,19 +99,46 @@ export async function getAiRuntimeStatus(): Promise<{
   model: string | null;
   reason: string | null;
   dailyUsed: number;
+  metrics: {
+    deterministicToday: number;
+    llmToday: number;
+    ratio: { deterministic: number; llm: number };
+  };
 }> {
   const cfg = getAiConfig();
   const dailyUsed = cfg.dailyCallLimit
     ? (await incrementCounter(`ai:llm:${tanggalHariIni()}`, 24 * 60 * 60 * 1000)).count - 1
     : 0;
   const state = isAiEnabled(cfg) ? 'active' : isAiShadow(cfg) ? 'shadow' : 'inactive';
+
+  // Read metrics
+  const detKey = `metrics:query:deterministic:${tanggalHariIni()}`;
+  const llmKey = `metrics:query:llm:${tanggalHariIni()}`;
+  // Use incrementCounter with peek (count only, no increment) — fallback to direct read
+  const detCount = await getCounterValue(detKey);
+  const llmCount = await getCounterValue(llmKey);
+  const total = detCount + llmCount;
+  const ratioDet = total > 0 ? Math.round((detCount / total) * 100) : 0;
+  const ratioLlm = total > 0 ? Math.round((llmCount / total) * 100) : 0;
+
   return {
     state,
     provider: cfg.provider,
     model: cfg.model || null,
     reason: aiStatusReason(cfg),
     dailyUsed: Math.max(0, dailyUsed),
+    metrics: {
+      deterministicToday: detCount,
+      llmToday: llmCount,
+      ratio: { deterministic: ratioDet, llm: ratioLlm },
+    },
   };
+}
+
+/** Read counter value without incrementing (uses store backend) */
+async function getCounterValue(key: string): Promise<number> {
+  const val = await cacheGet<string>(key);
+  return val ? parseInt(val, 10) : 0;
 }
 
 // Pesan penolakan. Sengaja dipisah agar kedua jenis pagar (NIK dan
@@ -148,6 +181,7 @@ export async function composeAnswer(opts: ComposeOptions): Promise<ComposeResult
   if (pagarData) {
     const narasiTolak = pagarNik ? NARASI_TOLAK_NIK : NARASI_TOLAK_PER_ORANG;
     const saranTolak = pagarNik ? SARAN_TOLAK_NIK : SARAN_TOLAK_PER_ORANG;
+    recordMetrics('deterministic');
     return {
       response: {
         narasi: narasiTolak,
@@ -192,6 +226,7 @@ export async function composeAnswer(opts: ComposeOptions): Promise<ComposeResult
     meta.latencyMs = Date.now() - mulai;
     if (alasan) meta.reason = alasan;
     if (limitedBy) meta.limitedBy = limitedBy;
+    recordMetrics('deterministic');
     return selengkap(meta, dasar.response);
   };
 
@@ -351,9 +386,11 @@ export async function composeAnswer(opts: ComposeOptions): Promise<ComposeResult
         narasiDeterministik: dasar.response.narasi.slice(0, 300),
       }),
     );
+    recordMetrics('deterministic');
     return selengkap(meta, dasar.response);
   }
 
   await cacheSet(cacheKey, { response: responsAi, ai: meta }, CACHE_TTL_MS);
+  recordMetrics('llm');
   return selengkap(meta, responsAi);
 }
