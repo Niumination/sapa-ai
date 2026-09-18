@@ -21,9 +21,11 @@ const TopOpdWidget = dynamic(() => import('@/components/TopOpdWidget'), {
 
 type DashboardMode = 'default' | 'ai-response';
 
-// Klien memutus lebih dulu daripada platform (Vercel Hobby mematikan fungsi 60 s),
-// supaya pesan error yang tampil selalu benar — bukan "timeout" palsu.
-const CLIENT_TIMEOUT_MS = 45_000;
+// Klien adalah jaring TERAKHIR, bukan yang pertama: server menyerah pada
+// model-timeout 40 dtk (+retrieval ≈ 43 dtk) sehingga pesan error yang benar
+// datang lebih dulu. Klien 55 dtk, platform 60 dtk — jadi pengguna selalu
+// menerima pesan dari server, bukan "timeout" palsu dari sisi klien.
+const CLIENT_TIMEOUT_MS = 55_000;
 
 function simpanRiwayat(query: string, hybrid: HybridResponse, matched: number, count: number) {
   try {

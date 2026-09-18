@@ -72,3 +72,21 @@ Integrasi arena.ai dev-2 di branch `integrasi-arena-ai` (3 patch `git am` bersih
 ## Riwayat sesi 2026-09-06 (ringkas)
 
 Default budget 800→1600→**3000** (titik manis terukur 6/6, ~12 dtk) → docs sinkron-penuh (README, AGENTS, AI_MODE_SHADOW, VERCEL_ENV benar, `docs/RENCANA-TAHAP-BERIKUTNYA.md` baru) → proyek Vercel `sapa-ai` (`sapa-smart-ai.vercel.app`), env AI + `REVALIDATE_SECRET` → push `main`, redeploy → `/api/status` produksi `ai: active, glm-5.3` + smoke query grounded. Wart terbuka: duplikasi satuan narasi AI (Tahap A1). Kuota: `glm-5.3` boros ($1,99/$3 per 5 jam) — kandidat `deepseek-v4-flash`, ganti hanya atas perintah eksplisit.
+
+## Riwayat sesi 2026-09-19 (ringkas)
+
+Toggle admin AI/Deterministik lahir di sesi ini dan tiga kali salah diperbaiki sebelum benar — pelajaran utamanya bukan kodenya, tapi urutan pembuktiannya.
+
+**Toggle admin (`/admin/ai-toggle`).** Panel on/off untuk AI dan jawaban deterministik, auth `AI_ADMIN_KEY` (header `x-admin-key`), state global.
+
+- **Salah 1:** state disimpan di `/tmp/sapa-ai-toggle.json`. Di Vercel `/tmp` itu per-instance dan mati saat idle, jadi instance yang melayani `/api/query` tidak menemukan berkas dan jatuh ke default ON. Gejalanya menipu: panel melaporkan OFF, jawaban tetap keluar. Pindah ke `@/lib/store` (Upstash Redis; fallback memori). **Tanpa Upstash, toggle TIDAK bisa global** — panel kini menampilkan backend dan memperingatkan bila `memory`.
+- **Salah 2:** pagar "deterministik OFF" dipasang di pintu masuk `composeAnswer`, sehingga mematikan SELURUH layanan — AI yang sebenarnya mampu menjawab ikut dibungkam. **Semantik yang benar (dikoreksi pemilik): deterministik = JAWABAN TEMPLATE.** Mematikannya melarang balasan template, bukan mematikan layanan. Pagar harus di `selesai()` — satu-satunya funnel tempat jawaban template keluar — plus jalur shadow yang juga mengirim template. Jalur cache dan jalur sukses LLM memakai `selengkap()` dan memang TIDAK boleh terpagar.
+- **Salah 3:** timeout panggilan model diulang. `callLlmText` me-retry apa pun yang bukan `LlmError`, termasuk timeout — menggandakan waktu tunggu tanpa menambah peluang berhasil (terukur 42,6 dtk untuk jawaban yang sudah pasti gagal). Timeout/pembatalan kini tidak diulang; hanya 403/429/5xx.
+
+**Anggaran waktu (terukur 2026-09-19).** `AI_TIMEOUT_MS` default 20 dtk terlalu ketat: jawaban sukses terukur 33,5 dtk, banyak query menembus 20 dtk lalu gagal. Anggaran lama "20+10+20 < 60" hanya berlaku karena timeout di-retry — begitu retry dimatikan, batas per percobaan adalah batas atas. Default kini **40 dtk**; klien dashboard 45→**55 dtk** (klien adalah jaring terakhir, bukan pertama: server 43 dtk < klien 55 dtk < platform 60 dtk), dan `vercel.json` menyertakan `maxDuration: 60` untuk `/api/query/stream` yang sebelumnya tidak punya entri.
+
+**Pelajaran DOX.** Dua test A1 (`b9a038f`) masuk dalam keadaan GAGAL karena vitest terblokir saat commit dan tidak pernah dijalankan ulang — satu test menuntut perilaku yang tidak pernah diimplementasikan, satu lagi melanggar test anti-few-shot-fiktif. Repo ini mewajibkan `npm run build && npx vitest run` hijau sebelum commit; jangan commit saat runner tidak bisa dijalankan.
+
+Status akhir sesi: 162 test hijau, `backend: redis`, toggle global terbukti lintas-instance (6/6 permintaan konsisten), metrik deterministik/LLM akurat.
+
+**Wart terbuka:** latensi model `glm-5.3` (13-35 dtk) — dengan deterministik OFF tidak ada jaring pengaman, jadi panggilan lambat berubah menjadi error ke pengguna. Kandidat: `deepseek-v4-flash` (perintah eksplisit pemilik).
