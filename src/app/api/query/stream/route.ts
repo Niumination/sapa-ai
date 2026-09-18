@@ -57,6 +57,13 @@ export async function POST(req: NextRequest) {
           onToken: (teks) => kirim('token', { text: teks }),
         });
 
+        // Admin mematikan AI + deterministik → akhiri aliran dengan error jujur,
+        // bukan mengirim narasi yang seharusnya tidak beredar.
+        if (hasil.ai?.limitedBy === 'service-unavailable') {
+          kirim('error', { error: hasil.ai.reason ?? 'Layanan tidak dapat diakses', stage: 'service-unavailable' });
+          return;
+        }
+
         kirim('result', {
           ...hasil.response,
           answer: hasil.response.narasi,

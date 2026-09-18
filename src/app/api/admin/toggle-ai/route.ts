@@ -1,33 +1,29 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { readToggleState, writeToggleState } from '@/lib/ai/toggle';
+import { readToggleState, writeToggleState, toggleBackend } from '@/lib/ai/toggle';
 
 const ADMIN_KEY = process.env.AI_ADMIN_KEY || '';
 
+function unauthorized() {
+  return NextResponse.json({ error: 'unauthorized' }, { status: 401 });
+}
+
 export async function GET(req: NextRequest) {
   const key = req.headers.get('x-admin-key') || '';
-  if (!ADMIN_KEY || key !== ADMIN_KEY) {
-    return NextResponse.json({ error: 'unauthorized' }, { status: 401 });
-  }
-  return NextResponse.json(readToggleState());
+  if (!ADMIN_KEY || key !== ADMIN_KEY) return unauthorized();
+  const state = await readToggleState();
+  return NextResponse.json({ ...state, backend: toggleBackend() });
 }
 
 export async function POST(req: NextRequest) {
   const key = req.headers.get('x-admin-key') || '';
-  if (!ADMIN_KEY || key !== ADMIN_KEY) {
-    return NextResponse.json({ error: 'unauthorized' }, { status: 401 });
-  }
+  if (!ADMIN_KEY || key !== ADMIN_KEY) return unauthorized();
 
   const body = await req.json().catch(() => ({}));
-  const currentState = readToggleState();
-  
-  const aiEnabled = typeof body.aiEnabled === 'boolean' ? body.aiEnabled : currentState.aiEnabled;
-  const detEnabled = typeof body.detEnabled === 'boolean' ? body.detEnabled : currentState.detEnabled;
-  
-  writeToggleState({
-    aiEnabled,
-    detEnabled,
-    updatedAt: new Date().toISOString(),
-    updatedBy: 'admin',
-  });
-  return NextResponse.json(readToggleState());
+  const current = await readToggleState();
+
+  const aiEnabled = typeof body.aiEnabled === 'boolean' ? body.aiEnabled : current.aiEnabled;
+  const detEnabled = typeof body.detEnabled === 'boolean' ? body.detEnabled : current.detEnabled;
+
+  const state = await writeToggleState({ aiEnabled, detEnabled });
+  return NextResponse.json({ ...state, backend: toggleBackend() });
 }

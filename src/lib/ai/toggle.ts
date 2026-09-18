@@ -1,7 +1,20 @@
-import { readFileSync, writeFileSync, existsSync } from 'fs';
-import { join } from 'path';
+// ─── Toggle mode jawaban SAPA-AI (khusus admin) ───
+//
+// MASALAH YANG DIPERBAIKI (2026-09-19)
+// Versi pertama menyimpan state di berkas /tmp. Di Vercel setiap instance
+// serverless punya /tmp sendiri dan mati saat idle, sehingga:
+//   • tulis dari panel admin tidak terlihat oleh instance yang melayani
+//     /api/query → toggle tampak "tidak berefek" (jawaban tetap keluar)
+// Solusi: pakai lapisan penyimpanan bersama `@/lib/store` (Upstash Redis bila
+// dikonfigurasi, cadangan memori bila tidak). Bila cadangan memori yang
+// terpakai, state TETAP per-instance — karena itu `toggleBackend()` diekspos
+// agar panel admin bisa memperingatkan alih-alih diam-diam gagal.
 
-const TOGGLE_FILE = join('/tmp', 'sapa-ai-toggle.json');
+import { cacheGet, cacheSet, activeBackend, type StoreBackend } from '@/lib/store';
+
+const TOGGLE_KEY = 'sapa:ai:toggle:v1';
+/** Umur state toggle. Cukup panjang; toggle bersifat operasional, bukan cache. */
+const TOGGLE_TTL_MS = 30 * 24 * 60 * 60 * 1000;
 
 export interface ToggleState {
   aiEnabled: boolean;
@@ -10,28 +23,50 @@ export interface ToggleState {
   updatedBy: string;
 }
 
-export function readToggleState(): ToggleState {
-  try {
-    if (existsSync(TOGGLE_FILE)) {
-      const raw = readFileSync(TOGGLE_FILE, 'utf-8');
-      return JSON.parse(raw);
-    }
-  } catch {
-    // ignore corrupt file
-  }
-  return { aiEnabled: true, detEnabled: true, updatedAt: new Date().toISOString(), updatedBy: 'default' };
+const DEFAULT_STATE: ToggleState = {
+  aiEnabled: true,
+  detEnabled: true,
+  updatedAt: new Date(0).toISOString(),
+  updatedBy: 'default',
+};
+
+/** Baca state toggle. Mengembalikan default (keduanya aktif) bila belum pernah diubah. */
+export async function readToggleState(): Promise<ToggleState> {
+  const tersimpan = await cacheGet<Partial<ToggleState>>(TOGGLE_KEY);
+  if (!tersimpan) return DEFAULT_STATE;
+  return {
+    aiEnabled: tersimpan.aiEnabled !== false,
+    detEnabled: tersimpan.detEnabled !== false,
+    updatedAt: tersimpan.updatedAt ?? DEFAULT_STATE.updatedAt,
+    updatedBy: tersimpan.updatedBy ?? 'unknown',
+  };
 }
 
-export function writeToggleState(state: ToggleState): void {
-  writeFileSync(TOGGLE_FILE, JSON.stringify(state, null, 2));
+/** Simpan state toggle ke penyimpanan bersama. */
+export async function writeToggleState(
+  state: Pick<ToggleState, 'aiEnabled' | 'detEnabled'>,
+  updatedBy = 'admin',
+): Promise<ToggleState> {
+  const lengkap: ToggleState = {
+    ...state,
+    updatedAt: new Date().toISOString(),
+    updatedBy,
+  };
+  await cacheSet(TOGGLE_KEY, lengkap, TOGGLE_TTL_MS);
+  return lengkap;
 }
 
-/** Check if AI is enabled via admin toggle. Default: true (enabled). */
-export function isAiToggleEnabled(): boolean {
-  return readToggleState().aiEnabled;
+/** Backend yang sedang dipakai. 'memory' berarti toggle per-instance (tidak andal). */
+export function toggleBackend(): StoreBackend {
+  return activeBackend();
 }
 
-/** Check if Deterministic is enabled via admin toggle. Default: true (enabled). */
-export function isDetToggleEnabled(): boolean {
-  return readToggleState().detEnabled;
+/** Apakah narasi AI dipakai. Default: aktif. */
+export async function isAiToggleEnabled(): Promise<boolean> {
+  return (await readToggleState()).aiEnabled;
+}
+
+/** Apakah jawaban deterministik dipakai. Default: aktif. */
+export async function isDetToggleEnabled(): Promise<boolean> {
+  return (await readToggleState()).detEnabled;
 }

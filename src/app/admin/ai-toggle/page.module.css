@@ -27,6 +27,7 @@
 
 .on { color: #00ff88; font-weight: bold; }
 .off { color: #ff4444; font-weight: bold; }
+.warn { color: #ffaa00; font-weight: bold; }
 
 .input {
   width: 100%;
@@ -50,7 +51,20 @@
   cursor: pointer;
 }
 
-.button:disabled {
+.buttonAlt {
+  width: 100%;
+  margin-top: 0.5rem;
+  padding: 0.75rem;
+  border-radius: 6px;
+  border: 1px solid #555;
+  background: #333;
+  color: white;
+  font-weight: bold;
+  cursor: pointer;
+}
+
+.button:disabled,
+.buttonAlt:disabled {
   opacity: 0.5;
   cursor: not-allowed;
 }

@@ -16,7 +16,7 @@ import {
   type EvidenceItem,
 } from '@/services/grounding';
 import { getAiConfig, isAiEnabled, isAiShadow, aiStatusReason, type AiConfig } from '@/lib/ai/env';
-import { isAiToggleEnabled, isDetToggleEnabled } from '@/lib/ai/toggle';
+import { isAiToggleEnabled, isDetToggleEnabled, readToggleState, toggleBackend } from '@/lib/ai/toggle';
 import { buildPrompt } from '@/lib/ai/prompt';
 import { parseLlmAnswer } from '@/lib/ai/schema';
 import { ejectTokens, createStreamEjector, dedupUnits } from '@/lib/ai/tokens';
@@ -102,6 +102,7 @@ export async function getAiRuntimeStatus(): Promise<{
   model: string | null;
   reason: string | null;
   dailyUsed: number;
+  toggles?: { aiEnabled: boolean; detEnabled: boolean; backend: 'redis' | 'memory'; updatedAt: string };
   metrics: {
     deterministicToday: number;
     llmToday: number;
@@ -112,7 +113,22 @@ export async function getAiRuntimeStatus(): Promise<{
   const dailyUsed = cfg.dailyCallLimit
     ? (await incrementCounter(`ai:llm:${tanggalHariIni()}`, 24 * 60 * 60 * 1000)).count - 1
     : 0;
-  const state = isAiEnabled(cfg) ? 'active' : isAiShadow(cfg) ? 'shadow' : 'inactive';
+
+  // Toggle admin menang atas env: status harus mencerminkan apa yang benar-benar
+  // dikirim ke pengguna, bukan sekadar isi AI_ENABLED.
+  const toggle = await readToggleState();
+  const backend = toggleBackend();
+  const dariEnv = isAiEnabled(cfg) ? 'active' : isAiShadow(cfg) ? 'shadow' : 'inactive';
+  const state: 'active' | 'shadow' | 'inactive' =
+    !toggle.aiEnabled || !toggle.detEnabled ? 'inactive' : dariEnv;
+  const reason =
+    !toggle.aiEnabled && !toggle.detEnabled
+      ? 'AI dan deterministik dinonaktifkan oleh admin — layanan tidak dapat diakses'
+      : !toggle.detEnabled
+        ? 'Deterministik dinonaktifkan oleh admin — layanan tidak dapat diakses'
+        : !toggle.aiEnabled
+          ? 'AI dinonaktifkan oleh admin — jawaban deterministik saja'
+          : aiStatusReason(cfg);
 
   // Read metrics
   const detKey = `metrics:query:deterministic:${tanggalHariIni()}`;
@@ -128,8 +144,14 @@ export async function getAiRuntimeStatus(): Promise<{
     state,
     provider: cfg.provider,
     model: cfg.model || null,
-    reason: aiStatusReason(cfg),
+    reason,
     dailyUsed: Math.max(0, dailyUsed),
+    toggles: {
+      aiEnabled: toggle.aiEnabled,
+      detEnabled: toggle.detEnabled,
+      backend,
+      updatedAt: toggle.updatedAt,
+    },
     metrics: {
       deterministicToday: detCount,
       llmToday: llmCount,
@@ -243,8 +265,8 @@ export async function composeAnswer(opts: ComposeOptions): Promise<ComposeResult
   if (!aktif && !shadow) return selesai(aiStatusReason(cfg) ?? 'AI nonaktif', 'unconfigured');
 
   // Admin toggle check - jika admin mematikan kedua layanan via panel
-  const aiToggleOn = isAiToggleEnabled();
-  const detToggleOn = isDetToggleEnabled();
+  const aiToggleOn = await isAiToggleEnabled();
+  const detToggleOn = await isDetToggleEnabled();
   if (!aiToggleOn && !detToggleOn) {
     return selesai('Layanan SAPA-AI tidak dapat diakses. AI dan Deterministik keduanya dinonaktifkan oleh admin.', 'service-unavailable');
   }

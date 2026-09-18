@@ -15,6 +15,13 @@ export interface SystemStatus {
     model: string | null;
     reason: string | null;
     dailyUsed: number;
+    /** State toggle admin — menang atas env. backend='memory' berarti toggle tidak global. */
+    toggles?: {
+      aiEnabled: boolean;
+      detEnabled: boolean;
+      backend: 'redis' | 'memory';
+      updatedAt: string;
+    };
     metrics?: {
       deterministicToday: number;
       llmToday: number;

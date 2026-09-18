@@ -73,8 +73,11 @@ describe('dedupUnits', () => {
     expect(dedupUnits('31,4 Persen', evidence)).toBe('31,4 Persen');
   });
 
-  it('tangkap duplikat "9.610 pegawai orang"', () => {
-    expect(dedupUnits('9.610 pegawai orang', evidence)).toBe('9.610 pegawai');
+  it('tangkap satuan ganda pada satuan selain "Persen": "9.610 pegawai pegawai" → "9.610 pegawai"', () => {
+    // Catatan: dedup hanya menangani satuan yang SAMA PERSIS berulang. Satuan
+    // sinonim hasil karangan model (mis. "pegawai orang") ditangani gerbang
+    // grounding, bukan di sini — jangan lebarkan fungsi ini tanpa bukti kasus nyata.
+    expect(dedupUnits('9.610 pegawai pegawai', evidence)).toBe('9.610 pegawai');
   });
 
   it('kosongkan input kosong', () => {
