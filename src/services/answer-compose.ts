@@ -270,7 +270,12 @@ export async function composeAnswer(opts: ComposeOptions): Promise<ComposeResult
     // jawaban AI tetap normal.
     if (deterministikMati) {
       meta.limitedBy = 'service-unavailable';
-      meta.reason = `${alasan ? `${alasan} — ` : ''}jawaban deterministik dinonaktifkan admin dan AI tidak menghasilkan jawaban`;
+      // Bedakan sebabnya: tanpa evidence bukan berarti model gagal — pesan lama
+      // menyalahkan model padahal modelnya tidak pernah dipanggil.
+      meta.reason =
+        limitedBy === 'no-evidence'
+          ? 'Tidak ada data SAPA yang relevan untuk pertanyaan ini, dan jawaban deterministik dinonaktifkan oleh admin'
+          : `${alasan ? `${alasan} — ` : ''}jawaban deterministik dinonaktifkan admin dan AI tidak menghasilkan jawaban`;
       meta.grounded = 'skipped';
       meta.used = false;
       return selengkap(meta, { ...dasar.response, narasi: meta.reason, rekomendasi: [] });

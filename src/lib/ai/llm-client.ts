@@ -2,7 +2,7 @@
 // Satu dialek untuk semua provider (OpenCode Go, Gemini via endpoint
 // OpenAI-compatible, atau gateway apa pun). Pola diwarisi dari llm-client.ts lama
 // (strip thinking, retry 5xx, AbortSignal) dengan anggaran yang jauh lebih ketat:
-// timeout 20 s dan max_tokens 3000 (default) — cukup untuk narasi ber-token
+// timeout 40 s dan max_tokens 3000 (default) — cukup untuk narasi ber-token
 // + ruang berpikir model reasoning, bukan esai.
 
 import type { AiConfig } from './env';
@@ -37,14 +37,40 @@ export class LlmError extends Error {
  *  hanya membuang anggaran waktu dua kali tanpa peluang berhasil, dan di
  *  Vercel anggaran itu keras (maxDuration 60 dtk). */
 export function dibatalkan(e: unknown): boolean {
-  return e instanceof Error && (e.name === 'AbortError' || /^timeout( setelah \d+ ms)?$/.test(e.message));
+  return e instanceof Error && (e.name === 'AbortError' || /^(timeout|stall)/.test(e.message));
 }
 
-function gabungSignal(eksternal?: AbortSignal, timeoutMs = 20_000): { signal: AbortSignal; selesai: () => void } {
+/** true bila galat = sambungan mandek (tidak ada data sama sekali). Beda dari
+ *  lambat: sambungan mandek tidak akan pulih, jadi lebih baik memutus lalu
+ *  mencoba ulang daripada menunggu timeout penuh. */
+function mandek(e: unknown): boolean {
+  return e instanceof Error && /^stall/.test(e.message);
+}
+
+function gabungSignal(
+  eksternal?: AbortSignal,
+  timeoutMs = 20_000,
+  stallMs = 0,
+): { signal: AbortSignal; reset: () => void; selesai: () => void } {
   const controller = new AbortController();
   // Sertakan nilainya di pesan: tanpa ini, "timeout" tidak memberi tahu batas
   // mana yang berlaku di produksi (env bisa menimpa default).
   const timer = setTimeout(() => controller.abort(new Error(`timeout setelah ${timeoutMs} ms`)), timeoutMs);
+
+  // Watchdog "tidak ada data". Hanya relevan untuk jalur streaming; jalur
+  // non-stream tidak punya sinyal kemajuan sehingga tidak bisa membedakan
+  // mandek dari lambat.
+  let watchdog: ReturnType<typeof setTimeout> | undefined;
+  const reset = () => {
+    if (!stallMs) return;
+    clearTimeout(watchdog);
+    watchdog = setTimeout(
+      () => controller.abort(new Error(`stall: tidak ada data dalam ${stallMs} ms`)),
+      stallMs,
+    );
+  };
+  reset();
+
   const onAbort = () => controller.abort(eksternal?.reason);
   if (eksternal) {
     if (eksternal.aborted) onAbort();
@@ -52,8 +78,10 @@ function gabungSignal(eksternal?: AbortSignal, timeoutMs = 20_000): { signal: Ab
   }
   return {
     signal: controller.signal,
+    reset,
     selesai: () => {
       clearTimeout(timer);
+      clearTimeout(watchdog);
       if (eksternal) eksternal.removeEventListener('abort', onAbort);
     },
   };
@@ -165,6 +193,18 @@ export async function callLlmText(
   throw terakhirError instanceof Error ? terakhirError : new LlmError('panggilan model gagal');
 }
 
+/** Batas "tidak ada data sama sekali" pada jalur streaming. Sambungan mandek
+ *  (terukur 19 Sep 2026 di produksi: 48 dtk tanpa satu token pun, sementara
+ *  query yang sama selesai 12 dtk di lokal) tidak akan pulih sendiri — menunggu
+ *  sampai timeout penuh hanya menghabiskan anggaran dan menyajikan error
+ *  padahal percobaan ulang bisa berhasil. */
+const STALL_MS = Number(process.env.AI_FIRST_TOKEN_MS ?? '') || 15_000;
+/** Percobaan kedua memakai anggaran lebih kecil supaya total tetap di bawah
+ *  anggaran klien (55 dtk): 15 dtk mandek + 1 dtk jeda + 30 dtk = 46 dtk. */
+const TIMEOUT_PERCOBAAN_KEDUA_MS = 30_000;
+const JEDA_MANDEK_MS = 1_000;
+const AMBANG_MANDEK_MS = STALL_MS;
+
 /** Streaming SSE. Menghasilkan potongan teks mentah (belum di-eject token). */
 export async function* streamLlm(
   cfg: AiConfig,
@@ -175,41 +215,62 @@ export async function* streamLlm(
     throw new LlmError(`dialek "${cfg.dialect}" tidak didukung`);
   }
 
-  const { signal: sig, selesai } = gabungSignal(signal, cfg.timeoutMs);
-  try {
-    const res = await kirim(cfg, messages, true, sig, false);
-    if (!res.ok || !res.body) {
-      const teks = await res.text().catch(() => '');
-      throw new LlmError(`HTTP ${res.status}: ${teks.slice(0, 200)}`, res.status);
-    }
-    const reader = res.body.getReader();
-    const decoder = new TextDecoder();
-    let buffer = '';
-    for (;;) {
-      const { done, value } = await reader.read();
-      if (done) break;
-      buffer += decoder.decode(value, { stream: true });
-      const baris = buffer.split('\n');
-      buffer = baris.pop() ?? '';
-      for (const b of baris) {
-        const trimmed = b.trim();
-        if (!trimmed.startsWith('data:')) continue;
-        const data = trimmed.slice(5).trim();
-        if (!data || data === '[DONE]') continue;
-        try {
-          const json = JSON.parse(data) as {
-            choices?: { delta?: { content?: string }; finish_reason?: string }[];
-          };
-          const delta = json.choices?.[0]?.delta?.content;
-          if (delta) yield { delta, finishReason: json.choices?.[0]?.finish_reason };
-        } catch {
-          // baris parsial/keep-alive — lewati
+  let terakhirError: unknown;
+  for (let percobaan = 1; percobaan <= 2; percobaan++) {
+    const batas = percobaan === 1 ? cfg.timeoutMs : Math.min(cfg.timeoutMs, TIMEOUT_PERCOBAAN_KEDUA_MS);
+    const { signal: sig, reset, selesai } = gabungSignal(signal, batas, STALL_MS);
+    // Percobaan ulang HANYA sah bila belum ada satu pun delta yang keluar ke
+    // pemanggil. Setelah ada output, memulai ulang akan menggandakan teks.
+    let sudahAdaData = false;
+    try {
+      const res = await kirim(cfg, messages, true, sig, false);
+      if (!res.ok || !res.body) {
+        const teks = await res.text().catch(() => '');
+        throw new LlmError(`HTTP ${res.status}: ${teks.slice(0, 200)}`, res.status);
+      }
+      const reader = res.body.getReader();
+      const decoder = new TextDecoder();
+      let buffer = '';
+      for (;;) {
+        const { done, value } = await reader.read();
+        if (done) break;
+        reset();
+        sudahAdaData = true;
+        buffer += decoder.decode(value, { stream: true });
+        const baris = buffer.split('\n');
+        buffer = baris.pop() ?? '';
+        for (const b of baris) {
+          const trimmed = b.trim();
+          if (!trimmed.startsWith('data:')) continue;
+          const data = trimmed.slice(5).trim();
+          if (!data || data === '[DONE]') continue;
+          try {
+            const json = JSON.parse(data) as {
+              choices?: { delta?: { content?: string }; finish_reason?: string }[];
+            };
+            const delta = json.choices?.[0]?.delta?.content;
+            if (delta) yield { delta, finishReason: json.choices?.[0]?.finish_reason };
+          } catch {
+            // baris parsial/keep-alive — lewati
+          }
         }
       }
+      return; // selesai utuh
+    } catch (e) {
+      terakhirError = e;
+      if (signal?.aborted) throw e; // pembatalan pemanggil: jangan diteruskan tanpa izin
+      const bisaUlang =
+        !sudahAdaData &&
+        (mandek(e) ||
+          (e instanceof LlmError && (e.status === 403 || e.status === 429 || (e.status ?? 0) >= 500)) ||
+          (e instanceof Error && /^timeout/.test(e.message)));
+      if (percobaan >= 2 || !bisaUlang) throw e;
+      await new Promise((r) => setTimeout(r, mandek(e) ? JEDA_MANDEK_MS : TUNDA_RETRY_MS));
+    } finally {
+      selesai();
     }
-  } finally {
-    selesai();
   }
+  throw terakhirError instanceof Error ? terakhirError : new LlmError('panggilan model gagal');
 }
 
 /**
