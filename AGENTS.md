@@ -2,7 +2,7 @@
 
 > **Next.js 16 + SPLP API langsung (tanpa DB, tanpa auth/login, tanpa DTSEN, tanpa warehouse)**
 > **Path:** `services/sapa-ai/` · **Repo:** `Niumination/sapa-ai` (`main`)
-> **Produksi:** https://sapa-smart-ai.vercel.app — AI **AKTIF** (`glm-5.3` OpenCode Go, gerbang 47/52 lolos) + fallback deterministik
+> **Produksi:** https://sapa-smart-ai.vercel.app — AI `deepseek-v4.1-flash` (OpenCode Go) + jawaban deterministik, keduanya dikendalikan toggle admin (`/admin/ai-toggle`, state di Upstash Redis)
 > **Status:** 🟢 Active — Perf RSC+ISR 10m (analytics/dashboard server-fetch, kpi/stats/report/sapa cache terdistribusi, revalidate endpoint)
 > **Backlog priority:** P2 — rencana berikut: `docs/RENCANA-TAHAP-BERIKUTNYA.md`
 
@@ -99,3 +99,27 @@ Hasil akhir: 5/5 query produksi `used=true, grounded=pass` (latensi 18,0-40,3 dt
 Status akhir sesi: 162 test hijau, `backend: redis`, toggle global terbukti lintas-instance (6/6 permintaan konsisten), metrik deterministik/LLM akurat.
 
 **Wart terbuka:** ekor latensi penyedia (`glm-5.3`) masih bisa menyentuh 40 dtk pada query tertentu; dengan deterministik OFF tidak ada jaring pengaman, jadi panggilan di atas 48 dtk tetap menjadi error. Jika ini mengganggu, opsi berikutnya adalah gerbang kualitas shadow penuh (`npm run eval`, 52 item) untuk `deepseek-v4-flash` — bukan sekadar perbandingan latensi.
+
+## Riwayat sesi 2026-09-19 (lanjutan) — stall, model, retry skema, insiden deploy
+
+**Diagnosis stall (keluhan: `timeout setelah 48000 ms`).** Pada jalur SSE diukur **nol token selama 48 dtk**, sementara query yang sama selesai **12,1 dtk** di lokal dengan prompt hanya 995 token. Sambungannya MANDEK, bukan model lambat menulis — dan keduanya butuh penanganan berbeda: menunggu itu benar untuk yang lambat, sia-sia untuk yang mandek.
+
+Perbaikan (`e172c66`): watchdog "tidak ada data" (`AI_FIRST_TOKEN_MS`, default 15 dtk) memutus sambungan mandek lalu mencoba ulang sekali dengan anggaran 30 dtk (terburuk 15+1+30 = 46 dtk). Percobaan ulang HANYA sah bila belum ada satu delta pun keluar ke pemanggil — setelah ada output, memulai ulang menggandakan teks. Dijaga `src/lib/ai/__tests__/stream-stall.test.ts`; **mock uji WAJIB menghormati AbortSignal**, kalau tidak watchdog tidak akan pernah terpicu di uji (jebakan yang sudah kena sekali).
+
+**Pergantian model produksi ke `deepseek-v4.1-flash`** (keputusan pemilik — kuota `glm-5.3` hampir habis, bukan karena latensi: lokal keduanya setara). Terukur pada 8 query jalur stream: latensi **3,6-8,5 dtk** (rata 5,4) melawan `glm-5.3` 15-40+ dtk. 6/8 langsung berhasil; 2 gagal "keluaran tidak sesuai skema" dan **keduanya berhasil saat diulang** → kegagalan skema bersifat sampling.
+
+Perbaikan (`8ce5950`): skema gagal → satu percobaan ulang NON-stream (token percobaan pertama digantikan hasil percobaan kedua lewat event `result`). Batas anggaran: hanya bila waktu terpakai <15 dtk, percobaan kedua dibatasi 25 dtk. Ditambah **default model per-provider** (`opencode-go` → `deepseek-v4.1-flash`) supaya menghapus/mengganti `AI_MODEL` di Vercel tidak pernah meninggalkan model kosong.
+
+**Pesan layanan nonaktif (`6c8078e`).** `AI dinonaktifkan oleh admin — jawaban deterministik dinonaktifkan admin dan AI tidak menghasilkan jawaban` → **`AI tidak aktif — jawaban deterministik dan AI tidak menghasilkan jawaban`**. Frasa "dinonaktifkan admin" muncul dua kali untuk satu sebab. Pesan sebab-spesifik lain sengaja dipertahankan (mis. kegagalan model tetap membawa alasannya) supaya diagnosis tidak hilang.
+
+**Pelajaran deploy (mahal — jangan diulang).**
+1. Periksa insiden platform sebelum menuduh kode: `curl -s https://www.vercel-status.com/api/v2/incidents/unresolved.json`.
+2. **Deployment macet di `INITIALIZING` menahan satu-satunya slot build Hobby.** Selama itu semua push berikutnya tidak pernah dibangun — commit perbaikan pesan tertinggal di produksi tanpa gejala yang jelas. Bebaskan: `vercel api -X PATCH "/v12/deployments/<id>/cancel"`.
+3. Bila integrasi Git tidak membuat deployment sama sekali: `vercel --prod --yes` dari direktori proyek.
+4. **Deploy CLI tidak otomatis mengambil domain produksi** — perlu `vercel promote <url>`.
+5. Verifikasi commit yang BENAR-BENAR melayani produksi: `vercel api "/v13/deployments/<domain>"` lalu baca `meta.githubCommitSha`. Jangan berasumsi "deploy terbaru = kode terbaru" — pernah tertinggal satu commit.
+6. `state: inactive` di `/api/status` belum berarti rusak — periksa `toggles` dulu; toggle admin menang atas env.
+
+**Storage Vercel (Hobby 10 GB).** Functions Storage = bundel fungsi yang disimpan **di setiap region**, dan tumbuh dari jumlah deployment tersimpan × ukuran output × retensi; diukur **GB-bulan** (maksimum harian per proyek, dijumlahkan sepanjang siklus). Akun ini: 12 proyek, ≥228 deployment tersimpan (cc-acehtengah >100). **Pause tidak menambah dan tidak mengurangi storage** — ia hanya menghentikan layanan. Pengungkitnya Deployment Retention Policy; proyek Hobby yang melewati batas kini penghapusannya dipercepat sendiri oleh Vercel.
+
+Status akhir sesi: 169 test hijau, model produksi `deepseek-v4.1-flash`, region `sin1`, jawaban AI terukur 3,4 dtk dengan `grounded=pass`. Saat pengecekan terakhir toggle admin berada di **AI OFF + deterministik OFF** (pilihan pemilik) sehingga layanan membalas 503 dengan pesan baru — bukan kerusakan.
