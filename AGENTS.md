@@ -52,11 +52,17 @@ npm run start -- -p 3104          # serve lokal (setelah build)
 
 ## Known drift (follow-up, bukan blokir)
 
-- `package.json` kini bernama `sapa-ai`; deps `prisma/bcryptjs/jose/next-auth` + `postinstall prisma generate`
-  masih menganggur (tak ada importer). Prune = task terpisah (butuh `npm install` ulang).
-- `rekons.md` (untracked, scratch lama) belum dibuang — di luar scope task ini.
-- `.agents/skills/` autoskills v0.3.6 (20 skill generik, 1.4M); 3 duplikat bank pusat
-  (frontend-design, accessibility, seo) — drop bila single-home ditegakkan.
+- **Selesai pada 0.1.0 (19 Sep 2026):** dependensi menganggur (`prisma`, `@prisma/client`,
+  `bcryptjs`, `jose`, `next-auth`, `nanoid`, `uuid`, `date-fns`) + `postinstall prisma generate`
+  sudah dibuang; `.agents/skills/` (244 berkas autoskills pihak ketiga) dan `skills-lock.json`
+  dihapus; `rekons.md` dipindahkan menjadi `docs/DESAIN-PIPELINE-DETERMINISTIK.md`;
+  `docs/archive/cc-lineage/` (warisan DTSEN) dihapus — rumahnya di repo cc-acehtengah;
+  `VERCEL_ENV.md` akar (duplikat) dihapus. Berkas ter-track turun 407 → 140.
+- **Utang yang masih ada:** kuota Functions Storage Vercel terlampaui — penerima perlu
+  mengatur Deployment Retention Policy (lihat `docs/serah-terima/10-PEMELIHARAAN-DAN-ROADMAP.md`).
+- **Paket serah terima** ada di `docs/serah-terima/` (11 dokumen, untuk Diskominfo
+  Bidang Statistik dan Persandian). Dokumen itu menghadap manusia, bukan agen — jangan
+  duplikasi isinya ke sini.
 
 ## Riwayat sesi 2026-09-03 (ringkas)
 
@@ -123,3 +129,15 @@ Perbaikan (`8ce5950`): skema gagal → satu percobaan ulang NON-stream (token pe
 **Storage Vercel (Hobby 10 GB).** Functions Storage = bundel fungsi yang disimpan **di setiap region**, dan tumbuh dari jumlah deployment tersimpan × ukuran output × retensi; diukur **GB-bulan** (maksimum harian per proyek, dijumlahkan sepanjang siklus). Akun ini: 12 proyek, ≥228 deployment tersimpan (cc-acehtengah >100). **Pause tidak menambah dan tidak mengurangi storage** — ia hanya menghentikan layanan. Pengungkitnya Deployment Retention Policy; proyek Hobby yang melewati batas kini penghapusannya dipercepat sendiri oleh Vercel.
 
 Status akhir sesi: 169 test hijau, model produksi `deepseek-v4.1-flash`, region `sin1`, jawaban AI terukur 3,4 dtk dengan `grounded=pass`. Saat pengecekan terakhir toggle admin berada di **AI OFF + deterministik OFF** (pilihan pemilik) sehingga layanan membalas 503 dengan pesan baru — bukan kerusakan.
+
+## Riwayat sesi 2026-09-19 (serah terima — versi 0.1.0)
+
+Repo dirapikan dan dilengkapi dokumen serah terima untuk **Diskominfo Bidang Statistik dan Persandian**, pemegang kegiatan pengembangan aplikasi.
+
+**Pembersihan (ter-track 407 → 140 berkas).** Dibuang: `docs/archive/cc-lineage/` (15 dokumen warisan DTSEN/cc-acehtengah — rumahnya di repo cc-acehtengah), `.agents/` + `skills-lock.json` (244 berkas autoskills pihak ketiga, duplikat bank pusat), `prisma/` + 8 dependensi menganggur + `postinstall prisma generate`, `VERCEL_ENV.md` akar (duplikat), catatan transien OpenCode Go (dipindah ke `docs/archive/`). `rekons.md` **bukan coretan** — isinya dokumen desain, jadi dipindahkan menjadi `docs/DESAIN-PIPELINE-DETERMINISTIK.md`. Verifikasi pasca-prune: typecheck OK, 169/169 test, build sukses.
+
+**Temuan untuk Bidang Persandian.** `react-leaflet` memakai **Hippocratic-2.1**, bukan lisensi OSI — dicatat di `LICENSE` butir 5 beserta opsi penggantinya. Tidak ditemukan kredensial ter-commit (pemindaian pola `sk-*`, token, `.env`/`*.key` di seluruh riwayat: bersih).
+
+**Paket dokumen.** `docs/serah-terima/00…10` + indeks, menghadap manusia dalam Bahasa Indonesia: berita acara, ringkasan, arsitektur, instalasi, runbook, panduan pengguna, API, keamanan & data, tata kelola AI, pengujian, pemeliharaan. Ditambah `LICENSE` (hak cipta Diskominfo, penggunaan internal pemerintahan) dan `CHANGELOG.md`. Roadmap lama (`docs/RENCANA-TAHAP-BERIKUTNYA.md`) diserap ke `10-PEMELIHARAAN-DAN-ROADMAP.md` lalu diarsipkan.
+
+**Pelajaran penulisan dokumen serah terima.** Dokumen penerima berbeda dari DOX agen: penerima butuh langkah yang bisa diikuti dan akibat yang bisa diprediksi, bukan riwayat commit. Tulis apa adanya soal keadaan yang belum selesai (kuota storage terlampaui, layanan tanya-jawab dimatikan, lisensi komponen) — kejutan yang ditemukan penerima setelah tanda tangan jauh lebih mahal daripada catatan jujur sebelum tanda tangan.

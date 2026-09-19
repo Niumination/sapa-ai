@@ -52,9 +52,15 @@ for dp, dirs, files in os.walk(root):
         except (UnicodeDecodeError, OSError):
             continue
         # Berkas uji yang SENGAJA memuat NIK sintetis wajib mendeklarasikan
-        # penanda ini di awal berkas. Tetap dicetak agar tidak ada yang lolos
-        # tanpa terlihat — ini bukan daftar abaikan tersembunyi.
-        if PENGECUALIAN in txt:
+        # penanda ini DI AWAL BERKAS (baris pertama). Tetap dicetak agar tidak
+        # ada yang lolos tanpa terlihat — ini bukan daftar abaikan tersembunyi.
+        #
+        # Ditegakkan hanya pada 1.000 karakter pertama: sebelumnya penanda
+        # dihitung di mana pun dalam berkas, sehingga DOKUMEN YANG MENJELASKAN
+        # penanda ini (mis. docs/serah-terima/07-KEAMANAN-DAN-DATA.md) ikut
+        # dilewati tanpa sengaja — pemindai jadi buta pada berkas yang justru
+        # membahas PII. Semua berkas uji yang sah menaruh penanda di baris 1-2.
+        if PENGECUALIAN in txt[:1000]:
             print("LEWATI (deklarasi data uji sintetis):", path)
             continue
         if nik.search(txt):

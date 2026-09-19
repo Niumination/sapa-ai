@@ -1,83 +1,113 @@
-# sapa-ai — Satu Pintu Akses Data Aceh Tengah
+# SAPA Smart AI — Asisten Data Statistik Kabupaten Aceh Tengah
 
-Dashboard publik untuk data SAPA (Satu Pintu Akses Data) Kabupaten Aceh Tengah.
-Jawaban dihitung dari data SAPA SPLP — dinarasikan AI (`glm-5.3` OpenCode Go)
-dengan **fallback deterministik**: bila model gagal/ragu, jawaban deterministik
-yang disajikan (tidak pernah error ke pengguna). Tanpa database, tanpa login.
+Asisten tanya-jawab berbasis web untuk data SAPA (Satu Pintu Akses Data) Kabupaten
+Aceh Tengah. Pertanyaan diajukan dalam bahasa Indonesia, jawaban disusun dari data
+SPLP dan dilengkapi bukti (indikator, nilai, satuan, tahun, OPD asal).
 
-**Repo:** https://github.com/Niumination/sapa-ai · **Produksi:** https://sapa-smart-ai.vercel.app
+**Repositori:** `github.com/Niumination/sapa-ai` (privat)
+**Produksi:** https://sapa-smart-ai.vercel.app
+**Versi:** 0.1.0 — tahap awal produksi
+**Pemegang hak:** Dinas Komunikasi dan Informatika Kabupaten Aceh Tengah
+
+> **Untuk penerima serah terima — mulai dari sini:** [`docs/serah-terima/`](docs/serah-terima/)
+> Berisi berita acara, arsitektur, panduan instalasi, runbook operasional, panduan
+> pengguna, dokumentasi API, keamanan dan data, tata kelola AI, pengujian, serta
+> rencana pemeliharaan.
+
+## Keadaan layanan saat ini
+
+Halaman informasi (dashboard, analitik, GIS, laporan) berjalan normal. **Layanan
+tanya-jawab sedang dimatikan** melalui panel admin karena perpanjangan langganan
+penyedia model bahasa tertunda. Ini pilihan pengelola, bukan kerusakan — lihat
+[`docs/serah-terima/01-RINGKASAN-APLIKASI.md`](docs/serah-terima/01-RINGKASAN-APLIKASI.md).
+
+## Sifat arsitektur
+
+Sengaja dibatasi: **satu sumber data** (API SPLP), **tanpa basis data**, **tanpa
+akun pengguna**, **tanpa DTSEN/gudang data/cron**. Data ditarik saat diminta dan
+disimpan sementara 10 menit. Bila SPLP tidak tersedia, aplikasi membalas dengan
+pesan jelas (HTTP 503), bukan angka kosong atau galat 500.
 
 ## Fitur
 
-- **AI Smart Query** — tanya data SAPA dalam bahasa natural; narasi AI grounded-evidence (pemeriksa angka + ejector token), fallback deterministik bila gagal; lead, headline, narasi eksekutif, dan kartu KPI memakai satu format angka singkat yang selaras
-- **10 chip keyword terverifikasi** — stunting, IPM, PDRB, kopi arabika, ASN, kesehatan, pendidikan, Belanja APBD, dst. (sumber SAPA SPLP)
-- **KPI Prioritas Daerah** — 8 kartu indikator terkurasi (stunting, IPM, ASN, kemiskinan, kopi, PDRB, jalan, putus sekolah) + delta antar-tahun
-- **Top 10 OPD + drill-down per OPD** — tren tahunan per indikator, tabel nilai terakhir, provenance jujur (record tanpa tahun dilaporkan, bukan dipaksakan jadi tren)
-- **Analitik, GIS 14 kecamatan, Laporan eksekutif + riwayat lokal**
-- **Status sistem jujur** — `/api/status`: SAPA aktif/mati dari SPLP asli; AI aktif (`glm-5.3`) di produksi, nonaktif tanpa env (fallback deterministik)
+- **Tanya data dalam bahasa alami** — narasi disusun model bahasa dari bukti SPLP;
+  angka yang tidak ada pada bukti dibuang (grounding), dan jawaban tetap
+  menyertakan daftar buktinya
+- **Dua saklar admin** — AI dan jawaban deterministik (template), diatur dari
+  `/admin/ai-toggle`; panel menampilkan akibat tiap kombinasi
+- **Halaman analitik** — grafik per OPD dengan penelusuran rinci
+- **GIS 14 kecamatan** — sebaran indikator pada peta
+- **Laporan eksekutif** — riwayat tersimpan di peramban pengguna
+- **Status jujur** — `/api/status` melaporkan keadaan sumber data dan AI apa adanya
 
-## Tech Stack
+## Tumpukan teknologi
 
-| Layer | Technology |
-|-------|-----------|
-| Frontend | Next.js 16, React 19, Tailwind CSS 4, Recharts, Leaflet (RSC revalidate 600 untuk `/dashboard` & `/dashboard/analytics`) |
-| Backend | Next.js API Routes (Node.js), tanpa ORM/database — ISR 10m (`revalidate 600`) untuk `/api/sapa|kpi|stats|report` |
-| Data Source | SAPA SPLP API (`api-splp.layanan.go.id/sapa/1.0/api/daftar_data`), cache LRU server 10 mnt + `unstable_cache` terdistribusi 10 mnt |
-| Test | Vitest (150 test: grounding, parser, AI schema/guard/retry) |
+- **Antarmuka:** Next.js 16 (App Router), React 19, Tailwind CSS 4, Recharts, Leaflet
+- **Layanan data:** Next.js API Routes (Node.js) — tanpa ORM, tanpa basis data
+- **Sumber data:** API SPLP `https://api-splp.layanan.go.id/sapa/1.0/api`
+- **Cache:** LRU per-instance 10 menit + `unstable_cache` 600 detik terdistribusi
+- **Pengujian:** Vitest — 169 pengujian pada 17 berkas
+- **Penempatan:** Vercel, fungsi dijalankan di region `sin1` (Singapura)
 
-## Quick Start
+## Mulai cepat
 
 ```bash
 npm install
 npm run dev
-
-# Open http://localhost:3000/dashboard
+# buka http://localhost:3000/dashboard
 ```
 
-Verifikasi sebelum commit:
+Verifikasi sebelum mengunggah perubahan:
 
 ```bash
-npm run typecheck && npx vitest run   # wajib hijau (150/150)
-npm run build    # wajib compiled successfully
+npm run typecheck && npx vitest run && npm run build
 ```
 
-Tidak ada setup database, tidak ada akun admin, tidak ada migrasi.
+Tidak ada basis data yang perlu disiapkan dan tidak ada migrasi.
 
-## Environment Variables
+## Variabel lingkungan
 
-Lihat `.env.example`. Kunci:
+Lihat [`.env.example`](.env.example) — seluruh 18 variabel terdokumentasi di sana.
+Yang paling sering disesuaikan:
 
 ```env
-# AI model (produksi: glm-5.3 OpenCode Go; tanpa ini = deterministik murni).
-AI_PROVIDER="opencode-go"
-AI_MODEL="glm-5.3"
-# AI_API_KEY=<isi via Vercel Dashboard, jangan commit>
+AI_PROVIDER="opencode-go"        # opencode-go | gemini | custom
+AI_MODEL="deepseek-v4.1-flash"   # wajib diisi untuk penyedia selain opencode-go
+# AI_API_KEY=<isi melalui dashboard Vercel, jangan pernah di-commit>
+AI_ADMIN_KEY=<kunci panel admin>
 ```
 
-## Project Structure
+Tanpa kunci API, aplikasi tetap berjalan dalam mode deterministik.
+
+## Struktur proyek
 
 ```
 src/
 ├── app/
-│   ├── api/query/        # POST query bahasa natural → narasi AI + fallback deterministik (ƒ Dynamic)
-│   ├── api/query/stream/ # SSE narasi AI (status → token → result/error)
-│   ├── api/sapa/         # GET agregat SAPA (○ 10m, tags sapa-analytics)
-│   ├── api/kpi/          # GET 8 KPI terkurasi + delta (○ 10m, tags kpi)
-│   ├── api/stats/        # GET agregat ringan (○ 10m, tags stats)
-│   ├── api/report/       # GET laporan eksekutif (○ 10m, tags report)
-│   ├── api/status/       # GET status sistem jujur (ƒ Dynamic, tidak di-cache)
-│   ├── api/revalidate/   # POST bust cache {tag|tags|all} (ƒ Dynamic, REVALIDATE_SECRET)
-│   └── dashboard/        # beranda RSC 10m (KpiPanel initialData), analytics RSC 10m (+?opd= drill-down), gis, laporan, status
-├── components/           # QueryBar, KpiPanel (initialData), TopOpdWidget, OpdDrilldown (lazy), ExecutiveAnswerRenderer, ...
-├── lib/                  # sapa-client (SPLP + retrieval v2 + LRU 10m), format-singkat (satu sumber format angka), ai/ (klien LLM agnostik-provider, prompt, skema, guard, ejector token)
-└── services/             # grounding, executive-presentation, kpi, report-generator, opd-drilldown, analytics-data, kpi-data, answer-compose (orkestrasi AI↔deterministik)
+│   ├── api/query/          # tanya-jawab (JSON) dan stream/ (SSE: status → token → result/error)
+│   ├── api/sapa|kpi|stats|report/   # agregat untuk dashboard (cache 10 menit)
+│   ├── api/status/         # kesehatan sumber data dan AI (tidak di-cache)
+│   ├── api/revalidate/     # penyegaran cache {tag|tags|all}
+│   ├── api/admin/          # pengendali saklar layanan
+│   ├── admin/ai-toggle/    # panel pengelola
+│   └── dashboard/          # dashboard, analytics, gis, laporan, status
+├── components/             # QueryBar, KpiPanel, OpdDrilldown, ExecutiveAnswerRenderer, ...
+├── lib/                    # sapa-client (SPLP + retrieval + LRU), format angka, ai/ (klien model, prompt, skema, guard, ejector)
+└── services/               # grounding, answer-compose (orkestrasi AI↔deterministik), analytics, kpi, report
 ```
 
-## Aturan repo
+## Aturan repositori
 
-Lihat `AGENTS.md` (aturan agen + known drift) dan `BACKLOG.md` (prioritas).
-Dokumen era stack lama (auth/DB/DTSEN/warehouse) diarsipkan di `docs/archive/` — sejarah, bukan acuan aktif.
+- **SAPA-only.** Jangan menambahkan basis data, autentikasi, DTSEN, gudang data,
+  atau cron tanpa pembahasan lebih dahulu.
+- Aturan kerja agen dan utang teknis tercatat di [`AGENTS.md`](AGENTS.md).
+- Desain pipeline deterministik ada di
+  [`docs/DESAIN-PIPELINE-DETERMINISTIK.md`](docs/DESAIN-PIPELINE-DETERMINISTIK.md).
+- Dokumen pendukung lain: [`docs/`](docs/) — termasuk `VERCEL_ENV.md` dan
+  `AI_MODE_SHADOW.md`.
 
-## License
+## Lisensi
 
-Private — Pemerintah Kabupaten Aceh Tengah / Niumination.
+Penggunaan internal pemerintahan — hak cipta Dinas Komunikasi dan Informatika
+Kabupaten Aceh Tengah. Lihat [`LICENSE`](LICENSE), termasuk catatan khusus
+mengenai lisensi komponen pihak ketiga.

@@ -1,0 +1,85 @@
+# Lisensi Penggunaan Internal Pemerintahan
+
+**Aplikasi:** SAPA Smart AI — Asisten Data Statistik Kabupaten Aceh Tengah
+**Versi:** 0.1.0
+**Pemegang hak cipta:** Dinas Komunikasi dan Informatika Kabupaten Aceh Tengah
+**Tahun:** 2026
+
+## 1. Kepemilikan
+
+Seluruh kode sumber aplikasi ini, beserta dokumentasi yang menyertainya, merupakan
+karya yang hak ciptanya dipegang oleh Dinas Komunikasi dan Informatika Kabupaten
+Aceh Tengah ("Pemegang Hak"). Kode ini dikembangkan dalam rangka kegiatan
+pengembangan aplikasi pada Bidang Statistik dan Persandian.
+
+## 2. Hak yang diberikan
+
+Pemegang Hak memberikan izin kepada:
+
+1. Perangkat Daerah di lingkungan Pemerintah Kabupaten Aceh Tengah, dan
+2. pihak yang ditunjuk resmi oleh Pemegang Hak,
+
+untuk menggunakan, menjalankan, menyalin, dan memodifikasi kode sumber ini
+**untuk keperluan internal pemerintahan**, termasuk pemeliharaan, pengembangan
+lanjutan, dan pemasangan pada infrastruktur milik Pemerintah Kabupaten Aceh Tengah.
+
+## 3. Pembatasan
+
+Tanpa izin tertulis dari Pemegang Hak, dilarang:
+
+1. menjual, menyewakan, atau mengalihkan kode ini kepada pihak ketiga;
+2. menyebarluaskan kode ini ke repositori publik atau pihak di luar
+   Pemerintah Kabupaten Aceh Tengah;
+3. menggunakan kode ini untuk keperluan komersial di luar kepentingan
+   pemerintahan;
+4. menghapus atau menyembunyikan pemberitahuan hak cipta pada kode dan dokumentasi.
+
+## 4. Komponen pihak ketiga
+
+Aplikasi ini memakai paket perangkat lunak pihak ketiga. Paket-paket tersebut
+**tunduk pada lisensi masing-masing**, bukan pada lisensi ini. Daftar berikut
+diverifikasi langsung dari `node_modules` pada 19 September 2026:
+
+| Komponen | Lisensi | Catatan |
+|---|---|---|
+| next | MIT | Kerangka kerja utama |
+| react, react-dom | MIT | Antarmuka |
+| recharts | MIT | Grafik analitik |
+| zod | MIT | Validasi skema |
+| tailwindcss, @tailwindcss/postcss | MIT | Penataan tampilan |
+| eslint, eslint-config-next | MIT | Alat pemeriksa kode |
+| vitest | MIT | Kerangka pengujian |
+| typescript | Apache-2.0 | Kompilator |
+| @types/* | MIT | Definisi tipe |
+| leaflet | BSD-2-Clause | Peta pada halaman GIS |
+| **react-leaflet** | **Hippocratic-2.1** | **Perlu perhatian — lihat butir 5** |
+
+## 5. Catatan lisensi react-leaflet (perlu perhatian Bidang Persandian)
+
+`react-leaflet` — pembungkus React untuk peta Leaflet yang dipakai halaman
+`/dashboard/gis` — **tidak memakai lisensi OSI** seperti MIT atau Apache.
+Paket ini memakai **Hippocratic License 2.1**, yang mengikat penggunaan pada
+pemenuhan standar hak asasi manusia yang dinyatakan dalam lisensi tersebut.
+
+Konsekuensi yang perlu dicatat penerima:
+
+1. Penggunaan internal pemerintahan untuk penyajian data statistik tidak
+   bertentangan dengan klausul tersebut.
+2. Namun lisensi ini **bukan lisensi bebas** — bila di kemudian hari aplikasi
+   dipakai ulang, digabungkan, atau diserahkan ke pihak lain, syaratnya harus
+   ditinjau ulang.
+3. Bila Bidang Persandian mensyaratkan seluruh komponen berlisensi OSI,
+   penggantinya adalah memakai `leaflet` langsung (BSD-2-Clause) tanpa
+   `react-leaflet`, atau beralih ke pustaka peta lain.
+
+## 6. Penafian
+
+Kode ini diserahkan "sebagaimana adanya". Pemegang Hak tidak memberikan jaminan
+atas kelayakan untuk maksud tertentu. **Jawaban yang dihasilkan fitur AI bersifat
+informatif dan bukan produk hukum resmi** — angka resmi tetap mengacu pada
+Organisasi Perangkat Daerah sumber data.
+
+## 7. Hukum yang berlaku
+
+Lisensi ini tunduk pada hukum yang berlaku di Negara Kesatuan Republik Indonesia
+dan ketentuan internal Pemerintah Kabupaten Aceh Tengah.
