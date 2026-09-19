@@ -21,9 +21,13 @@ Bidang Statistik dan Persandian, Dinas Komunikasi dan Informatika Kabupaten Aceh
 - **Percobaan ulang saat keluaran model tidak sesuai skema** (satu kali, non-stream),
   dengan batas anggaran waktu agar tidak menembus batas platform.
 - **`vercel.json`**: `regions: ["sin1"]` dan `maxDuration: 60` untuk rute tanya-jawab.
-- **Palang rahasia otomatis** pada pre-commit (`.githooks/pre-commit` +
-  `scripts/secret-scan-staged.py`).
-- **Dokumen serah terima** lengkap di `docs/serah-terima/`.
+- **Palang otomatis pada pre-commit** (`.githooks/pre-commit`): `scripts/pii-gate.sh`
+  memindai seluruh repositori untuk NIK 16 digit dan pola kredensial, lalu
+  `scripts/typecheck.sh`. Palang aktif setelah `npm install` memasang `core.hooksPath`.
+- **Dokumen serah terima** di `docs/serah-terima/` — 14 berkas: berita acara, ringkasan,
+  arsitektur, instalasi, runbook, panduan pengguna, API, keamanan & data, tata kelola AI,
+  pengujian, pemeliharaan, **Kerangka Acuan Kerja (KAK)**, **Rencana Anggaran Biaya (RAB)**,
+  dan indeks paket.
 - **`LICENSE`** dan berkas changelog ini.
 
 ### Diubah
@@ -64,6 +68,14 @@ Bidang Statistik dan Persandian, Dinas Komunikasi dan Informatika Kabupaten Aceh
 - `prisma/` beserta paket `prisma`, `@prisma/client`, `bcryptjs`, `jose`,
   `next-auth`, `nanoid`, `uuid`, dan `date-fns` — tidak satu pun dipakai oleh kode.
 - `VERCEL_ENV.md` di akar repo — duplikat dari `docs/VERCEL_ENV.md`.
+- **Sisa berkas milik proyek lain** yang lolos dari pembersihan pertama dan baru
+  dibersihkan setelah diverifikasi ulang: `supabase/` (2 migrasi basis data),
+  `references/bapokting-deterministic-query-2026-08-31.md`, `docs/VERCEL_ENV.md`
+  (memuat `DATABASE_URL`, Supabase, `JWT_SECRET`, `USE_MOCK_DATA` — seluruhnya tidak
+  dipakai aplikasi ini), `.claude/skills/` (20 symlink yang menjadi rusak ketika
+  `.agents/` dihapus), dan `.hermes/plans/` (rencana internal agen). Keempat berkas
+  pertama byte-identik dengan salinan di repo cc-acehtengah; `.hermes/` kini masuk
+  `.gitignore`. Berkas ter-track 154 → 129.
 - Catatan transien OpenCode Go (status gangguan penyedia, catatan aktivasi kunci)
   dipindahkan ke `docs/archive/`.
 

@@ -24,10 +24,10 @@
 
 | No | Butir | Keterangan |
 |---|---|---|
-| 1 | Kode sumber aplikasi | Repositori privat `github.com/Niumination/sapa-ai`, cabang `main` |
+| 1 | Kode sumber aplikasi | Repositori **publik** `github.com/Niumination/sapa-ai`, cabang `main` |
 | 2 | Hak cipta | Beralih kepada Diskominfo Aceh Tengah — lihat `LICENSE` |
 | 3 | Dokumentasi teknis | Folder `docs/serah-terima/` pada repositori |
-| 4 | Proyek penempatan (hosting) | Proyek Vercel `sapa-ai` pada akun kerja Diskominfo |
+| 4 | Proyek penempatan (hosting) | Proyek Vercel `sapa-ai` pada akun Vercel `archk4lis-projects` (paket Hobby — akun pribadi pengembang). **Pengalihan kepemilikan ke akun kerja Diskominfo adalah butir yang harus diselesaikan penerima** |
 | 5 | Nama domain produksi | `https://sapa-smart-ai.vercel.app` |
 | 6 | Penyimpanan keadaan saklar | Basis data Upstash Redis (tier gratis) |
 | 7 | Sumber data | API SPLP — `api-splp.layanan.go.id/sapa` (dikelola pihak ketiga, di luar lingkup) |
@@ -58,14 +58,20 @@ Hal-hal berikut dicatat apa adanya agar penerima tidak menemukan kejutan:
 2. **Model terakhir yang dipakai:** `deepseek-v4.1-flash`, diakses melalui
    OpenCode Go. Aplikasi sudah mendukung penyedia lain tanpa perubahan kode —
    termasuk Google Gemini — lihat `08-TATA-KELOLA-AI.md`.
-3. **Kuota penyimpanan Vercel sedang terlampaui** (Functions Storage). Ini tidak
+3. **Kuota penyimpanan Vercel terlampaui** (Functions Storage). Ini tidak
    menghentikan layanan yang berjalan, tetapi dapat memblokir penempatan
-   (deployment) baru. Tindakan yang diperlukan: mengatur Deployment Retention
-   Policy. Rincian pada `10-PEMELIHARAAN-DAN-ROADMAP.md`.
-4. **Sebagian berkas dihapus pada versi ini** (arsip warisan stack lain, bank
-   skill pihak ketiga, dependensi yang tidak dipakai). Semuanya masih dapat
-   dipulihkan dari riwayat Git bila diperlukan.
-5. **Lisensi `react-leaflet` adalah Hippocratic-2.1**, bukan lisensi OSI. Perlu
+   (deployment) baru. Kebijakan retensi sudah diatur pada 19 Sep 2026 (canceled
+   1 hari, errored 1 hari, pre-production 1 minggu, production 30 hari), sehingga
+   penyimpanan menyusut bertahap. Rincian pada `10-PEMELIHARAAN-DAN-ROADMAP.md`.
+4. **Sebagian berkas dihapus pada versi ini**: arsip warisan stack lain, bank
+   skill pihak ketiga, delapan dependensi yang tidak dipakai, serta sisa berkas
+   milik proyek lain (`supabase/`, `references/`, `docs/VERCEL_ENV.md`). Semuanya
+   masih dapat dipulihkan dari riwayat Git bila diperlukan.
+5. **Repositori bersifat publik.** Seluruh isi repositori — termasuk dokumen serah
+   terima ini dan daftar risiko pada `07-KEAMANAN-DAN-DATA.md` — dapat dibaca siapa
+   pun. Bila Bidang Persandian mensyaratkan sebaliknya, repositori dapat dijadikan
+   privat tanpa mengubah kode.
+6. **Lisensi `react-leaflet` adalah Hippocratic-2.1**, bukan lisensi OSI. Perlu
    ditinjau Bidang Persandian bila disyaratkan seluruh komponen berlisensi OSI.
    Rincian pada `LICENSE` butir 5 dan `07-KEAMANAN-DAN-DATA.md`.
 

@@ -14,3 +14,6 @@ data/dtsen-raw/
 
 # Contoh konfigurasi BOLEH di-commit (berisi placeholder, bukan rahasia).
 !.env.example
+
+# Rencana internal agen (Hermes) — bukan bagian aplikasi
+.hermes/

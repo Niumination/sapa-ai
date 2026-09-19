@@ -103,8 +103,9 @@ src/
 - Aturan kerja agen dan utang teknis tercatat di [`AGENTS.md`](AGENTS.md).
 - Desain pipeline deterministik ada di
   [`docs/DESAIN-PIPELINE-DETERMINISTIK.md`](docs/DESAIN-PIPELINE-DETERMINISTIK.md).
-- Dokumen pendukung lain: [`docs/`](docs/) — termasuk `VERCEL_ENV.md` dan
-  `AI_MODE_SHADOW.md`.
+- Dokumen pendukung lain: [`docs/`](docs/) — `AI_MODE_SHADOW.md`,
+  `DESAIN-PIPELINE-DETERMINISTIK.md`, `archive/`, serta paket serah terima
+  [`docs/serah-terima/`](docs/serah-terima/).
 
 ## Lisensi
 

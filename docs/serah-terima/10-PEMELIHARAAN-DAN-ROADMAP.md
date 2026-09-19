@@ -48,17 +48,33 @@ Ketiganya wajib hijau sebelum perubahan diunggah. Lihat `09-PENGUJIAN-DAN-MUTU.m
 
 ## Tindakan yang perlu diselesaikan penerima
 
-### 1. Kuota penyimpanan Vercel (perlu segera)
+### 1. Kuota penyimpanan Vercel (sudah ditangani — perlu dipantau)
 
 Kuota Functions Storage telah melampaui batas tier gratis. Akibat yang sudah
-terjadi: penempatan baru pernah macet total. Tindakan:
+terjadi: penempatan baru pernah macet total.
 
-1. Buka proyek `sapa-ai` → **Settings** → **Security** → **Deployment Retention Policy**
-2. Setel: Canceled `1 day`, Errored `1 day`, Pre-Production `7 days`, Production `30 days`
-3. Simpan. Vercel akan menghapus penempatan lama di luar pengecualian secara otomatis
+**Tindakan sudah dilakukan pada 19 September 2026.** Kebijakan retensi diatur pada
+tingkat tim — berlaku untuk seluruh proyek pada akun tersebut — dan nilainya
+terverifikasi langsung dari API Vercel:
+
+| Kategori penempatan | Retensi |
+|---|---|
+| Canceled | 1 hari |
+| Errored | 1 hari |
+| Pre-Production | 1 minggu |
+| Production | 30 hari |
+
+Yang perlu dilakukan penerima: **memantau, bukan mengatur ulang.** Penyimpanan
+menyusut bertahap, karena Vercel menandai penempatan yang melewati batas untuk
+dihapus dalam 48 jam, dan menilai ulang penempatan yang sempat terlindungi
+pengecualian paling lama 30 hari.
+
+Pengecualian yang **tidak akan dihapus** Vercel: penempatan yang memegang alias
+produksi, penempatan pratinjau terakhir dari cabang Git yang masih aktif,
+penempatan non-produksi dengan alias kustom, dan tiga penempatan terbaru (paket Hobby).
 
 Catatan penting: **menjeda (pause) proyek tidak mengurangi pemakaian penyimpanan.**
-Fungsi Storage dihitung dari penempatan yang tersimpan, bukan dari lalu lintas.
+Penyimpanan dihitung dari penempatan yang tersimpan, bukan dari lalu lintas.
 
 ### 2. Batas pemakaian harian model (perlu keputusan)
 

@@ -184,8 +184,8 @@ tidak memerlukan kredensial. Nilai bawaannya `SAPA_CLIENT_ID ?? '3'`.
 ### 3.4 Bukti bahwa `.env` tidak pernah masuk riwayat commit
 
 - `git log --all -- .env .env.local` → kosong (tidak ada satu commit pun).
-- `git ls-files` untuk pola `env` hanya menemukan: `.env.example`,
-  `docs/VERCEL_ENV.md`, `src/lib/ai/env.ts` — tidak ada berkas rahasia.
+- `git ls-files` untuk pola `env` hanya menemukan: `.env.example` dan
+  `src/lib/ai/env.ts` — tidak ada berkas rahasia.
 - `.gitignore` memuat `.env*` dengan pengecualian tunggal `!.env.example`.
 
 ---

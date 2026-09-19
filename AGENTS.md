@@ -58,11 +58,14 @@ npm run start -- -p 3104          # serve lokal (setelah build)
   dihapus; `rekons.md` dipindahkan menjadi `docs/DESAIN-PIPELINE-DETERMINISTIK.md`;
   `docs/archive/cc-lineage/` (warisan DTSEN) dihapus — rumahnya di repo cc-acehtengah;
   `VERCEL_ENV.md` akar (duplikat) dihapus. Berkas ter-track turun 407 → 140.
-- **Utang yang masih ada:** kuota Functions Storage Vercel terlampaui — penerima perlu
-  mengatur Deployment Retention Policy (lihat `docs/serah-terima/10-PEMELIHARAAN-DAN-ROADMAP.md`).
-- **Paket serah terima** ada di `docs/serah-terima/` (11 dokumen, untuk Diskominfo
-  Bidang Statistik dan Persandian). Dokumen itu menghadap manusia, bukan agen — jangan
-  duplikasi isinya ke sini.
+- **Kuota Functions Storage Vercel terlampaui** — kebijakan retensi sudah diatur
+  19 Sep 2026 di tingkat tim (canceled/errored 1 hari, pre-production 1 minggu,
+  production 30 hari) dan terverifikasi dari API Vercel; tinggal dipantau
+  (lihat `docs/serah-terima/10-PEMELIHARAAN-DAN-ROADMAP.md`).
+- **Paket serah terima** ada di `docs/serah-terima/` (14 dokumen: `00`–`12` + indeks,
+  termasuk KAK dan RAB, untuk Diskominfo Bidang Statistik dan Persandian). Repositori
+  ini **publik** — jangan menulis apa pun yang tidak boleh dibaca umum. Dokumen paket
+  itu menghadap manusia, bukan agen — jangan duplikasi isinya ke sini.
 
 ## Riwayat sesi 2026-09-03 (ringkas)
 
@@ -141,3 +144,18 @@ Repo dirapikan dan dilengkapi dokumen serah terima untuk **Diskominfo Bidang Sta
 **Paket dokumen.** `docs/serah-terima/00…10` + indeks, menghadap manusia dalam Bahasa Indonesia: berita acara, ringkasan, arsitektur, instalasi, runbook, panduan pengguna, API, keamanan & data, tata kelola AI, pengujian, pemeliharaan. Ditambah `LICENSE` (hak cipta Diskominfo, penggunaan internal pemerintahan) dan `CHANGELOG.md`. Roadmap lama (`docs/RENCANA-TAHAP-BERIKUTNYA.md`) diserap ke `10-PEMELIHARAAN-DAN-ROADMAP.md` lalu diarsipkan.
 
 **Pelajaran penulisan dokumen serah terima.** Dokumen penerima berbeda dari DOX agen: penerima butuh langkah yang bisa diikuti dan akibat yang bisa diprediksi, bukan riwayat commit. Tulis apa adanya soal keadaan yang belum selesai (kuota storage terlampaui, layanan tanya-jawab dimatikan, lisensi komponen) — kejutan yang ditemukan penerima setelah tanda tangan jauh lebih mahal daripada catatan jujur sebelum tanda tangan.
+
+## Riwayat sesi 2026-09-19 (verifikasi & sisa pembersihan)
+
+**Verifikasi paket serah terima.** Seluruh dokumen diperiksa ulang terhadap keadaan repo: tidak ada tautan antar-dokumen yang rusak, tidak ada nilai rahasia, 18 variabel `.env.example` semuanya dijelaskan di `03`, 11 route API semuanya terdokumentasi di `06`, dan klaim teknis (`.nvmrc` 22, `engines` >=20, `vercel.json` sin1 + maxDuration 60, type-check aktif, 169 pengujian) cocok dengan kenyataan.
+
+**Kesalahan yang ditemukan dan diperbaiki.**
+
+1. Berita Acara menyatakan repositori **privat**, padahal GitHub melaporkan `private: false` — repo ini **publik**. Teks Akta diperbaiki dan implikasinya dicatat terbuka (keadaan butir 5): seluruh dokumen, termasuk daftar risiko `07`, dapat dibaca umum.
+2. Akta menyatakan hosting pada "akun kerja Diskominfo", padahal proyek ada di akun pribadi `archk4lis-projects` (Hobby). Pengalihan kepemilikan ditandai sebagai kewajiban penerima.
+3. **Sisa berkas proyek lain yang lolos dari pembersihan pertama:** `supabase/` (2 migrasi basis data), `references/bapokting-*.md`, `docs/VERCEL_ENV.md` (env CC Aceh Tengah: Supabase/JWT), `.claude/skills/` (20 symlink yang menjadi **rusak** karena `.agents/` dihapus), dan `.hermes/plans/` (rencana internal agen). Sebelum dihapus, tiap berkas dibuktikan tidak dipakai: tidak ada dependensi, impor, skrip, maupun konfigurasi yang merujuknya, dan empat berkas pertama byte-identik (SHA-256) dengan salinan di cc-acehtengah. `.hermes/` kini masuk `.gitignore`. Ter-track 154 → 129.
+4. Pohon folder di `02-ARSITEKTUR` masih menampilkan berkas yang sudah dipindah atau dihapus, dan `.env.example` disebut "semuanya dikomentari" padahal `REVALIDATE_SECRET` disiapkan aktif.
+
+**Dokumen administrasi ditambahkan.** `11-KERANGKA-ACUAN-KERJA.md` (KAK) dan `12-RENCANA-ANGGARAN-BIAYA.md` (RAB). Aturannya: **tidak mengarang angka** — semua nilai rupiah dan nomor dokumen dikosongkan sebagai `[DIISI: …]`, sementara bagian teknis diisi dari keadaan repo. Pos biaya yang dapat dibuktikan dikatakan apa adanya (Vercel Hobby dan Upstash tier gratis memang tanpa biaya), dan rumus biaya pemakaian model diturunkan dari metrik aplikasi, bukan taksiran.
+
+**Pelajaran.** Verifikasi "sudah rapi" tidak cukup dari daftar berkas yang ter-track: symlink, berkas yang di-ignore, dan berkas yang hanya dirujuk dokumen tidak muncul di `git status`. Yang menemukannya adalah pencarian jejak nama proyek lain (`Supabase`, `DTSEN`, `Bapokting`, `cc-acehtengah`) pada **seluruh** isi repo, lalu memeriksa setiap berkas yang muncul. Dan klaim administratif pada dokumen (privat/publik, pemilik akun) wajib diuji terhadap kenyataan, bukan disalin dari niat.

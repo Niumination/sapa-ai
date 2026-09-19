@@ -225,7 +225,7 @@ Rincian parameter, contoh permintaan, dan kode status ada di dokumen
 
 ```
 sapa-ai/
-├── .env.example              # 18 variabel, semuanya dikomentari (dokumentasi, bukan anjuran)
+├── .env.example              # 18 variabel: 17 dikomentari, REVALIDATE_SECRET disiapkan
 ├── .nvmrc                    # berisi: 22
 ├── AGENTS.md                 # kontrak kerja repositori + riwayat sesi
 ├── README.md                 # gambaran fitur dan tech stack
@@ -237,10 +237,8 @@ sapa-ai/
 ├── docs/
 │   ├── AI_MODE_SHADOW.md
 │   ├── DESAIN-PIPELINE-DETERMINISTIK.md
-│   ├── RENCANA-TAHAP-BERIKUTNYA.md
-│   ├── VERCEL_ENV.md         # isi berkas ini masih bertema proyek lain (lihat Bagian 11)
-│   ├── archive/              # dokumentasi era stack lama (auth/DB/DTSEN) — sejarah
-│   └── serah-terima/         # dokumen serah terima
+│   ├── archive/              # arsip: audit AI, rencana tahap berikutnya, catatan sesi lama
+│   └── serah-terima/         # dokumen serah terima (12 berkas: 00–10 + indeks)
 ├── scripts/
 │   ├── typecheck.sh          # npx tsc --noEmit
 │   ├── eval-run.mjs          # runner evaluasi 78 butir + pembanding baseline
@@ -259,7 +257,6 @@ sapa-ai/
 │   │   └── rate-limit.ts
 │   ├── services/             # answer-compose, deterministic-answer, grounding, kpi, dll.
 │   └── types/index.ts        # HybridResponse dan tipe lain
-└── supabase/                 # sisa era stack lama, tidak dipakai
 ```
 
 ---
@@ -408,7 +405,7 @@ diperkenalkan kembali tanpa diskusi.
 | Yang tidak ada | Keterangan |
 |---|---|
 | **Tanpa basis data** | Tidak ada PostgreSQL, MySQL, SQLite, Supabase, atau penyimpanan permanen. Sumber data tunggal adalah SPLP. Cache hanya di memori proses dan cache Next.js |
-| **Tanpa ORM / Prisma** | Tidak ada skema, migrasi, atau klien ORM yang dipakai. Direktori `supabase/` ada tetapi tidak dipakai |
+| **Tanpa ORM / Prisma** | Tidak ada skema, migrasi, atau klien ORM yang dipakai. Sisa direktori `supabase/` (migrasi basis data milik proyek lain) sudah dihapus pada versi 0.1.0 |
 | **Tanpa autentikasi pengguna** | Tidak ada login, sesi, JWT, atau peran pengguna. Aplikasi sepenuhnya publik. Panel admin `/admin/ai-toggle` dilindungi **kunci bersama** melalui header `x-admin-key` (`AI_ADMIN_KEY`), bukan sistem akun |
 | **Tanpa DTSEN** | Tidak ada data DTSEN/BAPPEDA. Berkas mentah DTSEN dikecualikan di `.gitignore` (`data/dtsen-raw/`) atas dasar UU PDP |
 | **Tanpa warehouse / EWS** | Tidak ada gudang data, tabel fakta, atau sistem peringatan dini. Berkas mati terkait telah dihapus (`prisma.ts`, `auth.ts`, `splp-bridge.ts`, `data-source.ts`, `audit-log.ts`, `EwsPanel`, `BreakdownExplorer`, `TrendChart`) |
@@ -425,9 +422,12 @@ diperkenalkan kembali tanpa diskusi.
 - Fungsi `getSapaAccessToken()` masih ada di `src/lib/sapa-client.ts` untuk jalur
   OAuth SAPA, tetapi **tidak dipanggil** oleh `fetchSapaData()`. Komentar di
   `.env.example` menyatakan jalur OAuth belum dipakai saat ini.
-- `docs/VERCEL_ENV.md` di dalam repositori ini isinya masih bertema proyek lain
-  (menyebut `DATABASE_URL`, Supabase, `JWT_SECRET`). **Jangan dipakai sebagai acuan
-  konfigurasi sapa-ai.** (perlu dikonfirmasi apakah berkas ini memang tertinggal.)
+- `docs/VERCEL_ENV.md` (milik proyek lain — menyebut `DATABASE_URL`, Supabase,
+  `JWT_SECRET`), `supabase/`, `references/`, dan symlink `.claude/skills/` yang rusak
+  **sudah dihapus pada versi 0.1.0**. Keempatnya terbukti tidak dipakai oleh kode,
+  dependensi, maupun konfigurasi sapa-ai, dan salinan byte-identiknya ada di repositori
+  cc-acehtengah. Acuan konfigurasi sapa-ai hanya `.env.example` dan
+  `03-PANDUAN-INSTALASI-DAN-DEPLOYMENT.md`.
 
 ---
 
@@ -519,12 +519,10 @@ dengan mengisi "Admin Key" (`AI_ADMIN_KEY`). Prosedur lengkap ada di
 
 ## 15. Hal yang Perlu Dikonfirmasi
 
-1. Apakah `docs/VERCEL_ENV.md` memang berkas tertinggal dari proyek lain, atau
-   seharusnya berisi konfigurasi sapa-ai. (Saat ini isinya menyesatkan.)
-2. Apakah `REVALIDATE_SECRET` memang sengaja tidak diisi di produksi. Pengujian
+1. Apakah `REVALIDATE_SECRET` memang sengaja tidak diisi di produksi. Pengujian
    19 Sep 2026 menunjukkan `POST /api/revalidate` berhasil tanpa kunci apa pun
    (membalas 200). Lihat catatan keamanan di `06-DOKUMENTASI-API.md` bagian akhir.
-3. Apakah ada domain kustom yang terpasang selain `sapa-smart-ai.vercel.app`.
+2. Apakah ada domain kustom yang terpasang selain `sapa-smart-ai.vercel.app`.
    Pengujian hanya membuktikan domain Vercel tersebut melayani aplikasi.
-4. Rencana jangka panjang penyedia model AI (bergantung pada status langganan
+3. Rencana jangka panjang penyedia model AI (bergantung pada status langganan
    OpenCode Go).
