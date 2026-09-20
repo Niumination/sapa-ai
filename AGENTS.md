@@ -3,8 +3,8 @@
 > **Next.js 16 + SPLP API langsung (tanpa DB, tanpa auth/login, tanpa DTSEN, tanpa warehouse)**
 > **Path:** `services/sapa-ai/` · **Repo:** `Niumination/sapa-ai` (`main`)
 > **Produksi:** https://sapa-smart-ai.vercel.app — AI `deepseek-v4.1-flash` (OpenCode Go) + jawaban deterministik, keduanya dikendalikan toggle admin (`/admin/ai-toggle`, state di Upstash Redis)
-> **Status:** 🟢 Active — Perf RSC+ISR 10m (analytics/dashboard server-fetch, kpi/stats/report/sapa cache terdistribusi, revalidate endpoint)
-> **Backlog priority:** P2 — rencana berikut: `docs/RENCANA-TAHAP-BERIKUTNYA.md`
+> **Status:** ⏸️ **Selesai — menunggu client** (19 Sep 2026). Perf RSC+ISR 10m (analytics/dashboard server-fetch, kpi/stats/report/sapa cache terdistribusi, revalidate endpoint). Serah-terima lengkap: BAST, KAK, RAB (`docs/serah-terima/`). Pengembangan tahap lanjut menunggu client & instruksi pemilik
+> **Backlog priority:** P2 — ditangguhkan sampai instruksi client
 
 ## Arsitektur
 
