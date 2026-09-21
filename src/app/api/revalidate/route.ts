@@ -1,5 +1,7 @@
 import { NextResponse } from 'next/server';
 import { revalidateTag } from 'next/cache';
+import { checkRateLimit, getClientIp, rateLimitHeaders } from '@/lib/rate-limit';
+import { verifikasiAksesRevalidate } from '@/lib/revalidate-guard';
 
 export const dynamic = 'force-dynamic';
 export const runtime = 'nodejs';
@@ -9,13 +11,28 @@ const ALLOWED_TAGS = new Set(['sapa-analytics', 'kpi', 'stats', 'report']);
 export async function POST(req: Request) {
   try {
     const body = (await req.json().catch(() => ({}))) as { tag?: string; tags?: string[]; secret?: string };
-    const secretEnv = process.env.REVALIDATE_SECRET;
-    if (secretEnv) {
-      const headerSecret = req.headers.get('x-revalidate-secret');
-      const bodySecret = body.secret;
-      if (headerSecret !== secretEnv && bodySecret !== secretEnv) {
-        return NextResponse.json({ status: 'error', error: 'Unauthorized' }, { status: 401 });
-      }
+
+    // Pagar akses: fail-closed di produksi tanpa REVALIDATE_SECRET.
+    // (Terukur 2026-09-21: tanpa secret, POST anonim membatalkan seluruh cache.)
+    const izin = verifikasiAksesRevalidate({
+      secretEnv: process.env.REVALIDATE_SECRET,
+      headerSecret: req.headers.get('x-revalidate-secret'),
+      bodySecret: body.secret,
+      allowUnsigned: process.env.REVALIDATE_ALLOW_UNSIGNED,
+    });
+    if (!izin.ok) {
+      return NextResponse.json({ status: 'error', error: izin.pesan }, { status: izin.status });
+    }
+
+    // Pembatal cache yang tak dibatasi sama-sama berbahaya walau bertanda:
+    // batasi percobaan per IP.
+    const ip = getClientIp(req);
+    const batas = await checkRateLimit({ key: `revalidate:${ip}`, limit: 20, windowMs: 60_000 });
+    if (!batas.ok) {
+      return NextResponse.json(
+        { status: 'error', error: 'Terlalu banyak permintaan revalidate.' },
+        { status: 429, headers: rateLimitHeaders(batas) },
+      );
     }
 
     const tags: string[] = body.tags ?? (body.tag ? [body.tag] : []);
@@ -43,7 +60,7 @@ export async function POST(req: Request) {
       revalidateTag(t, BATAL_SEKETIKA);
     }
 
-    return NextResponse.json({ status: 'ok', revalidated: toRevalidate });
+    return NextResponse.json({ status: 'ok', revalidated: toRevalidate, mode: izin.mode });
   } catch (e) {
     return NextResponse.json({ status: 'error', error: e instanceof Error ? e.message : 'Gagal revalidate' }, { status: 500 });
   }

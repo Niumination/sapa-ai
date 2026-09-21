@@ -6,6 +6,13 @@
 // + ruang berpikir model reasoning, bukan esai.
 
 import type { AiConfig } from './env';
+import {
+  bolehPanggilPenyedia,
+  catatGagal,
+  catatSukses,
+  klasifikasiGalat,
+  klasifikasiStatus,
+} from './provider-health';
 
 export interface LlmMessage {
   role: 'system' | 'user';
@@ -146,6 +153,13 @@ export async function callLlmText(
     throw new LlmError(`dialek "${cfg.dialect}" tidak didukung`);
   }
 
+  // Sirkuit penyedia: bila baru-baru ini gagal auth/berulang, jangan buang
+  // anggaran waktu pengguna — gagal cepat lalu jatuh ke jawaban deterministik.
+  // (Terukur 2026-09-21: tanpa ini setiap query membakar ~11,7 dtk saat
+  //  langganan penyedia mati, lalu berakhir sama saja.)
+  const izin = await bolehPanggilPenyedia();
+  if (!izin.ok) throw new LlmError(`circuit-open: ${izin.alasan}`, 503);
+
   let terakhirError: unknown;
   for (let percobaan = 1; percobaan <= 2; percobaan++) {
     const { signal: sig, selesai } = gabungSignal(signal, cfg.timeoutMs);
@@ -153,9 +167,11 @@ export async function callLlmText(
       const res = await kirim(cfg, messages, false, sig, cfg.jsonMode);
       if (!res.ok) {
         const teks = await res.text().catch(() => '');
-        // 403 = throttle gateway (kunci salah = 401) — ikut di-retry seperti
-        // 429/5xx. 4xx lain = salah konfigurasi/permintaan, jangan retry.
-        const bisaRetry = res.status >= 500 || res.status === 429 || res.status === 403;
+        // Sebab membedakan penanganan: throttle (403 bertanda 1010 / 429) dan
+        // 5xx layak diulang; 403 "langganan mati" TIDAK — mengulanginya hanya
+        // menggandakan waktu tunggu tanpa peluang berhasil.
+        const sebab = klasifikasiStatus(res.status, teks);
+        const bisaRetry = sebab === 'server' || sebab === 'throttle';
         if (!bisaRetry) {
           throw new LlmError(`HTTP ${res.status}: ${teks.slice(0, 200)}`, res.status);
         }
@@ -166,6 +182,7 @@ export async function callLlmText(
         choices?: { message?: { content?: string }; finish_reason?: string }[];
         usage?: { prompt_tokens?: number; completion_tokens?: number };
       };
+      await catatSukses();
       return {
         text: json.choices?.[0]?.message?.content ?? '',
         finishReason: json.choices?.[0]?.finish_reason,
@@ -176,15 +193,18 @@ export async function callLlmText(
       };
     } catch (e) {
       terakhirError = e;
-      // Galat non-retryable (4xx selain 429/403) JANGAN dicoba ulang:
-      // kunci salah dicoba 2x hanya membuang 2x timeout.
-      const bolehLanjut =
-        !dibatalkan(e) &&
-        (!(e instanceof LlmError) || e.status === undefined || e.status >= 500 || e.status === 429 || e.status === 403);
-      if (percobaan >= 2 || !bolehLanjut) break;
-      // Jeda panjang hanya untuk throttle (403/429) — 300 ms sia-sia melawan
-      // cooldown skala menit; untuk galat lain pertahankan jeda singkat.
-      const tunda = e instanceof LlmError && (e.status === 403 || e.status === 429) ? TUNDA_RETRY_MS : 300;
+      const sebab = klasifikasiGalat(e);
+      // Galat non-retryable (4xx selain 429/403-throttle, dan auth) JANGAN
+      // dicoba ulang: kunci salah/langganan mati dicoba 2x hanya membuang
+      // 2x timeout.
+      const bolehLanjut = !dibatalkan(e) && (sebab === 'server' || sebab === 'throttle' || sebab === 'jaringan');
+      if (percobaan >= 2 || !bolehLanjut) {
+        await catatGagal(sebab, e instanceof Error ? e.message : String(e));
+        break;
+      }
+      // Jeda panjang hanya untuk throttle — 300 ms sia-sia melawan cooldown
+      // skala menit; untuk galat lain pertahankan jeda singkat.
+      const tunda = sebab === 'throttle' ? TUNDA_RETRY_MS : 300;
       await new Promise((r) => setTimeout(r, tunda));
     } finally {
       selesai();
@@ -215,6 +235,11 @@ export async function* streamLlm(
     throw new LlmError(`dialek "${cfg.dialect}" tidak didukung`);
   }
 
+  // Sirkuit penyedia juga berlaku di jalur streaming: penyedia yang mati tidak
+  // akan hidup kembali hanya karena kita menunggu.
+  const izin = await bolehPanggilPenyedia();
+  if (!izin.ok) throw new LlmError(`circuit-open: ${izin.alasan}`, 503);
+
   let terakhirError: unknown;
   for (let percobaan = 1; percobaan <= 2; percobaan++) {
     const batas = percobaan === 1 ? cfg.timeoutMs : Math.min(cfg.timeoutMs, TIMEOUT_PERCOBAAN_KEDUA_MS);
@@ -226,6 +251,8 @@ export async function* streamLlm(
       const res = await kirim(cfg, messages, true, sig, false);
       if (!res.ok || !res.body) {
         const teks = await res.text().catch(() => '');
+        const sebab = klasifikasiStatus(res.status, teks);
+        await catatGagal(sebab, `HTTP ${res.status}: ${teks.slice(0, 160)}`);
         throw new LlmError(`HTTP ${res.status}: ${teks.slice(0, 200)}`, res.status);
       }
       const reader = res.body.getReader();
@@ -255,16 +282,22 @@ export async function* streamLlm(
           }
         }
       }
-      return; // selesai utuh
+      await catatSukses(); // aliran selesai utuh → penyedia sehat
+      return;
     } catch (e) {
       terakhirError = e;
       if (signal?.aborted) throw e; // pembatalan pemanggil: jangan diteruskan tanpa izin
+      const sebab = klasifikasiGalat(e);
       const bisaUlang =
         !sudahAdaData &&
         (mandek(e) ||
-          (e instanceof LlmError && (e.status === 403 || e.status === 429 || (e.status ?? 0) >= 500)) ||
-          (e instanceof Error && /^timeout/.test(e.message)));
-      if (percobaan >= 2 || !bisaUlang) throw e;
+          sebab === 'throttle' ||
+          sebab === 'server' ||
+          sebab === 'timeout');
+      if (percobaan >= 2 || !bisaUlang) {
+        await catatGagal(sebab, e instanceof Error ? e.message : String(e));
+        throw e;
+      }
       await new Promise((r) => setTimeout(r, mandek(e) ? JEDA_MANDEK_MS : TUNDA_RETRY_MS));
     } finally {
       selesai();

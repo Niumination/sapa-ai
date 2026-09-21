@@ -293,7 +293,11 @@ describe('composeAnswer — dengan model aktif', () => {
     aktifkan();
 
     await composeAnswer({ query: 'stunting', records, stream: false });
-    expect(cacheSet).toHaveBeenCalledTimes(1);
+    // cacheSet juga dipakai untuk keadaan kesehatan penyedia (circuit breaker),
+    // jadi yang diperiksa adalah kunci jawaban AI-nya — bukan jumlah panggilan.
+    const panggilan = vi.mocked(cacheSet).mock.calls as unknown as [string, unknown, number][];
+    const kunciJawaban = panggilan.map((c) => String(c[0])).filter((k) => k.startsWith('ai:v1:'));
+    expect(kunciJawaban).toHaveLength(1);
   });
 });
 

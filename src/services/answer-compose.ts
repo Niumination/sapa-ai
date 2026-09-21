@@ -23,7 +23,8 @@ import { ejectTokens, createStreamEjector, dedupUnits } from '@/lib/ai/tokens';
 import { guardQuery, cekDataPribadi, cekPermintaanPerOrang } from '@/lib/ai/guard';
 import { callLlmText, streamLlm, extractNarasiPartial } from '@/lib/ai/llm-client';
 import { checkRateLimit } from '@/lib/rate-limit';
-import { cacheGet, cacheSet, incrementCounter, type CounterResult } from '@/lib/store';
+import { cacheGet, cacheSet, incrementCounter, peekCounter, type CounterResult } from '@/lib/store';
+import { bacaKesehatan, ringkasKesehatan } from '@/lib/ai/provider-health';
 import { normalizeText, dataSourceLabel, type SapaRecord } from '@/lib/sapa-client';
 import type { HybridResponse } from '@/types';
 
@@ -102,6 +103,11 @@ export async function getAiRuntimeStatus(): Promise<{
   model: string | null;
   reason: string | null;
   dailyUsed: number;
+  /** Apakah penyedia BENAR-BENAR menjawab — bukan sekadar env terisi.
+   *  Diukur dari hasil panggilan nyata (circuit breaker), lihat provider-health.ts. */
+  reachable?: boolean;
+  /** Rincian kesehatan penyedia (sebab kegagalan terakhir, sisa cooldown). */
+  health?: ReturnType<typeof ringkasKesehatan>;
   toggles?: { aiEnabled: boolean; detEnabled: boolean; backend: 'redis' | 'memory'; updatedAt: string };
   metrics: {
     deterministicToday: number;
@@ -110,9 +116,12 @@ export async function getAiRuntimeStatus(): Promise<{
   };
 }> {
   const cfg = getAiConfig();
-  const dailyUsed = cfg.dailyCallLimit
-    ? (await incrementCounter(`ai:llm:${tanggalHariIni()}`, 24 * 60 * 60 * 1000)).count - 1
-    : 0;
+  // BACA, jangan TAMBAH. Versi sebelumnya memakai incrementCounter() lalu
+  // mengurangi 1 — artinya setiap pemanggilan /api/status (halaman status,
+  // polling monitoring, sidebar) ikut menggerogoti kuota AI_DAILY_CALL_LIMIT
+  // tanpa satu pun panggilan model. Penghitung harian hanya boleh naik karena
+  // panggilan model yang benar-benar terjadi.
+  const dailyUsed = cfg.dailyCallLimit ? await peekCounter(`ai:llm:${tanggalHariIni()}`) : 0;
 
   // Toggle admin menang atas env: status harus mencerminkan apa yang benar-benar
   // dikirim ke pengguna, bukan sekadar isi AI_ENABLED.
@@ -144,12 +153,23 @@ export async function getAiRuntimeStatus(): Promise<{
   const ratioDet = total > 0 ? Math.round((detCount / total) * 100) : 0;
   const ratioLlm = total > 0 ? Math.round((llmCount / total) * 100) : 0;
 
+  // Kesehatan nyata penyedia: status "active" TIDAK boleh berarti "niat aktif"
+  // padahal setiap panggilan gagal (terukur 2026-09-21: state=active sementara
+  // semua panggilan 403 "subscription required").
+  const kesehatan = ringkasKesehatan(await bacaKesehatan());
+  const reasonJujur =
+    state !== 'inactive' && !kesehatan.reachable
+      ? `${reason ? `${reason}; ` : ''}penyedia tidak dapat dijangkau — ${kesehatan.sebab ?? 'galat'}${kesehatan.pesan ? `: ${kesehatan.pesan}` : ''}`
+      : reason;
+
   return {
     state,
     provider: cfg.provider,
     model: cfg.model || null,
-    reason,
+    reason: reasonJujur,
     dailyUsed: Math.max(0, dailyUsed),
+    reachable: kesehatan.reachable,
+    health: kesehatan,
     toggles: {
       aiEnabled: toggle.aiEnabled,
       detEnabled: toggle.detEnabled,
@@ -166,8 +186,7 @@ export async function getAiRuntimeStatus(): Promise<{
 
 /** Read counter value without incrementing (uses store backend) */
 async function getCounterValue(key: string): Promise<number> {
-  const val = await cacheGet<string>(key);
-  return val ? parseInt(val, 10) : 0;
+  return peekCounter(key);
 }
 
 // Pesan penolakan. Sengaja dipisah agar kedua jenis pagar (NIK dan
@@ -210,7 +229,7 @@ export async function composeAnswer(opts: ComposeOptions): Promise<ComposeResult
   if (pagarData) {
     const narasiTolak = pagarNik ? NARASI_TOLAK_NIK : NARASI_TOLAK_PER_ORANG;
     const saranTolak = pagarNik ? SARAN_TOLAK_NIK : SARAN_TOLAK_PER_ORANG;
-    recordMetrics('deterministic');
+    await recordMetrics('deterministic');
     return {
       response: {
         narasi: narasiTolak,
@@ -259,7 +278,7 @@ export async function composeAnswer(opts: ComposeOptions): Promise<ComposeResult
   /** true bila jawaban deterministik tidak boleh disajikan lagi. */
   const deterministikMati = !detToggleOn;
 
-  const selesai = (alasan?: string, limitedBy?: AiMeta['limitedBy'], errorMsg?: string): ComposeResult => {
+  const selesai = async (alasan?: string, limitedBy?: AiMeta['limitedBy'], errorMsg?: string): Promise<ComposeResult> => {
     meta.latencyMs = Date.now() - mulai;
     if (alasan) meta.reason = alasan;
     if (limitedBy) meta.limitedBy = limitedBy;
@@ -280,7 +299,7 @@ export async function composeAnswer(opts: ComposeOptions): Promise<ComposeResult
       meta.used = false;
       return selengkap(meta, { ...dasar.response, narasi: meta.reason, rekomendasi: [] });
     }
-    recordMetrics('deterministic');
+    await recordMetrics('deterministic');
     return selengkap(meta, dasar.response);
   };
 
@@ -494,11 +513,11 @@ export async function composeAnswer(opts: ComposeOptions): Promise<ComposeResult
     if (deterministikMati) {
       return selesai('mode shadow — jawaban template tidak diizinkan admin', 'service-unavailable');
     }
-    recordMetrics('deterministic');
+    await recordMetrics('deterministic');
     return selengkap(meta, dasar.response);
   }
 
   await cacheSet(cacheKey, { response: responsAi, ai: meta }, CACHE_TTL_MS);
-  recordMetrics('llm');
+  await recordMetrics('llm');
   return selengkap(meta, responsAi);
 }

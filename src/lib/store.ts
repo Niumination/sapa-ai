@@ -163,6 +163,15 @@ export async function incrementCounter(key: string, windowMs: number): Promise<C
   return { ...lokal, backend: 'memory' };
 }
 
+/** Ambil nilai pencacah TANPA menaikkannya — untuk pelaporan status. */
+export async function peekCounter(key: string): Promise<number> {
+  const dariRedis = await redisCommand(['GET', key]);
+  const mentah = typeof dariRedis === 'string' ? dariRedis : localGet(key);
+  if (mentah == null) return 0;
+  const n = Number(mentah);
+  return Number.isFinite(n) ? n : 0;
+}
+
 /** Hapus pencacah — dipakai setelah login berhasil. */
 export async function resetCounter(key: string): Promise<void> {
   local.delete(key);
