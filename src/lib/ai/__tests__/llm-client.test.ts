@@ -1,11 +1,13 @@
 // Uji retry throttle llm-client: 403/429/5xx di-retry 1x, 4xx lain tidak.
 // Tanpa jaringan — global.fetch di-stub. Backoff dipercepat via env khusus uji.
-import { afterEach, describe, expect, it, vi } from 'vitest';
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
 vi.stubEnv('AI_RETRY_BACKOFF_MS', '5');
 
 // eslint-disable-next-line import/first
 const { callLlmText } = await import('../llm-client');
+// eslint-disable-next-line import/first
+const { resetKesehatan } = await import('../provider-health');
 
 const cfgDasar = {
   enabled: false,
@@ -26,6 +28,15 @@ const cfgDasar = {
 const okJson = (teks: string) =>
   new Response(JSON.stringify({ choices: [{ message: { content: teks }, finish_reason: 'stop' }] }), { status: 200 });
 const gagal = (status: number, teks = 'galat') => new Response(teks, { status });
+
+// Keadaan sirkuit disimpan di penyimpanan bersama (memori proses saat uji).
+// Reviu 2026-09-22: sejak kegagalan JARINGAN ikut dihitung, sisa keadaan dari
+// satu uji bisa membuka sirkuit dan membuat uji berikutnya tidak memanggil
+// fetch sama sekali (gejalanya: "expected spy 1 times, got 0"). Setiap uji
+// karena itu dimulai dari penyedia SEHAT.
+beforeEach(async () => {
+  await resetKesehatan();
+});
 
 afterEach(() => {
   vi.unstubAllGlobals();

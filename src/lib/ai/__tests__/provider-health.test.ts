@@ -155,3 +155,31 @@ describe('llm-client menghormati sirkuit', () => {
     expect((await bolehPanggilPenyedia()).ok).toBe(true);
   });
 });
+
+describe('sirkuit penyedia — kegagalan jaringan & timeout ikut dihitung (reviu 2026-09-22)', () => {
+  it('dua kegagalan jaringan belum membuka sirkuit; tiga membukanya', async () => {
+    await catatSukses();
+    await catatGagal('jaringan', 'fetch failed');
+    await catatGagal('jaringan', 'fetch failed');
+    expect((await bolehPanggilPenyedia()).ok).toBe(true);
+    await catatGagal('jaringan', 'fetch failed');
+    const izin = await bolehPanggilPenyedia();
+    expect(izin.ok).toBe(false);
+    expect(izin.alasan).toContain('jaringan');
+  });
+
+  it('kegagalan timeout berturut juga membuka sirkuit', async () => {
+    await catatSukses();
+    for (let i = 0; i < 3; i++) await catatGagal('timeout', 'timeout setelah 48000 ms');
+    const ringkas = ringkasKesehatan(await catatGagal('timeout', 'timeout setelah 48000 ms'));
+    expect(ringkas.state).toBe('terbuka');
+    expect(ringkas.reachable).toBe(false);
+    expect(ringkas.sebab).toBe('timeout');
+  });
+
+  it('galat konfigurasi (400) tetap TIDAK membuka sirkuit', async () => {
+    await catatSukses();
+    for (let i = 0; i < 5; i++) await catatGagal('konfigurasi', 'HTTP 400: bad request');
+    expect((await bolehPanggilPenyedia()).ok).toBe(true);
+  });
+});

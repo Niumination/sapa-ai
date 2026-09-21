@@ -118,7 +118,26 @@ export function klasifikasiGalat(e: unknown): SebabGalat {
 /** Sebab yang boleh ikut membuka sirkuit. timeout/stall sengaja TIDAK dihitung:
  *  keduanya punya penanganan sendiri (watchdog + percobaan ulang bertimeout),
  *  dan model yang lambat bukan model yang mati. */
-const DIHITUNG: SebabGalat[] = ['auth', 'throttle', 'server'];
+/**
+ * Sebab yang MENGHITUNG kegagalan berturut-turut untuk membuka sirkuit.
+ *
+ * Reviu 2026-09-22 (gelombang 3, temuan saat audit penggabungan): semula hanya
+ * `auth`, `throttle`, dan `server`. Akibatnya kegagalan JARINGAN (`fetch failed`)
+ * dan TIMEOUT tidak pernah membuka sirkuit dan tidak pernah muncul di panel
+ * status — terukur: dengan `AI_BASE_URL` diarahkan ke alamat mati, `/api/status`
+ * tetap melaporkan `state: "active"`, `reachable: true`, `health.state: "sehat"`,
+ * padahal SETIAP panggilan gagal. Itu persis kelas "panel berbohong" yang
+ * diperbaiki gelombang 1, hanya jalur masuknya berbeda (jaringan, bukan auth).
+ *
+ * Ambangnya tetap 3 kegagalan berturut (`AI_CIRCUIT_FAIL_THRESHOLD`) supaya
+ * gangguan jaringan sesaat tidak mematikan AI selama cooldown.
+ *
+ * `konfigurasi` (4xx selain auth/throttle) dan `stall` SENGAJA tetap di luar:
+ * yang pertama adalah kesalahan permintaan kita (bukan penyedia tak sehat) dan
+ * satu kueri ganjil tidak boleh mematikan AI untuk semua orang; yang kedua sudah
+ * punya penanganan sendiri di jalur streaming.
+ */
+const DIHITUNG: SebabGalat[] = ['auth', 'throttle', 'server', 'timeout', 'jaringan'];
 
 /** Baca keadaan kesehatan tersimpan (tanpa mengubah apa pun). */
 export async function bacaKesehatan(): Promise<KesehatanPenyedia> {
