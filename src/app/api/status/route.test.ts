@@ -2,7 +2,13 @@ import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { GET } from './route';
 import { fetchSapaData } from '@/lib/sapa-client';
 
-vi.mock('@/lib/sapa-client', () => ({ fetchSapaData: vi.fn() }));
+vi.mock('@/lib/sapa-client', () => ({
+  fetchSapaData: vi.fn(),
+  // Perbaikan 2026-09-21: /api/status kini melaporkan opd & indikator (ukuran
+  // katalog yang sebenarnya). Mock ini menghitung dari data mock, bukan angka tetap.
+  getUniqueOpd: (r: unknown[]) => [...new Set((r as { opds_nama_opd?: string }[]).map((x) => x?.opds_nama_opd))],
+  getUniqueIndicators: (r: unknown[]) => [...new Set((r as { kode_indikator_nama_indikator?: string }[]).map((x) => x?.kode_indikator_nama_indikator))],
+}));
 
 const mockedFetch = vi.mocked(fetchSapaData);
 
@@ -15,10 +21,16 @@ beforeEach(() => {
 
 describe('GET /api/status', () => {
   it('SAPA active + AI inactive (default tanpa env model)', async () => {
-    mockedFetch.mockResolvedValue({ records: new Array(2055), origin: 'splp' } as never);
+    // 40 baris dari 38 OPD + 40 indikator unik — angka mock, bukan angka katalog nyata,
+    // supaya uji ini tidak ikut membusuk saat katalog bertambah.
+    const mock = Array.from({ length: 40 }, (_, i) => ({
+      opds_nama_opd: `OPD ${i % 38}`,
+      kode_indikator_nama_indikator: `Indikator ${i}`,
+    }));
+    mockedFetch.mockResolvedValue({ records: mock, origin: 'splp' } as never);
     const res = await GET();
     const body = await res.json();
-    expect(body.sapa).toEqual({ state: 'active', records: 2055 });
+    expect(body.sapa).toEqual({ state: 'active', records: 40, opd: 38, indikator: 40 });
     expect(body.ai.state).toBe('inactive');
     // Sejak 19 Sep 2026 model punya default per-provider (opencode-go →
     // deepseek-v4.1-flash) supaya menghapus AI_MODEL di Vercel tidak pernah
@@ -31,7 +43,7 @@ describe('GET /api/status', () => {
     mockedFetch.mockRejectedValue(new Error('SPLP mati'));
     const res = await GET();
     const body = await res.json();
-    expect(body.sapa).toEqual({ state: 'down', records: 0 });
+    expect(body.sapa).toEqual({ state: 'down', records: 0, opd: 0 });
     expect(body.ai.state).toBe('inactive');
   });
 

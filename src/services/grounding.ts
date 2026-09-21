@@ -67,6 +67,28 @@ export function buildAllowedNumbers(evidence: EvidenceItem[]): Set<string> {
  * Nilai NUMERIK evidence — dasar perbandingan utama (kebal terhadap pergeseran
  * desimal: 31,4 ≠ 3,14 ≠ 314).
  */
+/**
+ * Angka di dalam RENTANG tertulis.
+ *
+ * Reviu 2026-09-21: nilai evidence boleh berupa rentang ("2022–2026", "7-12
+ * tahun", "12 – 59 bulan"). Pemeriksa grounding hanya membaca rentang itu
+ * sebagai SATU token, sehingga narasi yang menulis "periode 2022–2026" — persis
+ * seperti isi evidence — dituding "tahun halu" dan jawaban AI yang benar
+ * dibuang. Rentang = dua angka yang sah.
+ */
+export function angkaRentang(nilai: string): number[] {
+  const out: number[] = [];
+  const pola = /(\d[\d.,]*)\s*[–—]\s*(\d[\d.,]*)|(\d[\d.,]*)\s*-\s*(\d[\d.,]*)/g;
+  for (const m of String(nilai).matchAll(pola)) {
+    for (const bagian of [m[1] ?? m[3], m[2] ?? m[4]]) {
+      if (!bagian) continue;
+      const n = parseNilaiSapa(bagian);
+      if (typeof n === 'number' && Number.isFinite(n)) out.push(n);
+    }
+  }
+  return out;
+}
+
 export function buildAllowedValues(evidence: EvidenceItem[]): number[] {
   const values: number[] = [];
   for (const e of evidence) {
@@ -75,7 +97,10 @@ export function buildAllowedValues(evidence: EvidenceItem[]): number[] {
       if (k == null) continue;
       const n = typeof k === 'number' ? k : parseNilaiSapa(String(k));
       if (typeof n === 'number' && Number.isFinite(n)) values.push(n);
+      // Rentang: ujung-ujungnya juga angka yang sah.
+      values.push(...angkaRentang(String(k)));
     }
+    for (const r of angkaRentang(String(e.indikator ?? ''))) values.push(r);
   }
   return values;
 }
@@ -111,9 +136,15 @@ export function buildAllowedDisplay(evidence: EvidenceItem[]): Set<string> {
 
 export function buildAllowedYears(evidence: EvidenceItem[]): Set<string> {
   const set = new Set<string>();
+  const tambah = (t: string) => {
+    const bersih = t.trim();
+    if (isFourDigitYear(bersih)) set.add(bersih);
+  };
   for (const e of evidence) {
-    const t = e.tahun?.trim() ?? '';
-    if (isFourDigitYear(t)) set.add(t);
+    tambah(e.tahun ?? '');
+    // Tahun yang ditulis sebagai rentang di nilai evidence ("2022–2026") juga sah.
+    const teks = `${e.nilai ?? ''} ${e.indikator ?? ''}`;
+    for (const m of teks.matchAll(/\b(19|20)\d{2}\b/g)) tambah(m[0]);
   }
   return set;
 }

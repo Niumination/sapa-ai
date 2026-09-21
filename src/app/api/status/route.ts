@@ -1,5 +1,5 @@
 import { NextResponse } from 'next/server';
-import { fetchSapaData } from '@/lib/sapa-client';
+import { fetchSapaData, getUniqueOpd, getUniqueIndicators } from '@/lib/sapa-client';
 import { getAiRuntimeStatus } from '@/services/answer-compose';
 
 export const dynamic = 'force-dynamic';
@@ -7,7 +7,8 @@ export const runtime = 'nodejs';
 export const maxDuration = 60;
 
 export interface SystemStatus {
-  sapa: { state: 'active' | 'down'; records: number };
+  /** records = jumlah baris katalog; opd = jumlah OPD unik (dipakai uji meta & pemantauan). */
+  sapa: { state: 'active' | 'down'; records: number; opd: number; indikator?: number };
   ai: {
     /** active = narasi AI dikirim ke pengguna; shadow = dievaluasi saja; inactive = deterministik. */
     state: 'active' | 'shadow' | 'inactive';
@@ -52,14 +53,19 @@ export interface SystemStatus {
  */
 export async function GET() {
   const status: SystemStatus = {
-    sapa: { state: 'down', records: 0 },
+    sapa: { state: 'down', records: 0, opd: 0 },
     ai: { state: 'inactive', provider: null, model: null, reason: null, dailyUsed: 0 },
   };
 
   const [sapa, ai] = await Promise.all([
     fetchSapaData()
-      .then(({ records }) => ({ state: 'active' as const, records: records.length }))
-      .catch(() => ({ state: 'down' as const, records: 0 })),
+      .then(({ records }) => ({
+        state: 'active' as const,
+        records: records.length,
+        opd: getUniqueOpd(records).length,
+        indikator: getUniqueIndicators(records).length,
+      }))
+      .catch(() => ({ state: 'down' as const, records: 0, opd: 0 })),
     getAiRuntimeStatus().catch(() => null),
   ]);
 

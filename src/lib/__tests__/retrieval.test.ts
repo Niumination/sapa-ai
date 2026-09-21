@@ -86,3 +86,60 @@ describe('konsepTakTermuat', () => {
     expect(konsepTakTermuat(korpus, terbaik, 'Jumlah keluarga di kecamatan Bebesen')).toContain('keluarga');
   });
 });
+
+// ─── Normalisasi singkatan & bahasa tidak baku (usulan audit 2026-09-21) ───
+// Bukti produksi: "brp jmlh pddk Aceh Tengah 2025" → 0 bukti & jawaban menolak,
+// padahal "Jumlah Data Penduduk" ada di katalog. Penyebabnya terukur: setiap
+// singkatan ber-df = 0 sehingga penjaga konsep-asing menyala palsu.
+import { tokenizeQuery, normalkanSingkatan } from '../sapa-client';
+
+describe('tokenizeQuery — normalisasi singkatan', () => {
+  it('singkatan penduduk/jumlah/berapa → bentuk baku', () => {
+    const t = tokenizeQuery('brp jmlh pddk Aceh Tengah 2025');
+    expect(t).toContain('penduduk');
+    expect(t).not.toContain('pddk');
+    expect(t).not.toContain('jmlh');
+  });
+
+  it('kata singkat 2 huruf ikut dipetakan sebelum filter panjang', () => {
+    const t = tokenizeQuery('yg tdk ada data stunting');
+    expect(t).toContain('stunting');
+    expect(t).not.toContain('yg');
+  });
+
+  it('sinonim awam "tengkes" → stunting (menutup gerbang konsep-asing)', () => {
+    expect(tokenizeQuery('Berapa banyak anak balita tengkes?')).toContain('stunting');
+  });
+
+  it('frasa "hidup di bawah garis kemiskinan" menyisakan kata topik', () => {
+    const t = tokenizeQuery('berapa warga yang hidup di bawah garis kemiskinan');
+    expect(t).toContain('kemiskinan');
+    expect(t).not.toContain('hidup');
+    expect(t).not.toContain('bawah');
+  });
+
+  it('normalkanSingkatan mendukung pemetaan multi-kata', () => {
+    expect(normalkanSingkatan('dinkes')).toEqual(['kesehatan']);
+    expect(normalkanSingkatan('hdi')).toEqual(['indeks', 'pembangunan', 'manusia']);
+    expect(normalkanSingkatan('koperasi')).toEqual(['koperasi']);
+  });
+});
+
+describe('retrieveRelevant — sinonim awam menemukan indikator yang benar', () => {
+  const KORPUS_STUNTING: SapaRecord[] = [
+    { id: 1, id_kode_indikator: 11, kode_indikator_kode_indikator: 'a', kode_indikator_nama_indikator: 'Jumlah penerima paket pemeriksaan kesehatan gratis kelompok usia balita dan anak usia pra sekolah', id_opds: 1, opds_nama_opd: 'Dinas Kesehatan', jadwal_pemutakhiran: 'Tahunan', satuan: 'Orang', tahun: '2025', variabel: '16936' },
+    { id: 2, id_kode_indikator: 12, kode_indikator_kode_indikator: 'b', kode_indikator_nama_indikator: 'Jumlah anak balita yang mengalami stunting (JAB(5) P stunting)', id_opds: 1, opds_nama_opd: 'Dinas Kesehatan', jadwal_pemutakhiran: 'Tahunan', satuan: 'Orang', tahun: '2025', variabel: '730' },
+    { id: 3, id_kode_indikator: 13, kode_indikator_kode_indikator: 'c', kode_indikator_nama_indikator: 'Prevalensi Stunting', id_opds: 2, opds_nama_opd: 'Badan Perencanaan Pembangunan Daerah', jadwal_pemutakhiran: 'Tahunan', satuan: 'Persen', tahun: '2025', variabel: '31,4' },
+  ];
+
+  it('"tengkes" kini menemukan indikator stunting, bukan indikator "balita" umum', () => {
+    const hits = retrieveRelevant(KORPUS_STUNTING, 'Berapa banyak anak balita tengkes di Aceh Tengah?');
+    expect(hits.length).toBeGreaterThan(0);
+    expect((hits[0]?.record.kode_indikator_nama_indikator ?? '').toLowerCase()).toContain('stunting');
+  });
+
+  it('"tengkes" tidak lagi dianggap konsep asing (df > 0 setelah pemetaan)', () => {
+    const hits = retrieveRelevant(KORPUS_STUNTING, 'jumlah balita tengkes');
+    expect(hits.length).toBeGreaterThan(0);
+  });
+});

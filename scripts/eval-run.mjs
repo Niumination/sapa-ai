@@ -151,9 +151,18 @@ function cekInvarians(item, r) {
       // varian tanpa pemisah ribuan & tanpa nol desimal berlebih
       const tanpa = String(v).replace(/\s/g, '');
       if (/^-?[\d.,]+$/.test(tanpa)) diizinkan.add(normNum(tanpa));
+      // RENTANG tertulis = dua angka yang sah. Tanpa ini, narasi yang menulis
+      // "periode 2022–2026" (persis isi evidence) ditandai halu — audit 2026-09-21.
+      for (const m of String(v).matchAll(/(\d[\d.,]*)\s*[–—]\s*(\d[\d.,]*)|(\d[\d.,]*)\s*-\s*(\d[\d.,]*)/g)) {
+        for (const bagian of [m[1] ?? m[3], m[2] ?? m[4]]) {
+          if (bagian) diizinkan.add(normNum(bagian));
+        }
+      }
     }
   }
-  for (const k of [2055, 38, ev.length, r.matched ?? 0]) diizinkan.add(String(k));
+  for (const k of [KATALOG.records ?? 2055, KATALOG.opd ?? 38, ev.length, r.matched ?? 0]) {
+    if (k != null) diizinkan.add(String(k));
+  }
   diizinkan.add(String(new Set(ev.map((e) => e.opd)).size));
   diizinkan.add(String(new Set(ev.map((e) => e.indikator)).size));
   // Angka yang memang ada di LABEL evidence (mis. "Usia 7-12 Tahun", "JAB(5)",
@@ -235,7 +244,19 @@ function nilaiItem(item, r) {
 
   // Nilai/frasa wajib
   if (lulus && item.nilaiWajib?.length) {
-    const kurang = item.nilaiWajib.filter((v) => !narasi.includes(v));
+    // Placeholder dinamis (perbaikan audit 2026-09-21): item meta yang menguji
+    // "jawaban benar = ukuran katalog" tidak boleh menulis angka tetap, karena
+    // katalog berubah (2.055 -> 2.065) dan item itu gagal padahal perilakunya benar.
+    // Angka id-ID ditulis "2.065", jadi bandingkan sebagai angka, bukan teks —
+    // kalau tidak, placeholder yang benar pun dianggap absen.
+    const wajib = item.nilaiWajib.map((v) => String(v)
+      .replaceAll('{records}', String(KATALOG.records ?? ''))
+      .replaceAll('{opd}', String(KATALOG.opd ?? '')));
+    const angkaNarasi = new Set(angkaDiTeks(narasi));
+    const adaWajib = (v) => (angkaDiTeks(v).length
+      ? angkaDiTeks(v).every((n) => angkaNarasi.has(n))
+      : narasi.includes(v));
+    const kurang = wajib.filter((v) => !adaWajib(v));
     if (kurang.length) { lulus = false; cara += ` | nilai wajib absen: ${kurang.join(', ')}`; }
   }
   if (lulus && item.kataLarangan?.length) {
@@ -263,13 +284,25 @@ if (ONLY) items = items.filter((i) => ONLY.includes(i.grup));
 if (IDS) items = items.filter((i) => IDS.includes(i.id));
 if (!items.length) { console.error('Tidak ada item yang cocok dengan filter.'); process.exit(2); }
 
-// Info mode AI
+// Info mode AI + konstanta katalog DINAMIS (perbaikan audit 2026-09-21).
+//
+// MASALAH TERUKUR: anti-halu mengizinkan konstanta katalog hardcode 2055.
+// Katalog produksi kini 2.065 record, sehingga narasi deterministik yang BENAR
+// ("Dari 2.065 record SAPA…") ditandai "angka di luar evidence" — dan pada
+// pengukuran 21 Sep 2026 hal ini menggagalkan 65 dari 78 item, menutupi mutu
+// yang sebenarnya. Konstanta harus dibaca dari sumbernya, bukan ditulis tetap.
+const KATALOG = { records: null, opd: null };
 let aiState = 'nonaktif';
 try {
   const st = await (await fetch(`${BASE}/api/status`)).json();
   aiState = st?.ai?.state ?? (st?.ai?.enabled ? 'aktif' : 'nonaktif');
+  const n = Number(st?.sapa?.records);
+  if (Number.isFinite(n) && n > 0) KATALOG.records = n;
+  const o = Number(st?.sapa?.opd ?? st?.sapa?.opdCount);
+  if (Number.isFinite(o) && o > 0) KATALOG.opd = o;
 } catch { /* server mungkin tak punya /api/status */ }
 console.log(`Eval set v${set.versi} — ${items.length} item — target ${BASE} — mode AI: ${aiState}`);
+console.log(`Konstanta katalog: ${KATALOG.records ?? '2055 (bawaan kode)'} record`);
 console.log(`Invarians: anti-halu · anti-token · anti-jargon · sumber wajib · anti-echo-NIK${DO_STREAM ? ' · parity SSE' : ''}${DO_STABILITY ? ' · stabilitas' : ''}\n`);
 
 const hasil = [];

@@ -10,9 +10,11 @@ import {
   extractYears,
   aggregateByIndicator,
   getUniqueOpd,
+  getSapaSummary,
   dataSourceLabel,
   type SapaRecord,
 } from '@/lib/sapa-client';
+import { deteksiMetaIntent } from '@/lib/intent-meta';
 import {
   buildDeterministicNarasi,
   buildVizFromEvidence,
@@ -54,7 +56,153 @@ export interface DeterministicResult {
  * Susun jawaban deterministik lengkap (narasi + visualisasi + rekomendasi).
  * `records` = seluruh katalog SAPA; retrieval dilakukan di sini agar satu pintu.
  */
+/**
+ * Jawaban untuk pertanyaan tentang SKALA KATALOG (berapa OPD, berapa record,
+ * sebaran tahun) — dibaca langsung dari katalog yang sedang dipegang sistem,
+ * bukan lewat pencocokan kata pada nama indikator.
+ *
+ * Mengapa ada: tanpa cabang ini, "Berapa OPD yang melaporkan data?" dijawab
+ * dengan indikator yang namanya memuat kata "laporan" (Frekuensi laporan isu
+ * publik, PPKBD pencatatan & pelaporan, …) — menjawab sesuatu yang tidak
+ * ditanyakan, padahal jawaban benarnya cuma pembacaan metadata katalog.
+ * Semua angka di narasi diambil dari `getSapaSummary()` dan dimasukkan sebagai
+ * baris evidence, sehingga invarians anti-halu tetap dipenuhi.
+ */
+export function buildMetaAnswer(
+  intent: ReturnType<typeof deteksiMetaIntent> & object,
+  query: string,
+  records: SapaRecord[],
+): DeterministicResult {
+  const ringkas = getSapaSummary(records);
+  const tahunList = ringkas.tahun.map((t) => t.trim()).sort();
+  const opdUrut = [...getUniqueOpd(records)].sort((a, b) => b.jumlah - a.jumlah);
+  const tahunKeJumlah = new Map<string, number>();
+  let tanpaTahun = 0;
+  for (const r of records) {
+    const t = r.tahun?.trim();
+    if (t) tahunKeJumlah.set(t, (tahunKeJumlah.get(t) ?? 0) + 1);
+    else tanpaTahun += 1;
+  }
+
+  const tahunStr = tahunList.length
+    ? tahunList.length === 1
+      ? tahunList[0]
+      : `${tahunList[0]}–${tahunList[tahunList.length - 1]}`
+    : 'tidak tercantum';
+
+  const LABEL_OPD = 'Jumlah OPD/Perangkat Daerah yang melaporkan data';
+  const LABEL_RECORD = 'Jumlah record (baris data) di portal SAPA';
+  const LABEL_INDIKATOR = 'Jumlah indikator unik di portal SAPA';
+  const LABEL_PERIODE = 'Periode tahun data yang termuat';
+
+  let evidence: EvidenceItem[];
+  let narasi: string;
+
+  switch (intent.jenis) {
+    case 'opd': {
+      // Setiap angka yang disebut narasi WAJIB punya barisnya di evidence —
+      // invarians anti-halu memindai narasi terhadap nilai evidence, dan audit
+      // 2026-09-21 menangkap versi pertama fungsi ini menyebut jumlah indikator
+      // & tiga OPD teratas tanpa barisnya (narasi benar, tapi tak tercite).
+      const teratasOpd = opdUrut.slice(0, 3);
+      evidence = [
+        { opd: 'Seluruh katalog SAPA', indikator: LABEL_OPD, nilai: String(ringkas.totalOpd), satuan: 'OPD', tahun: null, id: 'meta:opd' },
+        { opd: 'Seluruh katalog SAPA', indikator: LABEL_RECORD, nilai: String(ringkas.totalRecords), satuan: 'record', tahun: null, id: 'meta:records' },
+        { opd: 'Seluruh katalog SAPA', indikator: LABEL_INDIKATOR, nilai: String(ringkas.totalIndicators), satuan: 'indikator', tahun: null, id: 'meta:indikator' },
+        // Baris periode ikut di sini karena narasinya menyebut "periode 2022–2026"
+        // — tanpa baris ini, angka tahun dituding halu (terukur pada run E).
+        { opd: 'Seluruh katalog SAPA', indikator: LABEL_PERIODE, nilai: tahunStr, satuan: 'tahun', tahun: null, id: 'meta:periode' },
+        ...teratasOpd.map((o, i) => ({
+          opd: o.nama,
+          indikator: `Jumlah record OPD ${o.nama} (peringkat ${i + 1})`,
+          nilai: String(o.jumlah),
+          satuan: 'record',
+          tahun: null,
+          id: `meta:opd:${i + 1}`,
+        })),
+      ];
+      const teratas = teratasOpd.map((o) => `${o.nama} (${o.jumlah} record)`).join('; ');
+      narasi =
+        `Katalog SAPA memuat ${ringkas.totalRecords.toLocaleString('id-ID')} record dari ` +
+        `${ringkas.totalOpd} OPD/Perangkat Daerah yang melaporkan data, untuk ${ringkas.totalIndicators.toLocaleString('id-ID')} indikator unik ` +
+        `(periode ${tahunStr}). Tiga OPD dengan record terbanyak: ${teratas}. ` +
+        `Angka ini adalah keterangan tentang katalog, bukan nilai capaian kinerja.`;
+      break;
+    }
+    case 'katalog': {
+      evidence = [
+        { opd: 'Seluruh katalog SAPA', indikator: LABEL_RECORD, nilai: String(ringkas.totalRecords), satuan: 'record', tahun: null, id: 'meta:records' },
+        { opd: 'Seluruh katalog SAPA', indikator: LABEL_INDIKATOR, nilai: String(ringkas.totalIndicators), satuan: 'indikator', tahun: null, id: 'meta:indikator' },
+        { opd: 'Seluruh katalog SAPA', indikator: LABEL_OPD, nilai: String(ringkas.totalOpd), satuan: 'OPD', tahun: null, id: 'meta:opd' },
+        { opd: 'Seluruh katalog SAPA', indikator: LABEL_PERIODE, nilai: tahunStr, satuan: 'tahun', tahun: null, id: 'meta:periode' },
+      ];
+      narasi =
+        `Portal SAPA saat ini memuat ${ringkas.totalRecords.toLocaleString('id-ID')} record ` +
+        `dari ${ringkas.totalOpd} OPD/Perangkat Daerah, mencakup ${ringkas.totalIndicators.toLocaleString('id-ID')} ` +
+        `indikator unik dengan periode ${tahunStr}. ` +
+        `Catatan: satu indikator dapat memiliki beberapa record (per OPD atau per tahun), ` +
+        `sehingga jumlah record selalu lebih besar daripada jumlah indikator.`;
+      break;
+    }
+    case 'tahun':
+    default: {
+      const urutTahun = [...tahunKeJumlah.entries()].sort((a, b) => a[0].localeCompare(b[0]));
+      evidence = urutTahun.map(([t, n]) => ({
+        opd: 'Seluruh katalog SAPA',
+        indikator: `Jumlah record SAPA bertahun ${t}`,
+        nilai: String(n),
+        satuan: 'record',
+        tahun: t,
+        id: `meta:tahun:${t}`,
+      }));
+      if (tanpaTahun > 0) {
+        evidence.push({
+          opd: 'Seluruh katalog SAPA',
+          indikator: 'Jumlah record tanpa tahun tercantum',
+          nilai: String(tanpaTahun),
+          satuan: 'record',
+          tahun: null,
+          id: 'meta:tahun:kosong',
+        });
+      }
+      const rincian = urutTahun.map(([t, n]) => `${t}: ${n} record`).join('; ');
+      narasi =
+        `Sebaran record SAPA menurut tahun: ${rincian || 'tidak ada tahun tercantum'}. ` +
+        (tanpaTahun > 0 ? `${tanpaTahun} record tidak mencantumkan tahun. ` : '') +
+        `Total ${ringkas.totalRecords.toLocaleString('id-ID')} record dari ${ringkas.totalOpd} OPD. ` +
+        `Untuk tren capaian, tanyakan indikator tertentu (mis. "tren stunting 2023–2025").`;
+      break;
+    }
+  }
+
+  const rekomendasi = [
+    'Pertanyaan ini dijawab dari metadata katalog (bukan dari nilai capaian) — cek /dashboard/status untuk daftar OPD dan /dashboard/laporan untuk sebarannya.',
+    intent.jenis === 'tahun'
+      ? 'Untuk tren antar-tahun, sebutkan nama indikatornya agar sistem menampilkan deret tahun.'
+      : 'Untuk angka capaian, sebut indikator dan tahunnya (mis. "prevalensi stunting 2025").',
+  ];
+
+  return {
+    hits: [],
+    evidence,
+    aggregated: [],
+    opds: [],
+    response: formatAngkaPresentasi({
+      narasi,
+      visualisasi: { tipe: 'none', konfigurasi: {} },
+      rekomendasi,
+      dataSource: dataSourceLabel('splp'),
+      timestamp: new Date().toISOString(),
+    }),
+  };
+}
+
 export function buildDeterministicAnswer(query: string, records: SapaRecord[]): DeterministicResult {
+  // Gerbang niat meta di paling depan: murah, deterministik, dan mencegah
+  // jawaban menyesatkan (lihat buildMetaAnswer). Bila tidak yakin → null → lanjut.
+  const meta = deteksiMetaIntent(query, getUniqueOpd(records).map((o) => o.nama));
+  if (meta) return buildMetaAnswer(meta, query, records);
+
   const hits = retrieveRelevant(records, query, 80);
 
   if (hits.length === 0) {

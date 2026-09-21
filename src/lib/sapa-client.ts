@@ -111,6 +111,58 @@ export function normalizeText(s: string | null | undefined): string {
     .trim();
 }
 
+/**
+ * ─── Normalisasi singkatan & bahasa tidak baku (usulan audit 2026-09-21) ───
+ *
+ * MASALAH TERUKUR: penjaga konsep-asing bekerja per token, dan singkatan
+ * pengguna hampir selalu ber-df = 0 (tidak pernah muncul di nama indikator).
+ * Akibatnya pertanyaan wajar berubah menjadi "konsep tidak ada":
+ *
+ *   "brp jmlh pddk Aceh Tengah 2025" → 0 bukti, jawaban menolak (465 ms)
+ *   padahal "Jumlah Data Penduduk" ada di katalog.
+ *
+ * Perbaikan ini murni LEKSIKAL dan deterministik (tanpa model, tanpa embedding):
+ * bentuk tidak baku dipetakan ke bentuk baku SEBELUM stopword/panjang filter.
+ * Aman karena bentuk baku hasil pemetaan tetap melewati penyaring yang sama —
+ * mis. "brp" → "berapa" lalu tetap dibuang sebagai stopword.
+ *
+ * Prinsip: hanya memetakan bentuk yang TIDAK PERNAH menjadi kata sah di nama
+ * indikator. Pemetaan "tengkes" → "stunting" dan "pddk" → "penduduk" juga
+ * langsung memperbaiki gerbang konsep-asing, karena token hasil pemetaan
+ * punya df > 0 sehingga pertanyaan tidak lagi dianggap menyentuh konsep asing.
+ *
+ * Sumber kurasi: daftar sinonim/singkatan bahasa Indonesia untuk pencarian
+ * (Sastrawi, kamus slang Indonesia, dan daftar sinonim leksikal Indonesia).
+ */
+export const SINGKATAN: Record<string, string[]> = {
+  // angka & kuantitas
+  brp: ['berapa'], brpa: ['berapa'], brapa: ['berapa'],
+  jml: ['jumlah'], jmlh: ['jumlah'], jlh: ['jumlah'], byk: ['banyak'],
+  // entitas wilayah & pemerintahan
+  pddk: ['penduduk'], penddk: ['penduduk'], pdk: ['penduduk'],
+  kec: ['kecamatan'], kecam: ['kecamatan'], kab: ['kabupaten'],
+  kel: ['kelurahan'], prov: ['provinsi'], pemkab: ['pemerintah', 'kabupaten'],
+  dinkes: ['kesehatan'], kadinkes: ['kesehatan'], disdik: ['pendidikan'],
+  dinsos: ['sosial'], disdukcapil: ['kependudukan'], dishub: ['perhubungan'],
+  bappeda: ['perencanaan'], rsud: ['rumah', 'sakit'],
+  // kata baku yang sering disingkat
+  thn: ['tahun'], yg: ['yang'], dgn: ['dengan'], utk: ['untuk'],
+  dr: ['dari'], sdh: ['sudah'], udh: ['sudah'], udah: ['sudah'],
+  tdk: ['tidak'], gak: ['tidak'], ga: ['tidak'], gk: ['tidak'],
+  bgt: ['sangat'], hrg: ['harga'], hrga: ['harga'], ank: ['anak'],
+  // istilah statistik & kesehatan yang lazim dipakai masyarakat
+  tengkes: ['stunting'], tengkesan: ['stunting'], stundting: ['stunting'],
+  ipm: ['ipm'], hdi: ['indeks', 'pembangunan', 'manusia'],
+  asn: ['asn'], pns: ['asn'], pppk: ['asn'],
+  gakin: ['miskin'], rtm: ['rumah', 'tangga'],
+  jabar: ['jawa', 'barat'],
+};
+
+/** Petakan setiap kata ke bentuk baku (boleh menghasilkan >1 kata). */
+export function normalkanSingkatan(kata: string): string[] {
+  return SINGKATAN[kata] ?? [kata];
+}
+
 /** Token set dari query — hapus stopwords umum + stopword domain (PR Lapis 1). */
 export function tokenizeQuery(query: string): string[] {
   const stopWords = new Set([
@@ -138,6 +190,11 @@ export function tokenizeQuery(query: string): string[] {
     'dalam', 'pada', 'ke', 'oleh', 'apakah', 'adakah', 'tersebut',
     'sebuah', 'masing', 'macam', 'seluruh', 'semua', 'antara', 'sampai',
     'menjadi', 'merupakan', 'yakni', 'yaitu',
+    // pengisi frasa yang selalu ber-df 0 dan membuat penjaga konsep-asing
+    // menyala palsu (usulan audit 2026-09-21): "berapa warga yang HIDUP di
+    // BAWAH garis kemiskinan" → tanpa ini, "hidup"/"bawah" memaksa syarat
+    // 2 kecocokan sementara kata topiknya hanya satu.
+    'hidup', 'bawah', 'dibawah', 'sudah', 'telah', 'akan', 'kita', 'kami', 'mereka',
   ]);
   return normalizeText(query)
     .split(' ')
@@ -145,6 +202,10 @@ export function tokenizeQuery(query: string): string[] {
     // "…di tiap kecamatan?" menghasilkan token "kecamatan?" yang tidak pernah
     // cocok dengan nama indikator, sehingga pertanyaan wajar berujung 0 hasil.
     .map((w) => w.replace(/^[^a-z0-9]+|[^a-z0-9]+$/g, ''))
+    // Bentuk tidak baku → baku (audit 2026-09-21). Diletakkan SEBELUM filter
+    // panjang (agar "yg", "dr", "ga" ikut dipetakan) dan sebelum filter
+    // stopword (agar hasil pemetaan tetap tersaring secara normal).
+    .flatMap((w) => (w ? normalkanSingkatan(w) : []))
     .filter((w) => w.length >= 3 && !stopWords.has(w) && !/^\d+$/.test(w));
 }
 
@@ -203,8 +264,16 @@ const SYNONYM_ALTERNATIVES: Record<string, string[][]> = {
   inflasi: [['inflasi'], ['ihk']],
   kemiskinan: [['kemiskinan'], ['miskin'], ['gakin']],
   miskin: [['miskin'], ['kemiskinan'], ['gakin']],
-  stunting: [['stunting']],
+  stunting: [['stunting'], ['tengkes'], ['pendek']],
   kokurikuler: [['kokurikuler']],
+  // Usulan audit 2026-09-21 — kata penghubung frasa yang bermakna topik.
+  // "warga yang hidup di bawah garis kemiskinan" harus menemukan indikator
+  // kemiskinan walau kata "warga"/"garis" tak ada di katalog.
+  warga: [['warga'], ['penduduk'], ['masyarakat']],
+  garis: [['garis', 'kemiskinan'], ['kemiskinan'], ['miskin']],
+  sebaran: [['sebaran'], ['distribusi'], ['sebar'], ['jumlah']],
+  penduduk: [['penduduk'], ['kependudukan'], ['warga']],
+  balita: [['balita'], ['anak']],
 };
 
 export interface MatchGroup {
