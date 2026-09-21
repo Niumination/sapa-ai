@@ -271,6 +271,14 @@ const SYNONYM_ALTERNATIVES: Record<string, string[][]> = {
   kemiskinan: [['kemiskinan'], ['miskin'], ['gakin']],
   miskin: [['miskin'], ['kemiskinan'], ['gakin']],
   stunting: [['stunting'], ['tengkes'], ['pendek']],
+  // Usulan gelombang 3 (22 Sep 2026, item eval F4): pengguna bertanya dengan kata
+  // kerja hasil panen, katalog menulis "Jumlah produksi …". Tanpa pemetaan ini,
+  // "dihasilkan" dianggap konsep asing dan penjaga kejujuran malah memilih record
+  // yang salah (jumlah PETANI, satuan KK, padahal yang ditanya volume panen).
+  dihasilkan: [['dihasilkan'], ['produksi'], ['hasil']],
+  menghasilkan: [['menghasilkan'], ['produksi'], ['hasil']],
+  hasil: [['hasil'], ['produksi']],
+  panen: [['panen'], ['produksi']],
   kokurikuler: [['kokurikuler']],
   // Usulan audit 2026-09-21 — kata penghubung frasa yang bermakna topik.
   // "warga yang hidup di bawah garis kemiskinan" harus menemukan indikator
@@ -364,13 +372,20 @@ export function retrieveRelevant(records: SapaRecord[], query: string, cap = 80)
   const kataRecord = records.map((r) => ({
     ind: stemSet(r.kode_indikator_nama_indikator),
     opd: stemSet(r.opds_nama_opd),
+    // Reviu 22 Sep 2026 (item eval F4): kolom SATUAN adalah bagian korpus yang
+    // nyata. Kata "ton" tidak muncul di nama indikator mana pun, tetapi ada di
+    // satuan "Ton/Tahun". Tanpa baris ini, "ton" dianggap konsep asing lalu
+    // penjaga kejujuran memilih bukti yang salah (jumlah petani).
+    sat: stemSet(r.satuan),
   }));
   // df = jumlah record yang memuat grup ini. df = 0 berarti kata tersebut
   // tidak pernah muncul di korpus SAPA sama sekali.
   const df = groups.map(
     (g) =>
       kataRecord.filter((k) =>
-        g.alternatives.some((alt) => alternativeHit(alt, k.ind) || alternativeHit(alt, k.opd)),
+        g.alternatives.some(
+          (alt) => alternativeHit(alt, k.ind) || alternativeHit(alt, k.opd) || alternativeHit(alt, k.sat),
+        ),
       ).length,
   );
   const grupMungkin = df.filter((d) => d > 0).length;
@@ -434,6 +449,43 @@ export function retrieveRelevant(records: SapaRecord[], query: string, cap = 80)
   })();
   const memuat = (g: MatchGroup, k: { ind: Set<string>; opd: Set<string> }) =>
     g.alternatives.some((alt) => alternativeHit(alt, k.ind) || alternativeHit(alt, k.opd));
+  /**
+   * Preferensi SATUAN FISIK (reviu 22 Sep 2026, item eval F4).
+   *
+   * "Berapa ton kopi yang dihasilkan petani Aceh Tengah?" semula dijawab "Jumlah
+   * PETANI Kopi Arabika 38.294 KK" — padahal yang ditanya VOLUME panen, dan
+   * katalog memuat "Jumlah produksi komoditas perkebunan Kopi Arabika 29.019
+   * Ton/Tahun". Sebabnya: kata "petani" muncul di nama indikator sehingga dua
+   * record petani menang agregat, sementara kata "ton" tidak muncul di nama
+   * indikator mana pun (ia ada di kolom SATUAN).
+   *
+   * Aturan ini hanya menyala bila pengguna menyebut satuan FISIK (ton, kg,
+   * kuintal, liter, km, hektar) — bukan "persen", karena persen adalah satuan
+   * turunan yang lazim dipakai untuk niat komposisi/perbandingan dan sudah
+   * ditangani niat jawaban (`deteksiNiat`). Bukti yang satuannya cocok
+   * dinaikkan, bukan disaring: bukti lain tetap tersedia.
+   */
+  const SATUAN_FISIK: Record<string, string[]> = {
+    ton: ['ton'],
+    tonase: ['ton'],
+    kuintal: ['kuintal', 'kw'],
+    kg: ['kg', 'kilogram'],
+    kilogram: ['kg', 'kilogram'],
+    liter: ['liter'],
+    km: ['km', 'kilometer'],
+    kilometer: ['km', 'kilometer'],
+    hektar: ['ha', 'hektar'],
+    ha: ['ha', 'hektar'],
+    meter: ['meter'],
+  };
+  const satuanDiminta = groups.map((g) => g.token).filter((t) => SATUAN_FISIK[t]);
+  const nilaiSatuan = (record: SapaRecord): number =>
+    satuanDiminta.length === 0
+      ? 0
+      : satuanDiminta.filter((u) =>
+          SATUAN_FISIK[u].some((sat) => String(record.satuan ?? '').toLowerCase().includes(sat)),
+        ).length;
+
   const nilaiEntitas = (urut: number): number =>
     entitas.length === 0 || kataRecord[urut] == null
       ? 0
@@ -445,6 +497,7 @@ export function retrieveRelevant(records: SapaRecord[], query: string, cap = 80)
     .sort(
       (a, b) =>
         nilaiEntitas(b.urut) - nilaiEntitas(a.urut) ||
+        nilaiSatuan(b.record) - nilaiSatuan(a.record) ||
         b.score - a.score ||
         b.nilai - a.nilai ||
         a.urut - b.urut,

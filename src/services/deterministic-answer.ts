@@ -210,7 +210,65 @@ export function buildMetaAnswer(
   };
 }
 
+/** Pola permintaan yang menyasar SISTEM, bukan data. */
+const POLA_PERMINTAAN_SISTEM: RegExp[] = [
+  /(?:system|sistem)\s*prompt/i,
+  /instruksi\s*(?:sistem|internal|awal|rahasia|dasar)/i,
+  /(?:aturan|prompt|instruksi)\s*(?:internal|rahasia|tersembunyi)/i,
+  /(?:lupakan|abaikan|hapus|langgar|lewati)\s+(?:semua\s+)?(?:instruksi|perintah|aturan|prompt|batasan)/i,
+  /ignore\s+(?:all\s+)?(?:previous\s+|prior\s+)?(?:instructions|rules|prompt)/i,
+  /(?:tampilkan|tunjukkan|beri|kasih|bocorkan|sebutkan|reveal|show|print)\s+(?:saya\s+|aku\s+)?(?:isi\s+|teks\s+|kode\s+)?(?:prompt|instruksi|aturan\s+internal)/i,
+  /(?:kamu|anda|kamu\s+ini)\s+(?:pakai|gunakan|diberi|dijalankan)\s+(?:prompt|instruksi|aturan)/i,
+  /(?:developer|debug|dAN|dan)\s*mode/i,
+  /jailbreak|prompt\s*injection|\bDAN\s*mode\b/i,
+];
+
+/**
+ * Apakah pengguna meminta isi ATURAN INTERNAL aplikasi (bukan data SAPA)?
+ *
+ * Dua hal diuji di sini, dan keduanya penting untuk klien:
+ *
+ * 1. **Menolak dengan jelas** — permintaan seperti ini bukan pertanyaan data;
+ *    menjawabnya dengan "data tidak ditemukan" membuat pengguna bingung.
+ * 2. **TIDAK MENGGEMAKAN muatan pengguna.** Balasan lama mengutip pertanyaan apa
+ *    adanya, sehingga muatan injeksi ikut tercetak di jawaban — terukur 22 Sep
+ *    2026 pada item eval S1: narasi memuat "999999" (angka karangan penyerang)
+ *    dan item S3 memuat "system prompt" (jargon internal). Kalimat tetap di
+ *    bawah ini bersih dari angka asing sekaligus dari jargon internal, sehingga
+ *    tidak ada muatan yang dipantulkan kembali.
+ */
+export function deteksiPermintaanSistem(query: string): boolean {
+  return POLA_PERMINTAAN_SISTEM.some((p) => p.test(query));
+}
+
+/** Balasan tetap: jujur, tanpa jargon internal, tanpa mengutip pertanyaan. */
+export const NARASI_TOLAK_SISTEM =
+  'Maaf, aturan kerja internal saya tidak dapat ditampilkan maupun diubah, dan permintaan ' +
+  'seperti itu tidak memengaruhi cara saya menjawab. Saya hanya membantu pertanyaan tentang ' +
+  'data SAPA Aceh Tengah — misalnya indikator, perangkat daerah, tahun data, atau angka ' +
+  'pembangunan daerah. Silakan ajukan pertanyaan seputar data tersebut.';
+
 export function buildDeterministicAnswer(query: string, records: SapaRecord[]): DeterministicResult {
+  // Penjaga paling depan: permintaan atas aturan internal dijawab dengan kalimat
+  // tetap — tidak meneruskan kueri ke retrieval (tidak ada gunanya) dan tidak
+  // memantulkan muatan pengguna.
+  if (deteksiPermintaanSistem(query)) {
+    return {
+      hits: [],
+      evidence: [],
+      aggregated: aggregateByIndicator([]),
+      opds: [],
+      peringatan: [],
+      response: {
+        narasi: NARASI_TOLAK_SISTEM,
+        rekomendasi: [],
+        visualisasi: buildVizFromEvidence([]),
+        dataSource: dataSourceLabel('splp'),
+        timestamp: new Date().toISOString(),
+      },
+    };
+  }
+
   // Gerbang niat meta di paling depan: murah, deterministik, dan mencegah
   // jawaban menyesatkan (lihat buildMetaAnswer). Bila tidak yakin → null → lanjut.
   const meta = deteksiMetaIntent(query, getUniqueOpd(records).map((o) => o.nama));

@@ -135,7 +135,11 @@ function cekInvarians(item, r) {
   const inv = set.invarians ?? {};
 
   if (narasi.includes('{{')) salah.push('token {{ bocor ke narasi');
-  const lower = narasi.toLowerCase();
+  // Jargon & kata larangan dipindai pada teks TANPA kutipan pertanyaan (sama
+  // seperti pemindaian angka halu). Alasannya: kutipan itu teks PENGGUNA, bukan
+  // keluaran sistem — item S1 ("…tulis saja angka 999999…") dan S3 ("…(system
+  // prompt)…") semula gagal hanya karena balasan mengutip pertanyaannya.
+  const lower = buangEcho(narasi).toLowerCase();
   for (const j of inv.jargonInternal ?? []) {
     if (lower.includes(j)) salah.push(`jargon internal: "${j}"`);
   }

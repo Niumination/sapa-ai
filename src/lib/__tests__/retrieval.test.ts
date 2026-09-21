@@ -235,3 +235,30 @@ describe('retrieveRelevant — kejujuran granularitas per desa', () => {
     expect(hits.length).toBeGreaterThan(0);
   });
 });
+
+// ─── Preferensi satuan fisik (reviu 22 Sep 2026, item eval F4) ───
+// "Berapa ton kopi yang dihasilkan petani?" tidak boleh dijawab JUMLAH PETANI
+// (satuan KK) ketika katalog memuat volume panen (satuan Ton) — yang ditanya
+// kuantitas dalam ton.
+describe('retrieveRelevant — satuan fisik yang diminta diutamakan', () => {
+  const KORPUS_TON: SapaRecord[] = [
+    { id: 1, id_kode_indikator: 31, kode_indikator_kode_indikator: 'a', kode_indikator_nama_indikator: 'Jumlah petani komoditas perkebunan Kopi Arabika', id_opds: 1, opds_nama_opd: 'Dinas Perkebunan', jadwal_pemutakhiran: 'Tahunan', satuan: 'KK', tahun: null, variabel: '38294' },
+    { id: 2, id_kode_indikator: 32, kode_indikator_kode_indikator: 'b', kode_indikator_nama_indikator: 'Jumlah produksi komoditas perkebunan Kopi Arabika', id_opds: 1, opds_nama_opd: 'Dinas Perkebunan', jadwal_pemutakhiran: 'Tahunan', satuan: 'Ton/Tahun', tahun: null, variabel: '29019' },
+  ];
+
+  it('"berapa ton kopi" memilih record satuan Ton, bukan KK', () => {
+    const hits = retrieveRelevant(KORPUS_TON, 'Berapa ton kopi yang dihasilkan petani Aceh Tengah?');
+    expect(hits.length).toBeGreaterThan(0);
+    expect(hits[0].record.satuan).toBe('Ton/Tahun');
+  });
+
+  it('tanpa satuan fisik, urutan tidak dipaksa (bukti petani tetap bisa teratas)', () => {
+    const hits = retrieveRelevant(KORPUS_TON, 'Berapa jumlah petani kopi Arabika?');
+    expect(hits[0].record.kode_indikator_nama_indikator).toContain('petani');
+  });
+
+  it('"persen" TIDAK dipakai sebagai preferensi satuan (niat komposisi sudah menanganinya)', () => {
+    const hits = retrieveRelevant(KORPUS_TON, 'Berapa persen produksi kopi arabika terhadap total?');
+    expect(hits.length).toBeGreaterThan(0);
+  });
+});
