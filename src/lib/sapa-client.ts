@@ -206,7 +206,13 @@ export function tokenizeQuery(query: string): string[] {
     // panjang (agar "yg", "dr", "ga" ikut dipetakan) dan sebelum filter
     // stopword (agar hasil pemetaan tetap tersaring secara normal).
     .flatMap((w) => (w ? normalkanSingkatan(w) : []))
-    .filter((w) => w.length >= 3 && !stopWords.has(w) && !/^\d+$/.test(w));
+    // Token angka dibuang, termasuk bentuk RENTANG dan desimal Indonesia:
+    // "2023-2025", "31,4", "1.000". Reviu 2026-09-21: "Bagaimana tren stunting
+    // 2023-2025" dulu menghasilkan token df=0 → gerbang konsep-asing menyalakan
+    // → retrieval mengembalikan [] → jawaban "tidak ditemukan", padahal
+    // "Prevalensi Stunting" ada. Padanan tahun ditangani `extractYears()` yang
+    // memang memisahkan tahun dari kata kunci.
+    .filter((w) => w.length >= 3 && !stopWords.has(w) && !/^[\d.,\-–—/]+$/.test(w));
 }
 
 // ─── Retrieval v2 (PR Lapis 1): word-boundary + stemming ringan + sinonim ───
@@ -383,11 +389,95 @@ export function retrieveRelevant(records: SapaRecord[], query: string, cap = 80)
   // lebih besar dulu (kebiasaan "yang terbanyak" lebih informatif).
   const nilai = (r: SapaRecord): number => parseNumericId(normalisasiNilai(r.variabel)) ?? 0;
 
+  // ── Aturan ENTITAS (butir 1.1b peta jalan) ─────────────────────────────────
+  // Pelajaran dari percobaan pertama (21 Sep 2026) — ini versi kedua:
+  //
+  // Versi pertama menyaring hasil dengan "token ber-df ≤ 3 wajib termuat". Itu
+  // SALAH: berdf kecil belum tentu entitas — "perubahan" (df kecil karena muncul
+  // di indikator iklim) bukan entitas, dan menyaringnya justru membuang jawaban
+  // yang benar: T9 ("bansos sembako") kehilangan record sembako, P7 kehilangan
+  // record stunting, D4 kehilangan record PPKS — tiga regresi terukur.
+  //
+  // Versi kedua: ENTITAS = yang memang berupa NAMA — akronim huruf besar
+  // ("IPM", "PPKS", "PBI") atau nama diri ("Bebesen"). Perlakuannya bukan
+  // menyaring, melainkan (a) MENGANGKAT record yang memuatnya walau hanya cocok
+  // satu konsep, dan (b) MENGUTAMAKANNYA di urutan atas.
+  //
+  // Tanpa (a), "Indeks Pembangunan Manusia (IPM) 78,09" gugur oleh ambang
+  // minIndHits karena namanya pendek, lalu "Bandingkan IPM dengan target
+  // nasional" dijawab "Persentase puskesmas yang mencapai target INM" (dua kata
+  // umum berdf 20) — MENYESATKAN, karena "target INM" bukan IPM.
+  const entitas = (() => {
+    const kandidat: string[] = [];
+    // Akronim huruf besar ("IPM", "PPKS") = entitas di posisi mana pun — bentuk
+    // huruf besar seperti itu tidak mungkin muncul karena awal kalimat.
+    const tambah = (kata: string) => {
+      const t = (normalkanSingkatan(kata.toLowerCase()).slice(-1)[0] ?? '').toLowerCase();
+      if (t.length >= 3 && !KATA_MAKSUD.has(t)) kandidat.push(t);
+    };
+    for (const m of query.matchAll(/\b[A-Z]{2,}\b/g)) tambah(m[0]);
+    // Nama diri ("Bebesen") hanya dihitung bila BUKAN kata pertama kalimat:
+    // "Bagaimana tren…" huruf besarnya cuma akibat posisi, bukan nama.
+    for (const m of query.matchAll(/\b[A-Z][a-z]{3,}\b/g)) {
+      if ((m.index ?? 0) === 0) continue;
+      tambah(m[0]);
+    }
+    const unik = [...new Set(kandidat)];
+    return groups
+      .map((g, i) => ({ g, d: df[i] }))
+      .filter(
+        (x) =>
+          x.d > 0 &&
+          x.d <= 12 &&
+          unik.some((t) => x.g.token === t || x.g.alternatives.some((alt) => alt.includes(t))),
+      );
+  })();
+  const memuat = (g: MatchGroup, k: { ind: Set<string>; opd: Set<string> }) =>
+    g.alternatives.some((alt) => alternativeHit(alt, k.ind) || alternativeHit(alt, k.opd));
+  const nilaiEntitas = (urut: number): number =>
+    entitas.length === 0 || kataRecord[urut] == null
+      ? 0
+      : entitas.filter((x) => memuat(x.g, kataRecord[urut])).length;
+
   const hits = records
     .map((r, i) => ({ ...scoreRecord(r, groups, bobot), record: r, nilai: nilai(r), urut: i }))
-    .filter((s) => s.indHits >= minIndHits)
-    .sort((a, b) => b.score - a.score || b.nilai - a.nilai || a.urut - b.urut)
+    .filter((s) => s.indHits >= minIndHits || (entitas.length > 0 && nilaiEntitas(s.urut) > 0))
+    .sort(
+      (a, b) =>
+        nilaiEntitas(b.urut) - nilaiEntitas(a.urut) ||
+        b.score - a.score ||
+        b.nilai - a.nilai ||
+        a.urut - b.urut,
+    )
     .slice(0, cap);
+
+  const kandidat = hits;
+
+  // ── Kejujuran GRANULARITAS (per desa) ──────────────────────────────────────
+  // SAPA berhenti di tingkat kecamatan: tidak ada rincian per desa. Bila
+  // pengguna meminta rincian per desa DI sebuah kecamatan bernama, padahal
+  // tidak ada satu record pun yang menggabungkan nama kecamatan itu dengan kata
+  // "desa", maka yang tersedia hanyalah data lain di kecamatan tersebut
+  // (UMKM, koperasi, jalan) — menjawabnya dengan itu = menyesatkan. Terukur:
+  // item eval D5 ("persebaran jumlah keluarga per desa di Kecamatan Bebesen")
+  // semula dijawab data kader KB / UMKM.
+  const mintaRincianDesa = /\b(?:per|tiap|masing-masing)\s+(?:desa|kelurahan|kampung|gampong)\b/i.test(query);
+  if (mintaRincianDesa) {
+    // Untuk aturan ini ambang entitasnya dilonggarkan ke 6: nama kecamatan
+    // ("Bebesen", df=4) memang lebih umum daripada akronim langka seperti IPM.
+    const namaTempat = groups
+      .map((g, i) => ({ g, d: df[i] }))
+      .filter((x) => x.d > 0 && x.d <= 6 && x.g.token.length >= 4 && !KATA_MAKSUD.has(x.g.token))
+      .map((x) => x.g);
+    const unitDesa = groups.find((g) => /^(?:desa|kelurahan|kampung|gampong)/.test(g.token));
+    if (namaTempat.length > 0 && unitDesa) {
+      const adaGabungan = records.some((r, i) => {
+        const k = kataRecord[i];
+        return memuat(unitDesa, k) && namaTempat.some((g) => memuat(g, k));
+      });
+      if (!adaGabungan) return [];
+    }
+  }
 
   // Penjaga kejujuran (reviu 2026-09-04). Bila pertanyaan menyinggung konsep
   // yang TIDAK PERNAH tercatat di SAPA (df = 0), sedangkan kandidat terbaik
@@ -396,9 +486,9 @@ export function retrieveRelevant(records: SapaRecord[], query: string, cap = 80)
   // Terukur pada 78 item eval: +3 item lulus, tanpa mengorbankan satu pun
   // pertanyaan yang datanya benar-benar ada.
   const adaKonsepAsing = df.some((d) => d === 0);
-  if (adaKonsepAsing && (hits[0]?.indHits ?? 0) < 2) return [];
+  if (adaKonsepAsing && (kandidat[0]?.indHits ?? 0) < 2) return [];
 
-  return hits;
+  return kandidat;
 }
 
 /**

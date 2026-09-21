@@ -355,3 +355,58 @@ describe('composeAnswer — pagar data pribadi (AI nonaktif)', () => {
     expect(hasil.evidence.length).toBeGreaterThan(0);
   });
 });
+
+describe('composeAnswer — peringatan sistem tidak boleh hilang di mode AI', () => {
+  const rekamanBebesen: SapaRecord[] = [
+    {
+      id: 5, id_kode_indikator: 900, kode_indikator_kode_indikator: 'Y.1',
+      kode_indikator_nama_indikator: 'Jumlah Tenaga Kerja UMKM kecamatan Bebesen', id_opds: 9,
+      opds_nama_opd: 'Dinas Koperasi dan UKM', jadwal_pemutakhiran: 'Tahunan',
+      satuan: 'Orang', tahun: '2025', variabel: '1955',
+    },
+    {
+      id: 6, id_kode_indikator: 901, kode_indikator_kode_indikator: 'Y.2',
+      kode_indikator_nama_indikator: 'Jumlah UMKM Di Kecamatan Bebesen', id_opds: 9,
+      opds_nama_opd: 'Dinas Koperasi dan UKM', jadwal_pemutakhiran: 'Tahunan',
+      satuan: 'Unit', tahun: '2025', variabel: '831',
+    },
+    // Kata "keluarga" HARUS ada di korpus (walau bukan di baris teratas) supaya
+    // peringatan "kata kunci tidak termuat" benar-benar lahir — inilah perilaku
+    // katalog nyata: "keluarga" ada di indikator lain, tetapi tidak di Bebesen.
+    {
+      id: 7, id_kode_indikator: 902, kode_indikator_kode_indikator: 'Y.3',
+      kode_indikator_nama_indikator: 'Jumlah Keluarga Penerima Bantuan Sosial', id_opds: 10,
+      opds_nama_opd: 'Dinas Sosial', jadwal_pemutakhiran: 'Tahunan',
+      satuan: 'Keluarga', tahun: '2026', variabel: '13101',
+    },
+  ];
+
+  it('peringatan kata-kunci-tak-termuat disisipkan bila model memarafrasekannya', async () => {
+    // Model menjawab rapi tetapi mengubah frasa baku menjadi "tidak ada indikator
+    // yang memuat seluruh kata kunci" — maknanya sama, frasa bakunya hilang.
+    process.env.AI_ENABLED = 'true';
+    process.env.AI_PROVIDER = 'custom';
+    process.env.AI_BASE_URL = 'https://contoh.invalid/v1';
+    process.env.AI_API_KEY = 'kunci-uji';
+    process.env.AI_MODEL = 'uji-1';
+    vi.stubGlobal('fetch', jawabModel({
+      narasi: 'Tidak ada indikator SAPA yang memuat seluruh kata kunci sekaligus: "keluarga". Jumlah Tenaga Kerja UMKM kecamatan Bebesen tercatat {{5}}; Jumlah UMKM Di Kecamatan Bebesen {{6}}.',
+      rekomendasi: [],
+      followUps: [],
+    }));
+
+    const hasil = await composeAnswer({
+      query: 'Berapa jumlah keluarga di Kecamatan Bebesen?',
+      records: rekamanBebesen,
+      ip: '10.0.0.9',
+      stream: false,
+    });
+
+    expect(hasil.ai.grounded).toBe('pass');
+    expect(hasil.ai.nilaiTambah).toBe('dipakai-dengan-catatan');
+    // Frasa baku deterministik wajib ada di jawaban akhir.
+    expect(hasil.response.narasi).toContain('Tidak ada data SAPA yang memuat seluruh kata kunci sekaligus');
+    // Narasi model tetap dipertahankan (tidak dibuang).
+    expect(hasil.response.narasi).toContain('Tenaga Kerja UMKM');
+  });
+});

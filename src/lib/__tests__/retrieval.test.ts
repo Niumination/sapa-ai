@@ -5,7 +5,7 @@
 // memilih nilai terbesar.
 
 import { describe, it, expect } from 'vitest';
-import { retrieveRelevant, konsepTidakDikenal, konsepTakTermuat } from '../sapa-client';
+import { retrieveRelevant, tokenizeQuery, konsepTidakDikenal, konsepTakTermuat, normalkanSingkatan } from '../sapa-client';
 import type { SapaRecord } from '../sapa-client';
 
 const KORPUS: SapaRecord[] = [
@@ -91,7 +91,6 @@ describe('konsepTakTermuat', () => {
 // Bukti produksi: "brp jmlh pddk Aceh Tengah 2025" → 0 bukti & jawaban menolak,
 // padahal "Jumlah Data Penduduk" ada di katalog. Penyebabnya terukur: setiap
 // singkatan ber-df = 0 sehingga penjaga konsep-asing menyala palsu.
-import { tokenizeQuery, normalkanSingkatan } from '../sapa-client';
 
 describe('tokenizeQuery — normalisasi singkatan', () => {
   it('singkatan penduduk/jumlah/berapa → bentuk baku', () => {
@@ -140,6 +139,99 @@ describe('retrieveRelevant — sinonim awam menemukan indikator yang benar', () 
 
   it('"tengkes" tidak lagi dianggap konsep asing (df > 0 setelah pemetaan)', () => {
     const hits = retrieveRelevant(KORPUS_STUNTING, 'jumlah balita tengkes');
+    expect(hits.length).toBeGreaterThan(0);
+  });
+});
+
+describe('rentang tahun pada pertanyaan tren (reviu 2026-09-21)', () => {
+  const korpus: SapaRecord[] = [
+    { id: 1, id_kode_indikator: 11, kode_indikator_kode_indikator: 'a', kode_indikator_nama_indikator: 'Prevalensi Stunting', id_opds: 2, opds_nama_opd: 'Bappeda', jadwal_pemutakhiran: 'Tahunan', satuan: 'Persen', tahun: '2025', variabel: '31,4' },
+    { id: 2, id_kode_indikator: 12, kode_indikator_kode_indikator: 'b', kode_indikator_nama_indikator: 'Jumlah anak balita yang mengalami stunting', id_opds: 1, opds_nama_opd: 'Dinas Kesehatan', jadwal_pemutakhiran: 'Tahunan', satuan: 'Orang', tahun: '2025', variabel: '730' },
+  ];
+
+  it('token rentang tahun tidak lagi membuat retrieval kosong', () => {
+    const hits = retrieveRelevant(korpus, 'Bagaimana tren stunting 2023-2025?');
+    expect(hits.length).toBeGreaterThan(0);
+    expect((hits[0]?.record.kode_indikator_nama_indikator ?? '').toLowerCase()).toContain('stunting');
+  });
+
+  it('rentang tahun tidak dianggap konsep asing', () => {
+    expect(konsepTidakDikenal(korpus, 'tren stunting 2023-2025')).toEqual([]);
+  });
+
+  it('angka desimal Indonesia pada kueri juga dibuang dari token', () => {
+    expect(tokenizeQuery('prevalensi stunting 31,4 persen')).toEqual(['prevalensi', 'stunting']);
+  });
+});
+
+// ─── Aturan entitas-wajib & kejujuran granularitas (butir 1.1b peta jalan) ───
+// Terukur pada eval 78 item (21 Sep 2026): item C9 semula dijawab "target INM"
+// padahal pengguna bertanya IPM; item D5 dijawab data kader KB padahal pengguna
+// meminta rincian per desa. Keduanya = menyesatkan, bukan menjawab.
+describe('retrieveRelevant — entitas langka wajib termuat', () => {
+  // Korpus mini ini meniru RASIO korpus nyata: "target"/"nasional" adalah kata
+  // umum (df besar) yang muncul di banyak indikator capaian, sedangkan "IPM"
+  // hanya ada di satu record. Tanpa peniru rasio ini, uji akan menuntut
+  // perilaku yang salah.
+  const filler = (n: number): SapaRecord => ({
+    id: 100 + n, id_kode_indikator: 900 + n, kode_indikator_kode_indikator: `f${n}`,
+    kode_indikator_nama_indikator: `Persentase capaian target nasional program ${n}`,
+    id_opds: 9, opds_nama_opd: 'Sekretariat Daerah', jadwal_pemutakhiran: 'Tahunan',
+    satuan: 'Persen', tahun: '2025', variabel: String(60 + n),
+  });
+  const KORPUS_ENTITAS: SapaRecord[] = [
+    { id: 1, id_kode_indikator: 11, kode_indikator_kode_indikator: 'a', kode_indikator_nama_indikator: 'Persentase puskesmas yang mencapai target INM (Indeks Nasional)', id_opds: 1, opds_nama_opd: 'Dinas Kesehatan', jadwal_pemutakhiran: 'Tahunan', satuan: 'Persen', tahun: '2025', variabel: '78' },
+    { id: 2, id_kode_indikator: 12, kode_indikator_kode_indikator: 'b', kode_indikator_nama_indikator: 'Indeks Pembangunan Manusia (IPM)', id_opds: 2, opds_nama_opd: 'Badan Perencanaan Pembangunan Daerah', jadwal_pemutakhiran: 'Tahunan', satuan: 'Poin', tahun: '2025', variabel: '78,09' },
+    ...Array.from({ length: 5 }, (_, n) => filler(n + 1)),
+  ];
+
+  it('"IPM" (df=1) tidak boleh tersapu oleh kata umum "target"/"nasional" (df=6)', () => {
+    const hits = retrieveRelevant(KORPUS_ENTITAS, 'Bandingkan IPM Aceh Tengah dengan target nasional');
+    expect(hits.length).toBeGreaterThan(0);
+    expect(hits[0].record.kode_indikator_nama_indikator).toContain('Indeks Pembangunan Manusia');
+  });
+
+  it('entitas diutamakan, tetapi hasil lain TIDAK dibuang (bukti tetap lengkap)', () => {
+    // Pelajaran versi pertama: menyaring hasil dengan entitas malah membuang
+    // jawaban benar (T9 sembako, P7 stunting, D4 PPKS). Kontrak yang benar:
+    // entitas dinaikkan ke urutan atas, sisanya tetap tersedia.
+    const hits = retrieveRelevant(KORPUS_ENTITAS, 'Bandingkan IPM Aceh Tengah dengan target nasional');
+    expect(hits.length).toBeGreaterThan(1);
+    expect(hits[0].record.kode_indikator_nama_indikator).toContain('Indeks Pembangunan Manusia');
+    expect(
+      hits.some((h) => !(h.record.kode_indikator_nama_indikator ?? '').toLowerCase().includes('ipm')),
+    ).toBe(true);
+  });
+
+  it('pertanyaan tanpa entitas langka tidak terpengaruh aturan ini', () => {
+    // "target"/"nasional" di sini kata umum (df=6) → tidak ada entitas-wajib,
+    // sehingga hasil tetap seperti biasa (bukan kosong karena aturan baru).
+    const hits = retrieveRelevant(KORPUS_ENTITAS, 'Berapa persentase capaian target nasional');
+    expect(hits.length).toBeGreaterThan(0);
+    // Tidak ada penyaringan entitas: hasil boleh memuat record tanpa "IPM".
+    expect(
+      hits.some((h) => !(h.record.kode_indikator_nama_indikator ?? '').toLowerCase().includes('ipm')),
+    ).toBe(true);
+  });
+});
+
+describe('retrieveRelevant — kejujuran granularitas per desa', () => {
+  const KORPUS_DESA: SapaRecord[] = [
+    { id: 1, id_kode_indikator: 21, kode_indikator_kode_indikator: 'c', kode_indikator_nama_indikator: 'Jumlah UMKM Di Kecamatan Bebesen', id_opds: 3, opds_nama_opd: 'Dinas Koperasi dan UKM', jadwal_pemutakhiran: 'Tahunan', satuan: 'Unit', tahun: '2025', variabel: '831' },
+    { id: 2, id_kode_indikator: 22, kode_indikator_kode_indikator: 'd', kode_indikator_nama_indikator: 'Jumlah Kader Pada Rumah Data Kependudukan', id_opds: 3, opds_nama_opd: 'Dinas Koperasi dan UKM', jadwal_pemutakhiran: 'Tahunan', satuan: 'Orang', tahun: '2025', variabel: '1463' },
+  ];
+
+  it('rincian per desa di kecamatan bernama yang tak punya data desa ⇒ kosong', () => {
+    const hits = retrieveRelevant(KORPUS_DESA, 'Bagaimana persebaran jumlah keluarga per desa di Kecamatan Bebesen?');
+    expect(hits).toEqual([]);
+  });
+
+  it('rincian per desa TETAP dijawab bila korpus memang punya record desa-nya', () => {
+    const KORPUS_ADA: SapaRecord[] = [
+      ...KORPUS_DESA,
+      { id: 3, id_kode_indikator: 23, kode_indikator_kode_indikator: 'e', kode_indikator_nama_indikator: 'Jumlah Keluarga Desa Bebesen', id_opds: 3, opds_nama_opd: 'Dinas Sosial', jadwal_pemutakhiran: 'Tahunan', satuan: 'Keluarga', tahun: '2025', variabel: '1200' },
+    ];
+    const hits = retrieveRelevant(KORPUS_ADA, 'Bagaimana persebaran jumlah keluarga per desa di Kecamatan Bebesen?');
     expect(hits.length).toBeGreaterThan(0);
   });
 });

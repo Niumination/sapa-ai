@@ -11,13 +11,15 @@ import { buildDeterministicAnswer } from '@/services/deterministic-answer';
 import {
   isGrounded,
   isGroundedText,
-  groundOutput,
+  hitungSitasi,
+  catatanTerjaga,
   formatAngkaPresentasi,
   type EvidenceItem,
 } from '@/services/grounding';
 import { getAiConfig, isAiEnabled, isAiShadow, aiStatusReason, type AiConfig } from '@/lib/ai/env';
 import { isAiToggleEnabled, isDetToggleEnabled, readToggleState, toggleBackend } from '@/lib/ai/toggle';
 import { buildPrompt } from '@/lib/ai/prompt';
+import { deteksiNiat } from '@/lib/intent-meta';
 import { parseLlmAnswer } from '@/lib/ai/schema';
 import { ejectTokens, createStreamEjector, dedupUnits } from '@/lib/ai/tokens';
 import { guardQuery, cekDataPribadi, cekPermintaanPerOrang } from '@/lib/ai/guard';
@@ -68,6 +70,25 @@ export interface AiMeta {
   attempted?: boolean;
   /** Error message dari model call / parse / grounding (untuk debugging) */
   error?: string;
+  /** Niat yang dikirim ke model (router deterministik) — untuk audit & dasbor. */
+  intent?: string;
+  /** Kata pemicu niat, mis. 'perbandingan:"bandingkan"'. */
+  intentPemicu?: string[];
+  /**
+   * Gerbang nilai-tambah: 'dipakai' | 'ditolak-tidak-menambah' | 'ditolak-catatan-hilang'.
+   *
+   * Mengapa ada: pertanyaan pemilik aplikasi — "kenapa AI aktif malah kalah dari
+   * deterministik?". Terukur pada penyedia tiruan (21 Sep 2026): narasi AI
+   * menyitir jumlah bukti yang SAMA (2,50 vs 2,60) tetapi MENGHAPUS peringatan
+   * keterbatasan data. Tanpa gerbang ini, mode AI = menukar kesetaraan informasi
+   * dengan kehalusan bahasa. Sekarang AI hanya dipakai bila terbukti tidak kalah.
+   */
+  nilaiTambah?: 'dipakai' | 'dipakai-dengan-catatan' | 'ditolak-tidak-menambah' | 'ditolak-grounding';
+  /** Peringatan bakU yang disisipkan aplikasi karena model memarafrasekannya. */
+  catatanDisisipkan?: string[];
+  /** Sitasi (jumlah nilai evidence yang muncul di narasi) masing-masing jalur. */
+  sitasiAi?: number;
+  sitasiDeterministik?: number;
 }
 
 export interface ComposeResult {
@@ -346,11 +367,22 @@ export async function composeAnswer(opts: ComposeOptions): Promise<ComposeResult
     totalOpd: new Set(opts.records.map((r) => r.opds_nama_opd)).size,
     evidenceDihitung: dasar.evidence.length,
   };
+  // Router niat (deterministik) mengisi `intent` yang selama ini selalu
+  // 'nilai_saat_ini' — terukur 10/10 permintaan pada penyedia tiruan.
+  const { niat, pemicu } = deteksiNiat(dijaga.query);
+  meta.intent = niat;
   const { system, user } = buildPrompt({
     query: dijaga.query,
+    intent: niat,
     evidence: dasar.evidence,
     statistik,
+    // Peringatan hasil hitungan dibawa sebagai DATA, bukan diserahkan ke model:
+    // tanpa ini narasi AI menghapus keterbatasan data (terukur pada penyedia
+    // tiruan: peringatan "tidak ada data tahun 2025" hilang dari jawaban).
+    catatanWajib: dasar.peringatan,
+    draf: dasar.response.narasi,
   });
+  if (pemicu.length) meta.intentPemicu = pemicu;
   const pesan = [
     { role: 'system' as const, content: system },
     { role: 'user' as const, content: user },
@@ -461,8 +493,10 @@ export async function composeAnswer(opts: ComposeOptions): Promise<ComposeResult
   meta.unknownTokens = ejected.unknown.length;
 
   const extraAllowedNumbers = [statistik.totalRecord, statistik.totalOpd, statistik.evidenceDihitung];
-  const rekomendasiAman = terurai.data.rekomendasi.filter((r) => isGroundedText(r, dasar.evidence, { extraAllowedNumbers }).ok);
-  const followUpsAman = terurai.data.followUps.filter((r) => isGroundedText(r, dasar.evidence, { extraAllowedNumbers }).ok);
+  const tahunDimintaGuard = (opts.query.match(/\b(?:19|20)\d{2}\b/g) ?? []).slice(0, 4);
+  const opsiGrounding = { extraAllowedNumbers, tahunDiminta: tahunDimintaGuard };
+  const rekomendasiAman = terurai.data.rekomendasi.filter((r) => isGroundedText(r, dasar.evidence, opsiGrounding).ok);
+  const followUpsAman = terurai.data.followUps.filter((r) => isGroundedText(r, dasar.evidence, opsiGrounding).ok);
 
   let responsAi: HybridResponse = {
     narasi: dedupUnits(ejected.text, dasar.evidence),
@@ -473,15 +507,65 @@ export async function composeAnswer(opts: ComposeOptions): Promise<ComposeResult
     ...(followUpsAman.length > 0 ? { followUps: followUpsAman } : {}),
   } as HybridResponse & { followUps?: string[] };
 
-  // 9. Grounding lapis kedua (lapis pertama = narasi ber-token).
-  const cek = isGrounded(responsAi, dasar.evidence, { extraAllowedNumbers });
+  // 9. Grounding lapis kedua (lapis pertama = narasi ber-token), lalu
+  //    GERBANG NILAI-TAMBAH: AI hanya disajikan bila terbukti tidak kalah dari
+  //    jawaban deterministik.
+  //
+  //    Dua syarat, keduanya terukur (21 Sep 2026, penyedia tiruan):
+  //      (a) seluruh CATATAN_WAJIB masih tercermin di narasi — tanpa syarat ini,
+  //          AI menghapus "tidak ada data untuk tahun 2025" lalu menyajikan tahun
+  //          lain seolah menjawab: lebih rapi, tetapi menyesatkan;
+  //      (b) sitasi (jumlah nilai bukti di narasi) tidak lebih sedikit daripada
+  //          kepala jawaban deterministik (maks 3 baris pertama yang selalu
+  //          ditampilkan). Tanpa syarat ini, AI menukar isi dengan kehalusan:
+  //          terukur 2,50 vs 2,60 sitasi — tidak menambah apa pun.
+  //
+  //    Bila salah satu gagal, yang disajikan adalah jawaban deterministik LENGKAP
+  //    (`dasar.response`), bukan narasi tereduksi hasil penyusunan ulang. Versi
+  //    lama membangun ulang narasi dari 3 bukti pertama → pengguna mode AI justru
+  //    menerima jawaban yang LEBIH MISKIN daripada mode deterministik (terukur:
+  //    432 char vs 1014 char pada pertanyaan penduduk). Itu akar keluhan
+  //    "AI aktif malah kalah dari deterministik".
+  const tahunDiminta = (opts.query.match(/\b(?:19|20)\d{2}\b/g) ?? []).slice(0, 4);
+  const cek = isGrounded(responsAi, dasar.evidence, { extraAllowedNumbers, tahunDiminta });
+  const sitasiAi = hitungSitasi(responsAi.narasi, dasar.evidence);
+  const sitasiDeterministik = hitungSitasi(dasar.response.narasi, dasar.evidence);
+  meta.sitasiAi = sitasiAi;
+  meta.sitasiDeterministik = sitasiDeterministik;
+
   if (!cek.ok) {
-    const diganti = groundOutput(responsAi, dasar.evidence, opts.query, { extraAllowedNumbers });
-    responsAi = diganti.response;
+    responsAi = dasar.response;
     meta.grounded = 'replaced';
     meta.reason = cek.reasons.join('; ');
+    meta.nilaiTambah = 'ditolak-grounding';
   } else {
     meta.grounded = 'pass';
+    const jaga = catatanTerjaga(responsAi.narasi, dasar.peringatan);
+    const ambangSitasi = Math.min(sitasiDeterministik, 3);
+    if (!jaga.ok) {
+      // Model memarafrasekan peringatan ("tidak ada indikator … memuat seluruh
+      // kata kunci") sehingga maknanya masih ada tetapi FRASA bakunya hilang —
+      // dan frasa baku itulah yang membuat pengguna langsung paham datanya tidak
+      // tersedia. Membuang seluruh narasi AI karena ini berlebihan: yang
+      // diperbaiki adalah kalimatnya, bukan jawabannya. Peringatan sistem (lahir
+      // dari hitungan, bukan dari model) DISISIPKAN apa adanya di depan narasi
+      // AI — dijalankan setelah pemeriksaan grounding, dan isinya bukan klaim
+      // baru sehingga tidak perlu diverifikasi ulang.
+      const sisip = jaga.hilang.length ? jaga.hilang : dasar.peringatan;
+      responsAi = {
+        ...responsAi,
+        narasi: `${sisip.join(' ')} ${responsAi.narasi}`.replace(/\s{2,}/g, ' ').trim(),
+      };
+      meta.nilaiTambah = 'dipakai-dengan-catatan';
+      meta.catatanDisisipkan = sisip;
+      meta.reason = `peringatan sistem disisipkan: ${sisip.join(' | ').slice(0, 160)}`;
+    } else if (sitasiAi < ambangSitasi) {
+      responsAi = dasar.response;
+      meta.nilaiTambah = 'ditolak-tidak-menambah';
+      meta.reason = `narasi AI menyitir ${sitasiAi} bukti, deterministik ${sitasiDeterministik} (ambang ${ambangSitasi}) — AI tidak menambah informasi`;
+    } else {
+      meta.nilaiTambah = 'dipakai';
+    }
   }
   responsAi = formatAngkaPresentasi(responsAi);
 

@@ -50,6 +50,18 @@ export interface DeterministicResult {
   aggregated: ReturnType<typeof aggregateByIndicator>;
   opds: ReturnType<typeof getUniqueOpd>;
   response: HybridResponse;
+  /**
+   * Peringatan WAJIB yang lahir dari perhitungan, bukan dari model:
+   * tahun yang diminta tidak ada, atau kata kunci tidak pernah muncul bersama.
+   *
+   * Mengapa diekspos: terukur 21 Sep 2026 pada penyedia tiruan — saat AI aktif,
+   * narasinya menggantikan narasi deterministik **beserta peringatannya**, jadi
+   * jawaban terlihat lebih rapi tetapi MENYEMBUNYIKAN keterbatasan data
+   * ("Tidak ada data untuk tahun 2025" hilang, padahal pengguna menanyakannya).
+   * Peringatan tidak boleh menjadi tanggung jawab model; ia harus dibawa sebagai
+   * data dan diverifikasi ulang setelah model selesai.
+   */
+  peringatan: string[];
 }
 
 /**
@@ -187,6 +199,7 @@ export function buildMetaAnswer(
     evidence,
     aggregated: [],
     opds: [],
+    peringatan: [],
     response: formatAngkaPresentasi({
       narasi,
       visualisasi: { tipe: 'none', konfigurasi: {} },
@@ -210,9 +223,11 @@ export function buildDeterministicAnswer(query: string, records: SapaRecord[]): 
     // SAPA (bila ada). Ini keterangan tentang pertanyaannya sendiri — bukan
     // tebakan isi data.
     const asing = konsepTidakDikenal(records, query).slice(0, 3);
+    // Rangkai dengan pemisah yang eksplisit: versi lama menempelkan
+    // "…di katalog SAPA." + "Coba…" tanpa spasi → "SAPA.Coba" terbaca di layar.
     const sebabAsing = asing.length
-      ? ' Kata kunci ' + asing.map((k) => '"' + k + '"').join(', ') +
-        ' tidak terdapat pada satu pun indikator di katalog SAPA.'
+      ? 'Kata kunci ' + asing.map((k) => '"' + k + '"').join(', ') +
+        ' tidak terdapat pada satu pun indikator di katalog SAPA. '
       : '';
     const narasi =
       `Tidak ditemukan data SAPA yang relevan dengan "${query}". ` +
@@ -224,6 +239,9 @@ export function buildDeterministicAnswer(query: string, records: SapaRecord[]): 
       evidence: [],
       aggregated: [],
       opds: [],
+      peringatan: [
+        `Tidak ada indikator di katalog SAPA yang cocok dengan pertanyaan "${query}".`,
+      ],
       response: {
         narasi,
         visualisasi: { tipe: 'none', konfigurasi: {} },
@@ -285,6 +303,18 @@ export function buildDeterministicAnswer(query: string, records: SapaRecord[]): 
       kurangKonsep.map((k) => '"' + k + '"').join(', ') +
       ' bersama kata kunci lainnya. Berikut indikator terdekat. '
     : '';
+  const daftarPeringatan: string[] = [];
+  if (peringatanTahun) daftarPeringatan.push(peringatanTahun.trim());
+  const kurangKonsepFinal = konsepTakTermuat(records, hits[0].record, query).slice(0, 3);
+  if (kurangKonsepFinal.length) {
+    // Frasa di sini adalah KANONIK: teks yang sama dipakai sebagai peringatan
+    // wajib di jalur AI, sehingga pemakaian kata yang konsisten ("tidak ada
+    // data") menjadi syarat yang bisa diuji, bukan soal selera penulisan.
+    daftarPeringatan.push(
+      'Tidak ada data SAPA yang memuat seluruh kata kunci sekaligus — tidak ada indikator yang memuat ' +
+      kurangKonsepFinal.map((k) => '"' + k + '"').join(', ') + ' bersama kata kunci lainnya.',
+    );
+  }
   const visualisasi = buildVizFromEvidence(evidence);
   const rekomendasi: string[] = [
     `Tindak lanjuti temuan "${query}" dengan OPD pengampu (${opds.slice(0, 2).map((o) => o.nama).join(' / ') || 'lihat OPD pada tabel'}) untuk verifikasi data terbaru.`,
@@ -299,5 +329,5 @@ export function buildDeterministicAnswer(query: string, records: SapaRecord[]): 
     timestamp: new Date().toISOString(),
   });
 
-  return { hits, evidence, aggregated, opds, response };
+  return { hits, evidence, aggregated, opds, response, peringatan: daftarPeringatan };
 }

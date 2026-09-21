@@ -122,3 +122,73 @@ export function deteksiMetaIntent(query: string, namaOpd: string[] = []): MetaIn
 export function tahunDalamQuery(query: string): string[] {
   return (normalkanTeks(query).match(/\b(19|20)\d{2}\b/g) ?? []).slice(0, 4);
 }
+
+// ─── Router NIAT (bentuk jawaban), bukan sekadar gerbang meta ───
+//
+// MASALAH TERUKUR: `PromptContext.intent` ada di `prompt.ts` tetapi TIDAK PERNAH
+// diisi — 10 dari 10 permintaan ke penyedia tiruan (21 Sep 2026) memakai
+// `intent: 'nilai_saat_ini'`, termasuk pertanyaan tren dan perbandingan. Akibatnya
+// prompt menyuruh bentuk jawaban yang selalu sama, dan model tidak pernah tahu
+// pengguna menanyakan arah perubahan, urutan, atau selisih.
+//
+// Router ini deterministik (pola kata + penanda), murah, dan dapat diuji. Ia
+// SENGAJA memakai label yang sama dengan `grup` di `data/eval-set.json` supaya
+// hasil eval bisa dipakai untuk mengukur akurasi niat, bukan sekadar lulus/gagal.
+
+export type NiatJawaban =
+  | 'tren'
+  | 'perbandingan'
+  | 'peringkat'
+  | 'komposisi'
+  | 'distribusi'
+  | 'meta_katalog'
+  | 'sebab'
+  | 'personal'
+  | 'nilai_saat_ini';
+
+export interface HasilNiat {
+  niat: NiatJawaban;
+  /** Kata/frasa pemicu — untuk log dan penjelasan, bukan untuk jawaban. */
+  pemicu: string[];
+}
+
+const POLA_NIAT: { niat: NiatJawaban; pola: RegExp; nama: string }[] = [
+  // Urutan penting: yang paling spesifik lebih dulu.
+  { niat: 'personal', pola: /\bnik\b|\bnik-?\d|\bdata (per|perorangan)\b|nama (warga|orang|pegawai) tertentu|alamat warga/i, nama: 'data per-orang' },
+  { niat: 'sebab', pola: /\b(kenapa|mengapa|penyebab|disebabkan|faktor (penyebab|utama)|sebab)\b/i, nama: 'sebab-akibat' },
+  { niat: 'tren', pola: /\b(tren|trend|perkembangan|menurun|menaik|naik|turun|fluktuasi|dari tahun ke tahun|antar ?tahun|time ?series|3 tahun|lima tahun|5 tahun)\b/i, nama: 'arah perubahan' },
+  { niat: 'perbandingan', pola: /\b(bandingkan|dibandingkan|banding|versus|\bvs\b|selisih|lebih (tinggi|rendah|baik|besar|kecil)|perbedaan|dibanding)\b/i, nama: 'perbandingan' },
+  { niat: 'peringkat', pola: /\b(tertinggi|terendah|terbanyak|tersedikit|terbesar|terkecil|ranking|peringkat|5 besar|lima besar|top\s?\d|urutkan|peringkatnya)\b/i, nama: 'peringkat' },
+  { niat: 'komposisi', pola: /\b(komposisi|proporsi|porsi|pangsa|share|persentase dari|kontribusi terhadap|seberapa besar bagian)\b/i, nama: 'komposisi' },
+  { niat: 'distribusi', pola: /\b(sebaran|distribusi|persebaran|penyebaran|per kecamatan|per desa|per opd|per kategori|menurut (kecamatan|desa|opd|kategori|jenis|usia|jenis kelamin))\b/i, nama: 'sebaran' },
+];
+
+/** Deteksi bentuk jawaban yang pantas untuk sebuah pertanyaan. */
+export function deteksiNiat(query: string): HasilNiat {
+  const q = normalkanTeks(query);
+  if (!q) return { niat: 'nilai_saat_ini', pemicu: [] };
+
+  const pemicu: string[] = [];
+  for (const { niat, pola, nama } of POLA_NIAT) {
+    const m = q.match(pola);
+    if (m) {
+      pemicu.push(`${nama}:"${m[0]}"`);
+      // Satu niat dominan: yang pertama cocok menurut urutan spesifik.
+      return { niat, pemicu };
+    }
+  }
+  return { niat: 'nilai_saat_ini', pemicu };
+}
+
+/** Instruksi bentuk jawaban per niat — dipakai prompt AI & penjelasan UI. */
+export const PANDUAN_NIAT: Record<NiatJawaban, string> = {
+  tren: 'Sebutkan arah perubahan antarperiode yang ADA di evidence (tahun ke tahun). Jangan menyimpulkan tren dari satu titik data; bila tahun yang diminta tidak ada, katakan terus terang.',
+  perbandingan: 'Sebutkan dua atau lebih nilai yang dibandingkan beserta tahunnya, lalu jelaskan bahwa perbandingan hanya sah bila definisi, satuan, dan OPD penghasilnya sebanding. Jangan menghitung selisih/persen baru.',
+  peringkat: 'Sebutkan urutan dari yang terbesar/terkecil sesuai pertanyaan, maksimal 3 baris teratas, dengan nama indikator dan nilainya.',
+  komposisi: 'Sebutkan bagian yang diminta terhadap keseluruhan HANYA bila angka keseluruhannya ada di evidence; bila tidak ada, katakan bahwa totalnya tidak tersedia.',
+  distribusi: 'Sebutkan sebaran per kelompok (kecamatan/OPD/kategori) sesuai yang ada di evidence, dan sebutkan bila hanya sebagian kelompok yang tersedia.',
+  meta_katalog: 'Jawab dari statistik katalog (jumlah record/OPD/indikator). Tegaskan bahwa ini keterangan tentang katalog, bukan capaian kinerja.',
+  sebab: 'SAPA menyimpan angka, bukan sebab. Jangan menduga penyebab: susun angka terdekat lalu nyatakan bahwa analisis sebab memerlukan kajian OPD/akademik.',
+  personal: 'Tolak dengan sopan: SAPA tidak menyajikan data per orang. Tawarkan versi agregatnya.',
+  nilai_saat_ini: 'Sebutkan nilai utama beserta satuan, OPD, dan tahun data; sebutkan bila tahun tidak tercantum.',
+};

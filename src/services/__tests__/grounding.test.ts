@@ -6,7 +6,7 @@ import { describe, it, expect } from 'vitest';
 import {
   isGrounded,
   isGroundedText,
-  groundOutput,
+  buildQuotedLabelNumbers,
   buildAllowedValues,
   buildAllowedIntegerDigits,
   type EvidenceItem,
@@ -138,26 +138,6 @@ describe('grounding — cakupan field & helper', () => {
   });
 });
 
-describe('groundOutput — penggantian template', () => {
-  it('narasi halu diganti narasi deterministik, rekomendasi aman dipertahankan', () => {
-    const parsed = resp('Prevalensi stunting 12,7 persen pada 2019.', {
-      rekomendasi: ['Tindak lanjuti ke OPD terkait.', 'Anggarkan untuk 8 kecamatan.'],
-    });
-    const out = groundOutput(parsed, evidence, 'stunting');
-    expect(out.grounding).toBe('replaced');
-    expect(out.response.narasi).toContain('Prevalensi Stunting');
-    expect(out.response.narasi).toContain('31,4');
-    expect(out.response.rekomendasi).toEqual(['Tindak lanjuti ke OPD terkait.']);
-  });
-
-  it('narasi grounded tidak diubah', () => {
-    const parsed = resp('Prevalensi stunting 31,4 persen.');
-    const out = groundOutput(parsed, evidence, 'stunting');
-    expect(out.grounding).toBe('pass');
-    expect(out.response.narasi).toBe(parsed.narasi);
-  });
-});
-
 describe('grounding — angka di dalam NAMA indikator (uji live 2026-09-04)', () => {
   const labelEvidence: EvidenceItem[] = [
     {
@@ -208,5 +188,101 @@ describe('extractNumbers', () => {
     // Artefak JSON yang sama tidak boleh membuatnya gagal
     const dgnJson = `${teks} {"nilai":31.4,"satuan":"Persen"}`;
     expect(isGroundedText(dgnJson, ev).ok).toBe(true);
+  });
+});
+
+describe('isGrounded — kalimat ketiadaan tahun yang diketik pengguna (reviu 2026-09-21)', () => {
+  const ev: EvidenceItem[] = [
+    { opd: 'Dinas Perkebunan', indikator: 'Produksi Kopi Arabika', nilai: '29.019', satuan: 'Ton/Tahun', tahun: '2024', id: 7 },
+  ];
+
+  it('membebaskan "Tidak ada data untuk tahun 2025" bila 2025 ada di pertanyaan', () => {
+    const teks = 'Tidak ada data untuk tahun 2025 di SAPA. Produksi kopi arabika 29.019 Ton/Tahun (2024).';
+    const hasil = isGroundedText(teks, ev, { tahunDiminta: ['2025'] });
+    expect(hasil.ok, hasil.reasons.join('; ')).toBe(true);
+  });
+
+  it('TIDAK membebaskan tahun yang tidak diketik pengguna', () => {
+    const teks = 'Tidak ada data untuk tahun 2019 di SAPA. Produksi kopi arabika 29.019 Ton/Tahun (2024).';
+    const hasil = isGroundedText(teks, ev, { tahunDiminta: ['2025'] });
+    expect(hasil.ok).toBe(false);
+    expect(hasil.reasons.join(' ')).toContain('2019');
+  });
+
+  it('tanpa tahunDiminta, perilaku lama tetap: tahun di luar evidence ditolak', () => {
+    const teks = 'Tidak ada data untuk tahun 2025 di SAPA.';
+    expect(isGroundedText(teks, ev, {}).ok).toBe(false);
+  });
+});
+
+describe('buildQuotedLabelNumbers — label dengan tanda baca berbeda (reviu 2026-09-21)', () => {
+  const ev: EvidenceItem[] = [
+    { opd: 'Dinas Kependudukan', indikator: 'Jumlah Penduduk Usia 18+ Yang Dilakukan Pemeriksaan Iindeks Massa Tubuh', nilai: '84.504', satuan: 'Orang', tahun: '2025', id: 60 },
+    { opd: 'Bappeda', indikator: 'Prevalensi Stunting', nilai: '31,4', satuan: 'Persen', tahun: '2025', id: 511 },
+  ];
+
+  it('mengizinkan digit di nama indikator yang dikutip utuh', () => {
+    const set = buildQuotedLabelNumbers(ev, 'Jumlah Penduduk Usia 18+ Yang Dilakukan Pemeriksaan Iindeks Massa Tubuh 84.504 Orang');
+    expect(set.has(18)).toBe(true);
+  });
+
+  it('mengizinkan digit bila tanda baca berbeda tetapi frasa awal sama', () => {
+    const set = buildQuotedLabelNumbers(ev, 'Jumlah Penduduk Usia 18+ yang diperiksa kesehatannya 84.504 Orang');
+    expect(set.has(18)).toBe(true);
+  });
+
+  it('TIDAK mengizinkan bila nama indikator tidak dibahas sama sekali', () => {
+    const set = buildQuotedLabelNumbers(ev, 'Prevalensi Stunting 31,4 Persen (2025)');
+    expect(set.has(18)).toBe(false);
+  });
+
+  it('narasi yang menyebut nama indikator ber-angka tidak lagi ditolak', () => {
+    const teks = 'Jumlah Penduduk Usia 18+ Yang Dilakukan Pemeriksaan Iindeks Massa Tubuh tercatat 84.504 Orang (2025) (Dinas Kependudukan).';
+    const hasil = isGroundedText(teks, ev, {});
+    expect(hasil.ok, hasil.reasons.join('; ')).toBe(true);
+  });
+});
+
+describe('isGrounded — visualisasi aplikasi TIDAK dipindai sebagai klaim (reviu 2026-09-21)', () => {
+  const ev: EvidenceItem[] = [
+    { opd: 'Dinas Kesehatan', indikator: 'Jumlah Kader Pada Rumah Data Kependudukan (1 unit)', nilai: '1.463', satuan: 'Orang', tahun: '2026', id: 22 },
+  ];
+
+  it('angka turunan pada grafik tidak menghukum narasi yang benar', () => {
+    // 246/279/30.751 adalah angka TURUNAN yang dihitung aplikasi saat membangun
+    // bagan; sebelumnya membuat 26% jawaban model dibuang tanpa alasan.
+    const parsed = {
+      narasi: 'Jumlah Kader Pada Rumah Data Kependudukan tercatat 1.463 Orang (2026).',
+      rekomendasi: [],
+      visualisasi: { tipe: 'chart' as const, konfigurasi: { labels: ['A', 'B'], data: [246, 279, 30_751] } },
+      dataSource: 'SAPA',
+      timestamp: '2026-09-21T00:00:00.000Z',
+    };
+    const hasil = isGrounded(parsed, ev, {});
+    expect(hasil.ok, hasil.reasons.join('; ')).toBe(true);
+  });
+
+  it('narasi yang benar tetap diterima walau nama indikator memuat angka', () => {
+    const parsed = {
+      narasi: 'Jumlah Kader Pada Rumah Data Kependudukan (1 unit) tercatat 1.463 Orang (2026).',
+      rekomendasi: [],
+      visualisasi: { tipe: 'none' as const, konfigurasi: {} },
+      dataSource: 'SAPA',
+      timestamp: '2026-09-21T00:00:00.000Z',
+    };
+    const hasil = isGrounded(parsed, ev, {});
+    expect(hasil.ok, hasil.reasons.join('; ')).toBe(true);
+  });
+
+  it('angka karangan di NARASI tetap ditolak (pagar tidak melemah)', () => {
+    const parsed = {
+      narasi: 'Jumlah Kader Pada Rumah Data Kependudukan tercatat 99.999 Orang (2026).',
+      rekomendasi: [],
+      visualisasi: { tipe: 'none' as const, konfigurasi: {} },
+      dataSource: 'SAPA',
+      timestamp: '2026-09-21T00:00:00.000Z',
+    };
+    const hasil = isGrounded(parsed, ev, {});
+    expect(hasil.ok).toBe(false);
   });
 });

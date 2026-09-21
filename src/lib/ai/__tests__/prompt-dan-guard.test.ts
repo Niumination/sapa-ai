@@ -22,14 +22,20 @@ describe('buildPrompt', () => {
   });
 
   it('tidak mengandung contoh fiktif (anti-pola lama: "84 pegawai")', () => {
-    // Tidak ada angka di system prompt selain yang ada di aturan/statistik.
-    const angkaSystem = (system.match(/\d+/g) ?? []).map(Number);
-    // Hanya angka yang muncul pada aturan baku (2–4 kalimat, maksimal 3 butir).
+    // Nomor aturan ("1.", "10.") bukan contoh data — dikeluarkan lebih dulu,
+    // lalu dipastikan tidak ada angka besar yang bisa disalah-artikan sebagai
+    // contoh nilai. Inilah properti yang menjaga prompt tidak "mengajari" angka.
+    const tanpaNomorAturan = system.replace(/^\s*\d+\.\s/gm, '').replace(/\d[-–]\d/g, '');
+    const angkaSystem = (tanpaNomorAturan.match(/\d+/g) ?? []).map(Number);
     for (const n of angkaSystem) expect(n).toBeLessThan(10);
   });
 
-  it('setiap angka di payload pengguna berasal dari evidence/statistik/query', () => {
-    const payload = JSON.parse(extractJsonObject(user) ?? '{}');
+  it('setiap angka pada tabel evidence berasal dari evidence/statistik/query', () => {
+    // Format baru: markdown-KV. Yang diperiksa sama seperti dulu — tidak ada
+    // angka yang "diselundupkan" selain dari sumber yang sah.
+    const baris = user.split('\n').filter((l) => l.trim().startsWith('|'));
+    const isiTabel = baris.slice(2); // buang header + garis
+    expect(isiTabel.length).toBe(evidence.length);
     const diizinkan = new Set<number>([
       ...evidence.map((e) => parseNilaiSapa(String(e.nilai)) ?? NaN),
       ...evidence.map((e) => Number(e.id)),
@@ -38,25 +44,61 @@ describe('buildPrompt', () => {
       statistik.totalOpd,
       statistik.evidenceDihitung,
     ]);
-    const angka = (JSON.stringify(payload.evidence).match(/\d+(?:[.,]\d+)?/g) ?? [])
-      .map((t) => parseNilaiSapa(t))
-      .filter((n): n is number => n != null);
-    for (const n of angka) {
-      const cocok = [...diizinkan].some((v) => Math.abs(v - n) < 1e-9);
-      expect(cocok, `angka ${n} tidak ada di evidence`).toBe(true);
+    for (const b of isiTabel) {
+      for (const t of b.match(/\d+(?:[.,]\d+)?/g) ?? []) {
+        const n = parseNilaiSapa(t);
+        if (n == null) continue;
+        const cocok = [...diizinkan].some((v) => Math.abs(v - n) < 1e-9);
+        expect(cocok, `angka ${n} tidak ada di evidence`).toBe(true);
+      }
     }
   });
 
   it('mengirim id evidence agar model bisa memakai token {{id}}', () => {
-    expect(user).toContain('"id":511');
-    expect(user).toContain('"id":1945');
+    expect(user).toContain('| 511 |');
+    expect(user).toContain('| 1945 |');
   });
 
-  it('membatasi evidence yang dikirim (maks 20)', () => {
+  it('serialisasi markdown-KV: kolom eksplisit, sel kosong ditulis N/A', () => {
+    const tanpaTahun: EvidenceItem[] = [{ ...evidence[0], tahun: null, satuan: '' }];
+    const { user: u } = buildPrompt({ query: 'uji', evidence: tanpaTahun, statistik });
+    expect(u).toContain('| id | indikator | nilai | satuan | opd | tahun |');
+    expect(u).toContain('N/A');
+  });
+
+  it('membatasi evidence yang dikirim (maks 15 baris)', () => {
     const banyak = Array.from({ length: 35 }, (_, i) => ({ ...evidence[0], id: 1000 + i }));
     const { user: u } = buildPrompt({ query: 'uji', evidence: banyak, statistik });
-    const payload = JSON.parse(extractJsonObject(u) ?? '{}');
-    expect(payload.evidence).toHaveLength(20);
+    const isi = u.split('\n').filter((l) => l.trim().startsWith('|')).slice(2);
+    expect(isi).toHaveLength(15);
+  });
+
+  it('mengirim niat + panduan bentuk jawaban (bukan selalu nilai_saat_ini)', () => {
+    const { user: u } = buildPrompt({ query: 'tren stunting', intent: 'tren', evidence, statistik });
+    expect(u).toContain('INTENT: tren');
+    expect(u).toMatch(/PANDUAN_BENTUK_JAWABAN: .*arah perubahan antarperiode/);
+  });
+
+  it('membawa CATATAN_WAJIB sebagai data agar tidak dihapus model', () => {
+    const { user: u } = buildPrompt({
+      query: 'kopi 2025',
+      evidence,
+      statistik,
+      catatanWajib: ['Tidak ada data untuk tahun 2025 di SAPA.'],
+    });
+    expect(u).toContain('CATATAN_WAJIB');
+    expect(u).toContain('Tidak ada data untuk tahun 2025 di SAPA.');
+  });
+
+  it('menyertakan draf deterministik sebagai acuan informasi', () => {
+    const { user: u } = buildPrompt({
+      query: 'stunting',
+      evidence,
+      statistik,
+      draf: 'Draf: Prevalensi Stunting 31,4 Persen (2025).',
+    });
+    expect(u).toContain('acuan_draf');
+    expect(u).toContain('Prevalensi Stunting 31,4 Persen (2025)');
   });
 });
 

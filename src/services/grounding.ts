@@ -162,9 +162,6 @@ function collectTextForGrounding(parsed: HybridResponse): string {
   const parts: string[] = [];
   if (parsed.narasi) parts.push(parsed.narasi);
   if (Array.isArray(parsed.rekomendasi)) parts.push(parsed.rekomendasi.join(' '));
-  try {
-    parts.push(JSON.stringify(parsed.visualisasi?.konfigurasi ?? {}));
-  } catch {}
   // Kontrak AI: field opsional yang belum masuk tipe inti ikut diground.
   const extra = (parsed as unknown as { followUps?: unknown }).followUps;
   if (Array.isArray(extra)) parts.push(extra.join(' '));
@@ -179,6 +176,19 @@ export interface GroundingOptions {
    * "halu" itu inkonsisten (PR Lapis 1).
    */
   extraAllowedNumbers?: (string | number)[];
+  /**
+   * Tahun yang DIKETIK pengguna pada pertanyaannya.
+   *
+   * Dipakai untuk satu keperluan saja: kalimat KETIADAAN data ("Tidak ada data
+   * untuk tahun 2025 di SAPA.") menyebut tahun yang memang tidak ada di evidence
+   * — itu maksudnya. Tanpa pengecualian ini, narasi AI yang JUJUR tentang
+   * keterbatasan data dihukum "tahun halu" lalu diganti jawaban deterministik
+   * (terukur 21 Sep 2026 pada pertanyaan kopi 2025).
+   *
+   * Ketat: hanya kalimat berkata "tidak ada/belum tersedia", dan hanya untuk
+   * tahun yang benar-benar ada di pertanyaan.
+   */
+  tahunDiminta?: string[];
 }
 
 interface AllowedSets {
@@ -198,17 +208,46 @@ interface AllowedSets {
 }
 
 /** Kumpulkan angka dari label evidence yang benar-benar dikutip di dalam teks. */
+/** Samakan teks untuk pembandingan label: huruf kecil, tanda baca → spasi. */
+function samakanTeks(t: string): string {
+  return String(t ?? '')
+    .toLowerCase()
+    .replace(/[^\p{L}\p{N}]+/gu, ' ')
+    .replace(/\s+/g, ' ')
+    .trim();
+}
+
+/**
+ * Kumpulkan angka dari label evidence yang benar-benar dipakai di dalam teks.
+ *
+ * Dua bentuk pengutipan diterima:
+ *  1. label disebut UTUH ("Jumlah Penduduk Usia 18+ …");
+ *  2. label disebut dengan TANDA BACA berbeda — reviu 2026-09-21: narasi AI
+ *     menulis "…Usia 18+ Yang Dilakukan Pemeriksaan…" sedangkan evidence
+ *     menulisnya dengan spasi/tanda baca lain, dan model merapikannya. Tanpa
+ *     pencocokan toleran, digit di nama resmi itu dituding "angka halu" dan
+ *     JAWABAN YANG BENAR diganti (terukur: pertanyaan penduduk, dua percobaan
+ *     berturut-turut gagal dengan alasan `angka halu: 1`).
+ *
+ * Bentuk (2) memakai irisan frasa ≥ 24 karakter — panjang minimum itu yang
+ * mencegah model "meminjam" angka dari label lain yang tidak dibahas.
+ */
 export function buildQuotedLabelNumbers(evidence: EvidenceItem[], text: string): Set<number> {
   const set = new Set<number>();
-  const lower = text.toLowerCase();
+  const teksBersih = samakanTeks(text);
+  const tambahAngkaLabel = (label: string) => {
+    for (const token of label.match(/\d+(?:[.,]\d+)?/g) ?? []) {
+      const n = parseNilaiSapa(token);
+      if (n != null && Number.isFinite(n)) set.add(n);
+    }
+  };
   for (const e of evidence) {
     for (const label of [e.indikator, e.opd]) {
       const l = String(label ?? '').trim();
-      if (!l || !lower.includes(l.toLowerCase())) continue;
-      for (const token of l.match(/\d+(?:[.,]\d+)?/g) ?? []) {
-        const n = parseNilaiSapa(token);
-        if (n != null && Number.isFinite(n)) set.add(n);
-      }
+      if (!l) continue;
+      if (text.toLowerCase().includes(l.toLowerCase())) { tambahAngkaLabel(l); continue; }
+      const bersih = samakanTeks(l);
+      if (bersih.length >= 24 && teksBersih.includes(bersih.slice(0, 24))) tambahAngkaLabel(l);
     }
   }
   return set;
@@ -258,6 +297,58 @@ function tokenAllowed(raw: string, sets: AllowedSets): boolean {
 }
 
 /**
+ * Hitung SITASI: berapa baris evidence yang nilainya benar-benar muncul di narasi.
+ *
+ * Dipakai gerbang nilai-tambah jalur AI: narasi rapi yang menyitir lebih sedikit
+ * bukti daripada jawaban deterministik = kehilangan informasi, bukan perbaikan
+ * bahasa (terukur 21 Sep 2026: 2,50 vs 2,60).
+ */
+export function hitungSitasi(narasi: string, evidence: EvidenceItem[]): number {
+  if (!narasi || evidence.length === 0) return 0;
+  const angka = new Set(
+    extractNumbers(narasi).map(normalizeNumber).filter((n) => n !== '' && n !== '.'),
+  );
+  let n = 0;
+  for (const e of evidence) {
+    const v = normalizeNumber(String(e.nilai ?? ''));
+    if (!v || v === '.') continue;
+    if (angka.has(v) || narasi.includes(String(e.nilai ?? '').trim())) n++;
+  }
+  return n;
+}
+
+/**
+ * Apakah seluruh peringatan wajib masih tercermin di narasi?
+ *
+ * Penanda yang diperiksa: frasa dalam tanda kutip dan tahun 4 digit. Bila
+ * peringatan menyatakan KETIADAAN data, frasa bakunya ("tidak ada data" dst)
+ * juga diwajibkan — bukan sekadar maknanya, karena pembaca awam tidak langsung
+ * menyimpulkan datanya tidak tersedia dari parafrase seperti "tidak ada
+ * indikator yang memuat seluruh kata kunci" (terukur: dua item eval
+ * "jujur-kosong" gagal di mode AI hanya karena parafrase ini).
+ */
+export function catatanTerjaga(narasi: string, catatan: string[]): { ok: boolean; hilang: string[] } {
+  const hilang: string[] = [];
+  const teks = narasi ?? '';
+  /** Frasa ketiadaan BAKU — daftar yang sama dipakai harness eval ("jujur-kosong"). */
+  const FRASA_KETIADAAN = /tidak ada data|tidak ditemukan|tidak tersedia|belum tersedia|tidak dapat (menjawab|disajikan|ditampilkan)/i;
+  for (const c of catatan) {
+    if (!c) continue;
+    const penanda: string[] = [];
+    for (const m of c.matchAll(/["“]([^"”]+)["”]/g)) penanda.push(m[1]);
+    for (const m of c.matchAll(/\b(?:19|20)\d{2}\b/g)) penanda.push(m[0]);
+    let ada = penanda.length
+      ? penanda.every((p) => teks.includes(p))
+      : /tidak|belum|bukan/i.test(teks);
+    if (ada && /tidak ada|tidak ditemukan|belum tersedia/i.test(c) && !FRASA_KETIADAAN.test(teks)) {
+      ada = false;
+    }
+    if (!ada) hilang.push(c.slice(0, 160));
+  }
+  return { ok: hilang.length === 0, hilang };
+}
+
+/**
  * Periksa satu teks bebas (narasi, rekomendasi, followUps) terhadap evidence.
  * Murni — dipakai isGrounded dan oleh composer AI untuk field tambahan.
  */
@@ -267,6 +358,9 @@ export function isGroundedText(
   options: GroundingOptions = {},
 ): { ok: boolean; reasons: string[] } {
   const reasons: string[] = [];
+  // Kalimat ketiadaan data menyebut tahun yang memang TIDAK ada di evidence —
+  // hal yang benar. Dibebaskan hanya bila tahun itu diketik pengguna.
+  text = buangKetiadaanTahunDiketik(text, options);
 
   if (evidence.length === 0) {
     // Tanpa evidence, teks seharusnya bilang tidak tersedia — angka apa pun mencurigakan.
@@ -333,12 +427,29 @@ export function isGroundedText(
   return { ok: reasons.length === 0, reasons };
 }
 
+/**
+ * Buang kalimat ketiadaan-tahun sebelum pemindaian angka.
+ * Hanya membebaskan tahun yang memang ada di pertanyaan pengguna.
+ */
+function buangKetiadaanTahunDiketik(teks: string, options: GroundingOptions): string {
+  const diminta = new Set(options.tahunDiminta ?? []);
+  if (diminta.size === 0) return teks;
+  return teks.replace(
+    /[^.]*\b(?:tidak ada|belum tersedia|tidak tersedia)\b[^.]*\btahun\b[^.]*\./gi,
+    (kalimat) => {
+      const tahun = kalimat.match(/\b(?:19|20)\d{2}\b/g) ?? [];
+      return tahun.length > 0 && tahun.every((t) => diminta.has(t)) ? '' : kalimat;
+    },
+  );
+}
+
 export function isGrounded(
   parsed: HybridResponse,
   evidence: EvidenceItem[],
   options: GroundingOptions = {},
 ): { ok: boolean; reasons: string[] } {
-  return isGroundedText(collectTextForGrounding(parsed), evidence, options);
+  const teks = buangKetiadaanTahunDiketik(collectTextForGrounding(parsed), options);
+  return isGroundedText(teks, evidence, options);
 }
 
 /**
@@ -447,39 +558,4 @@ export function buildVizFromEvidence(evidence: EvidenceItem[]): HybridResponse['
       bars: ['nilai'],
     },
   };
-}
-
-export function groundOutput(
-  parsed: HybridResponse,
-  evidence: EvidenceItem[],
-  query: string,
-  options: GroundingOptions = {},
-): { response: HybridResponse; grounding: 'pass' | 'replaced'; reason?: string } {
-  const check = isGrounded(parsed, evidence, options);
-  if (check.ok) return { response: parsed, grounding: 'pass' };
-
-  const reason = check.reasons.join('; ');
-  const narasi = buildDeterministicNarasi(evidence, query);
-  const visualisasi = buildVizFromEvidence(evidence);
-  // Pertahankan rekomendasi asli bila teksnya sendiri lolos grounding;
-  // sisanya difilter. Jika kosong, isi fallback deterministik.
-  const safeRekomendasi = parsed.rekomendasi.filter(
-    (r) => isGroundedText(r, evidence, options).ok,
-  );
-  const rekomendasi =
-    safeRekomendasi.length > 0
-      ? safeRekomendasi.slice(0, 3)
-      : evidence.length > 0
-        ? [
-            `Tindak lanjuti pertanyaan "${query}" dengan mengonsultasikan temuan di atas ke OPD pemilik indikator untuk verifikasi data terbaru dan dasar perencanaan program.`,
-          ]
-        : [];
-  const replaced: HybridResponse = {
-    narasi,
-    visualisasi,
-    rekomendasi,
-    dataSource: parsed.dataSource || 'SAPA Aceh Tengah (api-splp.layanan.go.id)',
-    timestamp: new Date().toISOString(),
-  };
-  return { response: replaced, grounding: 'replaced', reason };
 }
