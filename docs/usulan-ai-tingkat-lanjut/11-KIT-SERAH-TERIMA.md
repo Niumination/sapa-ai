@@ -13,7 +13,7 @@ menyentuh `main` sampai Anda sendiri memutuskan.
 | Aset | Letak | Isi |
 |---|---|---|
 | **Cabang utuh** | `usulan/perbaikan-ai-2026-09-21` @ `e7258ca` (komit kode FR-12 terakhir) | 0 divergensi dari `main` (fast-forward); seri patch memuat seluruh komit kode & dokumen, sedangkan folder `seri-patch/` sendiri sengaja tidak ikut dipatch (isinya memang wadah patch) |
-| **Seri patch** | `06-USULAN-KODE/seri-patch/` | `0001`…`0016` (urutan wajib; komit dokumen: `0008`, `0010`, `0012`, `0015`; komit dokumen FR-12 = `0017`, menyusul di komit kebersihan) + `00-semua.patch` (paket tunggal) |
+| **Seri patch** | `06-USULAN-KODE/seri-patch/` | `0001`…`0017` (urutan wajib; komit dokumen: `0008`, `0010`, `0012`, `0015`, `0017`) + `00-semua.patch` (paket tunggal) — komit `kebersihan` di ujung cabang tidak diekspor karena isinya hanya patch + catatan ini |
 | **Skrip uji terima** | `06-USULAN-KODE/uji-terima.sh` | memutuskan LULUS/GAGAL sesuai ambang dokumen `10` |
 | **Alat pengukuran** | `verifikasi/mock-llm.mjs`, `verifikasi/stub-splp.mjs`, `verifikasi/banding-ai-vs-det.py`, `verifikasi/banding-main-vs-branch.py`, `scripts/uji-sitasi.mjs`, `scripts/uji-parafrase.mjs`, `scripts/buat-korpus-uji.mjs` | penyedia model & SPLP tiruan + harness pembanding + uji 50 sampel sitasi (FR-19) + uji parafrase EV-05 (FR-12) & pembangkit korpus uji 1.210 record |
 | **Bukti angka** | `verifikasi/eval90-*.txt`, `banding-G.txt`, `aman-cabang-perilaku.txt`, `uji-terima-hasil.txt`, `eval-parafrase-baseline.txt`, `eval-parafrase-hash.txt` | semua hasil yang diklaim di dokumen `10` (termasuk A/B lapis semantik FR-12) |
