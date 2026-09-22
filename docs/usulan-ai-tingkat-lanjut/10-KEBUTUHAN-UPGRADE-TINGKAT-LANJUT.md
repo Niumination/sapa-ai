@@ -135,7 +135,7 @@ Format: **Kode · Kebutuhan · Alasan/bukti · Kriteria terima (terukur) · Usah
 | **FR-16** | **Peringatan sistem disisipkan** bila model memarafrasekannya | frasa baku "tidak ada data" hilang saat diparafrase | item `L7`, `T10` lulus; `nilaiTambah='dipakai-dengan-catatan'` tampil | S | ✅ |
 | **FR-17** | **Gerbang nilai-tambah** (INV-04) dengan catatan sebab (`meta.reason`) | transparansi: operator tahu mengapa AI tidak dipakai | 0 fallback pada set 90 | M | ✅ |
 | **FR-18** | **Bentuk jawaban per niat** (tabel tren, peringkat 5 besar, komposisi, dst.) | Satu bentuk untuk semua niat = pengalaman buruk | ≥ 3 item per niat lulus | M | 🟡 (niat dikenali & masuk prompt ✅; template khusus per niat ⬜) |
-| **FR-19** | **Jawaban per-klaim bersitasi** (setiap kalimat klaim menunjuk baris bukti) | Standar RAGAS/faithfulness; memudahkan verifikasi pembaca | 0 klaim tanpa rujukan pada 50 keluaran sampel | L | ⬜ |
+| **FR-19** | **Jawaban per-klaim bersitasi** (setiap kalimat klaim menunjuk baris bukti) | Standar RAGAS/faithfulness; memudahkan verifikasi pembaca | 0 klaim tanpa rujukan pada 50 keluaran sampel | S–M | ✅ (`sitasi-per-klaim.ts`; penanda `[n]` pada narasi + `narasiBersitasi`/`sitasi` pada API; **42/42 klaim bersitasi, 0 penunjukan salah** pada 50 sampel di dua mode; `scripts/uji-sitasi.mjs`; laporan `14-LAPORAN-FR-19.md`) |
 | **FR-20** | **Klasifikasi sebab kegagalan** (retrieval vs generasi) per item evaluasi | supaya perbaikan tepat sasaran | setiap item gagal punya tag sebab | M | 🟡 (sebab penolakan AI ✅; tag sebab per item ⬜) |
 
 ### Kelompok D — Keamanan, privasi, penyalahgunaan
@@ -263,10 +263,10 @@ FR-18 di [5]/[10]; FR-25/26 di [10]/[11]; NFR-07 & FR-27 di [11].
 |---|---|---|---|
 | **A — Selesai (✅ gelombang 1–3)** | Sirkuit penyedia · status jujur · revalidate fail-closed · gerbang niat-meta · niat jawaban · gerbang nilai-tambah · lima sebab positif-palsu grounding · aturan entitas · kejujuran granularitas · preferensi satuan · penolakan injeksi · set evaluasi 90 · uji terima otomatis | 90/90 dua mode · 237 uji · kit serah terima | — |
 | **B — Cocok-makna & parafrase** | FR-12 lapis semantik Indonesia (`all-Indo-e5-small` + artefak ter-hash) · FR-13 indeksasi berkonteks · FR-14 fusi RRF · EV-05 120 item · EV-06 uji model sungguhan | recall@15 ≥ 90% pada 20 kueri parafrase baru; 90 item tetap 90/90; latensi muat dingin < 300 ms | 3–5 minggu |
-| **C — Mutu tertutup** | FR-19 jawaban per-klaim · FR-20 klasifikasi sebab · FR-24 pemeriksa pasangan entitas · FR-23 pembersihan masukan · NFR-07 telemetri `gen_ai.*` · OPS-04 notifikasi | 0 klaim tanpa rujukan pada 50 sampel; tiap kegagalan bertag sebab | 4–6 minggu |
+| **C — Mutu tertutup** | ~~FR-19 jawaban per-klaim~~ (selesai 22 Sep 2026) · FR-20 klasifikasi sebab · FR-24 pemeriksa pasangan entitas · FR-23 pembersihan masukan · NFR-07 telemetri `gen_ai.*` · OPS-04 notifikasi | 0 klaim tanpa rujukan pada 50 sampel; tiap kegagalan bertag sebab | 4–6 minggu |
 | **D — Tata kelola & pengalaman** | ~~FR-25 · FR-26 · FR-27~~ (selesai 22 Sep 2026) · NFR-09 aksesibilitas · OPS-03 penyegaran terjadwal · CMP-02/03/04 | notis tampil; ≥ 50 umpan balik/bulan; WCAG 2.2 AA | 3–4 minggu |
 
-**Urutan yang disarankan bila sumber daya terbatas:** ~~FR-25 → FR-27~~ (selesai 22 Sep 2026) → FR-19 → FR-12.
+**Urutan yang disarankan bila sumber daya terbatas:** ~~FR-25 → FR-27 → FR-26 → FR-19~~ (selesai 22 Sep 2026) → **FR-12** (lapis semantik).
 Alasannya: dua yang pertama langsung terlihat pengguna dan murah; FR-19 menaikkan kepercayaan
 paling tinggi per satuan usaha; FR-12 paling mahal tetapi paling besar lompatan mutunya.
 
@@ -371,4 +371,6 @@ Sebuah pekerjaan dianggap **selesai** hanya bila **semuanya** terpenuhi:
 | `verifikasi/stub-splp.mjs` | penyedia SPLP tiruan untuk uji luring (pasangan `SAPA_SPLP_BASE_URL`) |
 | `12-LAPORAN-FR-25-FR-27.md` | laporan bukti penambahan cap kesegaran data & dasbor celah (289 uji, gerbang baru, seri patch teruji di klon bersih) |
 | `13-LAPORAN-FR-26.md` | laporan bukti notis transparansi & kanal koreksi warga (317 uji, 14 gerbang uji terima) |
+| `14-LAPORAN-FR-19.md` | laporan bukti sitasi per klaim (343 uji; 50 sampel × 2 mode: 42/42 bersitasi, 0 penunjukan salah) |
+| `scripts/uji-sitasi.mjs` | skrip uji 50 sampel sitasi (kriteria terima FR-19) + pemeriksaan independen tiap penanda |
 | `06-USULAN-KODE/uji-terima.sh` | skrip uji terima (dipakai hermes agent/pengembang) |

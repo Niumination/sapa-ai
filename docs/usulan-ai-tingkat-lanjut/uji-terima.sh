@@ -9,6 +9,7 @@
 #   AI_URL=http://127.0.0.1:3116 DET_URL=http://127.0.0.1:3117 bash verifikasi/uji-terima.sh
 #   SAPA_SKIP_EVAL=1 bash verifikasi/uji-terima.sh      # lompati eval (cepat)
 #   SAPA_MODE=det bash verifikasi/uji-terima.sh         # nilai hanya mode deterministik
+#   ADMIN_TOKEN=... bash verifikasi/uji-terima.sh        # sekaligus periksa dasbor celah (FR-27)
 #
 # Keluar dengan 0 = LULUS, 1 = GAGAL. Setiap ambang di bawah diambil dari
 # dokumen 10-KEBUTUHAN-UPGRADE-TINGKAT-LANJUT.md (NFR-01..NFR-06, EV-01..EV-04).
@@ -73,11 +74,217 @@ else
   info "server $AI_URL tidak hidup — lompati"
 fi
 
-# ── 3. Evaluasi set 90 item ─────────────────────────────────────────────────
+# ── 3. Kesegaran data (FR-25) & dasbor celah pengetahuan (FR-27) ────────────
+# Kedua butir ini murah tetapi menentukan kepercayaan: pengguna harus tahu data
+# ini ditarik kapan dan versi korpus mana, dan tim harus tahu pertanyaan mana yang
+# belum terlayani. Gerbang di bawah memeriksa keduanya pada server yang NYATA.
+if [ "$(hidup "$AI_URL")" = "200" ]; then
+  judul "3. Kesegaran data & sidik korpus (FR-25)"
+  jawab=$(curl -s -m 90 -X POST "$AI_URL/api/query" -H 'Content-Type: application/json' \
+    -d '{"query":"Berapa jumlah penduduk Aceh Tengah?"}' 2>/dev/null || echo '{}')
+  printf '%s' "$jawab" > /tmp/ut-fr25.json
+  tarik=$(python3 -c "
+import json
+try: d = json.load(open('/tmp/ut-fr25.json'))
+except Exception: d = {}
+print(d.get('dataFetchedAt') or '')")
+  sidik=$(python3 -c "
+import json
+try: d = json.load(open('/tmp/ut-fr25.json'))
+except Exception: d = {}
+print(d.get('dataFingerprint') or '')")
+  years=$(python3 -c "
+import json
+try: d = json.load(open('/tmp/ut-fr25.json'))
+except Exception: d = {}
+print('ada' if isinstance(d.get('dataYears'), list) else 'tidak')")
+
+  if printf '%s' "$tarik" | grep -qE '^[0-9]{4}-[0-9]{2}-[0-9]{2}T'; then ok "waktu tarik data dilaporkan ($tarik)"; else no "dataFetchedAt tidak ada/tidak ISO ('$tarik')"; fi
+  if printf '%s' "$sidik" | grep -qE '^[0-9a-f]{8}$'; then ok "sidik korpus dilaporkan ($sidik)"; else no "dataFingerprint tidak 8 heksadesimal ('$sidik')"; fi
+  if [ "$years" = "ada" ]; then ok "daftar tahun data disertakan (dataYears)"; else no "dataYears bukan daftar"; fi
+
+  # Sidik harus SAMA pada jalur JSON dan jalur streaming selama korpus tak berubah.
+  sidik_alir=$(curl -s -m 90 -N -X POST "$AI_URL/api/query/stream" -H 'Content-Type: application/json' \
+    -d '{"query":"Berapa jumlah penduduk Aceh Tengah?"}' 2>/dev/null \
+    | python3 -c "
+import sys, json
+sidik = ''
+for baris in sys.stdin:
+    b = baris.strip()
+    if b.startswith('data:'):
+        try: d = json.loads(b[5:].strip())
+        except Exception: continue
+        if d.get('dataFingerprint'): sidik = d['dataFingerprint']
+print(sidik)")
+  if [ -n "$sidik_alir" ] && [ "$sidik_alir" = "$sidik" ]; then ok "sidik konsisten antara jalur JSON & streaming"; else no "sidik berbeda: JSON '$sidik' vs streaming '$sidik_alir'"; fi
+
+  # Sidik adalah penanda ISI korpus, jadi mode AI & deterministik yang melayani
+  # korpus yang sama harus melaporkan sidik yang sama. Bila berbeda, kemungkinan
+  # SPLP berubah di antara dua penarikan — jadi ini INFORMASI, bukan kegagalan.
+  if [ "$(hidup "$DET_URL")" = "200" ]; then
+    sidik_det=$(curl -s -m 90 -X POST "$DET_URL/api/query" -H 'Content-Type: application/json' \
+      -d '{"query":"Berapa jumlah penduduk Aceh Tengah?"}' 2>/dev/null \
+      | python3 -c "
+import sys, json
+try: d = json.load(sys.stdin)
+except Exception: d = {}
+print(d.get('dataFingerprint') or '')")
+    if [ -n "$sidik_det" ] && [ "$sidik_det" = "$sidik" ]; then
+      ok "mode AI & deterministik melaporkan versi korpus yang sama ($sidik)"
+    else
+      info "sidik beda antar-mode (AI '$sidik' vs det '$sidik_det') — biasanya karena SPLP berubah di antara dua penarikan"
+    fi
+  fi
+else
+  info "server $AI_URL tidak hidup — lompati FR-25"
+fi
+
+if [ "$(hidup "$AI_URL")" = "200" ]; then
+  judul "4. Dasbor celah pengetahuan (FR-27)"
+  ADA_TOKEN="${ADMIN_TOKEN:-}"
+  kode_tanpa=$(curl -s -o /tmp/ut-celah-tanpa.json -w '%{http_code}' -m 20 "$AI_URL/api/admin/celah" 2>/dev/null || echo 000)
+  if [ "$kode_tanpa" = "401" ] || [ "$kode_tanpa" = "503" ]; then
+    ok "endpoint celah menolak tanpa token (HTTP $kode_tanpa, fail-closed)"
+  else
+    no "endpoint celah TIDAK menolak tanpa token (HTTP $kode_tanpa) — data celah terbuka untuk umum"
+  fi
+  if [ -n "$ADA_TOKEN" ]; then
+    kode_token=$(curl -s -o /tmp/ut-celah-token.json -w '%{http_code}' -m 20 -H "x-admin-token: $ADA_TOKEN" "$AI_URL/api/admin/celah" 2>/dev/null || echo 000)
+    if [ "$kode_token" = "200" ]; then
+      # Pagar privasi: balasan tidak boleh memuat digit apa pun pada teks pertanyaan.
+      privasi=$(python3 -c "
+import json, re
+try: d = json.load(open('/tmp/ut-celah-token.json'))
+except Exception: d = {}
+item = d.get('item') or []
+print('bersih' if all(not re.search(r'[0-9]', str(i.get('pertanyaan',''))) for i in item) else 'kotor')")
+      minggu=$(python3 -c "
+import json
+try: d = json.load(open('/tmp/ut-celah-token.json'))
+except Exception: d = {}
+print(d.get('minggu') or '')")
+      if printf '%s' "$minggu" | grep -qE '^[0-9]{4}-W[0-9]{2}$'; then ok "dasbor celah hidup untuk admin (minggu $minggu)"; else no "kunci minggu tidak berbentuk YYYY-Www ('$minggu')"; fi
+      if [ "$privasi" = "bersih" ]; then ok "pagar privasi celah: tidak ada digit pada pertanyaan tersimpan"; else no "ada digit pada pertanyaan tersimpan — periksa sanitasi"; fi
+    else
+      no "token admin benar tetapi dasbor celah menjawab HTTP $kode_token"
+    fi
+  else
+    info "ADMIN_TOKEN tidak diberikan ke skrip — pemeriksaan daftar celah dilewati (kirim ADMIN_TOKEN=… bila ingin diperiksa)"
+  fi
+else
+  info "server $AI_URL tidak hidup — lompati FR-27"
+fi
+
+# ── 5. Transparansi & kanal koreksi (FR-26) ─────────────────────────────────
+if [ "$(hidup "$AI_URL")" = "200" ]; then
+  judul "5. Transparansi jawaban & kanal koreksi (FR-26)"
+
+  # (a) Notis harus benar-benar tampil pada HTML dasbor — bukan hanya ada di kode.
+  halaman=$(curl -s -m 45 "$AI_URL/dashboard" 2>/dev/null || echo '')
+  if printf '%s' "$halaman" | grep -q "Transparansi jawaban"; then
+    ok "notis transparansi tampil di halaman dasbor"
+  else
+    no "notis transparansi TIDAK ditemukan pada HTML dasbor (pengguna tidak diberi tahu)"
+  fi
+  if printf '%s' "$halaman" | grep -q "Lapor angka"; then
+    ok "kanal koreksi \"lapor angka\" tersedia di dasbor"
+  else
+    no "tombol kanal koreksi tidak ditemukan di dasbor"
+  fi
+
+  # (b) Kanal publik menerima laporan sah, menolak masukan liar, membuang angka.
+  kode_sah=$(curl -s -o /tmp/ut-umpan-sah.json -w '%{http_code}' -m 30 -X POST "$AI_URL/api/umpan-balik" \
+    -H 'Content-Type: application/json' \
+    -d '{"jenis":"satuan-salah","catatan":"satuan produksi kopi keliru","pertanyaan":"berapa produksi kopi"}' 2>/dev/null || echo 000)
+  if [ "$kode_sah" = "201" ] || [ "$kode_sah" = "200" ]; then ok "laporan sah diterima (HTTP $kode_sah)"; else no "laporan sah ditolak (HTTP $kode_sah)"; fi
+
+  kode_liar=$(curl -s -o /dev/null -w '%{http_code}' -m 30 -X POST "$AI_URL/api/umpan-balik" \
+    -H 'Content-Type: application/json' -d '{"jenis":"hapus-semua","catatan":"apa saja"}' 2>/dev/null || echo 000)
+  if [ "$kode_liar" = "400" ]; then ok "jenis laporan tak dikenal ditolak (HTTP 400)"; else no "masukan liar tidak ditolak (HTTP $kode_liar)"; fi
+
+  # (c) Laporan yang memuat NIK: tersimpan tanpa digit (diperiksa dari dasbor admin).
+  # Nomor uji dibangun saat dijalankan, bukan disimpan sebagai literal: skrip ini
+  # tidak perlu (dan tidak boleh) memuat nomor identitas dalam bentuk apa pun.
+  NOMOR_UJI=$(printf '1171012304%s' '950003')
+  curl -s -o /dev/null -m 30 -X POST "$AI_URL/api/umpan-balik" -H 'Content-Type: application/json' \
+    -d "{\"jenis\":\"angka-salah\",\"catatan\":\"NIK $NOMOR_UJI angka keliru\"}" 2>/dev/null || true
+
+  kode_tanpa=$(curl -s -o /tmp/ut-umpan-tanpa.json -w '%{http_code}' -m 20 "$AI_URL/api/admin/umpan-balik" 2>/dev/null || echo 000)
+  if [ "$kode_tanpa" = "401" ] || [ "$kode_tanpa" = "503" ]; then ok "daftar laporan menolak tanpa token (HTTP $kode_tanpa, fail-closed)"; else no "daftar laporan TIDAK menolak tanpa token (HTTP $kode_tanpa)"; fi
+
+  if [ -n "${ADMIN_TOKEN:-}" ]; then
+    kode_token=$(curl -s -o /tmp/ut-umpan-token.json -w '%{http_code}' -m 20 -H "x-admin-token: $ADMIN_TOKEN" "$AI_URL/api/admin/umpan-balik" 2>/dev/null || echo 000)
+    if [ "$kode_token" = "200" ]; then
+      hasil_privasi=$(python3 -c "
+import json, re
+try: d = json.load(open('/tmp/ut-umpan-token.json'))
+except Exception: d = {}
+item = d.get('item') or []
+kotor = [i for i in item if re.search(r'[0-9]', str(i.get('catatan','')) + str(i.get('pertanyaan','')))]
+print('bersih' if not kotor else 'kotor')")
+      total=$(python3 -c "
+import json
+try: d = json.load(open('/tmp/ut-umpan-token.json'))
+except Exception: d = {}
+print(d.get('total') or 0)")
+      if [ "$hasil_privasi" = "bersih" ]; then ok "laporan tersimpan tanpa digit (privasi terjaga; $total laporan minggu ini)"; else no "ada digit pada laporan tersimpan"; fi
+    else
+      no "token admin benar tetapi daftar laporan menjawab HTTP $kode_token"
+    fi
+  else
+    info "ADMIN_TOKEN tidak diberikan — pemeriksaan isi laporan dilewati"
+  fi
+else
+  info "server $AI_URL tidak hidup — lompati FR-26"
+fi
+
+# ── 6. Sitasi per klaim (FR-19) ─────────────────────────────────────────────
+if [ "$(hidup "$AI_URL")" = "200" ]; then
+  judul "6. Sitasi per klaim (FR-19)"
+  jawab_sit=$(curl -s -m 90 -X POST "$AI_URL/api/query" -H 'Content-Type: application/json' \
+    -d '{"query":"Berapa jumlah penduduk Aceh Tengah?"}' 2>/dev/null || echo '{}')
+  printf '%s' "$jawab_sit" > /tmp/ut-fr19.json
+  ringkas=$(python3 -c "
+import json
+try: d = json.load(open('/tmp/ut-fr19.json'))
+except Exception: d = {}
+s = d.get('sitasi') or {}
+n = d.get('narasiBersitasi') or ''
+import re
+print('%d|%d|%d|%s|%s' % (s.get('totalKlaim', 0), s.get('bersitasi', 0), len(s.get('tanpaSitasi') or []),
+      'penanda-ada' if re.search(r'\\[\\d+\\]', n) else 'penanda-tidak-ada',
+      'bukti-%d' % len(d.get('evidence') or [])))")
+  total_klaim=$(printf '%s' "$ringkas" | cut -d'|' -f1)
+  bersitasi=$(printf '%s' "$ringkas" | cut -d'|' -f2)
+  tanpa=$(printf '%s' "$ringkas" | cut -d'|' -f3)
+  penanda=$(printf '%s' "$ringkas" | cut -d'|' -f4)
+  bukti_jml=$(printf '%s' "$ringkas" | cut -d'|' -f5)
+
+  if [ "$tanpa" = "0" ]; then ok "0 klaim tanpa rujukan ($bersitasi/$total_klaim klaim bersitasi)"; else no "$tanpa klaim TANPA rujukan pada jawaban uji"; fi
+  if [ "$penanda" = "penanda-ada" ]; then ok "penanda [n] tertulis pada narasiBersitasi"; else no "narasi tidak memuat penanda rujukan"; fi
+  if [ "$bukti_jml" != "bukti-0" ]; then ok "rujukan punya sasaran ($bukti_jml baris bukti)"; else no "jawaban uji tidak memuat bukti — gerbang tidak dapat dinilai"; fi
+
+  # Uji 50 sampel (kriteria terima dokumen 10) — dijalankan bersama evaluasi agar
+  # tidak memperlambat pemeriksaan rutin; aktifkan dengan SAPA_SITASI_PENUH=1.
+  if [ "${SAPA_SITASI_PENUH:-0}" = "1" ]; then
+    SAPA_EVAL_URL="$AI_URL" node scripts/uji-sitasi.mjs > /tmp/ut-fr19-penuh.txt 2>&1
+    if grep -q "LULUS" /tmp/ut-fr19-penuh.txt; then
+      ok "uji 50 sampel: $(grep -E 'LULUS' /tmp/ut-fr19-penuh.txt | grep -oE '[0-9]+/[0-9]+ klaim bersitasi' | head -1)"
+    else
+      no "uji 50 sampel sitasi GAGAL — lihat /tmp/ut-fr19-penuh.txt"
+    fi
+  else
+    info "uji 50 sampel sitasi dilewati (set SAPA_SITASI_PENUH=1 untuk menjalankannya)"
+  fi
+else
+  info "server $AI_URL tidak hidup — lompati FR-19"
+fi
+
+# ── 7. Evaluasi set 90 item ─────────────────────────────────────────────────
 jalankan_eval() {
   local url="$1" label="$2" keluaran="$3"
   if [ "$(hidup "$url")" != "200" ]; then info "server $label ($url) tidak hidup — lompati"; return; fi
-  judul "3. Evaluasi — mode $label"
+  judul "7. Evaluasi — mode $label"
   SAPA_EVAL_URL="$url" SAPA_EVAL_LLM_GAP_MS="$GAP" timeout 1200 node scripts/eval-run.mjs > "$keluaran" 2>&1
   local lulus total
   lulus=$(grep -oE 'Lulus +: +[0-9]+' "$keluaran" | grep -oE '[0-9]+' | head -1)
@@ -95,7 +302,7 @@ jalankan_eval() {
 }
 
 if [ "$SKIP_EVAL" = "1" ]; then
-  judul "3. Evaluasi — DILEWATI (SAPA_SKIP_EVAL=1)"
+  judul "7. Evaluasi — DILEWATI (SAPA_SKIP_EVAL=1)"
 else
   [ "$MODE" = "ai" ]  && jalankan_eval "$AI_URL"  "AI"          /tmp/ut-eval-ai.txt
   [ "$MODE" = "det" ] && jalankan_eval "$DET_URL" "Deterministik" /tmp/ut-eval-det.txt

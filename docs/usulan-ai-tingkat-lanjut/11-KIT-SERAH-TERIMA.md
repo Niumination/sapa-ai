@@ -12,10 +12,10 @@ menyentuh `main` sampai Anda sendiri memutuskan.
 
 | Aset | Letak | Isi |
 |---|---|---|
-| **Cabang utuh** | `usulan/perbaikan-ai-2026-09-21` @ `e175c1a` (komit kode terakhir) | 0 divergensi dari `main` (fast-forward); seri patch `0001`…`0013` memuat seluruh komit kode & dokumen, sedangkan folder `seri-patch/` sendiri sengaja tidak ikut dipatch (isinya memang wadah patch) |
-| **Seri patch** | `06-USULAN-KODE/seri-patch/` | `0001`…`0012` (urutan wajib; `0008`, `0010`, `0012` = dokumen) + `00-semua.patch` (paket tunggal) |
+| **Cabang utuh** | `usulan/perbaikan-ai-2026-09-21` @ `6adf81d` (komit kode terakhir) | 0 divergensi dari `main` (fast-forward); seri patch memuat seluruh komit kode & dokumen, sedangkan folder `seri-patch/` sendiri sengaja tidak ikut dipatch (isinya memang wadah patch) |
+| **Seri patch** | `06-USULAN-KODE/seri-patch/` | `0001`…`0015` (urutan wajib; komit dokumen: `0008`, `0010`, `0012`, `0015`) + `00-semua.patch` (paket tunggal) |
 | **Skrip uji terima** | `06-USULAN-KODE/uji-terima.sh` | memutuskan LULUS/GAGAL sesuai ambang dokumen `10` |
-| **Alat pengukuran** | `verifikasi/mock-llm.mjs`, `verifikasi/banding-ai-vs-det.py`, `verifikasi/banding-main-vs-branch.py` | penyedia model tiruan + dua harness pembanding |
+| **Alat pengukuran** | `verifikasi/mock-llm.mjs`, `verifikasi/stub-splp.mjs`, `verifikasi/banding-ai-vs-det.py`, `verifikasi/banding-main-vs-branch.py`, `scripts/uji-sitasi.mjs` | penyedia model & SPLP tiruan + harness pembanding + uji 50 sampel sitasi (FR-19) |
 | **Bukti angka** | `verifikasi/eval90-*.txt`, `banding-G.txt`, `aman-cabang-perilaku.txt`, `uji-terima-hasil.txt` | semua hasil yang diklaim di dokumen `10` |
 | **Dua dasbor tinjauan** | `/admin/celah-pengetahuan`, `/admin/umpan-balik` | pertanyaan tak terlayani (FR-27) & laporan koreksi warga (FR-26); keduanya ber-`ADMIN_TOKEN` |
 | **Spesifikasi kebutuhan** | `10-KEBUTUHAN-UPGRADE-TINGKAT-LANJUT.md` | daftar kebutuhan `FR/NFR/DS/EV/OPS/CMP` + kriteria terima |
@@ -27,7 +27,7 @@ menyentuh `main` sampai Anda sendiri memutuskan.
 |---|---|---|
 | Node.js | 20.20.2 (dipakai saat pengujian) | Node 20 EOL 30 Apr 2026 — jadwalkan naik versi |
 | Next.js | 16.2.10 | tidak ada perubahan dependensi di cabang ini |
-| Uji | 27 berkas / **317 uji** | `npm test` |
+| Uji | 28 berkas / **343 uji** | `npm test` |
 | Variabel lingkungan baru | `REVALIDATE_ALLOW_UNSIGNED` (opsional) | **`REVALIDATE_SECRET` kini wajib** agar penyegaran cache tidak tertolak (fail-closed) |
 | Variabel lingkungan baru (FR-27 & FR-26) | `ADMIN_TOKEN` | menjaga **dua** dasbor admin: `/api/admin/celah` dan `/api/admin/umpan-balik`. Tanpa ini keduanya menjawab **503 fail-closed** |
 | Variabel lingkungan opsional | `SAPA_SPLP_BASE_URL` | mengarahkan pengambilan data ke SPLP lain/stub; dibaca **saat runtime**, jadi cukup diset di proses (lihat §7a) |
@@ -47,8 +47,8 @@ git switch -c kerja/ai-tingkat-lanjut origin/usulan/perbaikan-ai-2026-09-21
 ```bash
 git switch -c kerja/ai-tingkat-lanjut main
 git am 06-USULAN-KODE/seri-patch/0001-*.patch
-# … ulangi 0002 … 0012 (urutan wajib) — atau sekaligus:
-git am 06-USULAN-KODE/seri-patch/000[1-9]-*.patch 06-USULAN-KODE/seri-patch/001[0-2]-*.patch
+# … ulangi 0002 … 0015 (urutan wajib) — atau sekaligus:
+git am 06-USULAN-KODE/seri-patch/[0-9][0-9][0-9][0-9]-*.patch
 ```
 
 **Cara C — paket tunggal (paling cepat, riwayat menjadi satu komit):**
@@ -64,7 +64,7 @@ selaras) lalu jalankan uji terima (§7).
 
 > **Terbukti pada 22 Sep 2026:** ketiga cara diuji pada klon bersih `main`. Cara B (`git am` seluruh seri)
 > dan Cara C (`git apply --3way 00-semua.patch`) sama-sama berhasil; hasil pohon **identik dengan cabang**
-> (kecuali folder `seri-patch/` yang memang hanya wadah patch), `npm run typecheck` bersih, dan **317 uji lulus**
+> (kecuali folder `seri-patch/` yang memang hanya wadah patch), `npm run typecheck` bersih, dan **343 uji lulus**
 > di pohon hasil patch. Cara C menyisakan perubahan tanpa komit — jalankan `git add -A && git commit` sesudahnya.
 
 > **Catatan tentang bit eksekusi:** komit `0003`/`0004` hanya memulihkan bit eksekusi
@@ -107,9 +107,9 @@ selaras) lalu jalankan uji terima (§7).
 
 > Sejak 22 Sep 2026, `uji-terima.sh` memeriksa tiga butir murah yang sudah selesai: **FR-25** (waktu
 > tarik, sidik korpus, tahun data, konsistensi jalur JSON↔streaming, kesamaan versi korpus antar-mode),
-> **FR-27** (endpoint celah fail-closed + pagar privasi), dan **FR-26** (notis transparansi benar-benar
+> **FR-27** (endpoint celah fail-closed + pagar privasi), **FR-26** (notis transparansi benar-benar
 > tampil pada HTML dasbor, kanal koreksi menerima laporan sah, menolak jenis liar, dan menyimpan tanpa
-> digit). Untuk memeriksa isi kedua daftar, sertakan `ADMIN_TOKEN` — tanpa itu pemeriksaan itu
+> digit), dan **FR-19** (0 klaim tanpa rujukan; uji 50 sampel dijalankan penuh dengan `SAPA_SITASI_PENUH=1`). Untuk memeriksa isi kedua daftar, sertakan `ADMIN_TOKEN` — tanpa itu pemeriksaan itu
 > dilewati, bukan gagal.
 
 ```bash
@@ -192,11 +192,11 @@ perlu disetel — **bukan** gerbangnya dilonggarkan.
 ## 11. Instruksi siap-tempel untuk agen di repo lokal
 
 > **Tugas:** menerapkan versi "AI tingkat lanjut" pada repo ini tanpa menyentuh `main`.
-> Sumber: cabang/seri patch dari Arena (`06-USULAN-KODE/seri-patch/`, 12 patch, urut).
+> Sumber: cabang/seri patch dari Arena (`06-USULAN-KODE/seri-patch/`, 15 patch, urut).
 > Langkah:
 > 1. `git switch -c kerja/ai-tingkat-lanjut main`
-> 2. `git am 06-USULAN-KODE/seri-patch/000[1-9]-*.patch 06-USULAN-KODE/seri-patch/001[0-2]-*.patch`
-> 3. `npm ci && npm test` → wajib **317 uji lulus**; `npm run typecheck` → bersih.
+> 2. `git am 06-USULAN-KODE/seri-patch/[0-9][0-9][0-9][0-9]-*.patch`
+> 3. `npm ci && npm test` → wajib **343 uji lulus**; `npm run typecheck` → bersih.
 > 4. `bash verifikasi/uji-terima.sh` → wajib **LULUS**.
 > 5. Jalankan eval dua mode (lihat `11 §7`) → wajib **90/90** masing-masing, **0 regresi**.
 > 6. Bila ada konflik, jangan menimpa; laporkan berkas konflik beserta keputusan yang diambil.
