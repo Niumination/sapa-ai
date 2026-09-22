@@ -2,6 +2,7 @@ import { NextRequest } from 'next/server';
 import { fetchSapaData } from '@/lib/sapa-client';
 import { composeAnswer } from '@/services/answer-compose';
 import { getClientIp, rateLimitHeaders, checkRateLimit } from '@/lib/rate-limit';
+import { sitasiBalasan } from '@/services/sitasi-per-klaim';
 import { tahunPadaBukti } from '@/services/grounding';
 import { catatCelah, type SebabCelah } from '@/lib/insight-celah';
 
@@ -82,6 +83,9 @@ export async function POST(req: NextRequest) {
       dataFetchedAt: meta.diambilPada,
       dataFingerprint: meta.sidik,
       dataYears: tahunPadaBukti(hasil.evidence),
+      // FR-19: sitasi per klaim. `narasiBersitasi` adalah narasi dengan penanda
+      // [n]; `sitasi.tanpaSitasi` harus KOSONG — inilah yang diperiksa gerbang.
+      ...sitasiBalasan(hasil.response.narasi, hasil.evidence),
     },
     { headers: rateLimitHeaders(batas) },
   );

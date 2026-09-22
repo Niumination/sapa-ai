@@ -3,6 +3,7 @@
 // eksekutif. Tidak melakukan fetch, LLM, Prisma, atau mengubah angka.
 
 import { normalizeText } from '@/lib/sapa-client';
+import { beriSitasi } from '@/services/sitasi-per-klaim';
 import { headlineParts, singkatNarasi } from '@/lib/format-singkat';
 import type {
   ExecutiveAnswerType,
@@ -578,13 +579,19 @@ export function buildExecutivePresentation(response: HybridResponse): ExecutiveP
   const cleanNarasi = (primaryLead ?? '').replace(/\.\s*Dari\s*\d+[,\d]*\s*record SAPA.*?\./, '.').trim();
   const cleanNarrative = singkatNarasi(cleanNarasi ? cleanNarasi : (primaryLead ?? 'Tidak ada narasi yang dapat ditampilkan.'));
 
+  // Sitasi per klaim (FR-19) dihitung dari narasi yang SUDAH diringkas dan dari
+  // urutan bukti yang SUDAH final — supaya nomor penanda [n] benar-benar menunjuk
+  // baris bukti ke-n yang dilihat pembaca (bukan urutan sebelum pengurutan ulang).
+  const sitasi = beriSitasi(cleanNarrative, evidence);
+
   const lead = buildLead(evidence, answerType, cleanNarrative);
   const presentation: ExecutivePresentation = {
     version: 'v1',
     answerType,
     title,
     lead,
-    narrative: cleanNarrative,
+    narrative: sitasi.narasi,
+    citations: sitasi.ringkas,
     buckets,
     bucketSummary,
     metrics,

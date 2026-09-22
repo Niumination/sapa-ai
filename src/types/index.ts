@@ -63,6 +63,16 @@ export interface ExecutivePresentation {
   dataQuality: Array<{ label: string; status: 'ok' | 'warn' | 'info'; text: string }>;
   evidence: ExecutiveEvidence[];
   followUps: string[];
+  /**
+   * Mutu sitasi per klaim (FR-19). Opsional karena presentasi tersimpan dari
+   * versi sebelumnya tidak memilikinya — UI wajib menanganinya sebagai "tidak tahu",
+   * bukan sebagai "nol klaim".
+   */
+  citations?: {
+    totalKlaim: number;
+    bersitasi: number;
+    tanpaSitasi: string[];
+  };
   provenance: {
     source: string;
     origin: 'direct' | 'splp' | 'unknown';

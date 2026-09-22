@@ -238,11 +238,53 @@ else
   info "server $AI_URL tidak hidup — lompati FR-26"
 fi
 
-# ── 6. Evaluasi set 90 item ─────────────────────────────────────────────────
+# ── 6. Sitasi per klaim (FR-19) ─────────────────────────────────────────────
+if [ "$(hidup "$AI_URL")" = "200" ]; then
+  judul "6. Sitasi per klaim (FR-19)"
+  jawab_sit=$(curl -s -m 90 -X POST "$AI_URL/api/query" -H 'Content-Type: application/json' \
+    -d '{"query":"Berapa jumlah penduduk Aceh Tengah?"}' 2>/dev/null || echo '{}')
+  printf '%s' "$jawab_sit" > /tmp/ut-fr19.json
+  ringkas=$(python3 -c "
+import json
+try: d = json.load(open('/tmp/ut-fr19.json'))
+except Exception: d = {}
+s = d.get('sitasi') or {}
+n = d.get('narasiBersitasi') or ''
+import re
+print('%d|%d|%d|%s|%s' % (s.get('totalKlaim', 0), s.get('bersitasi', 0), len(s.get('tanpaSitasi') or []),
+      'penanda-ada' if re.search(r'\\[\\d+\\]', n) else 'penanda-tidak-ada',
+      'bukti-%d' % len(d.get('evidence') or [])))")
+  total_klaim=$(printf '%s' "$ringkas" | cut -d'|' -f1)
+  bersitasi=$(printf '%s' "$ringkas" | cut -d'|' -f2)
+  tanpa=$(printf '%s' "$ringkas" | cut -d'|' -f3)
+  penanda=$(printf '%s' "$ringkas" | cut -d'|' -f4)
+  bukti_jml=$(printf '%s' "$ringkas" | cut -d'|' -f5)
+
+  if [ "$tanpa" = "0" ]; then ok "0 klaim tanpa rujukan ($bersitasi/$total_klaim klaim bersitasi)"; else no "$tanpa klaim TANPA rujukan pada jawaban uji"; fi
+  if [ "$penanda" = "penanda-ada" ]; then ok "penanda [n] tertulis pada narasiBersitasi"; else no "narasi tidak memuat penanda rujukan"; fi
+  if [ "$bukti_jml" != "bukti-0" ]; then ok "rujukan punya sasaran ($bukti_jml baris bukti)"; else no "jawaban uji tidak memuat bukti — gerbang tidak dapat dinilai"; fi
+
+  # Uji 50 sampel (kriteria terima dokumen 10) — dijalankan bersama evaluasi agar
+  # tidak memperlambat pemeriksaan rutin; aktifkan dengan SAPA_SITASI_PENUH=1.
+  if [ "${SAPA_SITASI_PENUH:-0}" = "1" ]; then
+    SAPA_EVAL_URL="$AI_URL" node scripts/uji-sitasi.mjs > /tmp/ut-fr19-penuh.txt 2>&1
+    if grep -q "LULUS" /tmp/ut-fr19-penuh.txt; then
+      ok "uji 50 sampel: $(grep -E 'LULUS' /tmp/ut-fr19-penuh.txt | grep -oE '[0-9]+/[0-9]+ klaim bersitasi' | head -1)"
+    else
+      no "uji 50 sampel sitasi GAGAL — lihat /tmp/ut-fr19-penuh.txt"
+    fi
+  else
+    info "uji 50 sampel sitasi dilewati (set SAPA_SITASI_PENUH=1 untuk menjalankannya)"
+  fi
+else
+  info "server $AI_URL tidak hidup — lompati FR-19"
+fi
+
+# ── 7. Evaluasi set 90 item ─────────────────────────────────────────────────
 jalankan_eval() {
   local url="$1" label="$2" keluaran="$3"
   if [ "$(hidup "$url")" != "200" ]; then info "server $label ($url) tidak hidup — lompati"; return; fi
-  judul "6. Evaluasi — mode $label"
+  judul "7. Evaluasi — mode $label"
   SAPA_EVAL_URL="$url" SAPA_EVAL_LLM_GAP_MS="$GAP" timeout 1200 node scripts/eval-run.mjs > "$keluaran" 2>&1
   local lulus total
   lulus=$(grep -oE 'Lulus +: +[0-9]+' "$keluaran" | grep -oE '[0-9]+' | head -1)
@@ -260,7 +302,7 @@ jalankan_eval() {
 }
 
 if [ "$SKIP_EVAL" = "1" ]; then
-  judul "6. Evaluasi — DILEWATI (SAPA_SKIP_EVAL=1)"
+  judul "7. Evaluasi — DILEWATI (SAPA_SKIP_EVAL=1)"
 else
   [ "$MODE" = "ai" ]  && jalankan_eval "$AI_URL"  "AI"          /tmp/ut-eval-ai.txt
   [ "$MODE" = "det" ] && jalankan_eval "$DET_URL" "Deterministik" /tmp/ut-eval-det.txt

@@ -1,7 +1,7 @@
 
 [1m── 1. Statis (typecheck · uji unit · build) ──[0m
   [32m✓[0m typecheck lolos
-  [32m✓[0m uji unit: 27 berkas / 317 uji lulus (ambang 230)
+  [32m✓[0m uji unit: 28 berkas / 343 uji lulus (ambang 230)
   [32m✓[0m pagar grounding ada (INV-01)
   [32m✓[0m penjaga permintaan sistem ada (SEC-02)
 
@@ -9,7 +9,7 @@
   [32m✓[0m revalidate menolak permintaan tanpa rahasia (HTTP 503, fail-closed)
 
 [1m── 3. Kesegaran data & sidik korpus (FR-25) ──[0m
-  [32m✓[0m waktu tarik data dilaporkan (2026-09-22T10:41:14.749Z)
+  [32m✓[0m waktu tarik data dilaporkan (2026-09-22T10:57:40.977Z)
   [32m✓[0m sidik korpus dilaporkan (33c96113)
   [32m✓[0m daftar tahun data disertakan (dataYears)
   [32m✓[0m sidik konsisten antara jalur JSON & streaming
@@ -26,9 +26,15 @@
   [32m✓[0m laporan sah diterima (HTTP 201)
   [32m✓[0m jenis laporan tak dikenal ditolak (HTTP 400)
   [32m✓[0m daftar laporan menolak tanpa token (HTTP 401, fail-closed)
-  [32m✓[0m laporan tersimpan tanpa digit (privasi terjaga; 4 laporan minggu ini)
+  [32m✓[0m laporan tersimpan tanpa digit (privasi terjaga; 6 laporan minggu ini)
 
-[1m── 6. Evaluasi — DILEWATI (SAPA_SKIP_EVAL=1) ──[0m
+[1m── 6. Sitasi per klaim (FR-19) ──[0m
+  [32m✓[0m 0 klaim tanpa rujukan (1/1 klaim bersitasi)
+  [32m✓[0m penanda [n] tertulis pada narasiBersitasi
+  [32m✓[0m rujukan punya sasaran (bukti-1 baris bukti)
+  [32m✓[0m uji 50 sampel: 42/42 klaim bersitasi
+
+[1m── 7. Evaluasi — DILEWATI (SAPA_SKIP_EVAL=1) ──[0m
 
 [1m── Ringkasan uji terima ──[0m
   [32m✓ LULUS[0m — semua ambang terpenuhi.

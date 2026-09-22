@@ -134,3 +134,29 @@ describe('catatCelahBilaPerlu', () => {
     expect((await ambilCelah()).item).toHaveLength(0);
   });
 });
+
+// ─── FR-19: sitasi per klaim pada balasan API ─────────────────────────────────
+describe('POST /api/query — sitasi per klaim', () => {
+  it('menyertakan narasiBersitasi dan ringkasan sitasi', async () => {
+    const res = await POST(req({ query: 'Berapa jumlah ASN di Aceh Tengah?' }));
+    const body = await res.json();
+    expect(typeof body.narasiBersitasi).toBe('string');
+    expect(body.sitasi).toBeTruthy();
+    expect(body.sitasi.totalKlaim).toBeGreaterThanOrEqual(0);
+    expect(Array.isArray(body.sitasi.tanpaSitasi)).toBe(true);
+  });
+
+  it('klaim pada jawaban ber-bukti SELALU dapat dirujuk (tanpaSitasi kosong)', async () => {
+    const body = await (await POST(req({ query: 'Berapa jumlah ASN di Aceh Tengah?' }))).json();
+    expect(body.sitasi.totalKlaim).toBeGreaterThan(0);
+    expect(body.sitasi.tanpaSitasi).toEqual([]);
+    // Penanda harus benar-benar ada pada narasi yang bersitasi.
+    expect(body.narasiBersitasi).toMatch(/\[\d+\]/);
+  });
+
+  it('jawaban tanpa bukti tidak mengarang penanda', async () => {
+    const body = await (await POST(req({ query: 'qwertyzzz tidak ada di katalog' }))).json();
+    expect(body.evidence).toHaveLength(0);
+    expect(body.narasiBersitasi).not.toMatch(/\[\d+\]/);
+  });
+});

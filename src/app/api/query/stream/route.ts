@@ -1,5 +1,6 @@
 import { NextRequest } from 'next/server';
 import { fetchSapaData } from '@/lib/sapa-client';
+import { sitasiBalasan } from '@/services/sitasi-per-klaim';
 import { tahunPadaBukti } from '@/services/grounding';
 import { catatCelahBilaPerlu } from '@/app/api/query/route';
 import { composeAnswer } from '@/services/answer-compose';
@@ -85,6 +86,8 @@ export async function POST(req: NextRequest) {
           dataFetchedAt: fetched.meta.diambilPada,
           dataFingerprint: fetched.meta.sidik,
           dataYears: tahunPadaBukti(hasil.evidence),
+          // FR-19: sitasi per klaim — aturan yang sama dengan jalur JSON.
+          ...sitasiBalasan(hasil.response.narasi, hasil.evidence),
         });
       } catch (e) {
         kirim('error', { error: e instanceof Error ? e.message : 'Gagal memproses query' });
