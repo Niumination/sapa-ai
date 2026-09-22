@@ -123,7 +123,7 @@ Format: **Kode · Kebutuhan · Alasan/bukti · Kriteria terima (terukur) · Usah
 | **FR-09** | **Kolom satuan diakui sebagai bagian korpus** sehingga kata satuan tidak dianggap konsep asing | akar sebenarnya kegagalan `F4`: "ton" dianggap asing → penjaga kejujuran memilih bukti salah | uji + item `F4` lulus | S | ✅ |
 | **FR-10** | **Penjaga kejujuran**: konsep yang tidak pernah ada di katalog tidak boleh dijawab dengan data mirip | mencegah jawaban menyesatkan | item `kosong`/`jujur` lulus | M | ✅ |
 | **FR-11** | **Kejujuran granularitas per desa/kecamatan** (INV-07) | SAPA berhenti di tingkat kecamatan | item `D5` lulus | S | ✅ |
-| **FR-12** | **Lapis semantik berbahasa Indonesia** (embedding prakomputasi + fusi RRF dengan leksikal) | Uji parafrase bebas (bukan sinonim yang sudah dipetakan) masih bergantung pada kecocokan kata | recall@15 pada 20 kueri parafrase baru ≥ 90%; latensi muat dingin < 300 ms; artefak ber-hash ± 3 MB | L | ⬜ |
+| **FR-12** | **Lapis semantik berbahasa Indonesia** (embedding prakomputasi + fusi RRF dengan leksikal) | Uji parafrase bebas (bukan sinonim yang sudah dipetakan) masih bergantung pada kecocokan kata | recall@15 pada 20 kueri parafrase baru ≥ 90%; latensi muat dingin < 300 ms; artefak ber-hash ± 3 MB | L | ✅ 22 Sep 2026 |
 | **FR-13** | **Indeksasi berkonteks** (judul · OPD · satuan · tahun) agar kata OPD tahun tidak "mengotori" skor | Menaikkan presisi pada kueri panjang | 4 item uji tambahan lulus | S | ⬜ |
 | **FR-14** | **Fusi hasil ganda (RRF k=60)** antara daftar leksikal dan semantik | Standar industri; recall naik tanpa menurunkan presisi | recall@10 ≥ 90% pada kueri sulit | M | ⬜ |
 
@@ -262,13 +262,15 @@ FR-18 di [5]/[10]; FR-25/26 di [10]/[11]; NFR-07 & FR-27 di [11].
 | Fase | Isi | Kriteria terima | Perkiraan |
 |---|---|---|---|
 | **A — Selesai (✅ gelombang 1–3)** | Sirkuit penyedia · status jujur · revalidate fail-closed · gerbang niat-meta · niat jawaban · gerbang nilai-tambah · lima sebab positif-palsu grounding · aturan entitas · kejujuran granularitas · preferensi satuan · penolakan injeksi · set evaluasi 90 · uji terima otomatis | 90/90 dua mode · 237 uji · kit serah terima | — |
-| **B — Cocok-makna & parafrase** | FR-12 lapis semantik Indonesia (`all-Indo-e5-small` + artefak ter-hash) · FR-13 indeksasi berkonteks · FR-14 fusi RRF · EV-05 120 item · EV-06 uji model sungguhan | recall@15 ≥ 90% pada 20 kueri parafrase baru; 90 item tetap 90/90; latensi muat dingin < 300 ms | 3–5 minggu |
+| **B — Cocok-makna & parafrase** | ~~FR-12 lapis semantik Indonesia + fusi RRF~~ (selesai 22 Sep 2026; penyedia `hash`, penyedia `remote` kelas e5 siap dipakai) · FR-13 indeksasi berkonteks · FR-14 fusi RRF lanjutan · EV-05 120 item · EV-06 uji model sungguhan | recall@15 **20/20** pada 20 kueri parafrase baru (ambang 90 %); luar-katalog 5/5 ditolak; latensi muat dingin **75 ms** (ambang 300 ms); artefak ± 0 MB (in-memory, tanpa berkas) | sisa 2–4 minggu |
 | **C — Mutu tertutup** | ~~FR-19 jawaban per-klaim~~ (selesai 22 Sep 2026) · FR-20 klasifikasi sebab · FR-24 pemeriksa pasangan entitas · FR-23 pembersihan masukan · NFR-07 telemetri `gen_ai.*` · OPS-04 notifikasi | 0 klaim tanpa rujukan pada 50 sampel; tiap kegagalan bertag sebab | 4–6 minggu |
 | **D — Tata kelola & pengalaman** | ~~FR-25 · FR-26 · FR-27~~ (selesai 22 Sep 2026) · NFR-09 aksesibilitas · OPS-03 penyegaran terjadwal · CMP-02/03/04 | notis tampil; ≥ 50 umpan balik/bulan; WCAG 2.2 AA | 3–4 minggu |
 
-**Urutan yang disarankan bila sumber daya terbatas:** ~~FR-25 → FR-27 → FR-26 → FR-19~~ (selesai 22 Sep 2026) → **FR-12** (lapis semantik).
-Alasannya: dua yang pertama langsung terlihat pengguna dan murah; FR-19 menaikkan kepercayaan
-paling tinggi per satuan usaha; FR-12 paling mahal tetapi paling besar lompatan mutunya.
+**Urutan yang disarankan bila sumber daya terbatas:** ~~FR-25 → FR-27 → FR-26 → FR-19 → FR-12~~
+(selesai 22 Sep 2026) → **FR-20** (klasifikasi sebab) → **FR-24** → **FR-23** → Fase D.
+Alasannya: FR-19 menaikkan kepercayaan paling tinggi per satuan usaha; FR-12 (lapis semantik) sudah
+selesai dan menutup celah parafrase; FR-20 murah dan membuat **setiap** kegagalan yang tersisa
+terjelaskan dengan satu tag sebab — termasuk kegagalan yang baru muncul dari lapis semantik.
 
 ---
 

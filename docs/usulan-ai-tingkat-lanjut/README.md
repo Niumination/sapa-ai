@@ -9,6 +9,7 @@ Berkas di folder ini **berdiri sendiri** — dapat dibaca tanpa dokumen lain.
 | `12-LAPORAN-FR-25-FR-27.md` | pengembang · pemilik produk | **Laporan dua butir termurah**: cap kesegaran data (waktu tarik · sidik isi korpus · tahun data) + dasbor celah pengetahuan — rancangan, bukti uji, dan batas yang jujur |
 | `13-LAPORAN-FR-26.md` | pengembang · tim data | **Notis transparansi + kanal koreksi warga**: notis tiga keadaan, kanal "lapor angka" tanpa menyimpan angka, dasbor tinjauan `/admin/umpan-balik` — beserta bukti uji |
 | `14-LAPORAN-FR-19.md` | pengembang · tim data | **Sitasi per klaim**: penanda `[n]` pada narasi, `narasiBersitasi`/`sitasi` pada API, skrip uji 50 sampel beserta bukti lulusnya |
+| `15-LAPORAN-FR-12.md` | pengembang · tim data | **Lapis semantik Bahasa Indonesia + fusi RRF**: penyedia `hash` tanpa jaringan, invarian leksikal-dulu, kalibrasi ambang berpasangan (0,25/0,27), hasil recall@15 12/20 → 20/20, indeks dingin 75 ms, plus tiga bug yang ditemukan verifikasi dan batas yang jujur |
 | `09-AUDIT-KEAMANAN-PENGGABUNGAN.md` | pemilik produk · DevOps | bukti `main` belum tersentuh, hasil uji gabung, kesetaraan kontrak API, perbandingan perilaku produksi vs cabang, risiko & rencana mundur |
 | `uji-terima.sh` | semua | skrip uji terima otomatis (LULUS/GAGAL sesuai ambang) |
 | `seri-patch/` | agen repo lokal | 7 patch berurutan + `00-semua.patch` |

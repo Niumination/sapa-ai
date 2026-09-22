@@ -12,11 +12,11 @@ menyentuh `main` sampai Anda sendiri memutuskan.
 
 | Aset | Letak | Isi |
 |---|---|---|
-| **Cabang utuh** | `usulan/perbaikan-ai-2026-09-21` @ `6adf81d` (komit kode terakhir) | 0 divergensi dari `main` (fast-forward); seri patch memuat seluruh komit kode & dokumen, sedangkan folder `seri-patch/` sendiri sengaja tidak ikut dipatch (isinya memang wadah patch) |
-| **Seri patch** | `06-USULAN-KODE/seri-patch/` | `0001`…`0015` (urutan wajib; komit dokumen: `0008`, `0010`, `0012`, `0015`) + `00-semua.patch` (paket tunggal) |
+| **Cabang utuh** | `usulan/perbaikan-ai-2026-09-21` @ `e7258ca` (komit kode FR-12 terakhir) | 0 divergensi dari `main` (fast-forward); seri patch memuat seluruh komit kode & dokumen, sedangkan folder `seri-patch/` sendiri sengaja tidak ikut dipatch (isinya memang wadah patch) |
+| **Seri patch** | `06-USULAN-KODE/seri-patch/` | `0001`…`0016` (urutan wajib; komit dokumen: `0008`, `0010`, `0012`, `0015`; komit dokumen FR-12 = `0017`, menyusul di komit kebersihan) + `00-semua.patch` (paket tunggal) |
 | **Skrip uji terima** | `06-USULAN-KODE/uji-terima.sh` | memutuskan LULUS/GAGAL sesuai ambang dokumen `10` |
-| **Alat pengukuran** | `verifikasi/mock-llm.mjs`, `verifikasi/stub-splp.mjs`, `verifikasi/banding-ai-vs-det.py`, `verifikasi/banding-main-vs-branch.py`, `scripts/uji-sitasi.mjs` | penyedia model & SPLP tiruan + harness pembanding + uji 50 sampel sitasi (FR-19) |
-| **Bukti angka** | `verifikasi/eval90-*.txt`, `banding-G.txt`, `aman-cabang-perilaku.txt`, `uji-terima-hasil.txt` | semua hasil yang diklaim di dokumen `10` |
+| **Alat pengukuran** | `verifikasi/mock-llm.mjs`, `verifikasi/stub-splp.mjs`, `verifikasi/banding-ai-vs-det.py`, `verifikasi/banding-main-vs-branch.py`, `scripts/uji-sitasi.mjs`, `scripts/uji-parafrase.mjs`, `scripts/buat-korpus-uji.mjs` | penyedia model & SPLP tiruan + harness pembanding + uji 50 sampel sitasi (FR-19) + uji parafrase EV-05 (FR-12) & pembangkit korpus uji 1.210 record |
+| **Bukti angka** | `verifikasi/eval90-*.txt`, `banding-G.txt`, `aman-cabang-perilaku.txt`, `uji-terima-hasil.txt`, `eval-parafrase-baseline.txt`, `eval-parafrase-hash.txt` | semua hasil yang diklaim di dokumen `10` (termasuk A/B lapis semantik FR-12) |
 | **Dua dasbor tinjauan** | `/admin/celah-pengetahuan`, `/admin/umpan-balik` | pertanyaan tak terlayani (FR-27) & laporan koreksi warga (FR-26); keduanya ber-`ADMIN_TOKEN` |
 | **Spesifikasi kebutuhan** | `10-KEBUTUHAN-UPGRADE-TINGKAT-LANJUT.md` | daftar kebutuhan `FR/NFR/DS/EV/OPS/CMP` + kriteria terima |
 | **Peta kerja tinggal-jalan** | `10` §11 (Fase B–D) | urutan pekerjaan berikutnya + perkiraan usaha |
@@ -27,10 +27,12 @@ menyentuh `main` sampai Anda sendiri memutuskan.
 |---|---|---|
 | Node.js | 20.20.2 (dipakai saat pengujian) | Node 20 EOL 30 Apr 2026 — jadwalkan naik versi |
 | Next.js | 16.2.10 | tidak ada perubahan dependensi di cabang ini |
-| Uji | 28 berkas / **343 uji** | `npm test` |
+| Uji | 29 berkas / **379 uji** | `npm test` |
 | Variabel lingkungan baru | `REVALIDATE_ALLOW_UNSIGNED` (opsional) | **`REVALIDATE_SECRET` kini wajib** agar penyegaran cache tidak tertolak (fail-closed) |
 | Variabel lingkungan baru (FR-27 & FR-26) | `ADMIN_TOKEN` | menjaga **dua** dasbor admin: `/api/admin/celah` dan `/api/admin/umpan-balik`. Tanpa ini keduanya menjawab **503 fail-closed** |
 | Variabel lingkungan opsional | `SAPA_SPLP_BASE_URL` | mengarahkan pengambilan data ke SPLP lain/stub; dibaca **saat runtime**, jadi cukup diset di proses (lihat §7a) |
+| Variabel lingkungan baru (FR-12) | `SAPA_SEMANTIK` (`hash`/`remote`/`off`), `SAPA_SEMANTIK_AMBANG`, `SAPA_SEMANTIK_AMBANG_KUAT`, `SAPA_SEMANTIK_SELISIH`, `SAPA_SEMANTIK_DIM` | lapis semantik menyala secara bawaan dengan penyedia `hash` (tanpa jaringan). `SAPA_SEMANTIK=off` untuk mematikan (pembanding A/B). Ambang bawaan 0,27 hasil kalibrasi korpus uji — setel bila korpus Anda berbeda |
+| Variabel lingkungan baru (FR-12, penyedia jarak jauh) | `SAPA_EMBED_BASE_URL`, `SAPA_EMBED_MODEL`, `SAPA_EMBED_API_KEY`, `SAPA_EMBED_TIMEOUT_MS` | mengaktifkan embedding kelas e5 (OpenAI-compatible). Bila gagal, sistem otomatis kembali ke `hash` dan mencatat alasannya di `/api/status` — jawaban tidak pernah gagal karena ini |
 | Penyimpanan | memori proses (tanpa Redis) atau Upstash | tanpa Redis, sirkuit & saklar hidup per-instance (tetap benar, hanya perlu belajar sekali) |
 
 ## 3. Tiga cara menerapkan
