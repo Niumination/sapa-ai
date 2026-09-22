@@ -27,7 +27,7 @@ menyentuh `main` sampai Anda sendiri memutuskan.
 |---|---|---|
 | Node.js | 20.20.2 (dipakai saat pengujian) | Node 20 EOL 30 Apr 2026 — jadwalkan naik versi |
 | Next.js | 16.2.10 | tidak ada perubahan dependensi di cabang ini |
-| Uji | 29 berkas / **379 uji** | `npm test` |
+| Uji | 29 berkas / **382 uji** | `npm test` |
 | Variabel lingkungan baru | `REVALIDATE_ALLOW_UNSIGNED` (opsional) | **`REVALIDATE_SECRET` kini wajib** agar penyegaran cache tidak tertolak (fail-closed) |
 | Variabel lingkungan baru (FR-27 & FR-26) | `ADMIN_TOKEN` | menjaga **dua** dasbor admin: `/api/admin/celah` dan `/api/admin/umpan-balik`. Tanpa ini keduanya menjawab **503 fail-closed** |
 | Variabel lingkungan opsional | `SAPA_SPLP_BASE_URL` | mengarahkan pengambilan data ke SPLP lain/stub; dibaca **saat runtime**, jadi cukup diset di proses (lihat §7a) |
@@ -66,7 +66,7 @@ selaras) lalu jalankan uji terima (§7).
 
 > **Terbukti pada 22 Sep 2026:** ketiga cara diuji pada klon bersih `main`. Cara B (`git am` seluruh seri)
 > dan Cara C (`git apply --3way 00-semua.patch`) sama-sama berhasil; hasil pohon **identik dengan cabang**
-> (kecuali folder `seri-patch/` yang memang hanya wadah patch), `npm run typecheck` bersih, dan **343 uji lulus**
+> (kecuali folder `seri-patch/` yang memang hanya wadah patch), `npm run typecheck` bersih, dan **382 uji lulus**
 > di pohon hasil patch. Cara C menyisakan perubahan tanpa komit — jalankan `git add -A && git commit` sesudahnya.
 
 > **Catatan tentang bit eksekusi:** komit `0003`/`0004` hanya memulihkan bit eksekusi
@@ -198,7 +198,7 @@ perlu disetel — **bukan** gerbangnya dilonggarkan.
 > Langkah:
 > 1. `git switch -c kerja/ai-tingkat-lanjut main`
 > 2. `git am 06-USULAN-KODE/seri-patch/[0-9][0-9][0-9][0-9]-*.patch`
-> 3. `npm ci && npm test` → wajib **343 uji lulus**; `npm run typecheck` → bersih.
+> 3. `npm ci && npm test` → wajib **382 uji lulus**; `npm run typecheck` → bersih.
 > 4. `bash verifikasi/uji-terima.sh` → wajib **LULUS**.
 > 5. Jalankan eval dua mode (lihat `11 §7`) → wajib **90/90** masing-masing, **0 regresi**.
 > 6. Bila ada konflik, jangan menimpa; laporkan berkas konflik beserta keputusan yang diambil.

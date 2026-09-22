@@ -194,7 +194,7 @@ karena kode, sebab jalur `off` tidak menyentuh lapis semantik sama sekali.
 | `verifikasi/uji-terima.sh` + `docs/…/uji-terima.sh` | gerbang **§6b FR-12**: aktif? salah tulis terjawab? luar katalog ditolak? + uji parafrase penuh di balik `SAPA_PARAFRASE_PENUH=1` |
 | `verifikasi/{eval-parafrase-baseline,eval-parafrase-hash,uji-terima-hasil}.txt` | bukti mentah angka di §6 |
 
-Jumlah uji: **29 berkas / 379 uji** (naik dari 343). `npm run typecheck` OK, `npx next build` OK.
+Jumlah uji: **29 berkas / 382 uji** (naik dari 343). `npm run typecheck` OK, `npx next build` OK.
 
 ---
 
