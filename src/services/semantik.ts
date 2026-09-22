@@ -928,7 +928,11 @@ export function retrieveDenganSemantik(
   const mentah = cariSemantik(indeks, query, opsi?.topK ?? 20);
   const diterima = saringKandidatSemantik(mentah);
   if (diterima.length === 0) {
-    return { hasil: [], jalur: 'kosong', sidikIndeks: indeks.sidik };
+    // FR-20: sertakan skor teratas yang DITOLAK. Tanpa itu, jawaban kosong pada
+    // jalur semantik tidak bisa dibedakan dari "katalog benar-benar tidak punya"
+    // — padahal dua keadaan itu menuntut perbaikan yang berbeda (turunkan ambang
+    // vs lengkapi katalog).
+    return { hasil: [], jalur: 'kosong', sidikIndeks: indeks.sidik, skorSemantik: mentah[0]?.skor };
   }
 
   // Fusi RRF dipakai nyata di sini: daftar leksikal (kosong pada kasus ini) dan

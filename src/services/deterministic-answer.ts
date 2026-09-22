@@ -12,6 +12,8 @@ import {
   getUniqueOpd,
   getSapaSummary,
   dataSourceLabel,
+  mintaRincianPerDesa,
+  granularitasTidakTersedia,
   type SapaRecord,
 } from '@/lib/sapa-client';
 import { retrieveDenganSemantik, metaSemantik } from '@/services/semantik';
@@ -63,6 +65,23 @@ export interface DeterministicResult {
    * data dan diverifikasi ulang setelah model selesai.
    */
   peringatan: string[];
+  /**
+   * FR-20: fakta-fakta yang dibutuhkan pengklasifikasi sebab. Sengaja fakta
+   * MENTAH (jalur, jumlah bukti, kata asing, skor makna tertinggal) — bukan tag
+   * sebab — supaya keputusan "ini gagal karena apa" berada di satu tempat
+   * (`sebab-kegagalan.ts`) dan tidak tersebar di banyak `return`.
+   */
+  diagnosa: FaktaRetrieval;
+}
+
+/** Fakta lapis retrieval untuk klasifikasi sebab (FR-20). */
+export interface FaktaRetrieval {
+  jalur: 'leksikal' | 'leksikal+sisipan' | 'semantik' | 'kosong' | 'meta' | 'sistem';
+  jumlahBukti: number;
+  konsepAsing: string[];
+  /** Skor makna teratas yang DITOLAK ambang (dananya jalur semantik kosong). */
+  skorSemantik?: number;
+  mintaPerDesa: boolean;
 }
 
 /**
@@ -201,6 +220,14 @@ export function buildMetaAnswer(
     aggregated: [],
     opds: [],
     peringatan: [],
+    // Dijawab dari METADATA katalog — jalurnya dilaporkan apa adanya supaya
+    // pengklasifikasi sebab (FR-20) tidak menyebutnya "kecocokan kata".
+    diagnosa: {
+      jalur: 'meta',
+      jumlahBukti: evidence.length,
+      konsepAsing: [],
+      mintaPerDesa: false,
+    },
     response: formatAngkaPresentasi({
       narasi,
       visualisasi: { tipe: 'none', konfigurasi: {} },
@@ -260,6 +287,12 @@ export function buildDeterministicAnswer(query: string, records: SapaRecord[]): 
       aggregated: aggregateByIndicator([]),
       opds: [],
       peringatan: [],
+      diagnosa: {
+        jalur: 'sistem',
+        jumlahBukti: 0,
+        konsepAsing: [],
+        mintaPerDesa: false,
+      },
       response: {
         narasi: NARASI_TOLAK_SISTEM,
         rekomendasi: [],
@@ -302,6 +335,15 @@ export function buildDeterministicAnswer(query: string, records: SapaRecord[]): 
       evidence: [],
       aggregated: [],
       opds: [],
+      diagnosa: {
+        jalur: 'kosong',
+        jumlahBukti: 0,
+        konsepAsing: asing,
+        skorSemantik: retrieval.skorSemantik,
+        // Sinyal presisi: bukan "kueri menyebut per desa", melainkan "penjaga
+        // granularitas memang menolak kueri ini pada korpus ini".
+        mintaPerDesa: granularitasTidakTersedia(records, query),
+      },
       peringatan: [
         `Tidak ada indikator di katalog SAPA yang cocok dengan pertanyaan "${query}".`,
       ],
@@ -397,5 +439,19 @@ export function buildDeterministicAnswer(query: string, records: SapaRecord[]): 
     timestamp: new Date().toISOString(),
   });
 
-  return { hits, evidence, aggregated, opds, response, peringatan: daftarPeringatan };
+  return {
+    hits,
+    evidence,
+    aggregated,
+    opds,
+    response,
+    peringatan: daftarPeringatan,
+    diagnosa: {
+      jalur: retrieval.jalur,
+      jumlahBukti: evidence.length,
+      konsepAsing: [],
+      skorSemantik: retrieval.skorSemantik,
+      mintaPerDesa: mintaRincianPerDesa(query),
+    },
+  };
 }

@@ -8,6 +8,7 @@
 // angka sendiri: narasi ber-token {{id}} diganti oleh kode dengan nilai evidence.
 
 import { buildDeterministicAnswer } from '@/services/deterministic-answer';
+import { klasifikasiSebab, type Diagnosa } from '@/services/sebab-kegagalan';
 import {
   isGrounded,
   isGroundedText,
@@ -95,6 +96,12 @@ export interface ComposeResult {
   response: HybridResponse;
   evidence: EvidenceItem[];
   ai: AiMeta;
+  /**
+   * FR-20: sebab jawaban ini — satu tag `lapis:rincian` + status menjawab/jujur.
+   * Selalu terisi, termasuk untuk jawaban yang BERHASIL (supaya dasbor bisa
+   * membandingkan "terjawab lewat makna" vs "terjawab lewat kata").
+   */
+  diagnosa: Diagnosa;
   /** Jumlah record yang cocok dengan retrieval (kompatibel dengan kontrak lama). */
   matched: number;
   aggregated: ReturnType<typeof buildDeterministicAnswer>['aggregated'];
@@ -267,6 +274,11 @@ export async function composeAnswer(opts: ComposeOptions): Promise<ComposeResult
       matched: 0,
       aggregated: [],
       opds: [],
+      diagnosa: klasifikasiSebab({
+        jumlahBukti: 0,
+        pagar: pagarNik ? 'nik' : 'per-orang',
+        ai: { used: false, grounded: 'skipped', limitedBy: 'guard' },
+      }),
     };
   }
 
@@ -282,6 +294,13 @@ export async function composeAnswer(opts: ComposeOptions): Promise<ComposeResult
     cached: false,
   };
 
+  /**
+   * Susun hasil akhir + sebabnya (FR-20).
+   *
+   * Sebab dihitung dari fakta yang SAMA untuk semua jalur keluar, sehingga
+   * jawaban yang di-cache, jawaban yang ditolak gerbang, dan jawaban murni
+   * deterministik tidak mungkin diberi tag yang berbeda untuk keadaan yang sama.
+   */
   const selengkap = (m: AiMeta, response: HybridResponse): ComposeResult => ({
     response,
     evidence: dasar.evidence,
@@ -289,6 +308,20 @@ export async function composeAnswer(opts: ComposeOptions): Promise<ComposeResult
     matched: dasar.hits.length,
     aggregated: dasar.aggregated,
     opds: dasar.opds,
+    diagnosa: klasifikasiSebab({
+      jalur: dasar.diagnosa.jalur,
+      jumlahBukti: dasar.evidence.length,
+      konsepAsing: dasar.diagnosa.konsepAsing,
+      skorSemantik: dasar.diagnosa.skorSemantik,
+      mintaPerDesa: dasar.diagnosa.mintaPerDesa,
+      pagar: dasar.diagnosa.jalur === 'sistem' ? 'sistem' : undefined,
+      ai: {
+        used: m.used,
+        grounded: m.grounded,
+        nilaiTambah: m.nilaiTambah,
+        limitedBy: m.limitedBy,
+      },
+    }),
   });
 
   // ─── Toggle admin (menang atas env) ───

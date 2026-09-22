@@ -5,7 +5,7 @@
 // memilih nilai terbesar.
 
 import { describe, it, expect } from 'vitest';
-import { retrieveRelevant, tokenizeQuery, konsepTidakDikenal, konsepTakTermuat, normalkanSingkatan } from '../sapa-client';
+import { retrieveRelevant, tokenizeQuery, konsepTidakDikenal, konsepTakTermuat, normalkanSingkatan, granularitasTidakTersedia } from '../sapa-client';
 import type { SapaRecord } from '../sapa-client';
 
 const KORPUS: SapaRecord[] = [
@@ -26,6 +26,47 @@ describe('retrieveRelevant — skor berbobot kelangkaan kata', () => {
 
   it('kata pengisi tidak mengosongkan hasil', () => {
     expect(retrieveRelevant(KORPUS, 'Berapa sih total penduduk miskin di tiap wilayah?').length).toBeGreaterThan(0);
+  });
+});
+
+// ─── Penjaga granularitas: satu sumber untuk penjaga & diagnostik (FR-20) ────
+// Bahaya nyata yang dicegah uji ini: penjaga di `retrieveRelevant` dan sinyal
+// diagnostik dihitung dengan aturan berbeda, sehingga jawaban kosong diberi tag
+// "granularitas" padahal yang menyala adalah penjaga lain — atau sebaliknya.
+describe('granularitasTidakTersedia — sepakat dengan perilaku retrieveRelevant', () => {
+  const KORPUS_DESA: SapaRecord[] = [
+    { id: 1, id_kode_indikator: 11, kode_indikator_kode_indikator: 'a', kode_indikator_nama_indikator: 'Jumlah Koperasi di Kecamatan Bebesen', id_opds: 1, opds_nama_opd: 'Dinas Koperasi dan UKM', jadwal_pemutakhiran: 'Tahunan', satuan: 'Unit', tahun: '2026', variabel: '159' },
+    { id: 2, id_kode_indikator: 12, kode_indikator_kode_indikator: 'b', kode_indikator_nama_indikator: 'Jumlah Data Penduduk di Kecamatan Bebesen', id_opds: 2, opds_nama_opd: 'Dinas Kependudukan', jadwal_pemutakhiran: 'Tahunan', satuan: 'Jiwa', tahun: '2026', variabel: '39000' },
+  ];
+
+  it('menyala: nama kecamatan ada, rincian per desa tidak ada ⇒ retrieval kosong', () => {
+    const q = 'Berapa jumlah keluarga per desa di Kecamatan Bebesen?';
+    expect(granularitasTidakTersedia(KORPUS_DESA, q)).toBe(true);
+    expect(retrieveRelevant(KORPUS_DESA, q)).toHaveLength(0);
+  });
+
+  it('padam bila katalog memuat gabungan nama kecamatan + kata desa', () => {
+    const korpus = [
+      ...KORPUS_DESA,
+      { id: 3, id_kode_indikator: 13, kode_indikator_kode_indikator: 'c', kode_indikator_nama_indikator: 'Jumlah Desa di Kecamatan Bebesen', id_opds: 3, opds_nama_opd: 'Dinas Pemberdayaan Masyarakat', jadwal_pemutakhiran: 'Tahunan', satuan: 'Desa', tahun: '2026', variabel: '18' },
+    ];
+    const q = 'Berapa jumlah desa per desa di Kecamatan Bebesen?';
+    expect(granularitasTidakTersedia(korpus, q)).toBe(false);
+    expect(retrieveRelevant(korpus, q).length).toBeGreaterThan(0);
+  });
+
+  it('padam bila kueri tidak meminta rincian per desa', () => {
+    expect(granularitasTidakTersedia(KORPUS_DESA, 'Jumlah koperasi di Kecamatan Bebesen')).toBe(false);
+  });
+
+  it('tetap menyala untuk nama tempat yang tidak ada di katalog (perilaku lama, sengaja tidak diubah)', () => {
+    // Kata generik "kecamatan" pun terhitung sebagai kandidat tempat selama df-nya
+    // kecil, jadi penjaga ini tetap menyala. Itu AMAN: hasilnya kosong, dan
+    // memang tidak ada data per desa. Yang memilih tag yang lebih menolong
+    // operator adalah pengklasifikasi FR-20 — ia mendahulukan "konsep asing"
+    // (memperbaiki kata kunci jauh lebih murah daripada menambah data per desa).
+    expect(granularitasTidakTersedia(KORPUS_DESA, 'Berapa jumlah keluarga per desa di Kecamatan Tanah Rencong?')).toBe(true);
+    expect(retrieveRelevant(KORPUS_DESA, 'Berapa jumlah keluarga per desa di Kecamatan Tanah Rencong?')).toHaveLength(0);
   });
 });
 

@@ -106,31 +106,41 @@ describe('POST /api/query — kesegaran data & sidik korpus', () => {
 
 // ─── FR-27: pencatatan celah pengetahuan ──────────────────────────────────────
 describe('tentukanSebabCelah — aturan sebab (satu sumber untuk JSON & streaming)', () => {
-  it('tanpa bukti ⇒ tanpa-bukti', () => {
-    expect(tentukanSebabCelah(0, undefined)).toBe('tanpa-bukti');
+  const gagal = (sebab: string, catatan?: string) => ({ sebab, catatan }) as never;
+
+  it('tanpa bukti ⇒ retrieval:tanpa-bukti (tag terperinci FR-20)', () => {
+    expect(tentukanSebabCelah(gagal('retrieval:tanpa-bukti'))).toBe('retrieval:tanpa-bukti');
   });
-  it('bukti ada tetapi jawaban AI ditolak gerbang ⇒ ai-ditolak', () => {
-    expect(tentukanSebabCelah(5, 'ditolak-grounding')).toBe('ai-ditolak');
-    expect(tentukanSebabCelah(3, 'ditolak-tidak-menambah')).toBe('ai-ditolak');
+
+  it('kata kunci tidak ada di katalog ⇒ retrieval:konsep-asing (dulu: tanpa-bukti)', () => {
+    expect(tentukanSebabCelah(gagal('retrieval:konsep-asing'))).toBe('retrieval:konsep-asing');
   });
+
+  it('bukti ada tetapi jawaban AI ditolak gerbang ⇒ generasi:* (dulu: ai-ditolak)', () => {
+    expect(tentukanSebabCelah(gagal('selesai:leksikal', 'generasi:grounding'))).toBe('generasi:grounding');
+    expect(tentukanSebabCelah(gagal('selesai:leksikal', 'generasi:nilai-tambah'))).toBe('generasi:nilai-tambah');
+  });
+
   it('jawaban normal TIDAK dicatat (hemat penyimpanan)', () => {
-    expect(tentukanSebabCelah(5, 'dipakai')).toBeNull();
-    expect(tentukanSebabCelah(5, 'dipakai-dengan-catatan')).toBeNull();
-    expect(tentukanSebabCelah(2, undefined)).toBeNull();
+    expect(tentukanSebabCelah(gagal('selesai:leksikal'))).toBeNull();
+    expect(tentukanSebabCelah(gagal('selesai:ai'))).toBeNull();
+    expect(tentukanSebabCelah(gagal('selesai:semantik'))).toBeNull();
   });
 });
 
 describe('catatCelahBilaPerlu', () => {
   it('mencatat ke penyimpanan saat tanpa bukti, dan menyanitasi teksnya', async () => {
-    await catatCelahBilaPerlu('berapa jumlah keluarga NIK 1171012304950003', 0, undefined);
+    await catatCelahBilaPerlu('berapa jumlah keluarga NIK 1171012304950003', {
+      sebab: 'retrieval:tanpa-bukti',
+    });
     const ringkas = await ambilCelah();
     expect(ringkas.item).toHaveLength(1);
     expect(ringkas.item[0].pertanyaan).not.toMatch(/\d/);
-    expect(ringkas.item[0].sebab).toBe('tanpa-bukti');
+    expect(ringkas.item[0].sebab).toBe('retrieval:tanpa-bukti');
   });
 
   it('tidak mencatat saat jawaban normal', async () => {
-    await catatCelahBilaPerlu('berapa jumlah ASN', 5, 'dipakai');
+    await catatCelahBilaPerlu('berapa jumlah ASN', { sebab: 'selesai:ai' });
     expect((await ambilCelah()).item).toHaveLength(0);
   });
 });

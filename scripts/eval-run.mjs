@@ -22,6 +22,11 @@
  *   0 = tidak ada regresi & tidak ada pelanggaran invarians
  *   1 = ada regresi (item yang dulu lulus kini gagal) atau pelanggaran invarians
  *
+ * FR-20 (22 Sep 2026): setiap item yang GAGAL wajib membawa tag sebab dari
+ * server (`diagnosa.sebab` = `lapis:rincian`). Item gagal tanpa tag = pelanggaran
+ * (keluar 1), karena kegagalan tanpa penjelasan tidak akan pernah diperbaiki.
+ * Ringkasan menampilkan sebaran sebab — "retrieval vs generasi" terlihat langsung.
+ *
  * Pakai:
  *   node scripts/eval-run.mjs                       # jalankan & bandingkan dgn baseline
  *   node scripts/eval-run.mjs --baseline            # tulis ulang baseline
@@ -327,6 +332,12 @@ for (const [idx, item] of items.entries()) {
 
   const n = nilaiItem(item, r);
   const baris = { id: item.id, grup: item.grup, harus: item.harus, lulus: n.lulus, cara: n.cara, inv: n.inv, nEvidence: n.nEvidence, top1Ok: n.top1Ok };
+  // FR-20: sebab dari server. Tidak direka ulang di sini — harness hanya membaca,
+  // supaya jalur JSON, streaming, dan dasbor seluruhnya memakai klasifikasi yang sama.
+  baris.diagnosa = r?.diagnosa?.sebab ?? null;
+  baris.diagnosaStatus = r?.diagnosa?.status ?? null;
+  baris.diagnosaLapis = r?.diagnosa?.lapis ?? null;
+  baris.diagnosaCatatan = r?.diagnosa?.catatan ?? null;
   if (r.ai && r.ai.used) {
     baris.ai = { grounded: r.ai.grounded, unknownTokens: r.ai.unknownTokens ?? 0, latencyMs: r.ai.latencyMs ?? null, shadow: Boolean(r.ai.shadow) };
   } else if (r.ai && r.ai.attempted) {
@@ -380,6 +391,36 @@ console.log(`Gagal            : ${gagal.length}`);
 console.log(`  · menyesatkan  : ${menyesatkan.length}  (menjawab dgn data yg bukan ditanyakan)`);
 console.log(`  · invarians    : ${invTotal.length}  (halu/token/jargon/sumber/NIK)`);
 console.log(`Jujur-kosong     : ${jujurKosong.length}  (mengaku tidak punya data)`);
+
+// ─── FR-20: sebab per item gagal ─────────────────────────────────────────────
+const tanpaSebab = gagal.filter((h) => !h.diagnosa);
+if (tanpaSebab.length) {
+  console.log(`\n⟪PELANGGARAN FR-20⟫ ${tanpaSebab.length} item gagal TANPA tag sebab: ${tanpaSebab.map((h) => h.id).join(', ')}`);
+  process.exitCode = 1;
+}
+if (gagal.length) {
+  const peta = new Map();
+  for (const h of gagal) {
+    const kunci = h.diagnosa ?? '(tanpa tag)';
+    if (!peta.has(kunci)) peta.set(kunci, []);
+    peta.get(kunci).push(h.id);
+  }
+  console.log(`\n──────── Sebab kegagalan (${gagal.length} item gagal) ────────`);
+  const urut = [...peta.entries()].sort((a, b) => b[1].length - a[1].length);
+  for (const [sebab, ids] of urut) {
+    const lapis = sebab.split(':')[0];
+    console.log(`  ${String(ids.length).padStart(2)}×  ${sebab.padEnd(34)} [${lapis}]  → ${ids.slice(0, 12).join(', ')}${ids.length > 12 ? ` (+${ids.length - 12})` : ''}`);
+  }
+  const lapisan = [...new Set([...peta.keys()].map((s) => s.split(':')[0]))];
+  console.log(`  lapis terlibat: ${lapisan.join(', ')}`);
+}
+
+// Sebab untuk item yang LULUS juga dilaporkan bila ada catatan generasi —
+// jawaban benar yang kehilangan nilai tambah model tetap layak terlihat.
+const bercatatan = hasil.filter((h) => h.diagnosaCatatan);
+if (bercatatan.length) {
+  console.log(`\n  catatan generasi pada jawaban yang lulus: ${bercatatan.map((h) => `${h.id}=${h.diagnosaCatatan}`).slice(0, 10).join(' ')}`);
+}
 console.log(`Peringkat-1 tepat: ${hasil.filter((h) => h.top1Ok).length}/${hasil.length}`);
 console.log(`Waktu            : ${((Date.now() - t0) / 1000).toFixed(0)}s, ${kirim} permintaan`);
 

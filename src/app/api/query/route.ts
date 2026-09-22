@@ -6,6 +6,7 @@ import { getClientIp, rateLimitHeaders, checkRateLimit } from '@/lib/rate-limit'
 import { sitasiBalasan } from '@/services/sitasi-per-klaim';
 import { tahunPadaBukti } from '@/services/grounding';
 import { catatCelah, type SebabCelah } from '@/lib/insight-celah';
+import { sebabUntukCelah, type Diagnosa } from '@/services/sebab-kegagalan';
 
 export const dynamic = 'force-dynamic';
 export const runtime = 'nodejs';
@@ -70,7 +71,7 @@ export async function POST(req: NextRequest) {
 
   // Catat bila pertanyaan ini tidak terlayani (FR-27). Hanya kasus gagal yang
   // menulis — pertanyaan yang berhasil tidak menyentuh penyimpanan sama sekali.
-  await catatCelahBilaPerlu(queryRaw, hasil.evidence.length, hasil.ai?.nilaiTambah);
+  await catatCelahBilaPerlu(queryRaw, hasil.diagnosa);
 
   return Response.json(
     {
@@ -90,6 +91,8 @@ export async function POST(req: NextRequest) {
       dataFetchedAt: meta.diambilPada,
       dataFingerprint: meta.sidik,
       dataYears: tahunPadaBukti(hasil.evidence),
+      // FR-20: sebab jawaban ini (satu tag `lapis:rincian` + status). Selalu ada.
+      diagnosa: hasil.diagnosa,
       // FR-19: sitasi per klaim. `narasiBersitasi` adalah narasi dengan penanda
       // [n]; `sitasi.tanpaSitasi` harus KOSONG — inilah yang diperiksa gerbang.
       ...sitasiBalasan(hasil.response.narasi, hasil.evidence),
@@ -118,20 +121,20 @@ export async function siapkanIndeksSemantik(records: Parameters<typeof indeksUnt
 /**
  * Penentu sebab celah (dipisah agar jalur JSON & streaming memakai aturan yang
  * sama persis, dan agar mudah diuji).
+ *
+ * FR-20 (22 Sep 2026): masukannya bukan lagi dua sinyal kasar (jumlah bukti +
+ * nilai tambah), melainkan DIAGNOSA jawaban yang sudah diklasifikasikan — satu
+ * tag `lapis:rincian`. Perubahan ini disengaja: dua sinyal kasar tidak mampu
+ * membedakan "kata kuncinya tidak ada di katalog" dari "datanya tidak ada",
+ * padahal perbaikan keduanya berbeda jauh.
  */
-export function tentukanSebabCelah(jumlahBukti: number, nilaiTambah?: string): SebabCelah | null {
-  if (jumlahBukti === 0) return 'tanpa-bukti';
-  if (nilaiTambah?.startsWith('ditolak')) return 'ai-ditolak';
-  return null;
+export function tentukanSebabCelah(diagnosa: Pick<Diagnosa, 'sebab' | 'catatan'>): SebabCelah | null {
+  return sebabUntukCelah({ ...diagnosa, lapis: 'retrieval', status: 'jujur-kosong', rincian: '', jumlahBukti: 0, konsepAsing: [] });
 }
 
 /** Catat celah tanpa pernah mengganggu jawaban (gagal senyap bila penyimpanan bermasalah). */
-export async function catatCelahBilaPerlu(
-  query: string,
-  jumlahBukti: number,
-  nilaiTambah?: string,
-): Promise<void> {
-  const sebab = tentukanSebabCelah(jumlahBukti, nilaiTambah);
+export async function catatCelahBilaPerlu(query: string, diagnosa: Pick<Diagnosa, 'sebab' | 'catatan'>): Promise<void> {
+  const sebab = tentukanSebabCelah(diagnosa);
   if (!sebab) return;
   await catatCelah(query, sebab).catch(() => {});
 }

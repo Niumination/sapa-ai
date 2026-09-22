@@ -334,6 +334,102 @@ else
   info "server $DET_URL tidak hidup — lompati FR-12"
 fi
 
+# ── 6c. Klasifikasi sebab kegagalan (FR-20) ─────────────────────────────────
+# Kriteria terima FR-20: SETIAP item gagal membawa tag sebab (retrieval vs
+# generasi). Pemeriksaan di sini tidak bergantung korpus:
+#   (1) setiap balasan punya blok `diagnosa` dengan tag yang dikenal;
+#   (2) jawaban kosong diberi sebab lapis retrieval/generasi/penyajian;
+#   (3) jawaban yang tersaji diberi sebab lapis selesai/masukan;
+#   (4) prosa `rincian` bebas angka (pelajaran FR-12);
+#   (5) jalur JSON dan streaming memberi sebab yang sama.
+if [ "$(hidup "$DET_URL")" = "200" ]; then
+  judul "6c. Klasifikasi sebab kegagalan (FR-20)"
+  tanya_det() {
+    curl -s -m 90 -X POST "$1/api/query" -H 'Content-Type: application/json' \
+      -d "{\"query\":\"$2\"}" 2>/dev/null || echo '{}'
+  }
+  # (1)+(2) Kueri di luar katalog: WAJIB punya sebab kegagalan, bukan tanpa keterangan.
+  luar=$(tanya_det "$DET_URL" 'berapa jumlah drone di kecamatan peusangan')
+  printf '%s' "$luar" > /tmp/ut-fr20-luar.json
+  if python3 -c "
+import json,sys
+d = json.load(open('/tmp/ut-fr20-luar.json'))
+g = d.get('diagnosa') or {}
+gagal = {'masukan:data-personal','masukan:permintaan-sistem','retrieval:tanpa-bukti',
+         'retrieval:konsep-asing','retrieval:granularitas-per-desa','retrieval:makna-lemah',
+         'generasi:grounding','generasi:nilai-tambah','generasi:penyedia','penyajian:dinonaktifkan'}
+sys.exit(0 if g.get('sebab') in gagal and g.get('lapis') in ('retrieval','generasi','penyajian','masukan') else 1)
+" 2>/dev/null; then
+    sebab_luar=$(python3 -c "import json;print((json.load(open('/tmp/ut-fr20-luar.json')).get('diagnosa') or {}).get('sebab'))" 2>/dev/null)
+    ok "kueri di luar katalog membawa sebab '${sebab_luar:-?}'"
+  else
+    no "kueri di luar katalog TIDAK membawa sebab kegagalan yang dikenal"
+  fi
+
+  # (3) Kueri yang terjawab: sebab lapis selesai/masukan (bukan tag kegagalan).
+  terjawab=$(tanya_det "$DET_URL" 'berapa jumlah penduduk kabupaten ini')
+  printf '%s' "$terjawab" > /tmp/ut-fr20-terjawab.json
+  if python3 -c "
+import json,sys
+d = json.load(open('/tmp/ut-fr20-terjawab.json'))
+g = d.get('diagnosa') or {}
+sys.exit(0 if g.get('sebab','').startswith(('selesai:','masukan:')) and g.get('status') == 'menjawab' else 1)
+" 2>/dev/null; then
+    sebab_terjawab=$(python3 -c "import json;print((json.load(open('/tmp/ut-fr20-terjawab.json')).get('diagnosa') or {}).get('sebab'))" 2>/dev/null)
+    ok "kueri terjawab diberi sebab '${sebab_terjawab:-?}'"
+  else
+    no "kueri terjawab TIDAK diberi sebab lapis selesai/masukan"
+  fi
+
+  # (4) Prosa rincian bebas angka — angka hanya boleh hidup di data terstruktur.
+  if python3 -c "
+import json,re,sys
+for f in ('/tmp/ut-fr20-luar.json','/tmp/ut-fr20-terjawab.json'):
+    g = (json.load(open(f)).get('diagnosa') or {})
+    r = g.get('rincian') or ''
+    if not r or re.search(r'[0-9]', r):
+        sys.exit(1)
+sys.exit(0)
+" 2>/dev/null; then ok "prosa sebab bebas angka"; else no "prosa sebab memuat angka"; fi
+
+  # (5) JSON ↔ streaming: sebab untuk pertanyaan yang sama harus identik.
+  alir=$(curl -s -m 90 -N -X POST "$DET_URL/api/query/stream" -H 'Content-Type: application/json' \
+    -d '{"query":"berapa jumlah drone di kecamatan peusangan"}' 2>/dev/null || echo '')
+  printf '%s' "$alir" > /tmp/ut-fr20-stream.txt
+  if grep -q '"diagnosa"' /tmp/ut-fr20-stream.txt && \
+     python3 -c "
+import json,re,sys
+teks = open('/tmp/ut-fr20-stream.txt', encoding='utf-8', errors='replace').read()
+cari = None
+for baris in teks.splitlines():
+    if not baris.startswith('data:'): continue
+    try: o = json.loads(baris[5:].strip())
+    except Exception: continue
+    if isinstance(o, dict) and isinstance(o.get('diagnosa'), dict): cari = o['diagnosa'].get('sebab'); break
+lawan = (json.load(open('/tmp/ut-fr20-luar.json')).get('diagnosa') or {}).get('sebab')
+sys.exit(0 if cari and cari == lawan else 1)
+" 2>/dev/null; then
+    ok "jalur streaming memberi sebab yang sama dengan jalur JSON"
+  else
+    no "jalur streaming TIDAK melaporkan sebab yang sama"
+  fi
+
+  # (6) Harness penanda penuh (butuh korpus uji untuk pemeriksaan granularitas).
+  if [ "${SAPA_SEBAB_PENUH:-0}" = "1" ]; then
+    info "menjalankan harness penanda sebab penuh…"
+    if SAPA_EVAL_URL="$DET_URL" SAPA_SEBAB_JEDA_MS="${SAPA_SEBAB_JEDA_MS:-0}" timeout 900 \
+        node scripts/uji-sebab.mjs > /tmp/ut-fr20-penanda.txt 2>&1; then
+      ok "harness penanda sebab: $(grep -oE 'lapis yang terbukti bekerja: .*' /tmp/ut-fr20-penanda.txt | tail -1)"
+    else
+      no "harness penanda sebab GAGAL — lihat /tmp/ut-fr20-penanda.txt"
+    fi
+  else
+    info "harness penanda sebab dilewati (set SAPA_SEBAB_PENUH=1 untuk menjalankannya)"
+  fi
+else
+  info "server $DET_URL tidak hidup — lompati FR-20"
+fi
+
 # ── 7. Evaluasi set 90 item ─────────────────────────────────────────────────
 jalankan_eval() {
   local url="$1" label="$2" keluaran="$3"

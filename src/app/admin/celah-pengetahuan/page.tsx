@@ -15,10 +15,13 @@ import { useCallback, useEffect, useState } from 'react';
  * atau ke berkas lingkungan klien.
  */
 
+import { labelSebab } from '@/services/sebab-kegagalan';
+
 interface Entri {
   pertanyaan: string;
   jumlah: number;
-  sebab: 'tanpa-bukti' | 'ai-ditolak';
+  /** Tag sebab `lapis:rincian` (FR-20). Nilai lama (pra-FR-20) tetap mungkin. */
+  sebab: string;
   terakhir: string;
 }
 
@@ -170,7 +173,7 @@ export default function CelahPengetahuanPage() {
                     <td className="px-3 py-2 text-[var(--text-body)]">{e.pertanyaan}</td>
                     <td className="px-3 py-2 font-bold text-[var(--brand)]">{e.jumlah}</td>
                     <td className="px-3 py-2 text-[var(--text-muted)]">
-                      {e.sebab === 'tanpa-bukti' ? 'tanpa bukti' : 'AI ditolak gerbang'}
+                      {labelSebab(e.sebab)}
                     </td>
                     <td className="px-3 py-2 text-[var(--text-muted)]">{new Date(e.terakhir).toLocaleString('id-ID')}</td>
                   </tr>

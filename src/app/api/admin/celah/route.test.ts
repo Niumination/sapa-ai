@@ -18,7 +18,7 @@ beforeEach(() => {
 
 describe('GET /api/admin/celah', () => {
   it('tanpa token ⇒ 401 dan tidak membocorkan daftar', async () => {
-    await catatCelah('berapa jumlah keluarga per desa', 'tanpa-bukti');
+    await catatCelah('berapa jumlah keluarga per desa', 'retrieval:tanpa-bukti');
     const res = await GET(req());
     expect(res.status).toBe(401);
     const body = await res.json();
@@ -39,15 +39,15 @@ describe('GET /api/admin/celah', () => {
   });
 
   it('token benar ⇒ daftar celah minggu berjalan', async () => {
-    await catatCelah('berapa jumlah keluarga per desa', 'tanpa-bukti');
-    await catatCelah('berapa jumlah keluarga per desa', 'tanpa-bukti');
+    await catatCelah('berapa jumlah keluarga per desa', 'retrieval:tanpa-bukti');
+    await catatCelah('berapa jumlah keluarga per desa', 'retrieval:tanpa-bukti');
     const res = await GET(req('rahasia-uji'));
     expect(res.status).toBe(200);
     const body = await res.json();
     expect(body.status).toBe('ok');
     expect(body.total).toBe(2);
     expect(body.item[0].pertanyaan).toBe('berapa jumlah keluarga per desa');
-    expect(body.item[0].sebab).toBe('tanpa-bukti');
+    expect(body.item[0].sebab).toBe('retrieval:tanpa-bukti');
     expect(Array.isArray(body.pilihanMinggu)).toBe(true);
   });
 
@@ -58,7 +58,7 @@ describe('GET /api/admin/celah', () => {
   });
 
   it('balasan tidak memuat identitas apa pun — hanya pertanyaan bersih, jumlah, sebab, waktu', async () => {
-    await catatCelah('NIK 1171012304950003 keluarga', 'tanpa-bukti');
+    await catatCelah('NIK 1171012304950003 keluarga', 'retrieval:tanpa-bukti');
     const body = await (await GET(req('rahasia-uji'))).json();
     const kunci = Object.keys(body.item[0] ?? {});
     expect(kunci.sort()).toEqual(['jumlah', 'pertanyaan', 'sebab', 'terakhir']);

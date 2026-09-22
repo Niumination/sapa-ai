@@ -71,7 +71,7 @@ export async function POST(req: NextRequest) {
 
         // Celah pengetahuan (FR-27) — jalur inilah yang dipakai halaman utama,
         // jadi pencatatan harus ada di sini juga, bukan hanya di jalur JSON.
-        await catatCelahBilaPerlu(queryRaw, hasil.evidence.length, hasil.ai?.nilaiTambah);
+        await catatCelahBilaPerlu(queryRaw, hasil.diagnosa);
 
         kirim('result', {
           ...hasil.response,
@@ -90,6 +90,8 @@ export async function POST(req: NextRequest) {
           dataYears: tahunPadaBukti(hasil.evidence),
           // FR-19: sitasi per klaim — aturan yang sama dengan jalur JSON.
           ...sitasiBalasan(hasil.response.narasi, hasil.evidence),
+          // FR-20: sebab jawaban — kontrak sama dengan jalur JSON.
+          diagnosa: hasil.diagnosa,
         });
       } catch (e) {
         kirim('error', { error: e instanceof Error ? e.message : 'Gagal memproses query' });

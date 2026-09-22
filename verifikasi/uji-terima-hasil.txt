@@ -1,9 +1,15 @@
 
+[1m── 1. Statis (typecheck · uji unit · build) ──[0m
+  [32m✓[0m typecheck lolos
+  [32m✓[0m uji unit: 30 berkas / 419 uji lulus (ambang 230)
+  [32m✓[0m pagar grounding ada (INV-01)
+  [32m✓[0m penjaga permintaan sistem ada (SEC-02)
+
 [1m── 2. Pagar /api/revalidate (SEC-01) ──[0m
   [32m✓[0m revalidate menolak permintaan tanpa rahasia (HTTP 503, fail-closed)
 
 [1m── 3. Kesegaran data & sidik korpus (FR-25) ──[0m
-  [32m✓[0m waktu tarik data dilaporkan (2026-09-22T14:20:26.482Z)
+  [32m✓[0m waktu tarik data dilaporkan (2026-09-22T14:52:19.035Z)
   [32m✓[0m sidik korpus dilaporkan (0ffceb0e)
   [32m✓[0m daftar tahun data disertakan (dataYears)
   [32m✓[0m sidik konsisten antara jalur JSON & streaming
@@ -34,6 +40,14 @@
   [32m✓[0m kueri di luar katalog ditolak (0 bukti)
   · menjalankan uji parafrase penuh (20 + 5 negatif)…
   [32m✓[0m uji parafrase: recall@15 = 20/20 = 100%
+
+[1m── 6c. Klasifikasi sebab kegagalan (FR-20) ──[0m
+  [32m✓[0m kueri di luar katalog membawa sebab 'retrieval:konsep-asing'
+  [32m✓[0m kueri terjawab diberi sebab 'selesai:leksikal+sisipan'
+  [32m✓[0m prosa sebab bebas angka
+  [32m✓[0m jalur streaming memberi sebab yang sama dengan jalur JSON
+  · menjalankan harness penanda sebab penuh…
+  [32m✓[0m harness penanda sebab: lapis yang terbukti bekerja: retrieval, masukan, selesai
 
 [1m── 7. Evaluasi — DILEWATI (SAPA_SKIP_EVAL=1) ──[0m
 

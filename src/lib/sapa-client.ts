@@ -509,6 +509,70 @@ export function scoreRecord(record: SapaRecord, groups: MatchGroup[], bobot?: nu
 }
 
 /**
+ * Inti penjaga granularitas — dipisah supaya bisa dipanggil dari DUA tempat
+ * dengan LOGIKA YANG SAMA PERSIS:
+ *   (a) penjaga di `retrieveRelevant` (memakai bahan yang sudah dihitungnya);
+ *   (b) diagnostik FR-20 lewat `granularitasTidakTersedia` (menghitung sendiri).
+ *
+ * Tanpa pemisahan ini, pengklasifikasi sebab hanya bisa MENEBAK dari teks
+ * kueri — dan tebakan itu salah: katalog uji ternyata memuat record yang
+ * menggabungkan "desa" dengan nama kecamatan, sehingga pertanyaan "per desa"
+ * dijawab sah, bukan ditolak. Terukur pada uji penerimaan 22 Sep 2026.
+ */
+function granularitasDitolak(
+  groups: MatchGroup[],
+  df: number[],
+  kataRecord: Array<{ ind: Set<string>; opd: Set<string> }>,
+  records: SapaRecord[],
+  memuat: (g: MatchGroup, k: { ind: Set<string>; opd: Set<string> }) => boolean,
+): boolean {
+  // Untuk aturan ini ambang entitasnya dilonggarkan ke 6: nama kecamatan
+  // ("Bebesen", df=4) memang lebih umum daripada akronim langka seperti IPM.
+  const namaTempat = groups
+    .map((g, i) => ({ g, d: df[i] }))
+    .filter((x) => x.d > 0 && x.d <= 6 && x.g.token.length >= 4 && !KATA_MAKSUD.has(x.g.token))
+    .map((x) => x.g);
+  const unitDesa = groups.find((g) => /^(?:desa|kelurahan|kampung|gampong)/.test(g.token));
+  if (namaTempat.length === 0 || !unitDesa) return false;
+  const adaGabungan = records.some((_, i) => {
+    const k = kataRecord[i];
+    return memuat(unitDesa, k) && namaTempat.some((g) => memuat(g, k));
+  });
+  return !adaGabungan;
+}
+
+/** Versi mandiri untuk diagnostik: "apakah pertanyaan ini ditolak penjaga granularitas?" */
+export function granularitasTidakTersedia(records: SapaRecord[], query: string): boolean {
+  if (!mintaRincianPerDesa(query)) return false;
+  const groups = buildMatchGroups(tokenizeQuery(query));
+  if (groups.length === 0) return false;
+  const kataRecord = records.map((r) => ({
+    ind: stemSet(r.kode_indikator_nama_indikator),
+    opd: stemSet(r.opds_nama_opd),
+  }));
+  const df = groups.map(
+    (g) => kataRecord.filter((k) => g.alternatives.some((alt) => alternativeHit(alt, k.ind) || alternativeHit(alt, k.opd))).length,
+  );
+  const memuat = (g: MatchGroup, k: { ind: Set<string>; opd: Set<string> }) =>
+    g.alternatives.some((alt) => alternativeHit(alt, k.ind) || alternativeHit(alt, k.opd));
+  return granularitasDitolak(groups, df, kataRecord, records, memuat);
+}
+
+/**
+ * Apakah pertanyaan meminta rincian PER DESA/kelurahan/gampong?
+ *
+ * Dipakai dua tempat dan sengaja satu sumber: (a) penjaga granularitas di
+ * `retrieveRelevant` — katalog SAPA berhenti di tingkat kecamatan, jadi bila
+ * tidak ada satu pun record yang menggabungkan nama kecamatan dengan kata
+ * "desa", menjawabnya dengan data lain di kecamatan itu = menyesatkan;
+ * (b) pengklasifikasi sebab FR-20 — supaya jawaban kosong untuk kasus ini
+ * diberi tag `retrieval:granularitas-per-desa`, bukan tag umum.
+ */
+export function mintaRincianPerDesa(query: string): boolean {
+  return /\b(?:per|tiap|masing-masing)\s+(?:desa|kelurahan|kampung|gampong)\b/i.test(query);
+}
+
+/**
  * Ambil record relevan: minimal satu grup cocok di nama indikator.
  * Inilah gerbang kepercayaan retrieval — tanpa satu pun kata query yang cocok
  * di NAMA INDIKATOR, sistem lebih baik menjawab "tidak ditemukan" daripada
@@ -669,23 +733,7 @@ export function retrieveRelevant(records: SapaRecord[], query: string, cap = 80)
   // (UMKM, koperasi, jalan) — menjawabnya dengan itu = menyesatkan. Terukur:
   // item eval D5 ("persebaran jumlah keluarga per desa di Kecamatan Bebesen")
   // semula dijawab data kader KB / UMKM.
-  const mintaRincianDesa = /\b(?:per|tiap|masing-masing)\s+(?:desa|kelurahan|kampung|gampong)\b/i.test(query);
-  if (mintaRincianDesa) {
-    // Untuk aturan ini ambang entitasnya dilonggarkan ke 6: nama kecamatan
-    // ("Bebesen", df=4) memang lebih umum daripada akronim langka seperti IPM.
-    const namaTempat = groups
-      .map((g, i) => ({ g, d: df[i] }))
-      .filter((x) => x.d > 0 && x.d <= 6 && x.g.token.length >= 4 && !KATA_MAKSUD.has(x.g.token))
-      .map((x) => x.g);
-    const unitDesa = groups.find((g) => /^(?:desa|kelurahan|kampung|gampong)/.test(g.token));
-    if (namaTempat.length > 0 && unitDesa) {
-      const adaGabungan = records.some((r, i) => {
-        const k = kataRecord[i];
-        return memuat(unitDesa, k) && namaTempat.some((g) => memuat(g, k));
-      });
-      if (!adaGabungan) return [];
-    }
-  }
+  if (mintaRincianPerDesa(query) && granularitasDitolak(groups, df, kataRecord, records, memuat)) return [];
 
   // Penjaga kejujuran (reviu 2026-09-04). Bila pertanyaan menyinggung konsep
   // yang TIDAK PERNAH tercatat di SAPA (df = 0), sedangkan kandidat terbaik

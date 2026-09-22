@@ -24,9 +24,19 @@
 // menulis apa pun — jadi biaya penyimpanan sebanding dengan keluhan, bukan trafik.
 
 import { cacheGet, cacheSet, activeBackend, type StoreBackend } from '@/lib/store';
+import type { SebabGagal } from '@/services/sebab-kegagalan';
 
-/** Sebab sebuah pertanyaan dicatat sebagai celah. */
-export type SebabCelah = 'tanpa-bukti' | 'ai-ditolak';
+/**
+ * Sebab sebuah pertanyaan dicatat sebagai celah.
+ *
+ * FR-20 (22 Sep 2026): nilai sebab menjadi lebih terperinci — `tanpa-bukti` kini
+ * dipecah (`retrieval:tanpa-bukti`, `retrieval:konsep-asing`,
+ * `retrieval:granularitas-per-desa`, `retrieval:makna-lemah`) dan `ai-ditolak`
+ * dipisah (`generasi:grounding`, `generasi:nilai-tambah`, `generasi:penyedia`),
+ * ditambah sebab lapis masukan. Nilai LAMA tetap dikenali saat dibaca
+ * (`labelSebab` menangani keduanya), jadi data tersimpan tidak kehilangan makna.
+ */
+export type SebabCelah = SebabGagal;
 
 export interface EntriCelah {
   /** Pertanyaan yang sudah dibersihkan (tanpa angka/identitas). */
