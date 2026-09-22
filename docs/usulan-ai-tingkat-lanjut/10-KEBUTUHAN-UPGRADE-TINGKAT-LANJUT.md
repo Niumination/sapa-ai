@@ -151,9 +151,9 @@ Format: **Kode · Kebutuhan · Alasan/bukti · Kriteria terima (terukur) · Usah
 
 | Kode | Kebutuhan | Alasan / bukti | Kriteria terima | Usaha | Status |
 |---|---|---|---|---|---|
-| **FR-25** | **Tahun data & tanggal pengambilan SPLP** tampil pada setiap jawaban | kesegaran data adalah pertanyaan pertama pejabat | 100% jawaban menampilkan keduanya | S | 🟡 (tahun sudah; tanggal pengambilan belum) |
+| **FR-25** | **Tahun data, tanggal pengambilan SPLP, & sidik isi korpus** tampil pada setiap jawaban | kesegaran data adalah pertanyaan pertama pejabat | 100% jawaban menampilkan ketiganya | S | ✅ (`dataFetchedAt`+`dataFingerprint`+`dataYears` pada jalur JSON & streaming; gerbang otomatis di `uji-terima.sh` §3; bukti `verifikasi/uji-terima-hasil.txt`) |
 | **FR-26** | **Notis transparansi AI + kanal koreksi** ("lapor angka") | kepercayaan publik; wajib untuk layanan berbasis AI | teks tampil; umpan balik tercatat di penyimpanan | S | ⬜ |
-| **FR-27** | **Dasbor celah pengetahuan** (pertanyaan tanpa bukti & penolakan AI per minggu) | dari keluhan menjadi backlog sinonim & item evaluasi | 20 pertanyaan teratas tersedia tiap minggu | M | ⬜ |
+| **FR-27** | **Dasbor celah pengetahuan** (pertanyaan tanpa bukti & penolakan AI per minggu) | dari keluhan menjadi backlog sinonim & item evaluasi | 20 pertanyaan teratas tersedia tiap minggu | M | ✅ (`/api/admin/celah` + halaman `/admin/celah-pengetahuan`; 100 teratas, 8 minggu terakhir; digit/surel/tautan/nomor telepon dibuang sebelum disimpan — gerbang otomatis + pagar privasi di `uji-terima.sh` §4) |
 
 ---
 
@@ -266,7 +266,7 @@ FR-18 di [5]/[10]; FR-25/26 di [10]/[11]; NFR-07 & FR-27 di [11].
 | **C — Mutu tertutup** | FR-19 jawaban per-klaim · FR-20 klasifikasi sebab · FR-24 pemeriksa pasangan entitas · FR-23 pembersihan masukan · NFR-07 telemetri `gen_ai.*` · OPS-04 notifikasi | 0 klaim tanpa rujukan pada 50 sampel; tiap kegagalan bertag sebab | 4–6 minggu |
 | **D — Tata kelola & pengalaman** | FR-25 tahun data & stempel · FR-26 notis transparansi + kanal koreksi · FR-27 dasbor celah pengetahuan · NFR-09 aksesibilitas · OPS-03 penyegaran terjadwal · CMP-02/03/04 | notis tampil; ≥ 50 umpan balik/bulan; WCAG 2.2 AA | 3–4 minggu |
 
-**Urutan yang disarankan bila sumber daya terbatas:** FR-25 → FR-27 → FR-19 → FR-12.
+**Urutan yang disarankan bila sumber daya terbatas:** ~~FR-25 → FR-27~~ (selesai 22 Sep 2026) → FR-19 → FR-12.
 Alasannya: dua yang pertama langsung terlihat pengguna dan murah; FR-19 menaikkan kepercayaan
 paling tinggi per satuan usaha; FR-12 paling mahal tetapi paling besar lompatan mutunya.
 
@@ -367,5 +367,7 @@ Sebuah pekerjaan dianggap **selesai** hanya bila **semuanya** terpenuhi:
 | `verifikasi/uji-terima-hasil.txt` | keluaran uji terima otomatis dua mode |
 | `verifikasi/banding-G.txt` | A/B AI vs deterministik: 4,50 vs 3,00 sitasi |
 | `verifikasi/aman-cabang-perilaku.txt` | produksi vs cabang: 13/16 identik, 11,4 dtk → 0,56 dtk |
-| `06-USULAN-KODE/seri-patch/` | 7 patch + satu paket `00-semua.patch` |
+| `06-USULAN-KODE/seri-patch/` | 9 patch (`0001`…`0009`) + satu paket `00-semua.patch` — teruji `git am` pada klon bersih `main`, hasil pohon identik dengan cabang |
+| `verifikasi/stub-splp.mjs` | penyedia SPLP tiruan untuk uji luring (pasangan `SAPA_SPLP_BASE_URL`) |
+| `12-LAPORAN-FR-25-FR-27.md` | laporan bukti penambahan cap kesegaran data & dasbor celah (289 uji, gerbang baru, seri patch teruji di klon bersih) |
 | `06-USULAN-KODE/uji-terima.sh` | skrip uji terima (dipakai hermes agent/pengembang) |

@@ -12,8 +12,8 @@ menyentuh `main` sampai Anda sendiri memutuskan.
 
 | Aset | Letak | Isi |
 |---|---|---|
-| **Cabang utuh** | `usulan/perbaikan-ai-2026-09-21` @ `b64231d` | 7 komit, 0 divergensi dari `main` (fast-forward) |
-| **Seri patch** | `06-USULAN-KODE/seri-patch/` | `0001`…`0007` (urutan wajib) + `00-semua.patch` (paket tunggal) |
+| **Cabang utuh** | `usulan/perbaikan-ai-2026-09-21` @ `03313a1` | 9 komit kode + 1 komit dokumen, 0 divergensi dari `main` (fast-forward) |
+| **Seri patch** | `06-USULAN-KODE/seri-patch/` | `0001`…`0010` (urutan wajib; `0008` & `0010` = dokumen) + `00-semua.patch` (paket tunggal) |
 | **Skrip uji terima** | `06-USULAN-KODE/uji-terima.sh` | memutuskan LULUS/GAGAL sesuai ambang dokumen `10` |
 | **Alat pengukuran** | `verifikasi/mock-llm.mjs`, `verifikasi/banding-ai-vs-det.py`, `verifikasi/banding-main-vs-branch.py` | penyedia model tiruan + dua harness pembanding |
 | **Bukti angka** | `verifikasi/eval90-*.txt`, `banding-G.txt`, `aman-cabang-perilaku.txt`, `uji-terima-hasil.txt` | semua hasil yang diklaim di dokumen `10` |
@@ -26,8 +26,10 @@ menyentuh `main` sampai Anda sendiri memutuskan.
 |---|---|---|
 | Node.js | 20.20.2 (dipakai saat pengujian) | Node 20 EOL 30 Apr 2026 — jadwalkan naik versi |
 | Next.js | 16.2.10 | tidak ada perubahan dependensi di cabang ini |
-| Uji | 20 berkas / **237 uji** | `npm test` |
+| Uji | 24 berkas / **289 uji** | `npm test` |
 | Variabel lingkungan baru | `REVALIDATE_ALLOW_UNSIGNED` (opsional) | **`REVALIDATE_SECRET` kini wajib** agar penyegaran cache tidak tertolak (fail-closed) |
+| Variabel lingkungan baru (FR-27) | `ADMIN_TOKEN` | tanpa ini, `/api/admin/celah` menjawab **503 fail-closed** (aman, tetapi dasbor celah tidak dapat dibuka) |
+| Variabel lingkungan opsional | `SAPA_SPLP_BASE_URL` | mengarahkan pengambilan data ke SPLP lain/stub; dibaca **saat runtime**, jadi cukup diset di proses (lihat §7a) |
 | Penyimpanan | memori proses (tanpa Redis) atau Upstash | tanpa Redis, sirkuit & saklar hidup per-instance (tetap benar, hanya perlu belajar sekali) |
 
 ## 3. Tiga cara menerapkan
@@ -44,8 +46,8 @@ git switch -c kerja/ai-tingkat-lanjut origin/usulan/perbaikan-ai-2026-09-21
 ```bash
 git switch -c kerja/ai-tingkat-lanjut main
 git am 06-USULAN-KODE/seri-patch/0001-*.patch
-# … ulangi 0002 … 0007 (urutan wajib) — atau sekaligus:
-git am 06-USULAN-KODE/seri-patch/000[1-7]-*.patch
+# … ulangi 0002 … 0010 (urutan wajib) — atau sekaligus:
+git am 06-USULAN-KODE/seri-patch/000[1-9]-*.patch 06-USULAN-KODE/seri-patch/0010-*.patch
 ```
 
 **Cara C — paket tunggal (paling cepat, riwayat menjadi satu komit):**
@@ -58,6 +60,11 @@ git add -A && git commit -m "AI tingkat lanjut: gelombang 1-3 (set 90 item)"
 
 Setelah salah satu cara: `npm ci` (walaupun dependensi tidak berubah, ini memastikan `node_modules`
 selaras) lalu jalankan uji terima (§7).
+
+> **Terbukti pada 22 Sep 2026:** ketiga cara diuji pada klon bersih `main`. Cara B (`git am` seluruh seri)
+> dan Cara C (`git apply --3way 00-semua.patch`) sama-sama berhasil; hasil pohon **identik dengan cabang**
+> (kecuali folder `seri-patch/` yang memang hanya wadah patch), `npm run typecheck` bersih, dan **289 uji lulus**
+> di pohon hasil patch. Cara C menyisakan perubahan tanpa komit — jalankan `git add -A && git commit` sesudahnya.
 
 > **Catatan tentang bit eksekusi:** komit `0003`/`0004` hanya memulihkan bit eksekusi
 > `.githooks/pre-commit` & `scripts/pii-gate.sh` yang hilang saat pemindahan berkas. Bila Anda
@@ -97,6 +104,11 @@ selaras) lalu jalankan uji terima (§7).
 
 ## 7. Menguji di lokal (tanpa biaya, tanpa langganan)
 
+> Sejak 22 Sep 2026, `uji-terima.sh` juga memeriksa dua butir murah yang sudah selesai: **FR-25**
+> (waktu tarik, sidik korpus, tahun data, konsistensi jalur JSON↔streaming, kesamaan versi korpus
+> antar-mode) dan **FR-27** (endpoint celah fail-closed + pagar privasi). Untuk memeriksa daftar celah,
+> sertakan `ADMIN_TOKEN` — tanpa itu pemeriksaan itu dilewati, bukan gagal.
+
 ```bash
 # 1) Penyedia model tiruan (menjawab gaya model nyata, mencatat tiap panggilan)
 node verifikasi/mock-llm.mjs 8899 &
@@ -117,6 +129,29 @@ AI_URL=http://127.0.0.1:3116 DET_URL=http://127.0.0.1:3117 bash verifikasi/uji-t
 Hasil yang diharapkan pada cabang ini (terukur 22 Sep 2026): eval **90/90** dua mode ·
 grounded pass **100%** · fallback **0%** · invarians **0** · uji unit **237** ·
 A/B sitasi **4,50 vs 3,00** · pertanyaan ber-bukti saat penyedia mati **0,14–0,56 dtk**.
+
+## 7a. Menguji tanpa internet (stub SPLP) — berguna untuk agen lokal & CI
+
+Aplikasi menarik data dari `api-splp.layanan.go.id`. Bila jaringan sandbox/CI tidak boleh keluar,
+seluruh pengujian (termasuk evaluasi 90 item dan uji terima) menjadi buntu. Solusinya dua berkas:
+
+```bash
+# 1. penyedia SPLP tiruan — balasannya berformat sama dengan SPLP asli
+node verifikasi/stub-splp.mjs 9911                      # korpus bawaan 10 record
+node verifikasi/stub-splp.mjs 9911 /path/korpus.json    # atau korpus Anda sendiri
+
+# 2. arahkan aplikasi ke stub itu (dibaca saat runtime, tidak perlu build ulang)
+SAPA_SPLP_BASE_URL=http://127.0.0.1:9911/sapa/1.0/api npm run dev
+# lalu, di terminal lain:
+AI_URL=http://127.0.0.1:3000 ADMIN_TOKEN=rahasia-uji bash verifikasi/uji-terima.sh
+```
+
+> **Jebakan yang sudah ditemui (jangan diulang):** bila alamat SPLP dibaca lewat `process.env.X` biasa,
+> bundler Next **menanam nilainya saat BUILD** sehingga variabel yang diset saat `next start` diabaikan —
+> aplikasi tetap menghubungi SPLP produksi dan gagal di jaringan tertutup. Karena itu `sapa-client.ts`
+> memakai akses `process.env['SAPA_SPLP_BASE_URL']` (dinamis) dan membacanya per panggilan.
+> **Catatan evaluasi:** evaluasi 90 item hanya bermakna bila korpus stubnya lengkap; angka 90/90 yang
+> tercatat di `verifikasi/eval90-*.txt` dihasilkan dari data SPLP sungguhan.
 
 ## 8. Memvalidasi dengan model sungguhan (setelah langganan aktif)
 
@@ -154,11 +189,11 @@ perlu disetel — **bukan** gerbangnya dilonggarkan.
 ## 11. Instruksi siap-tempel untuk agen di repo lokal
 
 > **Tugas:** menerapkan versi "AI tingkat lanjut" pada repo ini tanpa menyentuh `main`.
-> Sumber: cabang/seri patch dari Arena (`06-USULAN-KODE/seri-patch/`, 7 patch, urut).
+> Sumber: cabang/seri patch dari Arena (`06-USULAN-KODE/seri-patch/`, 10 patch, urut).
 > Langkah:
 > 1. `git switch -c kerja/ai-tingkat-lanjut main`
-> 2. `git am 06-USULAN-KODE/seri-patch/000[1-7]-*.patch`
-> 3. `npm ci && npm test` → wajib **237 uji lulus**; `npm run typecheck` → bersih.
+> 2. `git am 06-USULAN-KODE/seri-patch/000[1-9]-*.patch 06-USULAN-KODE/seri-patch/0010-*.patch`
+> 3. `npm ci && npm test` → wajib **289 uji lulus**; `npm run typecheck` → bersih.
 > 4. `bash verifikasi/uji-terima.sh` → wajib **LULUS**.
 > 5. Jalankan eval dua mode (lihat `11 §7`) → wajib **90/90** masing-masing, **0 regresi**.
 > 6. Bila ada konflik, jangan menimpa; laporkan berkas konflik beserta keputusan yang diambil.
