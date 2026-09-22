@@ -12,11 +12,11 @@ menyentuh `main` sampai Anda sendiri memutuskan.
 
 | Aset | Letak | Isi |
 |---|---|---|
-| **Cabang utuh** | `usulan/perbaikan-ai-2026-09-21` @ `e7258ca` (komit kode FR-12 terakhir) | 0 divergensi dari `main` (fast-forward); seri patch memuat seluruh komit kode & dokumen, sedangkan folder `seri-patch/` sendiri sengaja tidak ikut dipatch (isinya memang wadah patch) |
+| **Cabang utuh** | `usulan/perbaikan-ai-2026-09-21` @ `b34cf94` (komit kode FR-20 terakhir) | 0 divergensi dari `main` (fast-forward); seri patch memuat seluruh komit kode & dokumen, sedangkan folder `seri-patch/` sendiri sengaja tidak ikut dipatch (isinya memang wadah patch) |
 | **Seri patch** | `06-USULAN-KODE/seri-patch/` | **seluruh** berkas `NNNN-*.patch` di folder itu, dijalankan **urut angka** (jangan melompat), ditambah `00-semua.patch` sebagai paket tunggal. Komit dokumen dikenali dari judulnya (`Dokumen: …`). Karena setiap ekspor mengecualikan folder ini, `git am` atas semua berkas `NNNN-*.patch` menghasilkan pohon yang **sama persis** dengan ujung cabang |
 | **Skrip uji terima** | `06-USULAN-KODE/uji-terima.sh` | memutuskan LULUS/GAGAL sesuai ambang dokumen `10` |
-| **Alat pengukuran** | `verifikasi/mock-llm.mjs`, `verifikasi/stub-splp.mjs`, `verifikasi/banding-ai-vs-det.py`, `verifikasi/banding-main-vs-branch.py`, `scripts/uji-sitasi.mjs`, `scripts/uji-parafrase.mjs`, `scripts/buat-korpus-uji.mjs` | penyedia model & SPLP tiruan + harness pembanding + uji 50 sampel sitasi (FR-19) + uji parafrase EV-05 (FR-12) & pembangkit korpus uji 1.210 record |
-| **Bukti angka** | `verifikasi/eval90-*.txt`, `banding-G.txt`, `aman-cabang-perilaku.txt`, `uji-terima-hasil.txt`, `eval-parafrase-baseline.txt`, `eval-parafrase-hash.txt` | semua hasil yang diklaim di dokumen `10` (termasuk A/B lapis semantik FR-12) |
+| **Alat pengukuran** | `verifikasi/mock-llm.mjs`, `verifikasi/stub-splp.mjs`, `verifikasi/banding-ai-vs-det.py`, `verifikasi/banding-main-vs-branch.py`, `scripts/uji-sitasi.mjs`, `scripts/uji-parafrase.mjs`, `scripts/uji-sebab.mjs`, `scripts/buat-korpus-uji.mjs` | penyedia model & SPLP tiruan + harness pembanding + uji 50 sampel sitasi (FR-19) + uji parafrase EV-05 (FR-12) + uji penanda sebab EV-20 (FR-20) & pembangkit korpus uji 1.210 record |
+| **Bukti angka** | `verifikasi/eval90-*.txt`, `banding-G.txt`, `aman-cabang-perilaku.txt`, `uji-terima-hasil.txt`, `eval-parafrase-baseline.txt`, `eval-parafrase-hash.txt`, `eval-sebab-cek.txt`, `uji-sitasi-ai.txt`, `uji-sitasi-det.txt` | semua hasil yang diklaim di dokumen `10` (termasuk A/B lapis semantik FR-12) |
 | **Dua dasbor tinjauan** | `/admin/celah-pengetahuan`, `/admin/umpan-balik` | pertanyaan tak terlayani (FR-27) & laporan koreksi warga (FR-26); keduanya ber-`ADMIN_TOKEN` |
 | **Spesifikasi kebutuhan** | `10-KEBUTUHAN-UPGRADE-TINGKAT-LANJUT.md` | daftar kebutuhan `FR/NFR/DS/EV/OPS/CMP` + kriteria terima |
 | **Peta kerja tinggal-jalan** | `10` §11 (Fase B–D) | urutan pekerjaan berikutnya + perkiraan usaha |
@@ -27,7 +27,7 @@ menyentuh `main` sampai Anda sendiri memutuskan.
 |---|---|---|
 | Node.js | 20.20.2 (dipakai saat pengujian) | Node 20 EOL 30 Apr 2026 — jadwalkan naik versi |
 | Next.js | 16.2.10 | tidak ada perubahan dependensi di cabang ini |
-| Uji | 29 berkas / **382 uji** | `npm test` |
+| Uji | 30 berkas / **419 uji** | `npm test` |
 | Variabel lingkungan baru | `REVALIDATE_ALLOW_UNSIGNED` (opsional) | **`REVALIDATE_SECRET` kini wajib** agar penyegaran cache tidak tertolak (fail-closed) |
 | Variabel lingkungan baru (FR-27 & FR-26) | `ADMIN_TOKEN` | menjaga **dua** dasbor admin: `/api/admin/celah` dan `/api/admin/umpan-balik`. Tanpa ini keduanya menjawab **503 fail-closed** |
 | Variabel lingkungan opsional | `SAPA_SPLP_BASE_URL` | mengarahkan pengambilan data ke SPLP lain/stub; dibaca **saat runtime**, jadi cukup diset di proses (lihat §7a) |
@@ -66,7 +66,7 @@ selaras) lalu jalankan uji terima (§7).
 
 > **Terbukti pada 22 Sep 2026:** ketiga cara diuji pada klon bersih `main`. Cara B (`git am` seluruh seri)
 > dan Cara C (`git apply --3way 00-semua.patch`) sama-sama berhasil; hasil pohon **identik dengan cabang**
-> (kecuali folder `seri-patch/` yang memang hanya wadah patch), `npm run typecheck` bersih, dan **382 uji lulus**
+> (kecuali folder `seri-patch/` yang memang hanya wadah patch), `npm run typecheck` bersih, dan **419 uji lulus**
 > di pohon hasil patch. Cara C menyisakan perubahan tanpa komit — jalankan `git add -A && git commit` sesudahnya.
 
 > **Catatan tentang bit eksekusi:** komit `0003`/`0004` hanya memulihkan bit eksekusi
@@ -111,7 +111,9 @@ selaras) lalu jalankan uji terima (§7).
 > tarik, sidik korpus, tahun data, konsistensi jalur JSON↔streaming, kesamaan versi korpus antar-mode),
 > **FR-27** (endpoint celah fail-closed + pagar privasi), **FR-26** (notis transparansi benar-benar
 > tampil pada HTML dasbor, kanal koreksi menerima laporan sah, menolak jenis liar, dan menyimpan tanpa
-> digit), dan **FR-19** (0 klaim tanpa rujukan; uji 50 sampel dijalankan penuh dengan `SAPA_SITASI_PENUH=1`). Untuk memeriksa isi kedua daftar, sertakan `ADMIN_TOKEN` — tanpa itu pemeriksaan itu
+> digit), **FR-19** (0 klaim tanpa rujukan; uji 50 sampel dijalankan penuh dengan `SAPA_SITASI_PENUH=1`), dan **FR-20**
+> (setiap balasan punya blok `diagnosa` bertag `lapis:rincian`; prosa sebab bebas angka; jalur JSON = streaming;
+> harness penanda penuh dengan `SAPA_SEBAB_PENUH=1`). Untuk memeriksa isi kedua daftar, sertakan `ADMIN_TOKEN` — tanpa itu pemeriksaan itu
 > dilewati, bukan gagal.
 
 ```bash
@@ -194,11 +196,11 @@ perlu disetel — **bukan** gerbangnya dilonggarkan.
 ## 11. Instruksi siap-tempel untuk agen di repo lokal
 
 > **Tugas:** menerapkan versi "AI tingkat lanjut" pada repo ini tanpa menyentuh `main`.
-> Sumber: cabang/seri patch dari Arena (`06-USULAN-KODE/seri-patch/`, 15 patch, urut).
+> Sumber: cabang/seri patch dari Arena (`06-USULAN-KODE/seri-patch/`, seluruh berkas `NNNN-*.patch`, urut angka).
 > Langkah:
 > 1. `git switch -c kerja/ai-tingkat-lanjut main`
 > 2. `git am 06-USULAN-KODE/seri-patch/[0-9][0-9][0-9][0-9]-*.patch`
-> 3. `npm ci && npm test` → wajib **382 uji lulus**; `npm run typecheck` → bersih.
+> 3. `npm ci && npm test` → wajib **419 uji lulus**; `npm run typecheck` → bersih.
 > 4. `bash verifikasi/uji-terima.sh` → wajib **LULUS**.
 > 5. Jalankan eval dua mode (lihat `11 §7`) → wajib **90/90** masing-masing, **0 regresi**.
 > 6. Bila ada konflik, jangan menimpa; laporkan berkas konflik beserta keputusan yang diambil.
