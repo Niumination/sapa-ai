@@ -12,7 +12,7 @@ menyentuh `main` sampai Anda sendiri memutuskan.
 
 | Aset | Letak | Isi |
 |---|---|---|
-| **Cabang utuh** | `usulan/perbaikan-ai-2026-09-21` @ `03313a1` | 9 komit kode + 1 komit dokumen, 0 divergensi dari `main` (fast-forward) |
+| **Cabang utuh** | `usulan/perbaikan-ai-2026-09-21` @ `e175c1a` (komit kode terakhir) | 0 divergensi dari `main` (fast-forward); seri patch `0001`…`0013` memuat seluruh komit kode & dokumen, sedangkan folder `seri-patch/` sendiri sengaja tidak ikut dipatch (isinya memang wadah patch) |
 | **Seri patch** | `06-USULAN-KODE/seri-patch/` | `0001`…`0012` (urutan wajib; `0008`, `0010`, `0012` = dokumen) + `00-semua.patch` (paket tunggal) |
 | **Skrip uji terima** | `06-USULAN-KODE/uji-terima.sh` | memutuskan LULUS/GAGAL sesuai ambang dokumen `10` |
 | **Alat pengukuran** | `verifikasi/mock-llm.mjs`, `verifikasi/banding-ai-vs-det.py`, `verifikasi/banding-main-vs-branch.py` | penyedia model tiruan + dua harness pembanding |
