@@ -13,7 +13,7 @@ menyentuh `main` sampai Anda sendiri memutuskan.
 | Aset | Letak | Isi |
 |---|---|---|
 | **Cabang utuh** | `usulan/perbaikan-ai-2026-09-21` @ `e7258ca` (komit kode FR-12 terakhir) | 0 divergensi dari `main` (fast-forward); seri patch memuat seluruh komit kode & dokumen, sedangkan folder `seri-patch/` sendiri sengaja tidak ikut dipatch (isinya memang wadah patch) |
-| **Seri patch** | `06-USULAN-KODE/seri-patch/` | `0001`…`0020` (urut angka, wajib berurut; komit dokumen: `0008`, `0010`, `0012`, `0015`, `0017`, `0020`) + `00-semua.patch` (paket tunggal). Komit dokumen terakhir + komit pembawa patch tidak dihitung ganda: karena setiap ekspor mengecualikan folder ini, hasil `git am` atas **seluruh** berkas `NNNN-*.patch` (urut angka) menghasilkan pohon yang **sama persis** dengan ujung cabang |
+| **Seri patch** | `06-USULAN-KODE/seri-patch/` | **seluruh** berkas `NNNN-*.patch` di folder itu, dijalankan **urut angka** (jangan melompat), ditambah `00-semua.patch` sebagai paket tunggal. Komit dokumen dikenali dari judulnya (`Dokumen: …`). Karena setiap ekspor mengecualikan folder ini, `git am` atas semua berkas `NNNN-*.patch` menghasilkan pohon yang **sama persis** dengan ujung cabang |
 | **Skrip uji terima** | `06-USULAN-KODE/uji-terima.sh` | memutuskan LULUS/GAGAL sesuai ambang dokumen `10` |
 | **Alat pengukuran** | `verifikasi/mock-llm.mjs`, `verifikasi/stub-splp.mjs`, `verifikasi/banding-ai-vs-det.py`, `verifikasi/banding-main-vs-branch.py`, `scripts/uji-sitasi.mjs`, `scripts/uji-parafrase.mjs`, `scripts/buat-korpus-uji.mjs` | penyedia model & SPLP tiruan + harness pembanding + uji 50 sampel sitasi (FR-19) + uji parafrase EV-05 (FR-12) & pembangkit korpus uji 1.210 record |
 | **Bukti angka** | `verifikasi/eval90-*.txt`, `banding-G.txt`, `aman-cabang-perilaku.txt`, `uji-terima-hasil.txt`, `eval-parafrase-baseline.txt`, `eval-parafrase-hash.txt` | semua hasil yang diklaim di dokumen `10` (termasuk A/B lapis semantik FR-12) |
@@ -49,7 +49,7 @@ git switch -c kerja/ai-tingkat-lanjut origin/usulan/perbaikan-ai-2026-09-21
 ```bash
 git switch -c kerja/ai-tingkat-lanjut main
 git am 06-USULAN-KODE/seri-patch/0001-*.patch
-# … ulangi 0002 … 0015 (urutan wajib) — atau sekaligus:
+# … ulangi untuk SEMUA berkas NNNN-*.patch, urut angka — atau sekaligus:
 git am 06-USULAN-KODE/seri-patch/[0-9][0-9][0-9][0-9]-*.patch
 ```
 
