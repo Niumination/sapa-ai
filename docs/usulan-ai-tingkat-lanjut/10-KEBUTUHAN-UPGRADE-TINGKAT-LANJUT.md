@@ -152,7 +152,7 @@ Format: **Kode · Kebutuhan · Alasan/bukti · Kriteria terima (terukur) · Usah
 | Kode | Kebutuhan | Alasan / bukti | Kriteria terima | Usaha | Status |
 |---|---|---|---|---|---|
 | **FR-25** | **Tahun data, tanggal pengambilan SPLP, & sidik isi korpus** tampil pada setiap jawaban | kesegaran data adalah pertanyaan pertama pejabat | 100% jawaban menampilkan ketiganya | S | ✅ (`dataFetchedAt`+`dataFingerprint`+`dataYears` pada jalur JSON & streaming; gerbang otomatis di `uji-terima.sh` §3; bukti `verifikasi/uji-terima-hasil.txt`) |
-| **FR-26** | **Notis transparansi AI + kanal koreksi** ("lapor angka") | kepercayaan publik; wajib untuk layanan berbasis AI | teks tampil; umpan balik tercatat di penyimpanan | S | ⬜ |
+| **FR-26** | **Notis transparansi AI + kanal koreksi** ("lapor angka") | kepercayaan publik; wajib untuk layanan berbasis AI | teks tampil; umpan balik tercatat di penyimpanan | S | ✅ (notis 3 keadaan jujur + kanal `POST /api/umpan-balik` berkuota + tinjauan `/admin/umpan-balik`; 6 gerbang otomatis di `uji-terima.sh` §5; laporan `13-LAPORAN-FR-26.md`) |
 | **FR-27** | **Dasbor celah pengetahuan** (pertanyaan tanpa bukti & penolakan AI per minggu) | dari keluhan menjadi backlog sinonim & item evaluasi | 20 pertanyaan teratas tersedia tiap minggu | M | ✅ (`/api/admin/celah` + halaman `/admin/celah-pengetahuan`; 100 teratas, 8 minggu terakhir; digit/surel/tautan/nomor telepon dibuang sebelum disimpan — gerbang otomatis + pagar privasi di `uji-terima.sh` §4) |
 
 ---
@@ -264,7 +264,7 @@ FR-18 di [5]/[10]; FR-25/26 di [10]/[11]; NFR-07 & FR-27 di [11].
 | **A — Selesai (✅ gelombang 1–3)** | Sirkuit penyedia · status jujur · revalidate fail-closed · gerbang niat-meta · niat jawaban · gerbang nilai-tambah · lima sebab positif-palsu grounding · aturan entitas · kejujuran granularitas · preferensi satuan · penolakan injeksi · set evaluasi 90 · uji terima otomatis | 90/90 dua mode · 237 uji · kit serah terima | — |
 | **B — Cocok-makna & parafrase** | FR-12 lapis semantik Indonesia (`all-Indo-e5-small` + artefak ter-hash) · FR-13 indeksasi berkonteks · FR-14 fusi RRF · EV-05 120 item · EV-06 uji model sungguhan | recall@15 ≥ 90% pada 20 kueri parafrase baru; 90 item tetap 90/90; latensi muat dingin < 300 ms | 3–5 minggu |
 | **C — Mutu tertutup** | FR-19 jawaban per-klaim · FR-20 klasifikasi sebab · FR-24 pemeriksa pasangan entitas · FR-23 pembersihan masukan · NFR-07 telemetri `gen_ai.*` · OPS-04 notifikasi | 0 klaim tanpa rujukan pada 50 sampel; tiap kegagalan bertag sebab | 4–6 minggu |
-| **D — Tata kelola & pengalaman** | FR-25 tahun data & stempel · FR-26 notis transparansi + kanal koreksi · FR-27 dasbor celah pengetahuan · NFR-09 aksesibilitas · OPS-03 penyegaran terjadwal · CMP-02/03/04 | notis tampil; ≥ 50 umpan balik/bulan; WCAG 2.2 AA | 3–4 minggu |
+| **D — Tata kelola & pengalaman** | ~~FR-25 · FR-26 · FR-27~~ (selesai 22 Sep 2026) · NFR-09 aksesibilitas · OPS-03 penyegaran terjadwal · CMP-02/03/04 | notis tampil; ≥ 50 umpan balik/bulan; WCAG 2.2 AA | 3–4 minggu |
 
 **Urutan yang disarankan bila sumber daya terbatas:** ~~FR-25 → FR-27~~ (selesai 22 Sep 2026) → FR-19 → FR-12.
 Alasannya: dua yang pertama langsung terlihat pengguna dan murah; FR-19 menaikkan kepercayaan
@@ -370,4 +370,5 @@ Sebuah pekerjaan dianggap **selesai** hanya bila **semuanya** terpenuhi:
 | `06-USULAN-KODE/seri-patch/` | 9 patch (`0001`…`0009`) + satu paket `00-semua.patch` — teruji `git am` pada klon bersih `main`, hasil pohon identik dengan cabang |
 | `verifikasi/stub-splp.mjs` | penyedia SPLP tiruan untuk uji luring (pasangan `SAPA_SPLP_BASE_URL`) |
 | `12-LAPORAN-FR-25-FR-27.md` | laporan bukti penambahan cap kesegaran data & dasbor celah (289 uji, gerbang baru, seri patch teruji di klon bersih) |
+| `13-LAPORAN-FR-26.md` | laporan bukti notis transparansi & kanal koreksi warga (317 uji, 14 gerbang uji terima) |
 | `06-USULAN-KODE/uji-terima.sh` | skrip uji terima (dipakai hermes agent/pengembang) |
