@@ -1,6 +1,9 @@
+// pii-gate: izinkan NIK sintetis uji — angka 16 digit di berkas ini adalah contoh uji, bukan NIK warga.
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { NextRequest } from 'next/server';
-import { POST } from './route';
+import { POST, tentukanSebabCelah, catatCelahBilaPerlu } from './route';
+import { ambilCelah } from '@/lib/insight-celah';
+import { __clearLocalStore } from '@/lib/store';
 import { fetchSapaData, type SapaRecord } from '@/lib/sapa-client';
 
 vi.mock('@/lib/sapa-client', async (importOriginal) => {
@@ -34,7 +37,12 @@ function req(body: unknown): NextRequest {
 
 beforeEach(() => {
   vi.resetAllMocks();
-  mockedFetch.mockResolvedValue({ records: fakeRecords, origin: 'splp' });
+  __clearLocalStore();
+  mockedFetch.mockResolvedValue({
+    records: fakeRecords,
+    origin: 'splp',
+    meta: { diambilPada: '2026-09-22T10:00:00.000Z', sidik: 'abcd1234' },
+  });
 });
 
 describe('POST /api/query', () => {
@@ -65,5 +73,64 @@ describe('POST /api/query', () => {
     expect(res.status).toBe(200);
     const body = await res.json();
     expect(body.matched).toBe(0);
+  });
+});
+
+// ─── FR-25 & DS-03 (gelombang 3 lanjutan): kesegaran data + sidik korpus ───────
+describe('POST /api/query — kesegaran data & sidik korpus', () => {
+  it('menyertakan dataFetchedAt, dataFingerprint, dan dataYears pada jawaban ber-bukti', async () => {
+    const res = await POST(req({ query: 'Berapa jumlah ASN di Aceh Tengah?' }));
+    expect(res.status).toBe(200);
+    const body = await res.json();
+    expect(body.dataFetchedAt).toBe('2026-09-22T10:00:00.000Z');
+    expect(body.dataFingerprint).toBe('abcd1234');
+    expect(body.dataYears).toEqual(['2026']);
+  });
+
+  it('jawaban tanpa bukti tetap menyertakan stempel & sidik, dengan dataYears kosong', async () => {
+    const res = await POST(req({ query: 'qwertyzzz tidak ada di katalog' }));
+    const body = await res.json();
+    expect(body.evidence).toHaveLength(0);
+    expect(body.dataFetchedAt).toBe('2026-09-22T10:00:00.000Z');
+    expect(body.dataFingerprint).toBe('abcd1234');
+    expect(body.dataYears).toEqual([]);
+  });
+
+  it('kunci lama TIDAK hilang (kontrak aditif)', async () => {
+    const body = await (await POST(req({ query: 'Berapa jumlah ASN di Aceh Tengah?' }))).json();
+    for (const k of ['narasi', 'answer', 'source', 'count', 'matched', 'aggregated', 'opds', 'evidence', 'query', 'ai', 'visualisasi', 'rekomendasi', 'timestamp', 'dataSource']) {
+      expect(body).toHaveProperty(k);
+    }
+  });
+});
+
+// ─── FR-27: pencatatan celah pengetahuan ──────────────────────────────────────
+describe('tentukanSebabCelah — aturan sebab (satu sumber untuk JSON & streaming)', () => {
+  it('tanpa bukti ⇒ tanpa-bukti', () => {
+    expect(tentukanSebabCelah(0, undefined)).toBe('tanpa-bukti');
+  });
+  it('bukti ada tetapi jawaban AI ditolak gerbang ⇒ ai-ditolak', () => {
+    expect(tentukanSebabCelah(5, 'ditolak-grounding')).toBe('ai-ditolak');
+    expect(tentukanSebabCelah(3, 'ditolak-tidak-menambah')).toBe('ai-ditolak');
+  });
+  it('jawaban normal TIDAK dicatat (hemat penyimpanan)', () => {
+    expect(tentukanSebabCelah(5, 'dipakai')).toBeNull();
+    expect(tentukanSebabCelah(5, 'dipakai-dengan-catatan')).toBeNull();
+    expect(tentukanSebabCelah(2, undefined)).toBeNull();
+  });
+});
+
+describe('catatCelahBilaPerlu', () => {
+  it('mencatat ke penyimpanan saat tanpa bukti, dan menyanitasi teksnya', async () => {
+    await catatCelahBilaPerlu('berapa jumlah keluarga NIK 1171012304950003', 0, undefined);
+    const ringkas = await ambilCelah();
+    expect(ringkas.item).toHaveLength(1);
+    expect(ringkas.item[0].pertanyaan).not.toMatch(/\d/);
+    expect(ringkas.item[0].sebab).toBe('tanpa-bukti');
+  });
+
+  it('tidak mencatat saat jawaban normal', async () => {
+    await catatCelahBilaPerlu('berapa jumlah ASN', 5, 'dipakai');
+    expect((await ambilCelah()).item).toHaveLength(0);
   });
 });

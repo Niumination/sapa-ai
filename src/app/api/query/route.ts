@@ -2,6 +2,8 @@ import { NextRequest } from 'next/server';
 import { fetchSapaData } from '@/lib/sapa-client';
 import { composeAnswer } from '@/services/answer-compose';
 import { getClientIp, rateLimitHeaders, checkRateLimit } from '@/lib/rate-limit';
+import { tahunPadaBukti } from '@/services/grounding';
+import { catatCelah, type SebabCelah } from '@/lib/insight-celah';
 
 export const dynamic = 'force-dynamic';
 export const runtime = 'nodejs';
@@ -36,7 +38,7 @@ export async function POST(req: NextRequest) {
       { status: 503 },
     );
   }
-  const { records } = fetched;
+  const { records, meta } = fetched;
 
   // Batas ketat sebelum kerja berat (retrieval + kemungkinan panggilan model).
   const ip = getClientIp(req);
@@ -58,6 +60,10 @@ export async function POST(req: NextRequest) {
     );
   }
 
+  // Catat bila pertanyaan ini tidak terlayani (FR-27). Hanya kasus gagal yang
+  // menulis — pertanyaan yang berhasil tidak menyentuh penyimpanan sama sekali.
+  await catatCelahBilaPerlu(queryRaw, hasil.evidence.length, hasil.ai?.nilaiTambah);
+
   return Response.json(
     {
       ...hasil.response,
@@ -71,7 +77,33 @@ export async function POST(req: NextRequest) {
       evidence: hasil.evidence,
       query: queryRaw,
       ai: hasil.ai,
+      // FR-25 & DS-03: kesegaran data + sidik korpus + tahun data pada bukti.
+      // Semuanya ADITIF — kunci lama tidak ada yang berubah atau hilang.
+      dataFetchedAt: meta.diambilPada,
+      dataFingerprint: meta.sidik,
+      dataYears: tahunPadaBukti(hasil.evidence),
     },
     { headers: rateLimitHeaders(batas) },
   );
+}
+
+/**
+ * Penentu sebab celah (dipisah agar jalur JSON & streaming memakai aturan yang
+ * sama persis, dan agar mudah diuji).
+ */
+export function tentukanSebabCelah(jumlahBukti: number, nilaiTambah?: string): SebabCelah | null {
+  if (jumlahBukti === 0) return 'tanpa-bukti';
+  if (nilaiTambah?.startsWith('ditolak')) return 'ai-ditolak';
+  return null;
+}
+
+/** Catat celah tanpa pernah mengganggu jawaban (gagal senyap bila penyimpanan bermasalah). */
+export async function catatCelahBilaPerlu(
+  query: string,
+  jumlahBukti: number,
+  nilaiTambah?: string,
+): Promise<void> {
+  const sebab = tentukanSebabCelah(jumlahBukti, nilaiTambah);
+  if (!sebab) return;
+  await catatCelah(query, sebab).catch(() => {});
 }

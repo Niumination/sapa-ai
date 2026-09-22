@@ -297,6 +297,26 @@ function tokenAllowed(raw: string, sets: AllowedSets): boolean {
 }
 
 /**
+ * Tahun data yang muncul pada bukti jawaban (urut menurun, tanpa duplikat).
+ *
+ * Kebutuhan FR-25: pembaca harus tahu ANGKA ini berasal dari tahun berapa.
+ * Dibuat di sini (bukan di UI) supaya jalur API, /api/status, dan halaman
+ * menghasilkan daftar yang sama persis. Nilai yang bukan tahun 4 digit
+ * (null, '-', '2022–2026') tidak dipaksakan menjadi tahun tunggal: rentang
+ * dikembalikan sebagai dua tahun, sedangkan nilai tak terbaca dilewati —
+ * lebih baik kosong daripada salah.
+ */
+export function tahunPadaBukti(evidence: EvidenceItem[]): string[] {
+  const set = new Set<string>();
+  for (const e of evidence) {
+    const t = String(e.tahun ?? '').trim();
+    if (isFourDigitYear(t)) set.add(t);
+    for (const m of String(e.tahun ?? '').matchAll(/\b(?:19|20)\d{2}\b/g)) set.add(m[0]);
+  }
+  return [...set].sort((a, b) => b.localeCompare(a));
+}
+
+/**
  * Hitung SITASI: berapa baris evidence yang nilainya benar-benar muncul di narasi.
  *
  * Dipakai gerbang nilai-tambah jalur AI: narasi rapi yang menyitir lebih sedikit

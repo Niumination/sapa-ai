@@ -597,7 +597,13 @@ export function buildExecutivePresentation(response: HybridResponse): ExecutiveP
     provenance: {
       source: response.dataSource || 'Sumber tidak tercantum',
       origin: detectOrigin(response.dataSource || ''),
-      fetchedAt: response.timestamp,
+      // Kesegaran yang JUJUR (FR-25): bila rute memberi tahu kapan korpus SPLP
+      // ditarik, itu yang ditampilkan. `response.timestamp` hanya dipakai sebagai
+      // cadangan untuk respons lama (riwayat tersimpan dari versi sebelumnya).
+      fetchedAt: response.dataFetchedAt ?? response.timestamp,
+      disusunPada: response.timestamp,
+      dataYears: response.dataYears ?? [],
+      fingerprint: response.dataFingerprint ?? null,
       evidenceCount: evidence.length,
     },
   };

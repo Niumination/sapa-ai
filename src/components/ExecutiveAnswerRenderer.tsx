@@ -382,7 +382,7 @@ function QualityPanel({ presentation }: { presentation: ExecutivePresentation })
 function ProvenancePanel({ presentation, onFollowUp }: { presentation: ExecutivePresentation; onFollowUp?: (query: string) => void }) {
   const [copied, setCopied] = useState(false);
   const [exported, setExported] = useState(false);
-  const copyText = `${presentation.title}\n\n${presentation.narrative}\n\nQuick win:\n${presentation.quickWins.map((win, index) => `${index + 1}. ${win.title}: ${win.action}`).join('\n')}\n\nSumber: ${presentation.provenance.source}\nDiakses: ${formatTimestamp(presentation.provenance.fetchedAt)}`;
+  const copyText = `${presentation.title}\n\n${presentation.narrative}\n\nQuick win:\n${presentation.quickWins.map((win, index) => `${index + 1}. ${win.title}: ${win.action}`).join('\n')}\n\nSumber: ${presentation.provenance.source}\nData SPLP ditarik: ${formatTimestamp(presentation.provenance.fetchedAt)}\nTahun data: ${(presentation.provenance.dataYears ?? []).length > 0 ? (presentation.provenance.dataYears ?? []).join(', ') : 'tidak ada tahun pada bukti'}${presentation.provenance.fingerprint ? `\nSidik korpus: ${presentation.provenance.fingerprint}` : ''}`;
 
   const copy = async () => {
     try { await navigator.clipboard.writeText(copyText); setCopied(true); setTimeout(() => setCopied(false), 1800); } catch { setCopied(false); }

@@ -1,5 +1,7 @@
 import { NextRequest } from 'next/server';
 import { fetchSapaData } from '@/lib/sapa-client';
+import { tahunPadaBukti } from '@/services/grounding';
+import { catatCelahBilaPerlu } from '@/app/api/query/route';
 import { composeAnswer } from '@/services/answer-compose';
 import { getClientIp } from '@/lib/rate-limit';
 
@@ -64,6 +66,10 @@ export async function POST(req: NextRequest) {
           return;
         }
 
+        // Celah pengetahuan (FR-27) — jalur inilah yang dipakai halaman utama,
+        // jadi pencatatan harus ada di sini juga, bukan hanya di jalur JSON.
+        await catatCelahBilaPerlu(queryRaw, hasil.evidence.length, hasil.ai?.nilaiTambah);
+
         kirim('result', {
           ...hasil.response,
           answer: hasil.response.narasi,
@@ -75,6 +81,10 @@ export async function POST(req: NextRequest) {
           evidence: hasil.evidence,
           query: queryRaw,
           ai: hasil.ai,
+          // FR-25 & DS-03 (aditif) — sama seperti jalur JSON.
+          dataFetchedAt: fetched.meta.diambilPada,
+          dataFingerprint: fetched.meta.sidik,
+          dataYears: tahunPadaBukti(hasil.evidence),
         });
       } catch (e) {
         kirim('error', { error: e instanceof Error ? e.message : 'Gagal memproses query' });

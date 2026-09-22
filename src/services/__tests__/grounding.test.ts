@@ -7,6 +7,7 @@ import {
   isGrounded,
   isGroundedText,
   buildQuotedLabelNumbers,
+  tahunPadaBukti,
   buildAllowedValues,
   buildAllowedIntegerDigits,
   type EvidenceItem,
@@ -284,5 +285,35 @@ describe('isGrounded — visualisasi aplikasi TIDAK dipindai sebagai klaim (revi
     };
     const hasil = isGrounded(parsed, ev, {});
     expect(hasil.ok).toBe(false);
+  });
+});
+
+describe('tahunPadaBukti — tahun data yang ditampilkan pada jawaban (FR-25)', () => {
+  it('mengumpulkan tahun unik urut menurun', () => {
+    const ev: EvidenceItem[] = [
+      { opd: 'A', indikator: 'I1', nilai: '10', satuan: 'Orang', tahun: '2025', id: 1 },
+      { opd: 'B', indikator: 'I2', nilai: '20', satuan: 'Orang', tahun: '2026', id: 2 },
+      { opd: 'C', indikator: 'I3', nilai: '30', satuan: 'Orang', tahun: '2025', id: 3 },
+    ];
+    expect(tahunPadaBukti(ev)).toEqual(['2026', '2025']);
+  });
+
+  it('tahun kosong / "-" dilewati, bukan ditebak', () => {
+    const ev: EvidenceItem[] = [
+      { opd: 'A', indikator: 'I1', nilai: '10', satuan: 'Orang', tahun: null, id: 1 },
+      { opd: 'B', indikator: 'I2', nilai: '20', satuan: 'Orang', tahun: '-', id: 2 },
+    ];
+    expect(tahunPadaBukti(ev)).toEqual([]);
+  });
+
+  it('rentang tahun pada kolom tahun dikembalikan sebagai dua tahun (bukan satu angka palsu)', () => {
+    const ev: EvidenceItem[] = [
+      { opd: 'A', indikator: 'I1', nilai: '10', satuan: 'Orang', tahun: '2022–2026', id: 1 },
+    ];
+    expect(tahunPadaBukti(ev)).toEqual(['2026', '2022']);
+  });
+
+  it('bukti kosong ⇒ daftar kosong', () => {
+    expect(tahunPadaBukti([])).toEqual([]);
   });
 });

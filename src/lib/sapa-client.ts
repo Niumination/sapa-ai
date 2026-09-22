@@ -3,7 +3,39 @@
 
 import { normalisasiNilai, parseNumericId } from './parse-numeric';
 
-const SPLP_BASE = 'https://api-splp.layanan.go.id/sapa/1.0/api';
+/**
+ * Alamat dasar SPLP. Boleh ditimpa lewat `SAPA_SPLP_BASE_URL` untuk pengujian
+ * luring (penyedia data tiruan di localhost) atau untuk lingkungan pementasan.
+ *
+ * Mengapa perlu: uji terima & pengembangan sering berjalan di jaringan yang
+ * tidak boleh/ tidak bisa menghubungi internet. Tanpa opsi ini, seluruh aplikasi
+ * (termasuk fitur yang sama sekali tidak menyentuh SPLP) tidak dapat diuji —
+ * terukur 22 Sep 2026: sandbox kehilangan akses keluar dan eval 90 item tidak
+ * bisa dijalankan sama sekali. Nilainya dibaca saat modul dimuat, jadi
+ * penyalahgunaannya tetap terbatas pada proses yang sengaja dikonfigurasi begitu.
+ */
+const SPLP_BASE_BAWAAN = 'https://api-splp.layanan.go.id/sapa/1.0/api';
+
+/**
+ * Alamat dasar SPLP, dibaca SETIAP KALI dipakai — bukan sekali saat modul dimuat.
+ *
+ * Dua pelajaran nyata yang membentuk kode ini:
+ *   1. Akses memakai tanda kurung siku (`process.env['…']`) SENGAJA dipakai.
+ *      Dengan `process.env.X` biasa, bundler Next menanam nilai variabel ini saat
+ *      BUILD; akibatnya `SAPA_SPLP_BASE_URL` yang diset saat `next start`
+ *      diabaikan dan aplikasi tetap menghubungi SPLP produksi. Terukur 22 Sep
+ *      2026: variabel sudah benar di proses, tetapi permintaan tetap gagal karena
+ *      alamat yang dipakai masih yang tertanam di bundel.
+ *   2. Dibaca per panggilan supaya penyalahgunaan tetap terbatas pada proses yang
+ *      sengaja dikonfigurasi begitu, dan uji dapat menggantinya tanpa memuat ulang.
+ */
+function alamatSplp(): string {
+  const dari =
+    typeof process !== 'undefined'
+      ? (process.env as Record<string, string | undefined>)['SAPA_SPLP_BASE_URL']?.trim()
+      : undefined;
+  return (dari || SPLP_BASE_BAWAAN).replace(/\/+$/, '');
+}
 
 const BROWSER_UA =
   'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/126.0 Safari/537.36';
@@ -76,14 +108,96 @@ export function dataSourceLabel(_origin: SapaDataOrigin): string {
 // cache manual di sini. Data publik statis + TTL = aman dibagikan lintas request.
 
 const SPLP_TTL_MS = 10 * 60 * 1000;
-let splpCache: { at: number; records: SapaRecord[] } | null = null;
 
-export async function fetchSapaData(): Promise<{ records: SapaRecord[]; origin: 'splp' }> {
+/**
+ * Meta korpus: kapan data SPLP ditarik dan sidik ISI korpus (penanda versi).
+ *
+ * Kebutuhan FR-25 & DS-03 (dokumen `docs/usulan-ai-tingkat-lanjut/10-...`):
+ * setiap jawaban wajib dapat dipertanggungjawabkan kesegarannya — pembaca harus
+ * tahu data ini ditarik kapan, dan sidik versi membuat cache/jejak audit bisa
+ * dibedakan ("angka ini dari korpus yang mana?").
+ *
+ * Catatan kejujuran: `diambilPada` adalah waktu korpus ditarik dari SPLP. Karena
+ * ada cache 10 menit (LRU) dan cache terdistribusi 600 detik pada rute tertentu,
+ * nilainya BUKAN waktu permintaan pengguna — dan memang tidak boleh ditulis
+ * begitu. Yang ditampilkan ke pengguna karena itu berlabel "data SPLP ditarik",
+ * bukan "diakses".
+ */
+export interface MetaKorpus {
+  /** ISO — kapan korpus ini ditarik dari SPLP. */
+  diambilPada: string;
+    /**
+   * Sidik ISI korpus (8 heksadesimal) — penanda versi, bukan penanda waktu.
+   *
+   * Dihitung dari isi record (id, indikator, OPD, tahun, satuan, nilai) yang
+   * diurutkan lebih dahulu, jadi:
+   *   - dua proses yang menarik data yang SAMA akan menghasilkan sidik yang SAMA,
+   *     walaupun waktu tariknya berbeda (inilah gunanya untuk jejak audit: "angka
+   *     ini berasal dari korpus versi X");
+   *   - perubahan sekecil apa pun pada data (nilai, tahun, satuan) menghasilkan
+   *     sidik berbeda, termasuk bila jumlah record tetap sama.
+   * Waktu tarik dilaporkan terpisah lewat `diambilPada`, jadi tidak ada informasi
+   * yang hilang. Catatan: sidik ini 32-bit (tabrakan mungkin secara teori, tidak
+   * untuk keperluan keamanan) — cukup untuk membedakan versi korpus dan
+   * membandingkan mode AI vs deterministik.
+   */
+  sidik: string;
+}
+
+/** FNV-1a 32-bit. Kecil, tanpa dependensi, jalan di semua runtime (node/edge). */
+function hashFnv1a(teks: string): string {
+  let h = 0x811c9dc5;
+  for (let i = 0; i < teks.length; i++) {
+    h ^= teks.charCodeAt(i);
+    h = Math.imul(h, 0x01000193) >>> 0;
+  }
+  return h.toString(16).padStart(8, '0');
+}
+
+/**
+ * Bentuk kanonis satu record untuk penghitungan sidik.
+ *
+ * Dipilih hanya bidang yang bermakna bagi pembaca jawaban (bukan bidang internal
+ * yang boleh berubah tanpa mengubah jawaban). Dipisah dengan karakter yang tidak
+ * mungkin muncul di data (\u001f) supaya "A|B" dan "AB|" tidak pernah bertabrakan.
+ */
+function barisKanonis(r: SapaRecord): string {
+  return [
+    r.id,
+    r.kode_indikator_nama_indikator,
+    r.opds_nama_opd,
+    r.tahun ?? '',
+    r.satuan ?? '',
+    r.variabel ?? '',
+  ].join('\u001f');
+}
+
+/**
+ * Sidik isi korpus. Record diurutkan (id, lalu isi) supaya urutan balasan SPLP
+ * yang berubah-ubah tidak mengubah sidik — yang ingin diukur adalah ISI, bukan
+ * urutan penyajian.
+ */
+export function sidikKorpus(records: SapaRecord[]): string {
+  const baris = records.map(barisKanonis).sort();
+  return hashFnv1a(`sapa:v2:${records.length}:${baris.join('\u001e')}`);
+}
+
+let splpCache: { at: number; records: SapaRecord[]; meta: MetaKorpus } | null = null;
+
+/**
+ * Meta korpus yang sedang dipegang proses ini (bila ada). Dipakai rute yang
+ * hanya menerima `records` tetapi perlu menempelkan stempel kesegaran.
+ */
+export function metaKorpusTerakhir(): MetaKorpus | null {
+  return splpCache?.meta ?? null;
+}
+
+export async function fetchSapaData(): Promise<{ records: SapaRecord[]; origin: 'splp'; meta: MetaKorpus }> {
   if (splpCache && Date.now() - splpCache.at < SPLP_TTL_MS) {
-    return { records: splpCache.records, origin: 'splp' };
+    return { records: splpCache.records, origin: 'splp', meta: splpCache.meta };
   }
 
-  const res = await fetch(`${SPLP_BASE}/daftar_data`, {
+  const res = await fetch(`${alamatSplp()}/daftar_data`, {
     headers: { 'Content-Type': 'application/json', 'User-Agent': BROWSER_UA },
     signal: AbortSignal.timeout(30000),
   });
@@ -96,8 +210,13 @@ export async function fetchSapaData(): Promise<{ records: SapaRecord[]; origin: 
   if (json.api_status !== 1) {
     throw new Error(`SPLP API failed: ${json.api_message}`);
   }
-  splpCache = { at: Date.now(), records: json.data };
-  return { records: json.data, origin: 'splp' };
+  const at = Date.now();
+  const meta: MetaKorpus = {
+    diambilPada: new Date(at).toISOString(),
+    sidik: sidikKorpus(json.data),
+  };
+  splpCache = { at, records: json.data, meta };
+  return { records: json.data, origin: 'splp', meta };
 }
 
 // ─── Helpers: Normalisasi & Filtering ───

@@ -9,6 +9,7 @@
 #   AI_URL=http://127.0.0.1:3116 DET_URL=http://127.0.0.1:3117 bash verifikasi/uji-terima.sh
 #   SAPA_SKIP_EVAL=1 bash verifikasi/uji-terima.sh      # lompati eval (cepat)
 #   SAPA_MODE=det bash verifikasi/uji-terima.sh         # nilai hanya mode deterministik
+#   ADMIN_TOKEN=... bash verifikasi/uji-terima.sh        # sekaligus periksa dasbor celah (FR-27)
 #
 # Keluar dengan 0 = LULUS, 1 = GAGAL. Setiap ambang di bawah diambil dari
 # dokumen 10-KEBUTUHAN-UPGRADE-TINGKAT-LANJUT.md (NFR-01..NFR-06, EV-01..EV-04).
@@ -73,11 +74,112 @@ else
   info "server $AI_URL tidak hidup — lompati"
 fi
 
-# ── 3. Evaluasi set 90 item ─────────────────────────────────────────────────
+# ── 3. Kesegaran data (FR-25) & dasbor celah pengetahuan (FR-27) ────────────
+# Kedua butir ini murah tetapi menentukan kepercayaan: pengguna harus tahu data
+# ini ditarik kapan dan versi korpus mana, dan tim harus tahu pertanyaan mana yang
+# belum terlayani. Gerbang di bawah memeriksa keduanya pada server yang NYATA.
+if [ "$(hidup "$AI_URL")" = "200" ]; then
+  judul "3. Kesegaran data & sidik korpus (FR-25)"
+  jawab=$(curl -s -m 90 -X POST "$AI_URL/api/query" -H 'Content-Type: application/json' \
+    -d '{"query":"Berapa jumlah penduduk Aceh Tengah?"}' 2>/dev/null || echo '{}')
+  printf '%s' "$jawab" > /tmp/ut-fr25.json
+  tarik=$(python3 -c "
+import json
+try: d = json.load(open('/tmp/ut-fr25.json'))
+except Exception: d = {}
+print(d.get('dataFetchedAt') or '')")
+  sidik=$(python3 -c "
+import json
+try: d = json.load(open('/tmp/ut-fr25.json'))
+except Exception: d = {}
+print(d.get('dataFingerprint') or '')")
+  years=$(python3 -c "
+import json
+try: d = json.load(open('/tmp/ut-fr25.json'))
+except Exception: d = {}
+print('ada' if isinstance(d.get('dataYears'), list) else 'tidak')")
+
+  if printf '%s' "$tarik" | grep -qE '^[0-9]{4}-[0-9]{2}-[0-9]{2}T'; then ok "waktu tarik data dilaporkan ($tarik)"; else no "dataFetchedAt tidak ada/tidak ISO ('$tarik')"; fi
+  if printf '%s' "$sidik" | grep -qE '^[0-9a-f]{8}$'; then ok "sidik korpus dilaporkan ($sidik)"; else no "dataFingerprint tidak 8 heksadesimal ('$sidik')"; fi
+  if [ "$years" = "ada" ]; then ok "daftar tahun data disertakan (dataYears)"; else no "dataYears bukan daftar"; fi
+
+  # Sidik harus SAMA pada jalur JSON dan jalur streaming selama korpus tak berubah.
+  sidik_alir=$(curl -s -m 90 -N -X POST "$AI_URL/api/query/stream" -H 'Content-Type: application/json' \
+    -d '{"query":"Berapa jumlah penduduk Aceh Tengah?"}' 2>/dev/null \
+    | python3 -c "
+import sys, json
+sidik = ''
+for baris in sys.stdin:
+    b = baris.strip()
+    if b.startswith('data:'):
+        try: d = json.loads(b[5:].strip())
+        except Exception: continue
+        if d.get('dataFingerprint'): sidik = d['dataFingerprint']
+print(sidik)")
+  if [ -n "$sidik_alir" ] && [ "$sidik_alir" = "$sidik" ]; then ok "sidik konsisten antara jalur JSON & streaming"; else no "sidik berbeda: JSON '$sidik' vs streaming '$sidik_alir'"; fi
+
+  # Sidik adalah penanda ISI korpus, jadi mode AI & deterministik yang melayani
+  # korpus yang sama harus melaporkan sidik yang sama. Bila berbeda, kemungkinan
+  # SPLP berubah di antara dua penarikan — jadi ini INFORMASI, bukan kegagalan.
+  if [ "$(hidup "$DET_URL")" = "200" ]; then
+    sidik_det=$(curl -s -m 90 -X POST "$DET_URL/api/query" -H 'Content-Type: application/json' \
+      -d '{"query":"Berapa jumlah penduduk Aceh Tengah?"}' 2>/dev/null \
+      | python3 -c "
+import sys, json
+try: d = json.load(sys.stdin)
+except Exception: d = {}
+print(d.get('dataFingerprint') or '')")
+    if [ -n "$sidik_det" ] && [ "$sidik_det" = "$sidik" ]; then
+      ok "mode AI & deterministik melaporkan versi korpus yang sama ($sidik)"
+    else
+      info "sidik beda antar-mode (AI '$sidik' vs det '$sidik_det') — biasanya karena SPLP berubah di antara dua penarikan"
+    fi
+  fi
+else
+  info "server $AI_URL tidak hidup — lompati FR-25"
+fi
+
+if [ "$(hidup "$AI_URL")" = "200" ]; then
+  judul "4. Dasbor celah pengetahuan (FR-27)"
+  ADA_TOKEN="${ADMIN_TOKEN:-}"
+  kode_tanpa=$(curl -s -o /tmp/ut-celah-tanpa.json -w '%{http_code}' -m 20 "$AI_URL/api/admin/celah" 2>/dev/null || echo 000)
+  if [ "$kode_tanpa" = "401" ] || [ "$kode_tanpa" = "503" ]; then
+    ok "endpoint celah menolak tanpa token (HTTP $kode_tanpa, fail-closed)"
+  else
+    no "endpoint celah TIDAK menolak tanpa token (HTTP $kode_tanpa) — data celah terbuka untuk umum"
+  fi
+  if [ -n "$ADA_TOKEN" ]; then
+    kode_token=$(curl -s -o /tmp/ut-celah-token.json -w '%{http_code}' -m 20 -H "x-admin-token: $ADA_TOKEN" "$AI_URL/api/admin/celah" 2>/dev/null || echo 000)
+    if [ "$kode_token" = "200" ]; then
+      # Pagar privasi: balasan tidak boleh memuat digit apa pun pada teks pertanyaan.
+      privasi=$(python3 -c "
+import json, re
+try: d = json.load(open('/tmp/ut-celah-token.json'))
+except Exception: d = {}
+item = d.get('item') or []
+print('bersih' if all(not re.search(r'[0-9]', str(i.get('pertanyaan',''))) for i in item) else 'kotor')")
+      minggu=$(python3 -c "
+import json
+try: d = json.load(open('/tmp/ut-celah-token.json'))
+except Exception: d = {}
+print(d.get('minggu') or '')")
+      if printf '%s' "$minggu" | grep -qE '^[0-9]{4}-W[0-9]{2}$'; then ok "dasbor celah hidup untuk admin (minggu $minggu)"; else no "kunci minggu tidak berbentuk YYYY-Www ('$minggu')"; fi
+      if [ "$privasi" = "bersih" ]; then ok "pagar privasi celah: tidak ada digit pada pertanyaan tersimpan"; else no "ada digit pada pertanyaan tersimpan — periksa sanitasi"; fi
+    else
+      no "token admin benar tetapi dasbor celah menjawab HTTP $kode_token"
+    fi
+  else
+    info "ADMIN_TOKEN tidak diberikan ke skrip — pemeriksaan daftar celah dilewati (kirim ADMIN_TOKEN=… bila ingin diperiksa)"
+  fi
+else
+  info "server $AI_URL tidak hidup — lompati FR-27"
+fi
+
+# ── 5. Evaluasi set 90 item ─────────────────────────────────────────────────
 jalankan_eval() {
   local url="$1" label="$2" keluaran="$3"
   if [ "$(hidup "$url")" != "200" ]; then info "server $label ($url) tidak hidup — lompati"; return; fi
-  judul "3. Evaluasi — mode $label"
+  judul "5. Evaluasi — mode $label"
   SAPA_EVAL_URL="$url" SAPA_EVAL_LLM_GAP_MS="$GAP" timeout 1200 node scripts/eval-run.mjs > "$keluaran" 2>&1
   local lulus total
   lulus=$(grep -oE 'Lulus +: +[0-9]+' "$keluaran" | grep -oE '[0-9]+' | head -1)
@@ -95,7 +197,7 @@ jalankan_eval() {
 }
 
 if [ "$SKIP_EVAL" = "1" ]; then
-  judul "3. Evaluasi — DILEWATI (SAPA_SKIP_EVAL=1)"
+  judul "5. Evaluasi — DILEWATI (SAPA_SKIP_EVAL=1)"
 else
   [ "$MODE" = "ai" ]  && jalankan_eval "$AI_URL"  "AI"          /tmp/ut-eval-ai.txt
   [ "$MODE" = "det" ] && jalankan_eval "$DET_URL" "Deterministik" /tmp/ut-eval-det.txt

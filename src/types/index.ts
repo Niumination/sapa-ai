@@ -66,7 +66,14 @@ export interface ExecutivePresentation {
   provenance: {
     source: string;
     origin: 'direct' | 'splp' | 'unknown';
+    /** Waktu korpus SPLP ditarik (FR-25). */
     fetchedAt: string;
+    /** Waktu JAWABAN disusun — dibedakan dari `fetchedAt` agar label UI tidak menyesatkan. */
+    disusunPada?: string;
+    /** Tahun data yang muncul pada bukti jawaban (urut menurun). */
+    dataYears?: string[];
+    /** Sidik versi korpus (DS-03); null bila tidak tersedia. */
+    fingerprint?: string | null;
     evidenceCount: number;
   };
   buckets: Record<string, ExecutiveEvidence[]>;
@@ -92,7 +99,18 @@ export interface HybridResponse {
   };
   rekomendasi: string[];
   dataSource: string;
+  /** Waktu JAWABAN disusun (ISO). */
   timestamp: string;
+  /**
+   * Waktu korpus SPLP DITARIK (ISO). Berbeda dari `timestamp`.
+   * Diisi rute; ditampilkan sebagai "Data SPLP ditarik" — bukan "diakses".
+   * Opsional supaya respons lama (riwayat tersimpan, klien lama) tetap sah.
+   */
+  dataFetchedAt?: string;
+  /** Sidik versi korpus (8 heks) — pembeda cache & jejak audit (DS-03). */
+  dataFingerprint?: string;
+  /** Tahun data pada bukti jawaban, urut menurun. Kosong = tidak ada bukti bertahun. */
+  dataYears?: string[];
   /** Optional presentation layer; legacy fields remain the source-compatible contract. */
   presentation?: ExecutivePresentation;
   /** Metadata AI — dipakai UI untuk label "dirangkai AI" vs "dihitung deterministik". */

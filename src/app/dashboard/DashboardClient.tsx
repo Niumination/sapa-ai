@@ -102,6 +102,11 @@ export default function DashboardClient({ initialKpiData }: { initialKpiData?: {
         rekomendasi: json.rekomendasi || [],
         dataSource: json.source || 'SAPA SPLP',
         timestamp: json.timestamp || new Date().toISOString(),
+        // FR-25 & DS-03 — teruskan apa adanya dari server; JANGAN dibuat di klien,
+        // karena waktu tarik korpus bukan waktu peramban menerima jawaban.
+        dataFetchedAt: json.dataFetchedAt,
+        dataFingerprint: json.dataFingerprint,
+        dataYears: Array.isArray(json.dataYears) ? json.dataYears : undefined,
         ai: json.ai as AiMetaSummary | undefined,
       });
 
