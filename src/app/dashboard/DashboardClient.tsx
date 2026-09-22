@@ -12,6 +12,7 @@ const AIResponseRenderer = dynamic(() => import('@/components/AIResponseRenderer
   loading: () => <p className="text-sm text-[#767D6F]">Memuat jawaban…</p>,
 });
 import KpiPanel from '@/components/KpiPanel';
+import NotisTransparansi from '@/components/NotisTransparansi';
 import type { AiMetaSummary, HybridResponse } from '@/types';
 
 const TopOpdWidget = dynamic(() => import('@/components/TopOpdWidget'), {
@@ -53,12 +54,15 @@ export default function DashboardClient({ initialKpiData }: { initialKpiData?: {
   const [error, setError] = useState<string | null>(null);
   const [statusText, setStatusText] = useState<string | null>(null);
   const [liveNarasi, setLiveNarasi] = useState<string>('');
+  // Pertanyaan terakhir dipakai kanal koreksi (FR-26) supaya laporan punya konteks.
+  const [pertanyaanTerakhir, setPertanyaanTerakhir] = useState<string>('');
   const abortRef = useRef<AbortController | null>(null);
   const timeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const liveNarasiRef = useRef('');
   const genRef = useRef(0);
 
   const handleQuery = useCallback(async (query: string) => {
+    setPertanyaanTerakhir(query);
     abortRef.current?.abort();
     if (timeoutRef.current) clearTimeout(timeoutRef.current);
     const gen = ++genRef.current;
@@ -222,6 +226,7 @@ export default function DashboardClient({ initialKpiData }: { initialKpiData?: {
           )}
         </div>
       )}
+      <NotisTransparansi ai={aiResponse?.ai ?? null} pertanyaan={pertanyaanTerakhir} />
     </div>
   );
 }

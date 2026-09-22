@@ -1,7 +1,7 @@
 
 [1m── 1. Statis (typecheck · uji unit · build) ──[0m
   [32m✓[0m typecheck lolos
-  [32m✓[0m uji unit: 24 berkas / 289 uji lulus (ambang 230)
+  [32m✓[0m uji unit: 27 berkas / 317 uji lulus (ambang 230)
   [32m✓[0m pagar grounding ada (INV-01)
   [32m✓[0m penjaga permintaan sistem ada (SEC-02)
 
@@ -9,7 +9,7 @@
   [32m✓[0m revalidate menolak permintaan tanpa rahasia (HTTP 503, fail-closed)
 
 [1m── 3. Kesegaran data & sidik korpus (FR-25) ──[0m
-  [32m✓[0m waktu tarik data dilaporkan (2026-09-22T10:26:43.355Z)
+  [32m✓[0m waktu tarik data dilaporkan (2026-09-22T10:41:14.749Z)
   [32m✓[0m sidik korpus dilaporkan (33c96113)
   [32m✓[0m daftar tahun data disertakan (dataYears)
   [32m✓[0m sidik konsisten antara jalur JSON & streaming
@@ -20,7 +20,15 @@
   [32m✓[0m dasbor celah hidup untuk admin (minggu 2026-W39)
   [32m✓[0m pagar privasi celah: tidak ada digit pada pertanyaan tersimpan
 
-[1m── 5. Evaluasi — DILEWATI (SAPA_SKIP_EVAL=1) ──[0m
+[1m── 5. Transparansi jawaban & kanal koreksi (FR-26) ──[0m
+  [32m✓[0m notis transparansi tampil di halaman dasbor
+  [32m✓[0m kanal koreksi "lapor angka" tersedia di dasbor
+  [32m✓[0m laporan sah diterima (HTTP 201)
+  [32m✓[0m jenis laporan tak dikenal ditolak (HTTP 400)
+  [32m✓[0m daftar laporan menolak tanpa token (HTTP 401, fail-closed)
+  [32m✓[0m laporan tersimpan tanpa digit (privasi terjaga; 4 laporan minggu ini)
+
+[1m── 6. Evaluasi — DILEWATI (SAPA_SKIP_EVAL=1) ──[0m
 
 [1m── Ringkasan uji terima ──[0m
   [32m✓ LULUS[0m — semua ambang terpenuhi.
