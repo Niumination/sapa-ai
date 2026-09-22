@@ -1,5 +1,6 @@
 import { NextResponse } from 'next/server';
 import { fetchSapaData, getUniqueOpd, getUniqueIndicators } from '@/lib/sapa-client';
+import { metaSemantik } from '@/services/semantik';
 import { getAiRuntimeStatus } from '@/services/answer-compose';
 
 export const dynamic = 'force-dynamic';
@@ -7,6 +8,20 @@ export const runtime = 'nodejs';
 export const maxDuration = 60;
 
 export interface SystemStatus {
+  /**
+   * Lapis semantik (FR-12): penyedia yang dipakai, dimensi, sidik artefak, dan
+   * waktu muat dingin terakhir. Operator perlu ini untuk tahu apakah jawaban
+   * "tidak ditemukan" datang dari katalog yang memang kosong atau dari lapis
+   * semantik yang mati.
+   */
+  semantik?: {
+    aktif: boolean;
+    penyedia: 'hash' | 'remote';
+    dim: number;
+    pembangunanTerakhir: { durasiMs: number; jumlahRecord: number; penyedia: 'hash' | 'remote' } | null;
+    sidik: string | null;
+    catatan: string | null;
+  };
   /** records = jumlah baris katalog; opd = jumlah OPD unik (dipakai uji meta & pemantauan). */
   sapa: { state: 'active' | 'down'; records: number; opd: number; indikator?: number };
   ai: {
@@ -71,5 +86,6 @@ export async function GET() {
 
   status.sapa = sapa;
   if (ai) status.ai = ai;
+  status.semantik = metaSemantik();
   return NextResponse.json(status);
 }

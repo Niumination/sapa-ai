@@ -1,5 +1,6 @@
 import { NextRequest } from 'next/server';
 import { fetchSapaData } from '@/lib/sapa-client';
+import { indeksUntuk, opsiRemoteDariLingkungan, penyediaDariLingkungan } from '@/services/semantik';
 import { composeAnswer } from '@/services/answer-compose';
 import { getClientIp, rateLimitHeaders, checkRateLimit } from '@/lib/rate-limit';
 import { sitasiBalasan } from '@/services/sitasi-per-klaim';
@@ -51,6 +52,12 @@ export async function POST(req: NextRequest) {
     );
   }
 
+  // FR-12: panaskan indeks semantik SEBELUM jawaban disusun. Penyusunan jawaban
+  // bersifat sinkron, jadi indeks harus sudah siap — dan karena cache-nya
+  // berkunci sidik korpus (FR-25), ini hanya benar-benar menghitung sekali per
+  // versi korpus, bukan setiap permintaan.
+  await siapkanIndeksSemantik(records, meta.sidik);
+
   const hasil = await composeAnswer({ query: queryRaw, records, ip, stream: false });
 
   // Jika admin mematikan AI dan Deterministik → 503, bukan 200
@@ -89,6 +96,23 @@ export async function POST(req: NextRequest) {
     },
     { headers: rateLimitHeaders(batas) },
   );
+}
+
+/**
+ * Panaskan indeks semantik (FR-12) tanpa pernah menggagalkan permintaan.
+ *
+ * Dipakai bersama oleh jalur JSON & streaming supaya keduanya memakai indeks
+ * yang sama. Kegagalan penyedia remote ditangani di dalam semantik.ts (turun ke
+ * penyedia hash), dan kegagalan tak terduga di sini pun tidak boleh menahan
+ * jawaban: lebih baik kehilangan jalur cadangan daripada kehilangan jawaban.
+ */
+export async function siapkanIndeksSemantik(records: Parameters<typeof indeksUntuk>[0], sidikKorpus: string): Promise<void> {
+  try {
+    const opsi = penyediaDariLingkungan() === 'remote' ? opsiRemoteDariLingkungan() : undefined;
+    await indeksUntuk(records, sidikKorpus, opsi);
+  } catch {
+    // senyap: jalur semantik hanya cadangan
+  }
 }
 
 /**

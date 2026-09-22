@@ -29,6 +29,41 @@ describe('retrieveRelevant — skor berbobot kelangkaan kata', () => {
   });
 });
 
+// ─── Leksikon istilah resmi & pengisi kalimat (uji parafrase FR-12, 22 Sep 2026) ───
+// Dua kueri parafrase yang SEMULA ditolak penjaga konsep-asing, bukan karena data
+// tidak ada. Sebabnya dua: (a) istilah pemerintahan ditulis lengkap sementara
+// katalog memakai akronim; (b) kata tanya pengukur & kata kerja predikat selalu
+// ber-df 0 sehingga memaksa gerbang "2 kecocokan" yang tak mungkin dipenuhi.
+describe('retrieveRelevant — leksikon frasa istilah resmi', () => {
+  const KORPUS_ISTILAH: SapaRecord[] = [
+    { id: 1, id_kode_indikator: 11, kode_indikator_kode_indikator: 'a', kode_indikator_nama_indikator: 'Jumlah ASN', id_opds: 1, opds_nama_opd: 'Badan Kepegawaian Daerah', jadwal_pemutakhiran: 'Tahunan', satuan: 'Orang', tahun: '2026', variabel: '9610' },
+    { id: 2, id_kode_indikator: 12, kode_indikator_kode_indikator: 'b', kode_indikator_nama_indikator: 'Indeks Pembangunan Manusia (IPM)', id_opds: 2, opds_nama_opd: 'Badan Perencanaan Pembangunan Daerah', jadwal_pemutakhiran: 'Tahunan', satuan: 'Poin', tahun: '2025', variabel: '78,09' },
+    { id: 3, id_kode_indikator: 13, kode_indikator_kode_indikator: 'c', kode_indikator_nama_indikator: 'Jumlah Balita Stunting', id_opds: 3, opds_nama_opd: 'Dinas Kesehatan', jadwal_pemutakhiran: 'Tahunan', satuan: 'Balita', tahun: '2025', variabel: '730' },
+  ];
+
+  it('"aparatur sipil negara" (UU 5/2014) menemukan indikator ASN yang ditulis akronim', () => {
+    expect(tokenizeQuery('Berapa banyak aparatur sipil negara?')).toEqual(['asn']);
+    const hits = retrieveRelevant(KORPUS_ISTILAH, 'Berapa banyak aparatur sipil negara?');
+    expect(hits[0]?.record.kode_indikator_nama_indikator).toBe('Jumlah ASN');
+  });
+
+  it('"indeks pembangunan manusia" (BPS) menemukan indikator IPM', () => {
+    expect(tokenizeQuery('Berapa indeks pembangunan manusia?')).toEqual(['ipm']);
+    expect(retrieveRelevant(KORPUS_ISTILAH, 'Berapa indeks pembangunan manusia?')[0]?.record.kode_indikator_nama_indikator).toMatch(/IPM/);
+  });
+
+  it('kata tanya pengukur & kata kerja predikat dibuang, topiknya tetap terbaca', () => {
+    // "seberapa" + "mengalami" selalu ber-df 0; tanpa dibuang, kueri ini ditolak.
+    expect(tokenizeQuery('Seberapa banyak anak yang mengalami tengkes?')).toEqual(['anak', 'stunting']);
+    expect(retrieveRelevant(KORPUS_ISTILAH, 'Seberapa banyak anak yang mengalami tengkes?')[0]?.record.kode_indikator_nama_indikator).toBe('Jumlah Balita Stunting');
+  });
+
+  it('"anak" (kata warga) menemukan indikator yang menulis "Balita"', () => {
+    expect(tokenizeQuery('jumlah anak stunting')).toEqual(['anak', 'stunting']);
+    expect(retrieveRelevant(KORPUS_ISTILAH, 'jumlah anak stunting').length).toBeGreaterThan(0);
+  });
+});
+
 // ─── Penjaga kejujuran (reviu 2026-09-04) ───
 // Bila pertanyaan menyinggung konsep yang TIDAK PERNAH tercatat di SAPA
 // (df = 0) dan kandidat terbaik hanya cocok satu konsep, yang tampil pasti

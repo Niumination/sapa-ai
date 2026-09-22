@@ -1,0 +1,41 @@
+{
+  "$schema": "Set kueri parafrase untuk mengukur lapis semantik (FR-12 / EV-05)",
+  "versi": 1,
+  "dibuat": "2026-09-22",
+  "sumber": "Disusun dari sudut pandang warga/pejabat yang bertanya — BUKAN dari nama indikator — sebelum pengukuran dijalankan.",
+  "caraPakai": "SAPA_EVAL_URL=http://127.0.0.1:3116 node scripts/uji-parafrase.mjs",
+  "catatan": [
+    "Indikator harapan harus ADA pada korpus uji yang dipakai (lihat verifikasi/korpus-uji-besar.json).",
+    "Kueri sengaja memakai kata berbeda, urutan berbeda, atau salah tulis — inilah kasus yang tidak ditangani pencocokan leksikal.",
+    "Set 'negatif' menguji sisi sebaliknya: pertanyaan di luar katalog HARUS dijawab 'tidak ada data', bukan dengan kemiripan terdekat."
+  ],
+  "item": [
+    { "pertanyaan": "berapa banyak warga yang tercatat di kabupaten ini", "harap": "penduduk" },
+    { "pertanyaan": "jumlah pendudk aceh tengah", "harap": "penduduk" },
+    { "pertanyaan": "banyaknya penduduk kabupaten", "harap": "penduduk" },
+    { "pertanyaan": "seberapa banyak anak yang mengalami tengkes", "harap": "stunting" },
+    { "pertanyaan": "prevalens stunting", "harap": "stunting" },
+    { "pertanyaan": "angka balita kurang gizi", "harap": "stunting" },
+    { "pertanyaan": "indeks pembangunan manusa aceh tengah", "harap": "manusia" },
+    { "pertanyaan": "nilai ipm kabupaten", "harap": "manusia" },
+    { "pertanyaan": "mutu hidup manusia di aceh tengah", "harap": "manusia" },
+    { "pertanyaan": "berapa banyak aparatur sipil negara", "harap": "asn" },
+    { "pertanyaan": "jumlah asn kabupaten", "harap": "asn" },
+    { "pertanyaan": "produksi kopi arabik tahun ini", "harap": "kopi" },
+    { "pertanyaan": "hasil panen kopi arabika", "harap": "kopi" },
+    { "pertanyaan": "derajat kemiskinan penduduk aceh tengah", "harap": "kemiskinan" },
+    { "pertanyaan": "kemiskinan aceh tengah sekarang", "harap": "kemiskinan" },
+    { "pertanyaan": "keluarga penerima bantuan sosial sembako", "harap": "sembako" },
+    { "pertanyaan": "jumlah koperas di kecamatan bebesen", "harap": "koperasi" },
+    { "pertanyaan": "panjang jalan kabupaten aceh tengah", "harap": "jalan" },
+    { "pertanyaan": "jumlah balita stunting", "harap": "stunting" },
+    { "pertanyaan": "produksi padi sawah", "harap": "padi" }
+  ],
+  "negatif": [
+    "berapa jumlah drone di kecamatan peusangan",
+    "harga cabai hari ini",
+    "hasil pertandingan sepak bola kemarin",
+    "berapa jumlah penumpang kereta cepat jakarta bandung",
+    "jadwal penerbangan dari bandara rembele"
+  ]
+}

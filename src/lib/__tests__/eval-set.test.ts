@@ -80,3 +80,36 @@ describe('data/eval-set.json', () => {
     expect((set.invarians.jargonInternal ?? []).length).toBeGreaterThan(0);
   });
 });
+
+// ─── Dampak perubahan leksikon FR-12 pada set evaluasi 90 item ───────────────
+// Perubahan FR-12 menyentuh tokenisasi: 3 stopword baru ("seberapa", "mengalami",
+// "menderita"), sinonim dua arah `anak` ⇄ `balita`, dan leksikon frasa resmi
+// ("aparatur sipil negara" → asn, "indeks pembangunan manusia" → ipm).
+//
+// Uji ini MENGUNCI luas dampaknya pada set evaluasi: hanya item yang benar-benar
+// memuat pemicunya yang boleh berubah perilaku. Bila kelak pemicu baru
+// ditambahkan, uji ini gagal lebih dulu — memaksa penulisnya menghitung dampak
+// pada gerbang eval 90 item, bukan menemukannya belakangan di produksi.
+describe('eval-set — dampak leksikon FR-12 dibatasi & terdata', () => {
+  const pemicu = [
+    { nama: 'stopword baru', pola: /\b(seberapa|mengalami|menderita)\b/i, harap: [] as string[] },
+    { nama: 'sinonim anak', pola: /\banak\b/i, harap: ['L9', 'F1'] },
+    { nama: 'frasa aparatur sipil negara', pola: /aparatur/i, harap: [] as string[] },
+    { nama: 'frasa indeks pembangunan manusia', pola: /indeks pembangunan manusia/i, harap: ['T3'] },
+  ];
+
+  it('setiap item yang tersentuh leksikon FR-12 terdaftar (tidak ada dampak tersembunyi)', () => {
+    for (const p of pemicu) {
+      const kena = set.item.filter((it) => p.pola.test(it.pertanyaan)).map((it) => it.id).sort();
+      expect(kena, `pemicu "${p.nama}" menyentuh item di luar daftar`).toEqual([...p.harap].sort());
+    }
+  });
+
+  it('item yang tersentuh tetap dapat dijawab (mode "jawab") atau tetap boleh jujur', () => {
+    for (const id of ['L9', 'F1', 'T3']) {
+      const it = set.item.find((x) => x.id === id);
+      expect(it, `item ${id} harus ada di set`).toBeDefined();
+      expect(['jawab', 'jujur']).toContain(it?.harus);
+    }
+  });
+});

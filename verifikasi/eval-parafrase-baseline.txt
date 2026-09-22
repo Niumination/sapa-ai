@@ -1,0 +1,32 @@
+
+  #  hasil  pos  jalur      pertanyaan
+   1   ✓       1  leksikal   berapa banyak warga yang tercatat di kabupaten ini
+   2   ✗       0  leksikal   jumlah pendudk aceh tengah
+   3   ✗       0  leksikal   banyaknya penduduk kabupaten
+   4   ✗       0  leksikal   seberapa banyak anak yang mengalami tengkes
+   5   ✓       1  leksikal   prevalens stunting
+   6   ✗       0  leksikal   angka balita kurang gizi
+   7   ✓       1  leksikal   indeks pembangunan manusa aceh tengah
+   8   ✓       1  leksikal   nilai ipm kabupaten
+   9   ✗       0  leksikal   mutu hidup manusia di aceh tengah
+  10   ✗       0  leksikal   berapa banyak aparatur sipil negara
+  11   ✓       1  leksikal   jumlah asn kabupaten
+  12   ✓       1  leksikal   produksi kopi arabik tahun ini
+  13   ✓       1  leksikal   hasil panen kopi arabika
+  14   ✗       0  leksikal   derajat kemiskinan penduduk aceh tengah
+  15   ✗       0  leksikal   kemiskinan aceh tengah sekarang
+  16   ✓       1  leksikal   keluarga penerima bantuan sosial sembako
+  17   ✓       1  leksikal   jumlah koperas di kecamatan bebesen
+  18   ✓       1  leksikal   panjang jalan kabupaten aceh tengah
+  19   ✓       1  leksikal   jumlah balita stunting
+  20   ✓       1  leksikal   produksi padi sawah
+
+  Set negatif (di luar katalog) — menolak benar: 5/5
+    ✓ berapa jumlah drone di kecamatan peusangan
+    ✓ harga cabai hari ini
+    ✓ hasil pertandingan sepak bola kemarin
+    ✓ berapa jumlah penumpang kereta cepat jakarta bandung
+    ✓ jadwal penerbangan dari bandara rembele
+
+  recall@15 = 12/20 = 60% (ambang dokumen 10: 90%)
+✗ GAGAL

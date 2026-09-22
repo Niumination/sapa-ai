@@ -1,6 +1,7 @@
 import { NextRequest } from 'next/server';
 import { fetchSapaData } from '@/lib/sapa-client';
 import { sitasiBalasan } from '@/services/sitasi-per-klaim';
+import { siapkanIndeksSemantik } from '@/app/api/query/route';
 import { tahunPadaBukti } from '@/services/grounding';
 import { catatCelahBilaPerlu } from '@/app/api/query/route';
 import { composeAnswer } from '@/services/answer-compose';
@@ -51,6 +52,7 @@ export async function POST(req: NextRequest) {
 
         kirim('status', { status: 'Menganalisis pertanyaan…' });
         const ip = getClientIp(req);
+        await siapkanIndeksSemantik(fetched.records, fetched.meta.sidik);
         const hasil = await composeAnswer({
           query: queryRaw,
           records: fetched.records,

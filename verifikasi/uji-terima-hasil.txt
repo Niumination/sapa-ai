@@ -1,19 +1,13 @@
 
-[1m── 1. Statis (typecheck · uji unit · build) ──[0m
-  [32m✓[0m typecheck lolos
-  [32m✓[0m uji unit: 28 berkas / 343 uji lulus (ambang 230)
-  [32m✓[0m pagar grounding ada (INV-01)
-  [32m✓[0m penjaga permintaan sistem ada (SEC-02)
-
 [1m── 2. Pagar /api/revalidate (SEC-01) ──[0m
   [32m✓[0m revalidate menolak permintaan tanpa rahasia (HTTP 503, fail-closed)
 
 [1m── 3. Kesegaran data & sidik korpus (FR-25) ──[0m
-  [32m✓[0m waktu tarik data dilaporkan (2026-09-22T10:57:40.977Z)
-  [32m✓[0m sidik korpus dilaporkan (33c96113)
+  [32m✓[0m waktu tarik data dilaporkan (2026-09-22T14:20:26.482Z)
+  [32m✓[0m sidik korpus dilaporkan (0ffceb0e)
   [32m✓[0m daftar tahun data disertakan (dataYears)
   [32m✓[0m sidik konsisten antara jalur JSON & streaming
-  [32m✓[0m mode AI & deterministik melaporkan versi korpus yang sama (33c96113)
+  [32m✓[0m mode AI & deterministik melaporkan versi korpus yang sama (0ffceb0e)
 
 [1m── 4. Dasbor celah pengetahuan (FR-27) ──[0m
   [32m✓[0m endpoint celah menolak tanpa token (HTTP 401, fail-closed)
@@ -26,13 +20,20 @@
   [32m✓[0m laporan sah diterima (HTTP 201)
   [32m✓[0m jenis laporan tak dikenal ditolak (HTTP 400)
   [32m✓[0m daftar laporan menolak tanpa token (HTTP 401, fail-closed)
-  [32m✓[0m laporan tersimpan tanpa digit (privasi terjaga; 6 laporan minggu ini)
+  [32m✓[0m laporan tersimpan tanpa digit (privasi terjaga; 2 laporan minggu ini)
 
 [1m── 6. Sitasi per klaim (FR-19) ──[0m
-  [32m✓[0m 0 klaim tanpa rujukan (1/1 klaim bersitasi)
+  [32m✓[0m 0 klaim tanpa rujukan (2/2 klaim bersitasi)
   [32m✓[0m penanda [n] tertulis pada narasiBersitasi
-  [32m✓[0m rujukan punya sasaran (bukti-1 baris bukti)
-  [32m✓[0m uji 50 sampel: 42/42 klaim bersitasi
+  [32m✓[0m rujukan punya sasaran (bukti-15 baris bukti)
+  · uji 50 sampel sitasi dilewati (set SAPA_SITASI_PENUH=1 untuk menjalankannya)
+
+[1m── 6b. Lapis semantik Bahasa Indonesia (FR-12 / EV-05) ──[0m
+  [32m✓[0m lapis semantik aktif (penyedia: hash)
+  [32m✓[0m salah tulis 'pendudk' tetap menemukan indikator penduduk
+  [32m✓[0m kueri di luar katalog ditolak (0 bukti)
+  · menjalankan uji parafrase penuh (20 + 5 negatif)…
+  [32m✓[0m uji parafrase: recall@15 = 20/20 = 100%
 
 [1m── 7. Evaluasi — DILEWATI (SAPA_SKIP_EVAL=1) ──[0m
 

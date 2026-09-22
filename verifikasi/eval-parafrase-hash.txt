@@ -1,0 +1,34 @@
+  penyedia semantik : hash · dim 512 · sidik indeks 0db47884
+  muat dingin indeks: 75 ms untuk 1210 record (penyedia hash)
+
+  #  hasil  pos  jalur      pertanyaan
+   1   ✓       1  leksikal   berapa banyak warga yang tercatat di kabupaten ini
+   2   ✓       1  semantik   jumlah pendudk aceh tengah
+   3   ✓       1  semantik   banyaknya penduduk kabupaten
+   4   ✓       1  leksikal   seberapa banyak anak yang mengalami tengkes
+   5   ✓       1  leksikal   prevalens stunting
+   6   ✓       1  semantik   angka balita kurang gizi
+   7   ✓       1  leksikal   indeks pembangunan manusa aceh tengah
+   8   ✓       1  leksikal   nilai ipm kabupaten
+   9   ✓       1  semantik   mutu hidup manusia di aceh tengah
+  10   ✓       1  leksikal   berapa banyak aparatur sipil negara
+  11   ✓       1  leksikal   jumlah asn kabupaten
+  12   ✓       1  leksikal   produksi kopi arabik tahun ini
+  13   ✓       1  leksikal   hasil panen kopi arabika
+  14   ✓       1  semantik   derajat kemiskinan penduduk aceh tengah
+  15   ✓       1  semantik   kemiskinan aceh tengah sekarang
+  16   ✓       1  leksikal   keluarga penerima bantuan sosial sembako
+  17   ✓       1  leksikal   jumlah koperas di kecamatan bebesen
+  18   ✓       1  leksikal   panjang jalan kabupaten aceh tengah
+  19   ✓       1  leksikal   jumlah balita stunting
+  20   ✓       1  leksikal   produksi padi sawah
+
+  Set negatif (di luar katalog) — menolak benar: 5/5
+    ✓ berapa jumlah drone di kecamatan peusangan
+    ✓ harga cabai hari ini
+    ✓ hasil pertandingan sepak bola kemarin
+    ✓ berapa jumlah penumpang kereta cepat jakarta bandung
+    ✓ jadwal penerbangan dari bandara rembele
+
+  recall@15 = 20/20 = 100% (ambang dokumen 10: 90%)
+✓ LULUS

@@ -280,6 +280,60 @@ else
   info "server $AI_URL tidak hidup — lompati FR-19"
 fi
 
+# ── 6b. Lapis semantik Bahasa Indonesia (FR-12 / EV-05) ─────────────────────
+# Tiga pemeriksaan, sengaja TIDAK bergantung korpus (bisa jalan di korpus
+# produksi maupun korpus uji): (1) lapis semantik benar-benar aktif menurut
+# /api/status, (2) salah tulis kata yang ADA di katalog tetap menemukan
+# indikator yang benar, (3) kueri di luar katalog tetap TIDAK dijawab dengan
+# data yang kebetulan mirip. Uji parafrase 20+5 kueri penuh dijalankan dengan
+# SAPA_PARAFRASE_PENUH=1 (butuh korpus uji + stub).
+if [ "$(hidup "$DET_URL")" = "200" ]; then
+  judul "6b. Lapis semantik Bahasa Indonesia (FR-12 / EV-05)"
+  sem_status=$(curl -s -m 60 "$DET_URL/api/status" 2>/dev/null || echo '{}')
+  sem_aktif=$(printf '%s' "$sem_status" | python3 -c "import json,sys;d=json.load(sys.stdin);print('ya' if (d.get('semantik') or {}).get('aktif') else 'tidak')" 2>/dev/null || echo 'tidak')
+  sem_penyedia=$(printf '%s' "$sem_status" | python3 -c "import json,sys;d=json.load(sys.stdin);print((d.get('semantik') or {}).get('penyedia') or '-')" 2>/dev/null || echo '-')
+  if [ "$sem_aktif" = "ya" ]; then ok "lapis semantik aktif (penyedia: $sem_penyedia)"; else no "lapis semantik TIDAK aktif"; fi
+
+  # (2) Salah tulis: "pendudk" — kata "penduduk" ada di katalog SAPA (indikator
+  #     penduduk). Yang dinilai: daftar bukti jawaban memuat indikator penduduk.
+  tanya_sem() {
+    curl -s -m 90 -X POST "$1/api/query" -H 'Content-Type: application/json' \
+      -d "{\"query\":\"$2\"}" 2>/dev/null || echo '{}'
+  }
+  typos=$(tanya_sem "$DET_URL" 'jumlah pendudk')
+  printf '%s' "$typos" > /tmp/ut-fr12-typo.json
+  if python3 -c "
+import json,sys
+d = json.load(open('/tmp/ut-fr12-typo.json'))
+ev = d.get('evidence') or []
+sys.exit(0 if any('penduduk' in str(e.get('indikator','')).lower() for e in ev) else 1)
+" 2>/dev/null; then ok "salah tulis 'pendudk' tetap menemukan indikator penduduk"; else no "salah tulis 'pendudk' TIDAK menemukan indikator penduduk"; fi
+
+  # (3) Kueri di luar katalog: tidak boleh dijawab dengan bukti apa pun.
+  luars=$(tanya_sem "$DET_URL" 'berapa jumlah drone di kecamatan peusangan')
+  printf '%s' "$luars" > /tmp/ut-fr12-negatif.json
+  jml_luar=$(python3 -c "
+import json
+d = json.load(open('/tmp/ut-fr12-negatif.json'))
+print(len(d.get('evidence') or []))" 2>/dev/null || echo 99)
+  if [ "${jml_luar:-99}" = "0" ]; then ok "kueri di luar katalog ditolak (0 bukti)"; else no "kueri di luar katalog dijawab ${jml_luar} bukti"; fi
+
+  if [ "${SAPA_PARAFRASE_PENUH:-0}" = "1" ]; then
+    info "menjalankan uji parafrase penuh (20 + 5 negatif)…"
+    if SAPA_EVAL_URL="$DET_URL" SAPA_PARAFRASE_JEDA_MS="${SAPA_PARAFRASE_JEDA_MS:-0}" timeout 900 \
+        node scripts/uji-parafrase.mjs > /tmp/ut-fr12-parafrase.txt 2>&1; then
+      recall=$(grep -oE 'recall@15 = [0-9]+/[0-9]+ = [0-9]+%' /tmp/ut-fr12-parafrase.txt | tail -1)
+      ok "uji parafrase: ${recall:-lihat /tmp/ut-fr12-parafrase.txt}"
+    else
+      no "uji parafrase GAGAL — lihat /tmp/ut-fr12-parafrase.txt"
+    fi
+  else
+    info "uji parafrase penuh dilewati (set SAPA_PARAFRASE_PENUH=1 untuk menjalankannya)"
+  fi
+else
+  info "server $DET_URL tidak hidup — lompati FR-12"
+fi
+
 # ── 7. Evaluasi set 90 item ─────────────────────────────────────────────────
 jalankan_eval() {
   local url="$1" label="$2" keluaran="$3"

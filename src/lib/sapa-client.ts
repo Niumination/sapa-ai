@@ -282,6 +282,29 @@ export function normalkanSingkatan(kata: string): string[] {
   return SINGKATAN[kata] ?? [kata];
 }
 
+/**
+ * LEKSIKON FRASA ISTILAH RESMI (usulan 22 Sep 2026, temuan uji parafrase FR-12).
+ *
+ * Pengguna menulis istilah pemerintahan secara LENGKAP, sedangkan katalog SAPA
+ * memakai akronimnya. Dua contoh terukur pada uji parafrase:
+ *   • "berapa banyak aparatur sipil negara" → ditolak (katalog memuat "Jumlah ASN");
+ *   • "indeks pembangunan manusia"          → hanya cocok karena kebetulan ada
+ *     indikator berjudul panjang; bila katalog memakai "IPM" saja, ia gugur.
+ *
+ * Sumber istilah (bukan karangan untuk lulus uji):
+ *   • ASN = Aparatur Sipil Negara — UU No. 5/2014 tentang Aparatur Sipil Negara.
+ *   • IPM = Indeks Pembangunan Manusia — publikasi BPS (metodologi IPM).
+ *
+ * Diterapkan sebagai penggantian frasa SEBELUM pemotongan token, sehingga
+ * "aparatur sipil negara" menjadi satu token baku `asn` dan sisanya ikut aturan
+ * normal (sinonim, stem, stopword). Frasa dicocokkan dengan batas kata agar
+ * "negara" pada "badan usaha milik negara" tidak ikut tergantikan.
+ */
+const FRASA_ISTILAH: Array<[RegExp, string]> = [
+  [/\baparatur sipil negara\b/g, 'asn'],
+  [/\bindeks pembangunan manusia\b/g, 'ipm'],
+];
+
 /** Token set dari query — hapus stopwords umum + stopword domain (PR Lapis 1). */
 export function tokenizeQuery(query: string): string[] {
   const stopWords = new Set([
@@ -314,8 +337,18 @@ export function tokenizeQuery(query: string): string[] {
     // BAWAH garis kemiskinan" → tanpa ini, "hidup"/"bawah" memaksa syarat
     // 2 kecocokan sementara kata topiknya hanya satu.
     'hidup', 'bawah', 'dibawah', 'sudah', 'telah', 'akan', 'kita', 'kami', 'mereka',
+    // Kata tanya pengukur & kata kerja predikat (uji parafrase FR-12, 22 Sep 2026):
+    // keduanya pembawa MAKSUD, bukan topik, dan tidak pernah ada di nama indikator
+    // → selalu df = 0 → memicu penjaga konsep-asing. Terukur: "seberapa banyak anak
+    // yang MENGALAMI tengkes" ditolak hanya karena dua kata ini, padahal data
+    // stunting tersedia; "jumlah balita tengkes" (tanpa keduanya) berhasil.
+    'seberapa', 'mengalami', 'menderita',
   ]);
-  return normalizeText(query)
+  const teks = normalizeText(query);
+  return (teks.includes('aparatur') || teks.includes('indeks pembangunan manusia')
+    ? FRASA_ISTILAH.reduce((t, [pola, ganti]) => t.replace(pola, ganti), teks)
+    : teks
+  )
     .split(' ')
     // Reviu 2026-09-04: tanpa ini, tanda tanya menempel pada kata terakhir —
     // "…di tiap kecamatan?" menghasilkan token "kecamatan?" yang tidak pernah
@@ -407,6 +440,9 @@ const SYNONYM_ALTERNATIVES: Record<string, string[][]> = {
   sebaran: [['sebaran'], ['distribusi'], ['sebar'], ['jumlah']],
   penduduk: [['penduduk'], ['kependudukan'], ['warga']],
   balita: [['balita'], ['anak']],
+  // Kebalikannya penting: katalog menulis "Balita", warga menulis "anak" — tanpa
+  // baris ini "anak" dianggap konsep asing (df = 0) dan memicu penjaga kejujuran.
+  anak: [['anak'], ['balita']],
 };
 
 export interface MatchGroup {

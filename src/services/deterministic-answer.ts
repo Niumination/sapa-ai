@@ -14,6 +14,7 @@ import {
   dataSourceLabel,
   type SapaRecord,
 } from '@/lib/sapa-client';
+import { retrieveDenganSemantik, metaSemantik } from '@/services/semantik';
 import { deteksiMetaIntent } from '@/lib/intent-meta';
 import {
   buildDeterministicNarasi,
@@ -274,7 +275,11 @@ export function buildDeterministicAnswer(query: string, records: SapaRecord[]): 
   const meta = deteksiMetaIntent(query, getUniqueOpd(records).map((o) => o.nama));
   if (meta) return buildMetaAnswer(meta, query, records);
 
-  const hits = retrieveRelevant(records, query, 80);
+  // FR-12: leksikal lebih dahulu; lapis semantik HANYA mengisi bila leksikal
+  // kosong (lihat retrieveDenganSemantik) — sehingga jawaban yang sudah benar
+  // tidak mungkin berubah karena lapis ini.
+  const retrieval = retrieveDenganSemantik(records, query, { cap: 80 });
+  const hits = retrieval.hasil;
 
   if (hits.length === 0) {
     // Jelaskan KENAPA kosong: sebut kata kunci yang tidak pernah tercatat di
@@ -363,6 +368,10 @@ export function buildDeterministicAnswer(query: string, records: SapaRecord[]): 
     : '';
   const daftarPeringatan: string[] = [];
   if (peringatanTahun) daftarPeringatan.push(peringatanTahun.trim());
+  // Kejujuran jalur (FR-12): bila jawaban datang dari pencocokan makna, katakan
+  // — baik pada peringatan wajib (agar jalur AI tidak menghapusnya) maupun pada
+  // narasi (agar pembaca tanpa AI pun melihatnya).
+  if (retrieval.jalur === 'semantik' && retrieval.peringatan) daftarPeringatan.push(retrieval.peringatan);
   const kurangKonsepFinal = konsepTakTermuat(records, hits[0].record, query).slice(0, 3);
   if (kurangKonsepFinal.length) {
     // Frasa di sini adalah KANONIK: teks yang sama dipakai sebagai peringatan
@@ -379,8 +388,9 @@ export function buildDeterministicAnswer(query: string, records: SapaRecord[]): 
     'Bandingkan antar-tahun bila indikator multi-tahun — cek kolom Tahun pada visualisasi untuk melihat deret historis.',
   ];
 
+  const peringatanSemantik = retrieval.jalur === 'semantik' && retrieval.peringatan ? `${retrieval.peringatan} ` : '';
   const response = formatAngkaPresentasi({
-    narasi: peringatanTahun + peringatanKonsep + narasiRaw,
+    narasi: peringatanTahun + peringatanKonsep + peringatanSemantik + narasiRaw,
     visualisasi,
     rekomendasi,
     dataSource: dataSourceLabel('splp'),
