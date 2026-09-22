@@ -10,9 +10,10 @@ Berkas di folder ini **berdiri sendiri** — dapat dibaca tanpa dokumen lain.
 | `13-LAPORAN-FR-26.md` | pengembang · tim data | **Notis transparansi + kanal koreksi warga**: notis tiga keadaan, kanal "lapor angka" tanpa menyimpan angka, dasbor tinjauan `/admin/umpan-balik` — beserta bukti uji |
 | `14-LAPORAN-FR-19.md` | pengembang · tim data | **Sitasi per klaim**: penanda `[n]` pada narasi, `narasiBersitasi`/`sitasi` pada API, skrip uji 50 sampel beserta bukti lulusnya |
 | `15-LAPORAN-FR-12.md` | pengembang · tim data | **Lapis semantik Bahasa Indonesia + fusi RRF**: penyedia `hash` tanpa jaringan, invarian leksikal-dulu, kalibrasi ambang berpasangan (0,25/0,27), hasil recall@15 12/20 → 20/20, indeks dingin 75 ms, plus tiga bug yang ditemukan verifikasi dan batas yang jujur |
+| `16-LAPORAN-FR-20.md` | pengembang · tim data | **Klasifikasi sebab kegagalan**: satu tag `lapis:rincian` per jawaban (masukan · retrieval · generasi · penyajian · selesai), tag menggantikan dua sebab kasar lama, wiring ke rute JSON + streaming & dasbor celah, harness penanda sebab, plus keputusan desain dan batas yang jujur |
 | `09-AUDIT-KEAMANAN-PENGGABUNGAN.md` | pemilik produk · DevOps | bukti `main` belum tersentuh, hasil uji gabung, kesetaraan kontrak API, perbandingan perilaku produksi vs cabang, risiko & rencana mundur |
 | `uji-terima.sh` | semua | skrip uji terima otomatis (LULUS/GAGAL sesuai ambang) |
-| `seri-patch/` | agen repo lokal | 7 patch berurutan + `00-semua.patch` |
+| `seri-patch/` | agen repo lokal | seluruh berkas `NNNN-*.patch` (urut angka) + `00-semua.patch` |
 
 ## Angka kunci versi ini (terukur 22 Sep 2026, penyedia model tiruan)
 

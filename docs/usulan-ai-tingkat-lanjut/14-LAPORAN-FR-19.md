@@ -93,7 +93,7 @@ dan menuntut nilai baris bukti ke-n benar-benar muncul pada kalimat itu — inil
 | `npx vitest run` | **28 berkas / 343 uji lulus** (dari 317) |
 | `npx next build` | sukses |
 | `verifikasi/uji-terima.sh` (dengan `SAPA_SITASI_PENUH=1`) | **LULUS** — 24 centang, termasuk `uji 50 sampel: 42/42 klaim bersitasi` |
-| Seri patch di klon bersih `main` | seluruh seri `0001`…`0015` → **0 baris berbeda** dengan cabang (diperiksa ulang di akhir) |
+| Seri patch di klon bersih `main` | seluruh berkas `NNNN-*.patch` (urut angka) → **0 baris berbeda** dengan cabang (diperiksa ulang di akhir; rincian di dokumen `11`) |
 
 Uji baru: 18 uji modul (termasuk kasus "tidak mengarang", toleransi, idempotensi, batas penanda),
 8 uji presentasi (termasuk pemeriksaan bahwa setiap penanda menunjuk baris yang nilainya ada pada
