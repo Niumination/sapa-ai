@@ -12,12 +12,12 @@ menyentuh `main` sampai Anda sendiri memutuskan.
 
 | Aset | Letak | Isi |
 |---|---|---|
-| **Cabang utuh** | `usulan/perbaikan-ai-2026-09-21` @ `94330e3` (komit kode OPS-04 terakhir) | 0 divergensi dari `main` (fast-forward); seri patch memuat seluruh komit kode & dokumen, sedangkan folder `seri-patch/` sendiri sengaja tidak ikut dipatch (isinya memang wadah patch) |
+| **Cabang utuh** | `usulan/perbaikan-ai-2026-09-21` @ `92316af` (komit kode NFR-07 terakhir) | 0 divergensi dari `main` (fast-forward); seri patch memuat seluruh komit kode & dokumen, sedangkan folder `seri-patch/` sendiri sengaja tidak ikut dipatch (isinya memang wadah patch) |
 | **Seri patch** | `06-USULAN-KODE/seri-patch/` | **seluruh** berkas `NNNN-*.patch` di folder itu, dijalankan **urut angka** (jangan melompat), ditambah `00-semua.patch` sebagai paket tunggal. Komit dokumen dikenali dari judulnya (`Dokumen: …`). Karena setiap ekspor mengecualikan folder ini, `git am` atas semua berkas `NNNN-*.patch` menghasilkan pohon yang **sama persis** dengan ujung cabang |
 | **Skrip uji terima** | `06-USULAN-KODE/uji-terima.sh` | memutuskan LULUS/GAGAL sesuai ambang dokumen `10` |
 | **Alat pengukuran** | `verifikasi/mock-llm.mjs`, `verifikasi/stub-splp.mjs`, `verifikasi/banding-ai-vs-det.py`, `verifikasi/banding-main-vs-branch.py`, `scripts/uji-sitasi.mjs`, `scripts/uji-parafrase.mjs`, `scripts/uji-sebab.mjs`, `scripts/uji-pasangan.mjs`, `scripts/buat-korpus-uji.mjs`, `scripts/uji-bersih-data.mjs`, `scripts/buat-korpus-beracun.mjs` | penyedia model & SPLP tiruan + harness pembanding + uji 50 sampel sitasi (FR-19) + uji parafrase EV-05 (FR-12) + uji penanda sebab EV-20 (FR-20) + uji 50 sampel pasangan entitas EV-24 (FR-24) + uji pembersihan data katalog EV-23 (FR-23) + pembangkit korpus uji 1.210 record + pembangkit korpus uji beracun 6 bentuk serangan |
 | **Penyedia model tiruan** | `verifikasi/mock-llm.mjs` (lima kepribadian: `mock-pintar` jujur · `mock-flash` menulis digit sendiri · `mock-tukar` menukar entitas · `mock-nakal` mengarang · `mock-patuh` **menuruti perintah di dalam data**) | menguji keempat pagar: anti-halu, gerbang nilai-tambah, gerbang pasangan entitas FR-24, dan pembersih data katalog FR-23 — tanpa langganan penyedia |
-| **Bukti angka** | `verifikasi/eval90-*.txt`, `banding-G.txt`, `aman-cabang-perilaku.txt`, `uji-terima-hasil.txt`, `eval-parafrase-baseline.txt`, `eval-parafrase-hash.txt`, `eval-sebab-cek.txt`, `uji-sitasi-ai.txt`, `uji-sitasi-det.txt`, `uji-pasangan-jujur.txt`, `uji-pasangan-tukar.txt`, `uji-bersih-data.txt`, `uji-bersih-data-jujur.txt`, `uji-bersih-data-korpus-bersih.txt`, `uji-bersih-data-tanpa-pembersih.txt`, `uji-peringatan.txt`, `uji-peringatan-bukti.json` | semua hasil yang diklaim di dokumen `10` (termasuk A/B lapis semantik FR-12 dan kontrol negatif FR-23 yang sengaja gagal) |
+| **Bukti angka** | `verifikasi/eval90-*.txt`, `banding-G.txt`, `aman-cabang-perilaku.txt`, `uji-terima-hasil.txt`, `eval-parafrase-baseline.txt`, `eval-parafrase-hash.txt`, `eval-sebab-cek.txt`, `uji-sitasi-ai.txt`, `uji-sitasi-det.txt`, `uji-pasangan-jujur.txt`, `uji-pasangan-tukar.txt`, `uji-bersih-data.txt`, `uji-bersih-data-jujur.txt`, `uji-bersih-data-korpus-bersih.txt`, `uji-bersih-data-tanpa-pembersih.txt`, `uji-peringatan.txt`, `uji-peringatan-bukti.json`, `uji-telemetri.txt`, `uji-telemetri-bukti.json` | semua hasil yang diklaim di dokumen `10` (termasuk A/B lapis semantik FR-12 dan kontrol negatif FR-23 yang sengaja gagal) |
 | **Dua dasbor tinjauan** | `/admin/celah-pengetahuan`, `/admin/umpan-balik` | pertanyaan tak terlayani (FR-27) & laporan koreksi warga (FR-26); keduanya ber-`ADMIN_TOKEN` |
 | **Spesifikasi kebutuhan** | `10-KEBUTUHAN-UPGRADE-TINGKAT-LANJUT.md` | daftar kebutuhan `FR/NFR/DS/EV/OPS/CMP` + kriteria terima |
 | **Peta kerja tinggal-jalan** | `10` §11 (Fase B–D) | urutan pekerjaan berikutnya + perkiraan usaha |
@@ -28,7 +28,7 @@ menyentuh `main` sampai Anda sendiri memutuskan.
 |---|---|---|
 | Node.js | 20.20.2 (dipakai saat pengujian) | Node 20 EOL 30 Apr 2026 — jadwalkan naik versi |
 | Next.js | 16.2.10 | tidak ada perubahan dependensi di cabang ini |
-| Uji | 33 berkas / **514 uji** | `npm test` |
+| Uji | 34 berkas / **533 uji** | `npm test` |
 | Variabel lingkungan baru | `REVALIDATE_ALLOW_UNSIGNED` (opsional) | **`REVALIDATE_SECRET` kini wajib** agar penyegaran cache tidak tertolak (fail-closed) |
 | Variabel lingkungan baru (FR-27 & FR-26) | `ADMIN_TOKEN` | menjaga **dua** dasbor admin: `/api/admin/celah` dan `/api/admin/umpan-balik`. Tanpa ini keduanya menjawab **503 fail-closed** |
 | Variabel lingkungan opsional | `SAPA_SPLP_BASE_URL` | mengarahkan pengambilan data ke SPLP lain/stub; dibaca **saat runtime**, jadi cukup diset di proses (lihat §7a) |
@@ -36,6 +36,7 @@ menyentuh `main` sampai Anda sendiri memutuskan.
 | Variabel lingkungan baru (FR-12, penyedia jarak jauh) | `SAPA_EMBED_BASE_URL`, `SAPA_EMBED_MODEL`, `SAPA_EMBED_API_KEY`, `SAPA_EMBED_TIMEOUT_MS` | mengaktifkan embedding kelas e5 (OpenAI-compatible). Bila gagal, sistem otomatis kembali ke `hash` dan mencatat alasannya di `/api/status` — jawaban tidak pernah gagal karena ini |
 | Variabel lingkungan baru (OPS-04, opsional) | `SAPA_ALERT_TELEGRAM_BOT_TOKEN` + `SAPA_ALERT_TELEGRAM_CHAT_ID`, `SAPA_ALERT_WEBHOOK_URL` (+ `SAPA_ALERT_WEBHOOK_TOKEN`), `SAPA_ALERT_PANEL_URL`, `SAPA_ALERT_ESKALASI_MENIT` (15), `SAPA_ALERT_JEDA_ULANG_MENIT` (60) | tanpa saluran, aplikasi tetap berjalan normal — `/api/admin/peringatan` melaporkan `siap:false` apa adanya. Telegram dipasang hanya bila token **dan** chat id terisi |
 | Variabel lingkungan baru (OPS-04, rahasia penjadwal) | `SAPA_URL`, `ADMIN_TOKEN` (rahasia GitHub Actions) | dipakai `.github/workflows/peringatan.yml` (tiap 10 menit). Bila tidak diisi, workflow itu **dorman** (bukan gagal) |
+| Variabel lingkungan baru (NFR-07, opsional) | `SAPA_TELEMETRI` (`off` mematikan), `SAPA_TELEMETRI_JENDELA` (200), `SAPA_TELEMETRI_REKAP_N` (20), `SAPA_TELEMETRI_SIMPAN` | telemetri menyala secara bawaan; mematikannya tidak mengubah jawaban, hanya menghilangkan baris log `[gen_ai]` dan agregat |
 | Penyimpanan | memori proses (tanpa Redis) atau Upstash | tanpa Redis, sirkuit & saklar hidup per-instance (tetap benar, hanya perlu belajar sekali) |
 
 ## 3. Tiga cara menerapkan
@@ -95,14 +96,15 @@ selaras) lalu jalankan uji terima (§7).
 | `src/app/dashboard/**`, `src/components/**` | pekerjaan tampilan | **tidak disentuh** cabang ini; perubahan UI baru aman dari konflik |
 | `data/eval-set.json`, `scripts/eval-run.mjs` | mutu/evaluasi | menambah item = menaikkan bar; **jangan** melonggarkan invarians |
 | `README.md`, `docs/**`, `AGENTS.md` | dokumentasi repo | cabang ini tidak mengubah isinya (hanya satu berkas berubah **mode**, bukan isi) |
+| `src/lib/ai/telemetri.ts`, `src/app/api/admin/telemetri/route.ts`, `scripts/uji-telemetri.mjs` | observabilitas (NFR-07) | wilayah baru; kontrak perilakunya (satu baris per permintaan, nama medan `gen_ai.*`, tanpa isi pertanyaan) dijaga uji unit 19 butir — ubah bersama `20-LAPORAN-NFR-07.md` |
 | `src/lib/ai/notifikasi.ts`, `src/app/api/admin/peringatan/route.ts`, `scripts/uji-peringatan.mjs`, `.github/workflows/peringatan.yml` | operasi/notifikasi (OPS-04) | wilayah baru; ubah hanya bersama-sama dengan `19-LAPORAN-OPS-04.md` karena kontrak perilakunya (episode, antispam, penyaringan rahasia) dijaga uji unit 20 butir |
 | `vercel.json`, `package.json`, `middleware.ts` | rilis/keamanan | **tidak disentuh**; perubahan di sini butuh persetujuan pemilik |
 
 ## 6. Daftar centang serah terima
 
 - [ ] `git status` bersih pada cabang kerja; `main` belum tersentuh.
-- [ ] `npm ci` selesai; `npm test` → **514 uji lulus** (≥ 500).
-- [ ] `bash verifikasi/uji-terima.sh` → **LULUS** (statis + pagar). Bagian §6f (notifikasi sirkuit) butuh server uji khusus — lihat `19 §2`; tanpa itu ia dilaporkan **dilewati**, bukan gagal.
+- [ ] `npm ci` selesai; `npm test` → **533 uji lulus** (≥ 520).
+- [ ] `bash verifikasi/uji-terima.sh` → **LULUS** (statis + pagar). Bagian §6f (notifikasi sirkuit) butuh server uji khusus — lihat `19 §2`; tanpa itu ia dilaporkan **dilewati**, bukan gagal. Bagian §6g (telemetri) **menjalankan servernya sendiri** — cukup `node scripts/uji-telemetri.mjs`; lewati dengan `SAPA_SKIP_TELEMETRI=1`.
 - [ ] Eval dua mode → **90/90** masing-masing, invarians 0, hasil tersimpan di `verifikasi/`.
 - [ ] A/B AI vs deterministik → sitasi AI **≥** deterministik.
 - [ ] `REVALIDATE_SECRET` disiapkan pada lingkungan non-lokal (Vercel/preview).
@@ -145,7 +147,7 @@ AI_URL=http://127.0.0.1:3116 DET_URL=http://127.0.0.1:3117 bash verifikasi/uji-t
 ```
 
 Hasil yang diharapkan pada cabang ini (terukur 22 Sep 2026): eval **90/90** dua mode ·
-grounded pass **100%** · fallback **0%** · invarians **0** · uji unit **514** ·
+grounded pass **100%** · fallback **0%** · invarians **0** · uji unit **533** ·
 A/B sitasi **4,50 vs 3,00** · pertanyaan ber-bukti saat penyedia mati **0,14–0,56 dtk**.
 
 ## 7a. Menguji tanpa internet (stub SPLP) — berguna untuk agen lokal & CI
@@ -211,7 +213,7 @@ perlu disetel — **bukan** gerbangnya dilonggarkan.
 > Langkah:
 > 1. `git switch -c kerja/ai-tingkat-lanjut main`
 > 2. `git am 06-USULAN-KODE/seri-patch/[0-9][0-9][0-9][0-9]-*.patch`
-> 3. `npm ci && npm test` → wajib **514 uji lulus**; `npm run typecheck` → bersih.
+> 3. `npm ci && npm test` → wajib **533 uji lulus**; `npm run typecheck` → bersih.
 > 4. `bash verifikasi/uji-terima.sh` → wajib **LULUS**.
 > 5. Jalankan eval dua mode (lihat `11 §7`) → wajib **90/90** masing-masing, **0 regresi**.
 > 6. Bila ada konflik, jangan menimpa; laporkan berkas konflik beserta keputusan yang diambil.
