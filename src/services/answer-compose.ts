@@ -19,7 +19,8 @@ import {
 } from '@/services/grounding';
 import { getAiConfig, isAiEnabled, isAiShadow, aiStatusReason, type AiConfig } from '@/lib/ai/env';
 import { isAiToggleEnabled, isDetToggleEnabled, readToggleState, toggleBackend } from '@/lib/ai/toggle';
-import { buildPrompt } from '@/lib/ai/prompt';
+import { buildPromptTerperiksa } from '@/lib/ai/prompt';
+import { adaPenandaMencurigakan, teksSajianAman } from '@/lib/ai/bersih-data';
 import { deteksiNiat } from '@/lib/intent-meta';
 import { parseLlmAnswer } from '@/lib/ai/schema';
 import { ejectTokens, createStreamEjector, dedupUnits } from '@/lib/ai/tokens';
@@ -101,6 +102,21 @@ export interface AiMeta {
    * bila gerbang benar-benar memeriksa narasi AI (`keras > 0` ⇒ narasi ditolak).
    */
   pasanganEntitas?: { ok: boolean; keras: number; lunak: number; jumlahNilai: number; jumlahKalimat: number };
+  /**
+   * FR-23: ringkasan pembersihan data katalog sebelum masuk prompt. Selalu ada
+   * pada jalur yang benar-benar memanggil model; `selDibersihkan > 0` berarti ada
+   * teks dari SPLP yang menyerupai perintah/struktur prompt dan telah dinetralkan.
+   */
+  pembersihan?: { selDiperiksa: number; selDibersihkan: number; selDipotong: number;
+    karakterDibuang: number; penandaDinetralkan: number; perintahDinetralkan: number;
+    jenisTersentuh: string[] };
+  /**
+   * FR-23 (lapis tampilan): baris bukti yang teks sumbernya memuat penanda
+   * mencurigakan (karakter tak terlihat/bidi, penanda peran, pembatas prompt).
+   * Balasan tetap mengutip data apa adanya; daftar ini hanya memberi tahu klien
+   * bahwa baris tersebut perlu disanitasi saat DITAMPILKAN.
+   */
+  penandaData?: { id: string; indikator: string }[];
   /** FR-24: rincian temuan keras yang membuat narasi model ditolak (untuk audit). */
   alasanPasangan?: string[];
   /** Peringatan bakU yang disisipkan aplikasi karena model memarafrasekannya. */
@@ -356,8 +372,13 @@ export async function composeAnswer(opts: ComposeOptions): Promise<ComposeResult
     ...(opts.query.match(/\b(?:19|20)\d{2}\b/g) ?? []),
   ];
 
+  // Corong keluaran: SETIAP jawaban (AI maupun deterministik) lewat sini.
+  // Narasi yang DISAJIKAN dibersihkan dari karakter tak terlihat/arah tulis dan
+  // kalimat berperan-perintah (FR-23 lapis tampilan). Pemeriksaan FR-24 di bawah
+  // sengaja tetap memakai narasi ASLI — gerbang itu memeriksa apa yang ditulis
+  // model, bukan apa yang tampil setelah dibersihkan.
   const selengkap = (m: AiMeta, response: HybridResponse): ComposeResult => ({
-    response,
+    response: { ...response, narasi: teksSajianAman(response.narasi) },
     evidence: dasar.evidence,
     pemeriksaan: ringkasPemeriksaan(
       periksaPasanganEntitas(response.narasi, dasar.evidence, {
@@ -465,7 +486,9 @@ export async function composeAnswer(opts: ComposeOptions): Promise<ComposeResult
   // 'nilai_saat_ini' — terukur 10/10 permintaan pada penyedia tiruan.
   const { niat, pemicu } = deteksiNiat(dijaga.query);
   meta.intent = niat;
-  const { system, user } = buildPrompt({
+  // FR-23: prompt dibangun lewat jalur terperiksa supaya pembersihan data katalog
+  // (karakter kendali, penanda peran, perintah dalam data, batas panjang) terlapor.
+  const { system, user, pembersihan } = buildPromptTerperiksa({
     query: dijaga.query,
     intent: niat,
     evidence: dasar.evidence,
@@ -477,6 +500,17 @@ export async function composeAnswer(opts: ComposeOptions): Promise<ComposeResult
     draf: dasar.response.narasi,
   });
   if (pemicu.length) meta.intentPemicu = pemicu;
+  meta.pembersihan = pembersihan;
+  // FR-23 (lapis tampilan): `evidence` pada balasan sengaja dikutip APA ADANYA dari
+  // SPLP — operator perlu melihat teks sumber yang asli untuk audit, jadi pembersih
+  // prompt TIDAK menulis ulang data yang ditampilkan. Konsekuensinya baris bukti bisa
+  // memuat karakter tak terlihat/penanda peran mentah. Daripada menyembunyikannya,
+  // baris seperti itu DITANDAI supaya klien dapat menampilkan dengan aman (mis.
+  // membuang karakter bidi yang bisa menyamarkan urutan angka).
+  const barisMencurigakan = dasar.evidence
+    .filter((e) => adaPenandaMencurigakan(`${e.indikator ?? ''} ${e.satuan ?? ''} ${e.opd ?? ''}`))
+    .map((e) => ({ id: String(e.id), indikator: String(e.indikator ?? '').slice(0, 120) }));
+  if (barisMencurigakan.length > 0) meta.penandaData = barisMencurigakan;
   const pesan = [
     { role: 'system' as const, content: system },
     { role: 'user' as const, content: user },

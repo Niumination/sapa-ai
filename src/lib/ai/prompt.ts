@@ -24,6 +24,15 @@
 //    jadi lebih rapi tetapi menyesatkan.
 
 import type { EvidenceItem } from '@/services/grounding';
+import {
+  BATAS_SEL,
+  RINGKAS_BERSIH_KOSONG,
+  bersihkanSelData,
+  gabungRingkas,
+  type HasilBersih,
+  type JenisSel,
+  type RingkasBersih,
+} from '@/lib/ai/bersih-data';
 import { PANDUAN_NIAT, type NiatJawaban } from '@/lib/intent-meta';
 
 export interface PromptContext {
@@ -58,41 +67,134 @@ ATURAN MUTLAK:
 const SCHEMA_HINT = `Skema JSON:
 {"narasi":"...","rekomendasi":["..."],"followUps":["..."],"visualHint":"metric|table|chart|none","confidence":"tinggi|sedang|rendah"}`;
 
-/** Serialisasi evidence sebagai tabel markdown-KV — kolom eksplisit, sel kosong = N/A. */
-export function serializeEvidence(evidence: EvidenceItem[], maxBaris = 15): string {
+/**
+ * Serialisasi evidence sebagai tabel markdown-KV — kolom eksplisit, sel kosong = N/A.
+ *
+ * FR-23: setiap sel DIBERSIHKAN lebih dulu (`bersih-data.ts`) — karakter kendali,
+ * zero-width, penanda arah tulis dibuang; penanda peran ("system:", "<|im_start|>")
+ * dan perintah imperatif di dalam data dinetralkan; panjang tiap sel dibatasi.
+ * Sel tabel ini ditulis OPD di SPLP, bukan oleh tim aplikasi, sehingga teksnya
+ * TIDAK boleh diperlakukan sebagai tepercaya (OWASP LLM01 — injeksi tak-langsung).
+ *
+ * Mengembalikan ringkasan pembersihan agar bisa dilaporkan pada balasan API.
+ */
+export function serializeEvidence(
+  evidence: EvidenceItem[],
+  maxBaris = 15,
+): { teks: string; ringkas: RingkasBersih } {
   const header = '| id | indikator | nilai | satuan | opd | tahun |';
   const garis = '|----|-----------|-------|--------|-----|-------|';
-  const sel = (v: unknown) => {
-    const t = String(v ?? '').replace(/\|/g, '/').replace(/\s+/g, ' ').trim();
-    return t === '' ? 'N/A' : t;
-  };
-  const baris = evidence.slice(0, maxBaris).map((e) =>
-    `| ${sel(e.id)} | ${sel(e.indikator)} | ${sel(e.nilai)} | ${sel(e.satuan)} | ${sel(e.opd)} | ${sel(e.tahun)} |`,
-  );
-  return [header, garis, ...baris].join('\n');
+  const kolom: JenisSel[] = ['id', 'indikator', 'nilai', 'satuan', 'opd', 'tahun'];
+  const ringkas: RingkasBersih[] = [];
+  const baris = evidence.slice(0, maxBaris).map((e) => {
+    const nilai: unknown[] = [e.id, e.indikator, e.nilai, e.satuan, e.opd, e.tahun];
+    const bersih = nilai.map((v, i) => {
+      const h = bersihkanSelData(v, kolom[i]);
+      return h;
+    });
+    ringkas.push(ringkasDariSel(bersih, kolom));
+    return `| ${bersih.map((h) => selTabel(h.teks)).join(' | ')} |`;
+  });
+  return { teks: [header, garis, ...baris].join('\n'), ringkas: gabungRingkas(ringkas) };
+}
+
+/** Satu sel tabel: pipa dilarang (memecah kolom), sel kosong ditulis N/A. */
+function selTabel(teks: string): string {
+  const t = String(teks ?? '').replace(/\|/g, '/').trim();
+  return t === '' ? 'N/A' : t;
+}
+
+function ringkasDariSel(hasil: HasilBersih[], kolom: JenisSel[]): RingkasBersih {
+  const r: RingkasBersih = { ...RINGKAS_BERSIH_KOSONG, jenisTersentuh: [] };
+  const jenis = new Set<string>();
+  hasil.forEach((h, i) => {
+    r.selDiperiksa += 1;
+    if (h.berubah) {
+      r.selDibersihkan += 1;
+      jenis.add(kolom[i]);
+    }
+    if (h.dipotong) r.selDipotong += 1;
+    r.karakterDibuang += h.karakterDibuang;
+    r.penandaDinetralkan += h.penandaDinetralkan;
+    r.perintahDinetralkan += h.perintahDinetralkan;
+  });
+  r.jenisTersentuh = [...jenis].sort();
+  return r;
 }
 
 export function buildPrompt(ctx: PromptContext): { system: string; user: string } {
+  const { system, user } = buildPromptTerperiksa(ctx);
+  return { system, user };
+}
+
+/**
+ * Sama dengan `buildPrompt`, tetapi mengembalikan LAPORAN pembersihan data (FR-23).
+ *
+ * Dipakai jalur permintaan (`answer-compose`) agar aplikasi dapat melaporkan
+ * berapa sel data katalog yang perlu dibersihkan pada tiap jawaban — tanpa itu,
+ * serangan injeksi tak-langsung hanya bisa dilihat dari log penyedia.
+ */
+export function buildPromptTerperiksa(ctx: PromptContext): {
+  system: string;
+  user: string;
+  pembersihan: RingkasBersih;
+} {
   const evidence = ctx.evidence.slice(0, 15);
   const niat = (ctx.intent ?? 'nilai_saat_ini') as NiatJawaban;
   const panduan = PANDUAN_NIAT[niat] ?? PANDUAN_NIAT.nilai_saat_ini;
 
-  const catatan = (ctx.catatanWajib ?? []).filter(Boolean);
-  const bagianCatatan = catatan.length
-    ? `\nCATATAN_WAJIB (semua harus muncul di narasi):\n${catatan.map((c) => `- ${c}`).join('\n')}\n`
+  // Setiap bagian prompt yang berasal dari DATA katalog dibersihkan lebih dulu.
+  // Termasuk draf deterministik: ia dibangun dari nama indikator & OPD, jadi ia
+  // juga membawa teks dari luar aplikasi.
+  const tabel = serializeEvidence(evidence);
+  const catatanMentah = (ctx.catatanWajib ?? []).filter(Boolean);
+  const catatanBersih = catatanMentah.map((c) => bersihkanSelData(c, 'catatan', BATAS_SEL.catatan));
+  const drafBersih = ctx.draf ? bersihkanSelData(ctx.draf, 'draf', BATAS_SEL.draf) : null;
+  const queryBersih = bersihkanSelData(ctx.query, 'catatan', 500);
+
+  const pembersihan = gabungRingkas([
+    tabel.ringkas,
+    ...catatanBersih.map((h) =>
+      h.berubah
+        ? { ...RINGKAS_BERSIH_KOSONG, selDiperiksa: 1, selDibersihkan: 1, jenisTersentuh: ['catatan'],
+            karakterDibuang: h.karakterDibuang, penandaDinetralkan: h.penandaDinetralkan,
+            perintahDinetralkan: h.perintahDinetralkan, selDipotong: h.dipotong ? 1 : 0 }
+        : { ...RINGKAS_BERSIH_KOSONG, selDiperiksa: 1 },
+    ),
+    ...(drafBersih
+      ? [{
+          ...RINGKAS_BERSIH_KOSONG,
+          selDiperiksa: 1,
+          selDibersihkan: drafBersih.berubah ? 1 : 0,
+          selDipotong: drafBersih.dipotong ? 1 : 0,
+          karakterDibuang: drafBersih.karakterDibuang,
+          penandaDinetralkan: drafBersih.penandaDinetralkan,
+          perintahDinetralkan: drafBersih.perintahDinetralkan,
+          jenisTersentuh: drafBersih.berubah ? ['draf'] : [],
+        }]
+      : []),
+    queryBersih.berubah
+      ? { ...RINGKAS_BERSIH_KOSONG, selDiperiksa: 1, selDibersihkan: 1, jenisTersentuh: ['pertanyaan'],
+          karakterDibuang: queryBersih.karakterDibuang, penandaDinetralkan: queryBersih.penandaDinetralkan,
+          perintahDinetralkan: queryBersih.perintahDinetralkan }
+      : { ...RINGKAS_BERSIH_KOSONG, selDiperiksa: 1 },
+  ]);
+
+  const bagianCatatan = catatanBersih.length
+    ? `\nCATATAN_WAJIB (semua harus muncul di narasi):\n${catatanBersih.map((c) => `- ${c.teks}`).join('\n')}\n`
     : '\nCATATAN_WAJIB: (tidak ada)\n';
 
-  const bagianDraf = ctx.draf
-    ? `\nacuan_draf: teks berikut dihasilkan aturan deterministik dan informasinya sudah benar — pakai sebagai acuan, rapikan bahasanya, jangan kurangi informasinya:\n"${ctx.draf.slice(0, 900)}"\n`
+  const bagianDraf = drafBersih
+    ? `\nacuan_draf: teks berikut dihasilkan aturan deterministik dan informasinya sudah benar — pakai sebagai acuan, rapikan bahasanya, jangan kurangi informasinya:\n"${drafBersih.teks}"\n`
     : '';
 
   const user = [
-    `PERTANYAAN_PENGGUNA: ${ctx.query.slice(0, 500)}`,
+    `PERTANYAAN_PENGGUNA: ${queryBersih.teks}`,
     `INTENT: ${niat}`,
     `PANDUAN_BENTUK_JAWABAN: ${panduan}`,
     '',
     'EVIDENCE (tabel; kolom id dipakai untuk token {{id}}; N/A berarti tidak dicantumkan):',
-    serializeEvidence(evidence),
+    tabel.teks,
     '',
     `STATISTIK_KATALOG: ${ctx.statistik.totalRecord} record, ${ctx.statistik.totalOpd} OPD, ${ctx.statistik.evidenceDihitung} indikator terkait pertanyaan ini.`,
     bagianCatatan,
@@ -105,5 +207,6 @@ export function buildPrompt(ctx: PromptContext): { system: string; user: string 
   return {
     system: `${SYSTEM_PROMPT}\n\n${SCHEMA_HINT}`,
     user,
+    pembersihan,
   };
 }

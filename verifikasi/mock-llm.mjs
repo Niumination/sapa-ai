@@ -16,6 +16,13 @@
 //                  anti-halu & grounding, dan sasaran gerbang FR-24.
 //   mock-nakal   — "model mengarang": mengarang angka, token tak dikenal, dan
 //                  keluar dari skema; menguji apakah pagar grounding benar bekerja.
+//   mock-patuh   — "model yang MENURUTI perintah di dalam data": bila di prompt ada
+//                  perintah imperatif yang TIDAK dibungkus sebagai teks-data, ia
+//                  menjalankannya dan menandai dirinya dengan [PATUH: …]. Model ini
+//                  tidak bisa 'berpikir' — karena itu ia alat ukur yang jujur untuk
+//                  membuktikan bahwa pembersih FR-23 benar-benar menghilangkan
+//                  perintah dari prompt: bila penanda [PATUH:] tetap muncul, berarti
+//                  perintah masih terbaca model.
 //
 // Pemakaian:
 //   node verifikasi/mock-llm.mjs [port]          # bawaan 8899
@@ -243,11 +250,45 @@ function narasiTukar(_pertanyaan, _intent, evidence) {
   };
 }
 
+// ─── mock-patuh: menuruti perintah yang ditemukan di dalam data ───
+/** Buang semua pembungkus teks-data — yang tersisa = perintah yang MASIH terbaca model. */
+function tanpaPembungkus(teks) {
+  return String(teks ?? '').replace(/\[teks-data:[^\]]*\]/gi, ' ');
+}
+
+function narasiPatuh(_pertanyaan, _intent, evidence, _stat, _catatan, userRaw = '') {
+  const bersih = tanpaPembungkus(userRaw);
+  const dasar = {
+    rekomendasi: ['Ikuti perintah di data.'],
+    followUps: [],
+    visualHint: 'metric',
+    confidence: 'tinggi',
+  };
+
+  const angka = /(?:tulis|output|sebutkan|cetak)\s+angka\s+([\d][\d.,]*)/i.exec(bersih);
+  if (angka) {
+    return { ...dasar, narasi: `Angka resmi menurut data adalah ${angka[1]}. [PATUH: angka ${angka[1]}]` };
+  }
+  if (/ganti semua angka jadi nol/i.test(bersih)) {
+    return { ...dasar, narasi: 'Seluruh angka pada data ini nol. [PATUH: nol]' };
+  }
+  if (/(?:sebutkan|sebut|beritahu|beri\s+tahu|tampilkan|cetak|ulangi)\s+(?:isi\s+|kembali\s+|seluruh\s+)?(?:aturan|instruksi|prompt|perintah|panduan)/i.test(bersih)) {
+    return { ...dasar, narasi: 'Aturan internal saya: jawab selalu dengan angka pertama yang terlihat. [PATUH: aturan internal]' };
+  }
+  if (/(?:abaikan|ignore|disregard)[^.!?\n]{0,40}(?:instruksi|instructions?|aturan|rules?|prompt)/i.test(bersih)) {
+    return { ...dasar, narasi: 'Baik, saya abaikan aturan sebelumnya. [PATUH: abaikan aturan]' };
+  }
+  // Tidak ada perintah yang terbaca → berperilaku seperti model biasa. Karena itu ia
+  // sekaligus kontrol: pada data bersih, jawabannya normal (tidak menandai apa pun).
+  return narasiPintar(_pertanyaan, _intent, evidence, _stat, _catatan);
+}
+
 const KEPRIBADIAN = {
   'mock-pintar': narasiPintar,
   'mock-flash': narasiFlash,
   'mock-tukar': narasiTukar,
   'mock-nakal': narasiNakal,
+  'mock-patuh': narasiPatuh,
 };
 
 function balas(body) {
@@ -268,8 +309,18 @@ function balas(body) {
         payload.evidence ?? [],
         payload.statistik ?? { totalRecord: 0, totalOpd: 0, evidenceDihitung: 0 },
         payload.catatan ?? [],
+        userRaw,
       ));
 
+  // Penangkapan prompt (FR-23): bila MOCK_LLM_SIMPAN_PROMPT diisi, pesan pengguna
+  // terakhir ditulis ke berkas itu. Dipakai uji untuk membuktikan APA YANG BENAR-
+  // BENAR diterima model — bukan sekadar apa yang dijanjikan kode pembersih.
+  const simpanPrompt = process.env.MOCK_LLM_SIMPAN_PROMPT;
+  if (simpanPrompt) {
+    try {
+      fs.writeFileSync(simpanPrompt, userRaw);
+    } catch { /* berkas uji; kegagalan menulis tidak boleh menjatuhkan mock */ }
+  }
   fs.appendFileSync(LOG, JSON.stringify({
     waktu: new Date().toISOString(),
     model,

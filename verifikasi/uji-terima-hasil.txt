@@ -1,7 +1,7 @@
 
 [1m── 1. Statis (typecheck · uji unit · build) ──[0m
   [32m✓[0m typecheck lolos
-  [32m✓[0m uji unit: 31 berkas / 452 uji lulus (ambang 230)
+  [32m✓[0m uji unit: 32 berkas / 494 uji lulus (ambang 230)
   [32m✓[0m pagar grounding ada (INV-01)
   [32m✓[0m penjaga permintaan sistem ada (SEC-02)
 
@@ -9,7 +9,7 @@
   [32m✓[0m revalidate menolak permintaan tanpa rahasia (HTTP 503, fail-closed)
 
 [1m── 3. Kesegaran data & sidik korpus (FR-25) ──[0m
-  [32m✓[0m waktu tarik data dilaporkan (2026-09-23T03:32:36.545Z)
+  [32m✓[0m waktu tarik data dilaporkan (2026-09-23T04:23:08.081Z)
   [32m✓[0m sidik korpus dilaporkan (0ffceb0e)
   [32m✓[0m daftar tahun data disertakan (dataYears)
   [32m✓[0m sidik konsisten antara jalur JSON & streaming
@@ -17,8 +17,7 @@
 
 [1m── 4. Dasbor celah pengetahuan (FR-27) ──[0m
   [32m✓[0m endpoint celah menolak tanpa token (HTTP 401, fail-closed)
-  [32m✓[0m dasbor celah hidup untuk admin (minggu 2026-W39)
-  [32m✓[0m pagar privasi celah: tidak ada digit pada pertanyaan tersimpan
+  · ADMIN_TOKEN tidak diberikan ke skrip — pemeriksaan daftar celah dilewati (kirim ADMIN_TOKEN=… bila ingin diperiksa)
 
 [1m── 5. Transparansi jawaban & kanal koreksi (FR-26) ──[0m
   [32m✓[0m notis transparansi tampil di halaman dasbor
@@ -26,7 +25,7 @@
   [32m✓[0m laporan sah diterima (HTTP 201)
   [32m✓[0m jenis laporan tak dikenal ditolak (HTTP 400)
   [32m✓[0m daftar laporan menolak tanpa token (HTTP 401, fail-closed)
-  [32m✓[0m laporan tersimpan tanpa digit (privasi terjaga; 4 laporan minggu ini)
+  · ADMIN_TOKEN tidak diberikan — pemeriksaan isi laporan dilewati
 
 [1m── 6. Sitasi per klaim (FR-19) ──[0m
   [32m✓[0m 0 klaim tanpa rujukan (2/2 klaim bersitasi)
@@ -38,24 +37,27 @@
   [32m✓[0m lapis semantik aktif (penyedia: hash)
   [32m✓[0m salah tulis 'pendudk' tetap menemukan indikator penduduk
   [32m✓[0m kueri di luar katalog ditolak (0 bukti)
-  · menjalankan uji parafrase penuh (20 + 5 negatif)…
-  [32m✓[0m uji parafrase: recall@15 = 20/20 = 100%
+  · uji parafrase penuh dilewati (set SAPA_PARAFRASE_PENUH=1 untuk menjalankannya)
 
 [1m── 6c. Klasifikasi sebab kegagalan (FR-20) ──[0m
   [32m✓[0m kueri di luar katalog membawa sebab 'retrieval:konsep-asing'
   [32m✓[0m kueri terjawab diberi sebab 'selesai:leksikal+sisipan'
   [32m✓[0m prosa sebab bebas angka
   [32m✓[0m jalur streaming memberi sebab yang sama dengan jalur JSON
-  · menjalankan harness penanda sebab penuh…
-  [32m✓[0m harness penanda sebab: lapis yang terbukti bekerja: retrieval, masukan, selesai
+  · harness penanda sebab dilewati (set SAPA_SEBAB_PENUH=1 untuk menjalankannya)
 
 [1m── 6d. Pemeriksa pasangan entitas (FR-24) ──[0m
   [32m✓[0m balasan memuat pemeriksaan pasangan entitas (2 nilai diperiksa)
   [32m✓[0m jawaban yang disajikan bebas temuan pasangan keras
   [32m✓[0m narasi model penukar entitas DITOLAK gerbang pasangan (penyebab dilaporkan)
   [32m✓[0m jawaban pengganti tetap bersih & prosa penolakan bebas angka
-  · menjalankan uji 50 keluaran sampel (EV-24)…
-  [32m✓[0m uji pasangan: 0 kesalahan pasangan pada 50 keluaran sampel
+  · uji 50 sampel pasangan dilewati (set SAPA_PASANGAN_PENUH=1 untuk menjalankannya)
+
+[1m── 6e. Pembersihan data katalog → prompt (FR-23) ──[0m
+  [32m✓[0m balasan mode AI memuat laporan pembersihan (92 sel diperiksa)
+  [32m✓[0m korpus bersih tidak disentuh (0 sel dibersihkan, 0 baris ditandai)
+  [32m✓[0m korpus beracun + model biasa LULUS (5 baris sumber mencurigakan ditandai)
+  [32m✓[0m model yang menuruti perintah di data TIDAK lagi bisa menuruti (0 penanda [PATUH:])
 
 [1m── 7. Evaluasi — DILEWATI (SAPA_SKIP_EVAL=1) ──[0m
 
