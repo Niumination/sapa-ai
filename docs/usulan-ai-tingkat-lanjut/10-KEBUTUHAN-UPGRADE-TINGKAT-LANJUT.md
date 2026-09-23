@@ -168,7 +168,7 @@ Format: **Kode · Kebutuhan · Alasan/bukti · Kriteria terima (terukur) · Usah
 | **NFR-05** | **Kejujuran status**: panel melaporkan kenyataan panggilan | `reachable=false` + sebab terisi saat gagal | ✅ |
 | **NFR-06** | **Keamanan endpoint operasional** | `/api/revalidate` menolak tanpa rahasia (fail-closed) | ✅ |
 | **NFR-07** | **Telemetri terstruktur** per tahap (retrieval, prompt, model, grounding, gerbang) | p95 per tahap terlihat di log (`gen_ai.*`) | ✅ (23 Sep 2026 — dok 20: 7 tahap, baris `[gen_ai]` + rekap `[gen_ai-rekap]`, agregat p50/p95, endpoint admin fail-closed, 19 butir uji ujung-ke-ujung + kontrol negatif) |
-| **NFR-08** | **Uji otomatis** sebagai gerbang perubahan | ≥ 230 uji lulus; typecheck & build bersih | ✅ (533 uji) |
+| **NFR-08** | **Uji otomatis** sebagai gerbang perubahan | ≥ 230 uji lulus; typecheck & build bersih | ✅ (566 uji) |
 | **NFR-09** | **Aksesibilitas** halaman utama | WCAG 2.2 AA: kontras, fokus, label ARIA, navigasi papan ketik | ⬜ |
 | **NFR-10** | **Keterpulihan**: rollback produksi ≤ 5 menit | deployment sebelumnya dapat dipromosikan ulang; tanpa migrasi data | ✅ |
 
@@ -205,7 +205,7 @@ Format: **Kode · Kebutuhan · Alasan/bukti · Kriteria terima (terukur) · Usah
 |---|---|---|---|
 | **OPS-01** | **Saklar AI/Deterministik** + status jujur untuk operator | saklar bekerja; status memuat sebab | ✅ |
 | **OPS-02** | **Sirkuit penyedia** untuk auth/throttle/server/jaringan/timeout | gagal cepat; pulih otomatis satu percobaan setelah cooldown | ✅ |
-| **OPS-03** | **Penyegaran cache terjadwal** (mis. harian) dengan rahasia | cache segar harian; endpoint tetap fail-closed | ⬜ |
+| **OPS-03** | **Penyegaran cache terjadwal** (mis. harian) dengan rahasia | cache segar harian; endpoint tetap fail-closed | ✅ (23 Sep 2026 — dok 21: penjadwal + bukti kesegaran pada data, kategori kegagalan, pembukuan di `/api/status`, 45 butir uji termasuk aplikasi tanpa rahasia) |
 | **OPS-04** | **Log & peringatan**: bila sirkuit terbuka > 15 menit, kirim notifikasi (Surel/Telegram) | operator diberi tahu tanpa membuka panel | ✅ (23 Sep 2026 — dok 19: peringatan segera + eskalasi 15 mnt, Telegram/webhook, penjadwal luar, 13 butir uji ujung-ke-ujung) |
 | **OPS-05** | **Catatan rilis** per gelombang (isi, bukti, cara mundur) | setiap rilis punya catatan + tag git | 🟡 (pesan komit ✅; tag belum) |
 | **OPS-06** | **Uji terima otomatis** sebelum rilis (`uji-terima.sh`) | LULUS sebelum promosi produksi | ✅ |
@@ -267,7 +267,7 @@ FR-18 di [5]/[10]; FR-25/26 di [10]/[11]; NFR-07 & FR-27 di [11].
 | **D — Tata kelola & pengalaman** | ~~FR-25 · FR-26 · FR-27~~ (selesai 22 Sep 2026) · NFR-09 aksesibilitas · OPS-03 penyegaran terjadwal · CMP-02/03/04 | notis tampil; ≥ 50 umpan balik/bulan; WCAG 2.2 AA | 3–4 minggu |
 
 **Urutan yang disarankan bila sumber daya terbatas:** ~~FR-25 → FR-27 → FR-26 → FR-19 → FR-12 → FR-20 → FR-24 → FR-23~~
-(selesai 22–23 Sep 2026; OPS-04 dan NFR-07 ikut selesai 23 Sep 2026 — seluruh Fase C tertutup) → **Fase D**: **OPS-03 penyegaran terjadwal** → **NFR-09 aksesibilitas WCAG 2.2 AA** → **CMP-02/03/04**.
+(selesai 22–23 Sep 2026; OPS-04, NFR-07, dan OPS-03 ikut selesai 23 Sep 2026 — seluruh Fase C tertutup) → **Fase D** lanjutan: **NFR-09 aksesibilitas WCAG 2.2 AA** → **CMP-02/03/04**.
 Alasannya: FR-19 menaikkan kepercayaan paling tinggi per satuan usaha; FR-12 (lapis semantik) sudah
 selesai dan menutup celah parafrase; FR-20 murah dan membuat **setiap** kegagalan yang tersisa
 terjelaskan dengan satu tag sebab — termasuk kegagalan yang baru muncul dari lapis semantik.
