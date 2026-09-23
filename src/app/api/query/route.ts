@@ -7,6 +7,7 @@ import { sitasiBalasan } from '@/services/sitasi-per-klaim';
 import { tahunPadaBukti } from '@/services/grounding';
 import { catatCelah, type SebabCelah } from '@/lib/insight-celah';
 import { sebabUntukCelah, type Diagnosa } from '@/services/sebab-kegagalan';
+import { denganTelemetri, ukurTahapAsync } from '@/lib/ai/telemetri';
 
 export const dynamic = 'force-dynamic';
 export const runtime = 'nodejs';
@@ -19,6 +20,13 @@ export const maxDuration = 60;
  * Streaming tersedia di /api/query/stream.
  */
 export async function POST(req: NextRequest) {
+  // NFR-07: konteks telemetri dibuka di sini supaya pengambilan data & indeks
+  // semantik (dua pekerjaan terberat sebelum penyusunan jawaban) ikut terukur
+  // dan masuk ke SATU baris log `[gen_ai]` bersama tahap-tahap di composeAnswer.
+  return denganTelemetri({ jalan: 'query-json' }, () => tanganiQuery(req));
+}
+
+async function tanganiQuery(req: NextRequest) {
   let queryRaw = '';
   try {
     const body = await req.json();
@@ -33,7 +41,9 @@ export async function POST(req: NextRequest) {
   }
 
   // Hardening: SPLP mati → 503 graceful, bukan 500 mentah (test: route.test.ts)
-  const fetched = await fetchSapaData().catch((err: unknown) => ({ splpError: err }));
+  const fetched = await ukurTahapAsync('pengambilan_data', () =>
+    fetchSapaData().catch((err: unknown) => ({ splpError: err })),
+  );
   if ('splpError' in fetched) {
     const detail = fetched.splpError instanceof Error ? fetched.splpError.message : String(fetched.splpError);
     return Response.json(
@@ -57,7 +67,7 @@ export async function POST(req: NextRequest) {
   // bersifat sinkron, jadi indeks harus sudah siap — dan karena cache-nya
   // berkunci sidik korpus (FR-25), ini hanya benar-benar menghitung sekali per
   // versi korpus, bukan setiap permintaan.
-  await siapkanIndeksSemantik(records, meta.sidik);
+  await ukurTahapAsync('indeks_semantik', () => siapkanIndeksSemantik(records, meta.sidik));
 
   const hasil = await composeAnswer({ query: queryRaw, records, ip, stream: false });
 

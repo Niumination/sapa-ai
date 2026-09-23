@@ -607,6 +607,30 @@ else
   info "notifikasi sirkuit dilewati (set SAPA_SIRKUIT_URL=http://127.0.0.1:3131 untuk menjalankannya)"
 fi
 
+# ── 6g. Telemetri per tahap (NFR-07) ────────────────────────────────────────
+# Kriteria terima NFR-07: "p95 per tahap terlihat di log (gen_ai.*)".
+# Harness ini MENJALANKAN SENDIRI aplikasi, stub SPLP, dan penyedia model tiruan,
+# lalu memeriksa tiga hal yang tidak bisa diperiksa dari luar: (a) tiap permintaan
+# menulis tepat satu baris [gen_ai], (b) p50/p95 yang dilaporkan API SAMA dengan
+# hasil hitung ulang dari sampel mentah di log, dan (c) dengan SAPA_TELEMETRI=off
+# tidak ada satu pun baris yang ditulis sementara layanan tetap menjawab normal
+# (kontrol negatif — tanpa ini, "ada log" tidak membuktikan apa pun).
+if [ "${SAPA_SKIP_TELEMETRI:-0}" = "1" ]; then
+  info "telemetri per tahap dilewati (SAPA_SKIP_TELEMETRI=1)"
+else
+  judul "6g. Telemetri per tahap (NFR-07)"
+  if SAPA_TELEMETRI_N="${SAPA_TELEMETRI_N:-10}" \
+      node scripts/uji-telemetri.mjs --n="${SAPA_TELEMETRI_N:-10}" --splp="${SAPA_TELEMETRI_SPLP:-auto}" \
+      --port="${SAPA_TELEMETRI_PORTA:-3141}" --port-negatif="${SAPA_TELEMETRI_PORTB:-3142}" \
+      --simpan=/tmp/ut-telemetri.json > /tmp/ut-telemetri.txt 2>&1; then
+    ok "telemetri per tahap: $(grep -oE 'ringkasan: [0-9]+ ✓ / [0-9]+ ✗' /tmp/ut-telemetri.txt | head -1 | sed 's/ringkasan: //')"
+    p95model=$(grep -oE 'model p95 = [0-9]+ ms' /tmp/ut-telemetri.txt | head -1)
+    [ -n "$p95model" ] && ok "p95 per tahap muncul di log — $p95model"
+  else
+    no "harness telemetri GAGAL — lihat /tmp/ut-telemetri.txt"
+  fi
+fi
+
 # ── 7. Evaluasi set 90 item ─────────────────────────────────────────────────
 jalankan_eval() {
   local url="$1" label="$2" keluaran="$3"

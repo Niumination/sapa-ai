@@ -29,6 +29,7 @@ import { callLlmText, streamLlm, extractNarasiPartial } from '@/lib/ai/llm-clien
 import { checkRateLimit } from '@/lib/rate-limit';
 import { cacheGet, cacheSet, incrementCounter, peekCounter, type CounterResult } from '@/lib/store';
 import { bacaKesehatan, ringkasKesehatan } from '@/lib/ai/provider-health';
+import { catatHasil, catatTahap, denganTelemetri, ukurTahap } from '@/lib/ai/telemetri';
 import { normalizeText, dataSourceLabel, daftarKecamatan, type SapaRecord } from '@/lib/sapa-client';
 import {
   periksaPasanganEntitas,
@@ -281,6 +282,13 @@ const SARAN_TOLAK_PER_ORANG = [
 ];
 
 export async function composeAnswer(opts: ComposeOptions): Promise<ComposeResult> {
+  // NFR-07: satu permintaan = satu episode telemetri. Bila route sudah membuka
+  // konteks (untuk mengukur pengambilan data & indeks semantik), konteks itulah
+  // yang dipakai — jadi tidak mungkin ada baris log ganda.
+  return denganTelemetri({ jalan: opts.stream ? 'stream' : 'json' }, () => composeAnswerInti(opts));
+}
+
+async function composeAnswerInti(opts: ComposeOptions): Promise<ComposeResult> {
   const mulai = Date.now();
 
   // 0. Pagar data pribadi — berlaku di SEMUA mode (deterministik, shadow, aktif).
@@ -325,7 +333,12 @@ export async function composeAnswer(opts: ComposeOptions): Promise<ComposeResult
     };
   }
 
-  const dasar = buildDeterministicAnswer(opts.query, opts.records);
+  // NFR-07 tahap `retrieval`: skor leksikal + semantik sampai jawaban dasar siap.
+  const dasar = ukurTahap(
+    'retrieval',
+    () => buildDeterministicAnswer(opts.query, opts.records),
+    () => ({ jumlah_record: opts.records.length }),
+  );
 
   const meta: AiMeta = {
     used: false,
@@ -377,16 +390,41 @@ export async function composeAnswer(opts: ComposeOptions): Promise<ComposeResult
   // kalimat berperan-perintah (FR-23 lapis tampilan). Pemeriksaan FR-24 di bawah
   // sengaja tetap memakai narasi ASLI — gerbang itu memeriksa apa yang ditulis
   // model, bukan apa yang tampil setelah dibersihkan.
-  const selengkap = (m: AiMeta, response: HybridResponse): ComposeResult => ({
-    response: { ...response, narasi: teksSajianAman(response.narasi) },
-    evidence: dasar.evidence,
-    pemeriksaan: ringkasPemeriksaan(
+  const selengkap = (m: AiMeta, response: HybridResponse): ComposeResult => {
+    // NFR-07: pemeriksaan pasangan entitas atas narasi yang DISAJIKAN ikut
+    // dihitung ke tahap `gerbang` (di jalur ini ia memang berjalan dua kali:
+    // sekali sebagai gerbang penolakan, sekali sebagai laporan keluaran).
+    const tPasangan = Date.now();
+    const pemeriksaan = ringkasPemeriksaan(
       periksaPasanganEntitas(response.narasi, dasar.evidence, {
         kecamatan: kosakataKecamatan,
         nilaiDiizinkan: angkaSistem,
       }),
-    ),
-    ai: m,
+    );
+    catatTahap('gerbang', Date.now() - tPasangan, { keluaran_diperiksa: pemeriksaan.jumlahNilai });
+
+    // NFR-07: ringkasan hasil — SATU tempat untuk semua jalur keluar (bukti
+    // kosong, model gagal, ditolak gerbang, maupun AI dipakai). Isinya metadata
+    // saja: tidak ada pertanyaan, narasi, atau nilai data di sini.
+    catatHasil({
+      mode: m.used ? (m.shadow ? 'shadow' : 'ai') : m.limitedBy === 'no-evidence' ? 'tanpa-bukti' : 'deterministik',
+      grounded: m.grounded ?? null,
+      nilai_tambah: m.nilaiTambah ?? null,
+      used: m.used ?? false,
+      cached: m.cached ?? false,
+      shadow: m.shadow ?? false,
+      limited_by: m.limitedBy ?? null,
+      jumlah_bukti: dasar.evidence.length,
+      jumlah_cocok: dasar.hits.length,
+      niat: m.intent ?? null,
+      fallback: m.grounded === 'replaced' || m.nilaiTambah === 'ditolak-grounding',
+    });
+
+    return {
+      response: { ...response, narasi: teksSajianAman(response.narasi) },
+      evidence: dasar.evidence,
+      pemeriksaan,
+      ai: m,
     matched: dasar.hits.length,
     aggregated: dasar.aggregated,
     opds: dasar.opds,
@@ -404,7 +442,8 @@ export async function composeAnswer(opts: ComposeOptions): Promise<ComposeResult
         limitedBy: m.limitedBy,
       },
     }),
-  });
+    };
+  };
 
   // ─── Toggle admin (menang atas env) ───
   // Dibaca SEBELUM cek env supaya keputusan pemilik aplikasi tidak bisa
@@ -488,6 +527,7 @@ export async function composeAnswer(opts: ComposeOptions): Promise<ComposeResult
   meta.intent = niat;
   // FR-23: prompt dibangun lewat jalur terperiksa supaya pembersihan data katalog
   // (karakter kendali, penanda peran, perintah dalam data, batas panjang) terlapor.
+  const tPrompt = Date.now();
   const { system, user, pembersihan } = buildPromptTerperiksa({
     query: dijaga.query,
     intent: niat,
@@ -511,6 +551,14 @@ export async function composeAnswer(opts: ComposeOptions): Promise<ComposeResult
     .filter((e) => adaPenandaMencurigakan(`${e.indikator ?? ''} ${e.satuan ?? ''} ${e.opd ?? ''}`))
     .map((e) => ({ id: String(e.id), indikator: String(e.indikator ?? '').slice(0, 120) }));
   if (barisMencurigakan.length > 0) meta.penandaData = barisMencurigakan;
+  // NFR-07 tahap `prompt`: bangun + bersihkan prompt (FR-23). Yang dicatat hanya
+  // PANJANG dan JUMLAH sel yang dibersihkan — isi prompt tidak pernah masuk log.
+  catatTahap('prompt', Date.now() - tPrompt, {
+    panjang_system: system.length,
+    panjang_user: user.length,
+    sel_dibersihkan: pembersihan?.selDibersihkan ?? 0,
+    baris_ditandai: barisMencurigakan.length,
+  });
   const pesan = [
     { role: 'system' as const, content: system },
     { role: 'user' as const, content: user },
@@ -655,7 +703,19 @@ export async function composeAnswer(opts: ComposeOptions): Promise<ComposeResult
   //    432 char vs 1014 char pada pertanyaan penduduk). Itu akar keluhan
   //    "AI aktif malah kalah dari deterministik".
   const tahunDiminta = (opts.query.match(/\b(?:19|20)\d{2}\b/g) ?? []).slice(0, 4);
+  const tGrounding = Date.now();
   const cek = isGrounded(responsAi, dasar.evidence, { extraAllowedNumbers, tahunDiminta });
+  // NFR-07 tahap `grounding`: apakah lolos, berapa temuan, berapa nilai diperiksa.
+  catatTahap('grounding', Date.now() - tGrounding, {
+    lolos: cek.ok,
+    temuan: cek.reasons?.length ?? 0,
+    nilai_diperiksa: extraAllowedNumbers.length + tahunDiminta.length,
+  });
+
+  // NFR-07 tahap `gerbang`: keputusan nilai-tambah (catatan wajib + ambang
+  // sitasi) dan gerbang FR-24 pasangan entitas — dua gerbang yang bisa MENOLAK
+  // narasi model, sehingga durasinya layak dilihat terpisah dari grounding.
+  const tGerbang = Date.now();
   const sitasiAi = hitungSitasi(responsAi.narasi, dasar.evidence);
   const sitasiDeterministik = hitungSitasi(dasar.response.narasi, dasar.evidence);
   meta.sitasiAi = sitasiAi;
@@ -730,6 +790,13 @@ export async function composeAnswer(opts: ComposeOptions): Promise<ComposeResult
         .map((t) => `${t.jenis}:${t.nilai}${t.diklaim ? `→${t.diklaim}` : ''}`);
     }
   }
+
+  catatTahap('gerbang', Date.now() - tGerbang, {
+    nilai_tambah: meta.nilaiTambah ?? null,
+    catatan_wajib: dasar.peringatan.length,
+    pasangan_ok: meta.pasanganEntitas ? meta.pasanganEntitas.ok : null,
+    pasangan_keras: meta.pasanganEntitas?.keras ?? 0,
+  });
 
   responsAi = formatAngkaPresentasi(responsAi);
 

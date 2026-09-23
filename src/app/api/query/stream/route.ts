@@ -6,6 +6,7 @@ import { tahunPadaBukti } from '@/services/grounding';
 import { catatCelahBilaPerlu } from '@/app/api/query/route';
 import { composeAnswer } from '@/services/answer-compose';
 import { getClientIp } from '@/lib/rate-limit';
+import { denganTelemetri, ukurTahapAsync } from '@/lib/ai/telemetri';
 
 export const dynamic = 'force-dynamic';
 export const runtime = 'nodejs';
@@ -40,9 +41,15 @@ export async function POST(req: NextRequest) {
       };
       const tutup = () => controller.close();
 
+      // NFR-07: satu episode telemetri untuk seluruh aliran. Dibuka DI DALAM
+      // `start` supaya konteks async-nya mencakup semua tahap (pengambilan data,
+      // indeks semantik, retrieval, prompt, model, grounding, gerbang).
+      await denganTelemetri({ jalan: 'query-stream' }, async () => {
       try {
         kirim('status', { status: 'Mengambil data SAPA…' });
-        const fetched = await fetchSapaData().catch((err: unknown) => ({ splpError: err }));
+        const fetched = await ukurTahapAsync('pengambilan_data', () =>
+          fetchSapaData().catch((err: unknown) => ({ splpError: err })),
+        );
         if ('splpError' in fetched) {
           const detail = fetched.splpError instanceof Error ? fetched.splpError.message : String(fetched.splpError);
           kirim('error', { error: 'Sumber data SAPA (SPLP) tidak dapat dijangkau. Coba lagi beberapa saat.', stage: 'splp', detail });
@@ -52,7 +59,7 @@ export async function POST(req: NextRequest) {
 
         kirim('status', { status: 'Menganalisis pertanyaan…' });
         const ip = getClientIp(req);
-        await siapkanIndeksSemantik(fetched.records, fetched.meta.sidik);
+        await ukurTahapAsync('indeks_semantik', () => siapkanIndeksSemantik(fetched.records, fetched.meta.sidik));
         const hasil = await composeAnswer({
           query: queryRaw,
           records: fetched.records,
@@ -99,6 +106,7 @@ export async function POST(req: NextRequest) {
       } finally {
         tutup();
       }
+      });
     },
   });
 

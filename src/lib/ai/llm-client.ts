@@ -14,6 +14,7 @@ import {
   klasifikasiStatus,
 } from './provider-health';
 import { periksaPeringatanSirkuit } from './notifikasi';
+import { catatModel } from './telemetri';
 
 export interface LlmMessage {
   role: 'system' | 'user';
@@ -162,6 +163,7 @@ export async function callLlmText(
   if (!izin.ok) throw new LlmError(`circuit-open: ${izin.alasan}`, 503);
 
   let terakhirError: unknown;
+  const t0 = Date.now();
   for (let percobaan = 1; percobaan <= 2; percobaan++) {
     const { signal: sig, selesai } = gabungSignal(signal, cfg.timeoutMs);
     try {
@@ -186,7 +188,7 @@ export async function callLlmText(
       // OPS-04: nirblokir — operator diberi tahu (mis. pemulihan sirkuit) tanpa
       // menambah satu milidetik pun pada permintaan pengguna.
       periksaPeringatanSirkuit(await catatSukses());
-      return {
+      const jawaban: LlmResult = {
         text: json.choices?.[0]?.message?.content ?? '',
         finishReason: json.choices?.[0]?.finish_reason,
         usage: {
@@ -194,6 +196,16 @@ export async function callLlmText(
           completionTokens: json.usage?.completion_tokens,
         },
       };
+      // NFR-07: durasi + token + finish reason masuk telemetri per tahap.
+      catatModel(Date.now() - t0, {
+        sukses: true,
+        model: cfg.model,
+        penyedia: cfg.provider,
+        tokenMasuk: jawaban.usage?.promptTokens,
+        tokenKeluar: jawaban.usage?.completionTokens,
+        finishReason: jawaban.finishReason ?? null,
+      });
+      return jawaban;
     } catch (e) {
       terakhirError = e;
       const sebab = klasifikasiGalat(e);
@@ -202,6 +214,12 @@ export async function callLlmText(
       // 2x timeout.
       const bolehLanjut = !dibatalkan(e) && (sebab === 'server' || sebab === 'throttle' || sebab === 'jaringan');
       if (percobaan >= 2 || !bolehLanjut) {
+        catatModel(Date.now() - t0, {
+          sukses: false,
+          model: cfg.model,
+          penyedia: cfg.provider,
+          galat: `${sebab}: ${e instanceof Error ? e.message : String(e)}`,
+        });
         periksaPeringatanSirkuit(await catatGagal(sebab, e instanceof Error ? e.message : String(e)));
         break;
       }
@@ -244,6 +262,16 @@ export async function* streamLlm(
   if (!izin.ok) throw new LlmError(`circuit-open: ${izin.alasan}`, 503);
 
   let terakhirError: unknown;
+  // NFR-07: durasi aliran dihitung sejak permintaan dikirim; ttfb = potongan
+  // pertama sampai ke kita (semconv: time_to_first_chunk).
+  const t0 = Date.now();
+  let potongPertamaMs: number | null = null;
+  // Token pada jalur streaming: penyedia OpenAI-compatible mengirim `usage` pada
+  // potongan TERAKHIR (biasanya saat finish_reason terisi). Kita catat bila ada —
+  // dan bila tidak ada, kolom token dibiarkan kosong. Mengarang angka biaya jauh
+  // lebih buruk daripada mengakui angka itu tidak tersedia.
+  let tokenMasuk: number | undefined;
+  let tokenKeluar: number | undefined;
   for (let percobaan = 1; percobaan <= 2; percobaan++) {
     const batas = percobaan === 1 ? cfg.timeoutMs : Math.min(cfg.timeoutMs, TIMEOUT_PERCOBAAN_KEDUA_MS);
     const { signal: sig, reset, selesai } = gabungSignal(signal, batas, STALL_MS);
@@ -277,14 +305,29 @@ export async function* streamLlm(
           try {
             const json = JSON.parse(data) as {
               choices?: { delta?: { content?: string }; finish_reason?: string }[];
+              usage?: { prompt_tokens?: number; completion_tokens?: number };
             };
+            if (json.usage) {
+              tokenMasuk = json.usage.prompt_tokens ?? tokenMasuk;
+              tokenKeluar = json.usage.completion_tokens ?? tokenKeluar;
+            }
             const delta = json.choices?.[0]?.delta?.content;
-            if (delta) yield { delta, finishReason: json.choices?.[0]?.finish_reason };
+            if (delta) {
+              if (potongPertamaMs === null) potongPertamaMs = Date.now() - t0;
+              yield { delta, finishReason: json.choices?.[0]?.finish_reason };
+            }
           } catch {
             // baris parsial/keep-alive — lewati
           }
         }
       }
+      catatModel(Date.now() - t0, {
+        sukses: true,
+        model: cfg.model,
+        penyedia: cfg.provider,
+        ...(potongPertamaMs !== null ? { ttfbMs: potongPertamaMs } : {}),
+        ...(tokenMasuk !== undefined || tokenKeluar !== undefined ? { tokenMasuk, tokenKeluar } : {}),
+      });
       periksaPeringatanSirkuit(await catatSukses()); // aliran selesai utuh → penyedia sehat
       return;
     } catch (e) {
@@ -298,6 +341,12 @@ export async function* streamLlm(
           sebab === 'server' ||
           sebab === 'timeout');
       if (percobaan >= 2 || !bisaUlang) {
+        catatModel(Date.now() - t0, {
+          sukses: false,
+          model: cfg.model,
+          penyedia: cfg.provider,
+          galat: `${sebab}: ${e instanceof Error ? e.message : String(e)}`,
+        });
         periksaPeringatanSirkuit(await catatGagal(sebab, e instanceof Error ? e.message : String(e)));
         throw e;
       }

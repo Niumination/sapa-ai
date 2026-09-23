@@ -1,0 +1,1138 @@
+{
+  "waktu": "2026-09-23T07:30:27.528Z",
+  "app": "http://127.0.0.1:3141",
+  "splp": "http://127.0.0.1:3161/sapa/1.0/api",
+  "canary": "zqcanaryj1rxyc",
+  "permintaan": [
+    {
+      "i": 1,
+      "stream": false,
+      "status": 200,
+      "akhir": null,
+      "pertanyaan": "Berapa Jumlah Bank Sampah Aktif di Kecamatan Bebesen di Rumah Sakit Umum Daerah Datu Beru?"
+    },
+    {
+      "i": 2,
+      "stream": true,
+      "status": 200,
+      "akhir": "result",
+      "pertanyaan": "Berapa Jumlah petani komoditas perkebunan Kopi Arabika di Kecamatan Jagong Jeget di Dinas Pendidikan?"
+    },
+    {
+      "i": 3,
+      "stream": false,
+      "status": 200,
+      "akhir": null,
+      "pertanyaan": "Berapa Jumlah Penumpang Angkutan Umum di Kecamatan Kute Panang di Dinas Komunikasi dan Informatika? (zqcanaryj1rxyc)"
+    },
+    {
+      "i": 4,
+      "stream": true,
+      "status": 200,
+      "akhir": "result",
+      "pertanyaan": "Berapa Jumlah Guru Sekolah Dasar di Kecamatan Bebesen di Rumah Sakit Umum Daerah Datu Beru?"
+    },
+    {
+      "i": 5,
+      "stream": false,
+      "status": 200,
+      "akhir": null,
+      "pertanyaan": "Berapa Luas Kawasan Hutan Lindung di Kecamatan Atu Lintang di Dinas Komunikasi dan Informatika?"
+    },
+    {
+      "i": 6,
+      "stream": true,
+      "status": 200,
+      "akhir": "result",
+      "pertanyaan": "Berapa Jumlah Koperasi di Kecamatan Atu Lintang di Dinas Komunikasi dan Informatika? (zqcanaryj1rxyc)"
+    },
+    {
+      "i": 7,
+      "stream": false,
+      "status": 200,
+      "akhir": null,
+      "pertanyaan": "Berapa Jumlah Produksi Jagung di Dinas Sosial?"
+    },
+    {
+      "i": 8,
+      "stream": true,
+      "status": 200,
+      "akhir": "result",
+      "pertanyaan": "Berapa Jumlah Pasar Rakyat di Dinas Perhubungan?"
+    },
+    {
+      "i": 9,
+      "stream": false,
+      "status": 200,
+      "akhir": null,
+      "pertanyaan": "Berapa Luas Kawasan Hutan Lindung di Dinas Pariwisata Pemuda dan Olahraga? (zqcanaryj1rxyc)"
+    },
+    {
+      "i": 10,
+      "stream": true,
+      "status": 200,
+      "akhir": "result",
+      "pertanyaan": "Berapa Jumlah Data Penduduk di Dinas Pemberdayaan Masyarakat dan Kampung?"
+    }
+  ],
+  "gen": [
+    {
+      "waktu": "2026-09-23T07:30:28.738Z",
+      "permintaan": "q-muds9tyo-f2o3d6",
+      "jalan": "query-json",
+      "total_ms": 274,
+      "jumlah_tahap_ms": 257,
+      "tahap": {
+        "pengambilan_data": {
+          "ms": 0,
+          "dipanggil": 1
+        },
+        "indeks_semantik": {
+          "ms": 101,
+          "dipanggil": 1
+        },
+        "retrieval": {
+          "ms": 135,
+          "dipanggil": 1,
+          "jumlah_record": 1210
+        },
+        "prompt": {
+          "ms": 4,
+          "dipanggil": 1,
+          "panjang_system": 2461,
+          "panjang_user": 3741,
+          "sel_dibersihkan": 0,
+          "baris_ditandai": 0
+        },
+        "model": {
+          "ms": 11,
+          "dipanggil": 1,
+          "sukses": true,
+          "model": "mock-pintar",
+          "penyedia": "custom",
+          "token_masuk": 936,
+          "token_keluar": 202,
+          "finish_reason": "stop"
+        },
+        "grounding": {
+          "ms": 1,
+          "dipanggil": 1,
+          "lolos": true,
+          "temuan": 0,
+          "nilai_diperiksa": 3
+        },
+        "gerbang": {
+          "ms": 5,
+          "dipanggil": 2,
+          "nilai_tambah": "dipakai",
+          "catatan_wajib": 0,
+          "pasangan_ok": true,
+          "pasangan_keras": 0,
+          "keluaran_diperiksa": 5
+        }
+      },
+      "hasil": {
+        "mode": "ai",
+        "grounded": "pass",
+        "nilai_tambah": "dipakai",
+        "used": true,
+        "cached": false,
+        "shadow": false,
+        "limited_by": null,
+        "jumlah_bukti": 15,
+        "jumlah_cocok": 80,
+        "niat": "nilai_saat_ini",
+        "fallback": false
+      },
+      "gen_ai": {
+        "gen_ai.operation.name": "chat",
+        "gen_ai.provider.name": "custom",
+        "gen_ai.request.model": "mock-pintar",
+        "gen_ai.response.finish_reasons": [
+          "stop"
+        ],
+        "gen_ai.usage.input_tokens": 936,
+        "gen_ai.usage.output_tokens": 202,
+        "sapa.jalan": "query-json",
+        "sapa.mode": "ai"
+      }
+    },
+    {
+      "waktu": "2026-09-23T07:30:30.114Z",
+      "permintaan": "q-muds9v40-v0tyll",
+      "jalan": "query-stream",
+      "total_ms": 162,
+      "jumlah_tahap_ms": 150,
+      "tahap": {
+        "pengambilan_data": {
+          "ms": 0,
+          "dipanggil": 1
+        },
+        "indeks_semantik": {
+          "ms": 0,
+          "dipanggil": 1
+        },
+        "retrieval": {
+          "ms": 138,
+          "dipanggil": 1,
+          "jumlah_record": 1210
+        },
+        "prompt": {
+          "ms": 0,
+          "dipanggil": 1,
+          "panjang_system": 2461,
+          "panjang_user": 3976,
+          "sel_dibersihkan": 0,
+          "baris_ditandai": 0
+        },
+        "model": {
+          "ms": 9,
+          "dipanggil": 1,
+          "sukses": true,
+          "model": "mock-pintar",
+          "penyedia": "custom",
+          "token_masuk": 994,
+          "token_keluar": 214,
+          "finish_reason": null,
+          "ttfb_ms": 6
+        },
+        "grounding": {
+          "ms": 1,
+          "dipanggil": 1,
+          "lolos": true,
+          "temuan": 0,
+          "nilai_diperiksa": 3
+        },
+        "gerbang": {
+          "ms": 2,
+          "dipanggil": 2,
+          "nilai_tambah": "dipakai",
+          "catatan_wajib": 0,
+          "pasangan_ok": true,
+          "pasangan_keras": 0,
+          "keluaran_diperiksa": 3
+        }
+      },
+      "hasil": {
+        "mode": "ai",
+        "grounded": "pass",
+        "nilai_tambah": "dipakai",
+        "used": true,
+        "cached": false,
+        "shadow": false,
+        "limited_by": null,
+        "jumlah_bukti": 15,
+        "jumlah_cocok": 82,
+        "niat": "nilai_saat_ini",
+        "fallback": false
+      },
+      "gen_ai": {
+        "gen_ai.operation.name": "chat",
+        "gen_ai.provider.name": "custom",
+        "gen_ai.request.model": "mock-pintar",
+        "gen_ai.response.finish_reasons": [],
+        "gen_ai.usage.input_tokens": 994,
+        "gen_ai.usage.output_tokens": 214,
+        "sapa.jalan": "query-stream",
+        "sapa.mode": "ai"
+      }
+    },
+    {
+      "waktu": "2026-09-23T07:30:31.425Z",
+      "permintaan": "q-muds9w61-69coiw",
+      "jalan": "query-json",
+      "total_ms": 104,
+      "jumlah_tahap_ms": 98,
+      "tahap": {
+        "pengambilan_data": {
+          "ms": 0,
+          "dipanggil": 1
+        },
+        "indeks_semantik": {
+          "ms": 0,
+          "dipanggil": 1
+        },
+        "retrieval": {
+          "ms": 91,
+          "dipanggil": 1,
+          "jumlah_record": 1210
+        },
+        "prompt": {
+          "ms": 1,
+          "dipanggil": 1,
+          "panjang_system": 2461,
+          "panjang_user": 4094,
+          "sel_dibersihkan": 0,
+          "baris_ditandai": 0
+        },
+        "model": {
+          "ms": 4,
+          "dipanggil": 1,
+          "sukses": true,
+          "model": "mock-pintar",
+          "penyedia": "custom",
+          "token_masuk": 1024,
+          "token_keluar": 205,
+          "finish_reason": "stop"
+        },
+        "grounding": {
+          "ms": 0,
+          "dipanggil": 1,
+          "lolos": true,
+          "temuan": 0,
+          "nilai_diperiksa": 3
+        },
+        "gerbang": {
+          "ms": 2,
+          "dipanggil": 2,
+          "nilai_tambah": "dipakai",
+          "catatan_wajib": 0,
+          "pasangan_ok": true,
+          "pasangan_keras": 0,
+          "keluaran_diperiksa": 5
+        }
+      },
+      "hasil": {
+        "mode": "ai",
+        "grounded": "pass",
+        "nilai_tambah": "dipakai",
+        "used": true,
+        "cached": false,
+        "shadow": false,
+        "limited_by": null,
+        "jumlah_bukti": 15,
+        "jumlah_cocok": 74,
+        "niat": "nilai_saat_ini",
+        "fallback": false
+      },
+      "gen_ai": {
+        "gen_ai.operation.name": "chat",
+        "gen_ai.provider.name": "custom",
+        "gen_ai.request.model": "mock-pintar",
+        "gen_ai.response.finish_reasons": [
+          "stop"
+        ],
+        "gen_ai.usage.input_tokens": 1024,
+        "gen_ai.usage.output_tokens": 205,
+        "sapa.jalan": "query-json",
+        "sapa.mode": "ai"
+      }
+    },
+    {
+      "waktu": "2026-09-23T07:30:32.752Z",
+      "permintaan": "q-muds9x6j-l28m0p",
+      "jalan": "query-stream",
+      "total_ms": 117,
+      "jumlah_tahap_ms": 111,
+      "tahap": {
+        "pengambilan_data": {
+          "ms": 0,
+          "dipanggil": 1
+        },
+        "indeks_semantik": {
+          "ms": 0,
+          "dipanggil": 1
+        },
+        "retrieval": {
+          "ms": 97,
+          "dipanggil": 1,
+          "jumlah_record": 1210
+        },
+        "prompt": {
+          "ms": 1,
+          "dipanggil": 1,
+          "panjang_system": 2461,
+          "panjang_user": 3695,
+          "sel_dibersihkan": 0,
+          "baris_ditandai": 0
+        },
+        "model": {
+          "ms": 8,
+          "dipanggil": 1,
+          "sukses": true,
+          "model": "mock-pintar",
+          "penyedia": "custom",
+          "token_masuk": 924,
+          "token_keluar": 191,
+          "finish_reason": null,
+          "ttfb_ms": 5
+        },
+        "grounding": {
+          "ms": 1,
+          "dipanggil": 1,
+          "lolos": true,
+          "temuan": 0,
+          "nilai_diperiksa": 3
+        },
+        "gerbang": {
+          "ms": 4,
+          "dipanggil": 2,
+          "nilai_tambah": "dipakai",
+          "catatan_wajib": 0,
+          "pasangan_ok": true,
+          "pasangan_keras": 0,
+          "keluaran_diperiksa": 5
+        }
+      },
+      "hasil": {
+        "mode": "ai",
+        "grounded": "pass",
+        "nilai_tambah": "dipakai",
+        "used": true,
+        "cached": false,
+        "shadow": false,
+        "limited_by": null,
+        "jumlah_bukti": 15,
+        "jumlah_cocok": 80,
+        "niat": "nilai_saat_ini",
+        "fallback": false
+      },
+      "gen_ai": {
+        "gen_ai.operation.name": "chat",
+        "gen_ai.provider.name": "custom",
+        "gen_ai.request.model": "mock-pintar",
+        "gen_ai.response.finish_reasons": [],
+        "gen_ai.usage.input_tokens": 924,
+        "gen_ai.usage.output_tokens": 191,
+        "sapa.jalan": "query-stream",
+        "sapa.mode": "ai"
+      }
+    },
+    {
+      "waktu": "2026-09-23T07:30:34.075Z",
+      "permintaan": "q-muds9y7b-g0fl58",
+      "jalan": "query-json",
+      "total_ms": 116,
+      "jumlah_tahap_ms": 112,
+      "tahap": {
+        "pengambilan_data": {
+          "ms": 0,
+          "dipanggil": 1
+        },
+        "indeks_semantik": {
+          "ms": 0,
+          "dipanggil": 1
+        },
+        "retrieval": {
+          "ms": 104,
+          "dipanggil": 1,
+          "jumlah_record": 1210
+        },
+        "prompt": {
+          "ms": 1,
+          "dipanggil": 1,
+          "panjang_system": 2461,
+          "panjang_user": 3696,
+          "sel_dibersihkan": 0,
+          "baris_ditandai": 0
+        },
+        "model": {
+          "ms": 4,
+          "dipanggil": 1,
+          "sukses": true,
+          "model": "mock-pintar",
+          "penyedia": "custom",
+          "token_masuk": 924,
+          "token_keluar": 196,
+          "finish_reason": "stop"
+        },
+        "grounding": {
+          "ms": 1,
+          "dipanggil": 1,
+          "lolos": true,
+          "temuan": 0,
+          "nilai_diperiksa": 3
+        },
+        "gerbang": {
+          "ms": 2,
+          "dipanggil": 2,
+          "nilai_tambah": "dipakai",
+          "catatan_wajib": 0,
+          "pasangan_ok": true,
+          "pasangan_keras": 0,
+          "keluaran_diperiksa": 5
+        }
+      },
+      "hasil": {
+        "mode": "ai",
+        "grounded": "pass",
+        "nilai_tambah": "dipakai",
+        "used": true,
+        "cached": false,
+        "shadow": false,
+        "limited_by": null,
+        "jumlah_bukti": 15,
+        "jumlah_cocok": 66,
+        "niat": "nilai_saat_ini",
+        "fallback": false
+      },
+      "gen_ai": {
+        "gen_ai.operation.name": "chat",
+        "gen_ai.provider.name": "custom",
+        "gen_ai.request.model": "mock-pintar",
+        "gen_ai.response.finish_reasons": [
+          "stop"
+        ],
+        "gen_ai.usage.input_tokens": 924,
+        "gen_ai.usage.output_tokens": 196,
+        "sapa.jalan": "query-json",
+        "sapa.mode": "ai"
+      }
+    },
+    {
+      "waktu": "2026-09-23T07:30:35.391Z",
+      "permintaan": "q-muds9z84-sdrzzw",
+      "jalan": "query-stream",
+      "total_ms": 107,
+      "jumlah_tahap_ms": 100,
+      "tahap": {
+        "pengambilan_data": {
+          "ms": 0,
+          "dipanggil": 1
+        },
+        "indeks_semantik": {
+          "ms": 0,
+          "dipanggil": 1
+        },
+        "retrieval": {
+          "ms": 91,
+          "dipanggil": 1,
+          "jumlah_record": 1210
+        },
+        "prompt": {
+          "ms": 1,
+          "dipanggil": 1,
+          "panjang_system": 2461,
+          "panjang_user": 3953,
+          "sel_dibersihkan": 0,
+          "baris_ditandai": 0
+        },
+        "model": {
+          "ms": 5,
+          "dipanggil": 1,
+          "sukses": true,
+          "model": "mock-pintar",
+          "penyedia": "custom",
+          "token_masuk": 989,
+          "token_keluar": 211,
+          "finish_reason": null,
+          "ttfb_ms": 4
+        },
+        "grounding": {
+          "ms": 0,
+          "dipanggil": 1,
+          "lolos": true,
+          "temuan": 0,
+          "nilai_diperiksa": 3
+        },
+        "gerbang": {
+          "ms": 3,
+          "dipanggil": 2,
+          "nilai_tambah": "dipakai",
+          "catatan_wajib": 0,
+          "pasangan_ok": true,
+          "pasangan_keras": 0,
+          "keluaran_diperiksa": 5
+        }
+      },
+      "hasil": {
+        "mode": "ai",
+        "grounded": "pass",
+        "nilai_tambah": "dipakai",
+        "used": true,
+        "cached": false,
+        "shadow": false,
+        "limited_by": null,
+        "jumlah_bukti": 15,
+        "jumlah_cocok": 35,
+        "niat": "nilai_saat_ini",
+        "fallback": false
+      },
+      "gen_ai": {
+        "gen_ai.operation.name": "chat",
+        "gen_ai.provider.name": "custom",
+        "gen_ai.request.model": "mock-pintar",
+        "gen_ai.response.finish_reasons": [],
+        "gen_ai.usage.input_tokens": 989,
+        "gen_ai.usage.output_tokens": 211,
+        "sapa.jalan": "query-stream",
+        "sapa.mode": "ai"
+      }
+    },
+    {
+      "waktu": "2026-09-23T07:30:36.702Z",
+      "permintaan": "q-mudsa08o-mtvbkk",
+      "jalan": "query-json",
+      "total_ms": 102,
+      "jumlah_tahap_ms": 97,
+      "tahap": {
+        "pengambilan_data": {
+          "ms": 0,
+          "dipanggil": 1
+        },
+        "indeks_semantik": {
+          "ms": 0,
+          "dipanggil": 1
+        },
+        "retrieval": {
+          "ms": 90,
+          "dipanggil": 1,
+          "jumlah_record": 1210
+        },
+        "prompt": {
+          "ms": 1,
+          "dipanggil": 1,
+          "panjang_system": 2461,
+          "panjang_user": 3166,
+          "sel_dibersihkan": 0,
+          "baris_ditandai": 0
+        },
+        "model": {
+          "ms": 3,
+          "dipanggil": 1,
+          "sukses": true,
+          "model": "mock-pintar",
+          "penyedia": "custom",
+          "token_masuk": 792,
+          "token_keluar": 173,
+          "finish_reason": "stop"
+        },
+        "grounding": {
+          "ms": 0,
+          "dipanggil": 1,
+          "lolos": true,
+          "temuan": 0,
+          "nilai_diperiksa": 3
+        },
+        "gerbang": {
+          "ms": 3,
+          "dipanggil": 2,
+          "nilai_tambah": "dipakai",
+          "catatan_wajib": 0,
+          "pasangan_ok": true,
+          "pasangan_keras": 0,
+          "keluaran_diperiksa": 5
+        }
+      },
+      "hasil": {
+        "mode": "ai",
+        "grounded": "pass",
+        "nilai_tambah": "dipakai",
+        "used": true,
+        "cached": false,
+        "shadow": false,
+        "limited_by": null,
+        "jumlah_bukti": 15,
+        "jumlah_cocok": 31,
+        "niat": "nilai_saat_ini",
+        "fallback": false
+      },
+      "gen_ai": {
+        "gen_ai.operation.name": "chat",
+        "gen_ai.provider.name": "custom",
+        "gen_ai.request.model": "mock-pintar",
+        "gen_ai.response.finish_reasons": [
+          "stop"
+        ],
+        "gen_ai.usage.input_tokens": 792,
+        "gen_ai.usage.output_tokens": 173,
+        "sapa.jalan": "query-json",
+        "sapa.mode": "ai"
+      }
+    },
+    {
+      "waktu": "2026-09-23T07:30:37.997Z",
+      "permintaan": "q-mudsa192-0ha1qm",
+      "jalan": "query-stream",
+      "total_ms": 87,
+      "jumlah_tahap_ms": 81,
+      "tahap": {
+        "pengambilan_data": {
+          "ms": 0,
+          "dipanggil": 1
+        },
+        "indeks_semantik": {
+          "ms": 0,
+          "dipanggil": 1
+        },
+        "retrieval": {
+          "ms": 71,
+          "dipanggil": 1,
+          "jumlah_record": 1210
+        },
+        "prompt": {
+          "ms": 1,
+          "dipanggil": 1,
+          "panjang_system": 2461,
+          "panjang_user": 3014,
+          "sel_dibersihkan": 0,
+          "baris_ditandai": 0
+        },
+        "model": {
+          "ms": 5,
+          "dipanggil": 1,
+          "sukses": true,
+          "model": "mock-pintar",
+          "penyedia": "custom",
+          "token_masuk": 754,
+          "token_keluar": 165,
+          "finish_reason": null,
+          "ttfb_ms": 3
+        },
+        "grounding": {
+          "ms": 0,
+          "dipanggil": 1,
+          "lolos": true,
+          "temuan": 0,
+          "nilai_diperiksa": 3
+        },
+        "gerbang": {
+          "ms": 4,
+          "dipanggil": 2,
+          "nilai_tambah": "dipakai",
+          "catatan_wajib": 0,
+          "pasangan_ok": true,
+          "pasangan_keras": 0,
+          "keluaran_diperiksa": 5
+        }
+      },
+      "hasil": {
+        "mode": "ai",
+        "grounded": "pass",
+        "nilai_tambah": "dipakai",
+        "used": true,
+        "cached": false,
+        "shadow": false,
+        "limited_by": null,
+        "jumlah_bukti": 15,
+        "jumlah_cocok": 31,
+        "niat": "nilai_saat_ini",
+        "fallback": false
+      },
+      "gen_ai": {
+        "gen_ai.operation.name": "chat",
+        "gen_ai.provider.name": "custom",
+        "gen_ai.request.model": "mock-pintar",
+        "gen_ai.response.finish_reasons": [],
+        "gen_ai.usage.input_tokens": 754,
+        "gen_ai.usage.output_tokens": 165,
+        "sapa.jalan": "query-stream",
+        "sapa.mode": "ai"
+      }
+    },
+    {
+      "waktu": "2026-09-23T07:30:39.339Z",
+      "permintaan": "q-mudsa296-717m8p",
+      "jalan": "query-json",
+      "total_ms": 129,
+      "jumlah_tahap_ms": 125,
+      "tahap": {
+        "pengambilan_data": {
+          "ms": 0,
+          "dipanggil": 1
+        },
+        "indeks_semantik": {
+          "ms": 0,
+          "dipanggil": 1
+        },
+        "retrieval": {
+          "ms": 118,
+          "dipanggil": 1,
+          "jumlah_record": 1210
+        },
+        "prompt": {
+          "ms": 1,
+          "dipanggil": 1,
+          "panjang_system": 2461,
+          "panjang_user": 3655,
+          "sel_dibersihkan": 0,
+          "baris_ditandai": 0
+        },
+        "model": {
+          "ms": 4,
+          "dipanggil": 1,
+          "sukses": true,
+          "model": "mock-pintar",
+          "penyedia": "custom",
+          "token_masuk": 914,
+          "token_keluar": 190,
+          "finish_reason": "stop"
+        },
+        "grounding": {
+          "ms": 0,
+          "dipanggil": 1,
+          "lolos": true,
+          "temuan": 0,
+          "nilai_diperiksa": 3
+        },
+        "gerbang": {
+          "ms": 2,
+          "dipanggil": 2,
+          "nilai_tambah": "dipakai",
+          "catatan_wajib": 0,
+          "pasangan_ok": true,
+          "pasangan_keras": 0,
+          "keluaran_diperiksa": 5
+        }
+      },
+      "hasil": {
+        "mode": "ai",
+        "grounded": "pass",
+        "nilai_tambah": "dipakai",
+        "used": true,
+        "cached": false,
+        "shadow": false,
+        "limited_by": null,
+        "jumlah_bukti": 15,
+        "jumlah_cocok": 29,
+        "niat": "nilai_saat_ini",
+        "fallback": false
+      },
+      "gen_ai": {
+        "gen_ai.operation.name": "chat",
+        "gen_ai.provider.name": "custom",
+        "gen_ai.request.model": "mock-pintar",
+        "gen_ai.response.finish_reasons": [
+          "stop"
+        ],
+        "gen_ai.usage.input_tokens": 914,
+        "gen_ai.usage.output_tokens": 190,
+        "sapa.jalan": "query-json",
+        "sapa.mode": "ai"
+      }
+    },
+    {
+      "waktu": "2026-09-23T07:30:40.652Z",
+      "permintaan": "q-mudsa3ac-8yjja4",
+      "jalan": "query-stream",
+      "total_ms": 104,
+      "jumlah_tahap_ms": 99,
+      "tahap": {
+        "pengambilan_data": {
+          "ms": 1,
+          "dipanggil": 1
+        },
+        "indeks_semantik": {
+          "ms": 0,
+          "dipanggil": 1
+        },
+        "retrieval": {
+          "ms": 88,
+          "dipanggil": 1,
+          "jumlah_record": 1210
+        },
+        "prompt": {
+          "ms": 1,
+          "dipanggil": 1,
+          "panjang_system": 2461,
+          "panjang_user": 4087,
+          "sel_dibersihkan": 0,
+          "baris_ditandai": 0
+        },
+        "model": {
+          "ms": 7,
+          "dipanggil": 1,
+          "sukses": true,
+          "model": "mock-pintar",
+          "penyedia": "custom",
+          "token_masuk": 1022,
+          "token_keluar": 286,
+          "finish_reason": null,
+          "ttfb_ms": 5
+        },
+        "grounding": {
+          "ms": 0,
+          "dipanggil": 1,
+          "lolos": true,
+          "temuan": 0,
+          "nilai_diperiksa": 3
+        },
+        "gerbang": {
+          "ms": 2,
+          "dipanggil": 2,
+          "nilai_tambah": "dipakai",
+          "catatan_wajib": 1,
+          "pasangan_ok": true,
+          "pasangan_keras": 0,
+          "keluaran_diperiksa": 5
+        }
+      },
+      "hasil": {
+        "mode": "ai",
+        "grounded": "pass",
+        "nilai_tambah": "dipakai",
+        "used": true,
+        "cached": false,
+        "shadow": false,
+        "limited_by": null,
+        "jumlah_bukti": 15,
+        "jumlah_cocok": 20,
+        "niat": "nilai_saat_ini",
+        "fallback": false
+      },
+      "gen_ai": {
+        "gen_ai.operation.name": "chat",
+        "gen_ai.provider.name": "custom",
+        "gen_ai.request.model": "mock-pintar",
+        "gen_ai.response.finish_reasons": [],
+        "gen_ai.usage.input_tokens": 1022,
+        "gen_ai.usage.output_tokens": 286,
+        "sapa.jalan": "query-stream",
+        "sapa.mode": "ai"
+      }
+    }
+  ],
+  "rekap": [
+    {
+      "waktu": "2026-09-23T07:30:34.076Z",
+      "sebab": "otomatis-5",
+      "jendela": 10,
+      "jumlah": {
+        "permintaan": 5,
+        "tahapLengkap": 5,
+        "modelDipanggil": 5,
+        "modelGagal": 0,
+        "tanpaBukti": 0,
+        "fallback": 0
+      },
+      "tahap": {
+        "pengambilan_data": {
+          "n": 5,
+          "p50": 0,
+          "p95": 0,
+          "maks": 0,
+          "rata": 0,
+          "kejadian": 5
+        },
+        "indeks_semantik": {
+          "n": 5,
+          "p50": 0,
+          "p95": 101,
+          "maks": 101,
+          "rata": 20.2,
+          "kejadian": 5
+        },
+        "retrieval": {
+          "n": 5,
+          "p50": 104,
+          "p95": 138,
+          "maks": 138,
+          "rata": 113,
+          "kejadian": 5
+        },
+        "prompt": {
+          "n": 5,
+          "p50": 1,
+          "p95": 4,
+          "maks": 4,
+          "rata": 1.4,
+          "kejadian": 5
+        },
+        "model": {
+          "n": 5,
+          "p50": 8,
+          "p95": 11,
+          "maks": 11,
+          "rata": 7.2,
+          "kejadian": 5
+        },
+        "grounding": {
+          "n": 5,
+          "p50": 1,
+          "p95": 1,
+          "maks": 1,
+          "rata": 0.8,
+          "kejadian": 5
+        },
+        "gerbang": {
+          "n": 5,
+          "p50": 2,
+          "p95": 5,
+          "maks": 5,
+          "rata": 3,
+          "kejadian": 5
+        }
+      },
+      "backend": "memory"
+    },
+    {
+      "waktu": "2026-09-23T07:30:40.653Z",
+      "sebab": "otomatis-5",
+      "jendela": 10,
+      "jumlah": {
+        "permintaan": 10,
+        "tahapLengkap": 10,
+        "modelDipanggil": 10,
+        "modelGagal": 0,
+        "tanpaBukti": 0,
+        "fallback": 0
+      },
+      "tahap": {
+        "pengambilan_data": {
+          "n": 10,
+          "p50": 0,
+          "p95": 1,
+          "maks": 1,
+          "rata": 0.1,
+          "kejadian": 10
+        },
+        "indeks_semantik": {
+          "n": 10,
+          "p50": 0,
+          "p95": 101,
+          "maks": 101,
+          "rata": 10.1,
+          "kejadian": 10
+        },
+        "retrieval": {
+          "n": 10,
+          "p50": 91,
+          "p95": 138,
+          "maks": 138,
+          "rata": 102.3,
+          "kejadian": 10
+        },
+        "prompt": {
+          "n": 10,
+          "p50": 1,
+          "p95": 4,
+          "maks": 4,
+          "rata": 1.2,
+          "kejadian": 10
+        },
+        "model": {
+          "n": 10,
+          "p50": 5,
+          "p95": 11,
+          "maks": 11,
+          "rata": 6,
+          "kejadian": 10
+        },
+        "grounding": {
+          "n": 10,
+          "p50": 0,
+          "p95": 1,
+          "maks": 1,
+          "rata": 0.4,
+          "kejadian": 10
+        },
+        "gerbang": {
+          "n": 10,
+          "p50": 2,
+          "p95": 5,
+          "maks": 5,
+          "rata": 2.9,
+          "kejadian": 10
+        }
+      },
+      "backend": "memory"
+    }
+  ],
+  "negatif": {
+    "telemetriAktif": false,
+    "dijawab": 3,
+    "barisGenAi": 0,
+    "barisRekap": 0
+  },
+  "statusTelemetri": {
+    "aktif": true,
+    "jendela": 10,
+    "rekapSetiap": 5,
+    "tahap": {
+      "pengambilan_data": {
+        "n": 10,
+        "p50": 0,
+        "p95": 1,
+        "maks": 1,
+        "rata": 0.1,
+        "kejadian": 10
+      },
+      "indeks_semantik": {
+        "n": 10,
+        "p50": 0,
+        "p95": 101,
+        "maks": 101,
+        "rata": 10.1,
+        "kejadian": 10
+      },
+      "retrieval": {
+        "n": 10,
+        "p50": 91,
+        "p95": 138,
+        "maks": 138,
+        "rata": 102.3,
+        "kejadian": 10
+      },
+      "prompt": {
+        "n": 10,
+        "p50": 1,
+        "p95": 4,
+        "maks": 4,
+        "rata": 1.2,
+        "kejadian": 10
+      },
+      "model": {
+        "n": 10,
+        "p50": 5,
+        "p95": 11,
+        "maks": 11,
+        "rata": 6,
+        "kejadian": 10
+      },
+      "grounding": {
+        "n": 10,
+        "p50": 0,
+        "p95": 1,
+        "maks": 1,
+        "rata": 0.4,
+        "kejadian": 10
+      },
+      "gerbang": {
+        "n": 10,
+        "p50": 2,
+        "p95": 5,
+        "maks": 5,
+        "rata": 2.9,
+        "kejadian": 10
+      }
+    },
+    "jumlah": {
+      "permintaan": 10,
+      "tahapLengkap": 10,
+      "modelDipanggil": 10,
+      "modelGagal": 0,
+      "tanpaBukti": 0,
+      "fallback": 0
+    },
+    "backend": "memory",
+    "diperbaruiPada": "2026-09-23T07:30:40.653Z",
+    "logTerakhir": {
+      "waktu": "2026-09-23T07:30:40.653Z",
+      "totalMs": 104
+    }
+  },
+  "ringkasan": [
+    "  ✓ jalur AI menyala (ai.state=active) — seluruh tahap benar-benar berjalan",
+    "  ✓ telemetri aktif pada aplikasi normal",
+    "  ✓ semua 10 permintaan dijawab HTTP 200",
+    "  ✓ 10 baris [gen_ai] untuk 10 permintaan (tidak ada yang hilang/ganda)",
+    "  ✓ kelima tahap wajib (retrieval, prompt, model, grounding, gerbang) ada di SETIAP baris",
+    "  ✓ model benar-benar dipanggil pada 10/10 permintaan (uji tidak vakum)",
+    "  ✓ token masuk/keluar tercatat pada semua 10 panggilan model yang berhasil",
+    "  ✓ panjang prompt tercatat pada setiap baris (tahap prompt nyata, bukan 0 ms kosong)",
+    "  ✓ jumlah durasi tahap ≤ total pada setiap baris (tidak ada pengukuran ganda)",
+    "  ✓ p50/p95 yang dilaporkan = hasil hitung ulang dari log (5 tahap, n = 10/10/10/10/10)",
+    "  ✓ sampel mentah di endpoint admin sama persis dengan durasi di log",
+    "  ✓ baris [gen_ai-rekap] di log identik dengan balasan API (p95 per tahap benar-benar terlihat di log)",
+    "  · p95 per tahap (rekap manual): pengambilan_data 1ms · indeks_semantik 101ms · retrieval 138ms · prompt 4ms · model 11ms · grounding 1ms · gerbang 5ms (model p95 = 11 ms)",
+    "  ✓ 2 baris rekap OTOMATIS muncul di log (setiap 5 permintaan)",
+    "  ✓ endpoint admin telemetri fail-closed tanpa token (HTTP 401)",
+    "  ✓ kata canary \"zqcanaryj1rxyc\" tidak muncul di satu pun baris [gen_ai] (telemetri = metadata saja)",
+    "  ✓ tidak ada medan isi (query/narasi/content) pada baris [gen_ai]",
+    "  ✓ aplikasi negatif melaporkan telemetri NONAKTIF (saklar jujur)",
+    "  ✓ aplikasi negatif tetap menjawab normal (mematikan telemetri tidak merusak layanan)",
+    "  ✓ NOL baris [gen_ai]/[gen_ai-rekap] saat telemetri dimatikan (kontrol negatif sah)"
+  ],
+  "lulus": 19,
+  "gagal": 0
+}

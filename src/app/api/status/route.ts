@@ -2,6 +2,7 @@ import { NextResponse } from 'next/server';
 import { fetchSapaData, getUniqueOpd, getUniqueIndicators } from '@/lib/sapa-client';
 import { metaSemantik } from '@/services/semantik';
 import { getAiRuntimeStatus } from '@/services/answer-compose';
+import { ringkasTelemetri, type RingkasTahap } from '@/lib/ai/telemetri';
 
 export const dynamic = 'force-dynamic';
 export const runtime = 'nodejs';
@@ -21,6 +22,28 @@ export interface SystemStatus {
     pembangunanTerakhir: { durasiMs: number; jumlahRecord: number; penyedia: 'hash' | 'remote' } | null;
     sidik: string | null;
     catatan: string | null;
+  };
+  /**
+   * NFR-07: telemetri per tahap. Angka di sini adalah p50/p95 dari jendela
+   * sampel terakhir — bukan rata-rata seluruh riwayat, karena tujuan pertanyaan
+   * operasional selalu "SEKARANG lambat di mana", bukan "rata-rata sejak kapan".
+   */
+  telemetri?: {
+    aktif: boolean;
+    jendela: number;
+    rekapSetiap: number;
+    tahap: Record<string, RingkasTahap>;
+    jumlah: {
+      permintaan: number;
+      tahapLengkap: number;
+      modelDipanggil: number;
+      modelGagal: number;
+      tanpaBukti: number;
+      fallback: number;
+    };
+    backend: string;
+    diperbaruiPada: string | null;
+    logTerakhir: { waktu: string; totalMs: number } | null;
   };
   /** records = jumlah baris katalog; opd = jumlah OPD unik (dipakai uji meta & pemantauan). */
   sapa: { state: 'active' | 'down'; records: number; opd: number; indikator?: number };
@@ -72,7 +95,7 @@ export async function GET() {
     ai: { state: 'inactive', provider: null, model: null, reason: null, dailyUsed: 0 },
   };
 
-  const [sapa, ai] = await Promise.all([
+  const [sapa, ai, telemetri] = await Promise.all([
     fetchSapaData()
       .then(({ records }) => ({
         state: 'active' as const,
@@ -82,10 +105,12 @@ export async function GET() {
       }))
       .catch(() => ({ state: 'down' as const, records: 0, opd: 0 })),
     getAiRuntimeStatus().catch(() => null),
+    ringkasTelemetri().catch(() => null),
   ]);
 
   status.sapa = sapa;
   if (ai) status.ai = ai;
   status.semantik = metaSemantik();
+  if (telemetri) status.telemetri = telemetri;
   return NextResponse.json(status);
 }
