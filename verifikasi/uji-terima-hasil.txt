@@ -1,7 +1,7 @@
 
 [1m── 1. Statis (typecheck · uji unit · build) ──[0m
   [32m✓[0m typecheck lolos
-  [32m✓[0m uji unit: 34 berkas / 533 uji lulus (ambang 230)
+  [32m✓[0m uji unit: 35 berkas / 566 uji lulus (ambang 230)
   [32m✓[0m pagar grounding ada (INV-01)
   [32m✓[0m penjaga permintaan sistem ada (SEC-02)
 
@@ -9,7 +9,7 @@
   [32m✓[0m revalidate menolak permintaan tanpa rahasia (HTTP 503, fail-closed)
 
 [1m── 3. Kesegaran data & sidik korpus (FR-25) ──[0m
-  [32m✓[0m waktu tarik data dilaporkan (2026-09-23T07:24:27.079Z)
+  [32m✓[0m waktu tarik data dilaporkan (2026-09-23T07:44:14.301Z)
   [32m✓[0m sidik korpus dilaporkan (0ffceb0e)
   [32m✓[0m daftar tahun data disertakan (dataYears)
   [32m✓[0m sidik konsisten antara jalur JSON & streaming
@@ -26,7 +26,7 @@
   [32m✓[0m laporan sah diterima (HTTP 201)
   [32m✓[0m jenis laporan tak dikenal ditolak (HTTP 400)
   [32m✓[0m daftar laporan menolak tanpa token (HTTP 401, fail-closed)
-  [32m✓[0m laporan tersimpan tanpa digit (privasi terjaga; 4 laporan minggu ini)
+  [32m✓[0m laporan tersimpan tanpa digit (privasi terjaga; 6 laporan minggu ini)
 
 [1m── 6. Sitasi per klaim (FR-19) ──[0m
   [32m✓[0m 0 klaim tanpa rujukan (2/2 klaim bersitasi)
@@ -64,7 +64,11 @@
 
 [1m── 6g. Telemetri per tahap (NFR-07) ──[0m
   [32m✓[0m telemetri per tahap: 19 ✓ / 0 ✗
-  [32m✓[0m p95 per tahap muncul di log — model p95 = 13 ms
+  [32m✓[0m p95 per tahap muncul di log — model p95 = 23 ms
+
+[1m── 6h. Penyegaran cache terjadwal (OPS-03) ──[0m
+  [32m✓[0m penyegaran cache terjadwal: 45 ✓ / 0 ✗
+  [32m✓[0m cache benar-benar dihitung ulang (cap waktu data) — 2026-09-23T07:43:19.738Z → 2026-09-23T07:45:52.308Z
 
 [1m── 7. Evaluasi — DILEWATI (SAPA_SKIP_EVAL=1) ──[0m
 

@@ -1,0 +1,102 @@
+# ─── OPS-03: penyegaran cache terjadwal (penjadwal luar) ──────────────────────
+#
+# MENGAPA ADA
+# Endpoint pembatal cache (/api/revalidate) sudah ada dan sudah fail-closed,
+# tetapi TIDAK ADA YANG MEMANGGILNYA secara berkala. Akibatnya "cache segar
+# harian" hanya bergantung pada TTL 600 detik: bila agregat SPLP berubah dan
+# tak seorang pun membuka halaman, angka lama tetap disajikan — dan bila
+# penjadwal sendiri rusak, tidak ada satu pun sinyal.
+#
+# Penjadwal ini memanggil skrip yang SAMA yang dapat dipakai operator di
+# mesinnya sendiri (cron lokal / Task Scheduler) — lihat
+# docs/usulan-ai-tingkat-lanjut/21-LAPORAN-OPS-03.md bagian "Memasang jadwal".
+#
+# JAM: 22:00 UTC = 05:00 WIB — sebelum jam kerja, setelah agregat SPLP hari
+# sebelumnya selesai ditulis. Perubahan pada ekspresi cron WAJIB disertai
+# pembaruan JAM_JADWAL_UTC di src/lib/penyegar-cache.ts, karena itulah yang
+# dipakai untuk menilai "terlewat" (penjadwal mati) di /api/status.
+#
+# DORMAN SEMENTARA RAPI — DISENGAJA
+# Bila rahasia `REVALIDATE_SECRET` atau variabel `SAPA_URL` belum diisi, langkah
+# ini mencetak pesan dan keluar dengan SUKSES (seperti pola OPS-04): repositori
+# yang belum siap tidak boleh menyalakan alarm palsu setiap hari. Tetapi begitu
+# keduanya ada, kegagalan penyegaran menjadi kegagalan workflow yang tampak.
+#
+# CARA MENGAKTIFKAN (Settings → Secrets and variables → Actions):
+#   Variables: SAPA_URL             = https://sapa-smart-ai.vercel.app
+#   Secrets:   REVALIDATE_SECRET    = rahasia yang sama dengan environment Vercel
+#   Secrets (opsional): SAPA_ALERT_WEBHOOK_URL, SAPA_ALERT_WEBHOOK_TOKEN
+#                       (saluran yang sama dengan OPS-04 untuk kabar kegagalan)
+#
+# UJI MANUAL: tab Actions → "Penyegaran cache harian" → Run workflow
+#             (isian tag boleh dikosongkan = semua tag).
+
+name: Penyegaran cache harian
+
+on:
+  schedule:
+    - cron: '0 22 * * *'
+  workflow_dispatch:
+    inputs:
+      tag:
+        description: 'Tag yang disegarkan: all | sapa-analytics | kpi | stats | report'
+        required: false
+        default: all
+      periksa:
+        description: 'Hanya periksa kesegaran (tidak menyegarkan)'
+        type: boolean
+        required: false
+        default: false
+
+concurrency:
+  group: segarkan-cache
+  cancel-in-progress: false
+
+jobs:
+  segarkan:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - name: Ambil repositori (skrip penjadwal ini sendiri)
+        uses: actions/checkout@v4
+
+      - name: Siapkan Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Jalankan penyegaran + bukti kesegaran
+        env:
+          SAPA_BASE_URL: ${{ vars.SAPA_URL }}
+          REVALIDATE_SECRET: ${{ secrets.REVALIDATE_SECRET }}
+          SAPA_ALERT_WEBHOOK_URL: ${{ secrets.SAPA_ALERT_WEBHOOK_URL }}
+          SAPA_ALERT_WEBHOOK_TOKEN: ${{ secrets.SAPA_ALERT_WEBHOOK_TOKEN }}
+          SAPA_SEGARKAN_SUMBER: jadwal-github
+          TAG: ${{ github.event.inputs.tag || 'all' }}
+          PERIKSA: ${{ github.event.inputs.periksa || 'false' }}
+        run: |
+          set -euo pipefail
+          if [ -z "${SAPA_BASE_URL:-}" ]; then
+            echo "Dilewati: variabel SAPA_URL belum diisi (Settings → Variables)."
+            exit 0
+          fi
+          if [ "${PERIKSA}" = "true" ]; then
+            node scripts/segarkan-cache.mjs --periksa=1 --simpan=/tmp/segarkan.json
+          else
+            if [ -z "${REVALIDATE_SECRET:-}" ]; then
+              echo "Dilewati: rahasia REVALIDATE_SECRET belum diisi (Settings → Secrets)."
+              exit 0
+            fi
+            node scripts/segarkan-cache.mjs --tag="${TAG}" --ulang=3 --simpan=/tmp/segarkan.json
+          fi
+
+      - name: Ringkasan
+        if: always()
+        run: |
+          {
+            echo "## Penyegaran cache SAPA"
+            echo
+            echo '```json'
+            cat /tmp/segarkan.json 2>/dev/null || echo '{"catatan":"tidak ada artefak"}'
+            echo '```'
+          } >> "$GITHUB_STEP_SUMMARY"

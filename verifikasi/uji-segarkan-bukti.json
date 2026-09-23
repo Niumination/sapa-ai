@@ -1,0 +1,24 @@
+{
+  "waktu": "2026-09-23T07:43:20.270Z",
+  "lulus": 44,
+  "gagal": [],
+  "catatan": [
+    "batas laju aktif pada percobaan ke-18 dari bagian ini"
+  ],
+  "contohBarisLog": "[segarkan] {\"waktu\":\"2026-09-23T07:43:20.265Z\",\"tag\":[\"stats\"],\"mode\":\"bertanda\",\"sumber\":\"tanpa-penanda\",\"kategori\":\"ok\",\"durasiMs\":0,\"terakhirMs\":1790149400265,\"umurJam\":0,\"segar\":true,\"terlewat\":false,\"gagalBerturut\":0,\"backend\":\"server\"}",
+  "contohStatus": {
+    "terakhirMs": 1790149399570,
+    "umurJam": 0,
+    "segar": true,
+    "terlewat": false,
+    "berikutnyaMs": 1790200800000,
+    "gagalBerturut": 0,
+    "perluKabar": false,
+    "jumlahOk": 1,
+    "jumlahGagal": 0
+  },
+  "buktiKesegaran": {
+    "sebelum": "2026-09-23T07:42:03.650Z",
+    "sesudah": "2026-09-23T07:43:19.738Z"
+  }
+}

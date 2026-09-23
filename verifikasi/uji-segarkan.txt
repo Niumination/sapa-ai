@@ -1,0 +1,70 @@
+═══ Uji ujung-ke-ujung: penyegaran cache terjadwal (OPS-03) ═══
+SPLP: http://127.0.0.1:3163/sapa/1.0/api
+
+── 1. Kesiapan aplikasi ──
+  [32m✓[0m aplikasi A siap
+  [32m✓[0m aplikasi B siap (tanpa REVALIDATE_SECRET)
+
+── 2. Bukti cache bekerja (prasyarat mutlak) ──
+  [32m✓[0m aplikasi A menjawab /api/stats — record=1210
+  [32m✓[0m /api/stats memang di-cache (dua bacaan → cap waktu sama) — lastFetched=2026-09-23T07:42:03.650Z
+
+── 3. Aplikasi B tanpa rahasia → fail-closed 503 (dan tercatat) ──
+  [32m✓[0m POST anonim ke aplikasi B ditolak 503 (bukan 200) — HTTP 503
+  [32m✓[0m balasan menjelaskan penyebabnya + cara memperbaiki — kategori=endpoint-tertutup
+  [32m✓[0m kategori balasan = endpoint-tertutup
+  [32m✓[0m aplikasi B melaporkan cache belum pernah disegarkan (segar=false)
+  [32m✓[0m aplikasi B melaporkan kegagalan tercatat (jumlahGagal ≥ 1) — jumlahGagal=1
+  [32m✓[0m penjadwal pada aplikasi B keluar dengan kode 3 (endpoint tertutup) — kode=3
+  [32m✓[0m penjadwal melaporkan kategori endpoint-tertutup (bukan sekadar "gagal") — endpoint-tertutup
+  [32m✓[0m penjadwal TIDAK mencoba ulang untuk kegagalan konfigurasi — percobaan=1
+
+── 4. Rahasia salah → 401, cache TIDAK disentuh, tidak menulis pembukuan ──
+  [32m✓[0m rahasia salah ditolak 401 — HTTP 401
+  [32m✓[0m kategori = rahasia-salah
+  [32m✓[0m cache TIDAK dibatalkan oleh percobaan gagal — lastFetched tetap 2026-09-23T07:42:03.650Z
+  [32m✓[0m percobaan 401 TIDAK menulis ke penyimpanan bersama (anti pemborosan kuota) — jumlahGagal=0
+  [32m✓[0m penjadwal dengan rahasia salah keluar kode 2 — kode=2
+  [32m✓[0m penjadwal tidak mencoba ulang 401 (tidak ada gunanya) — percobaan=1
+
+── 5. Penyegaran sungguhan → cap waktu data berubah (bukti "segar") ──
+  [32m✓[0m penjadwal keluar 0 — kode=0
+  [32m✓[0m penjadwal melaporkan hasil ok + kesegaran terkonfirmasi
+  [32m✓[0m cache BENAR-BENAR dihitung ulang (lastFetched berubah) — 2026-09-23T07:42:03.650Z → 2026-09-23T07:43:19.738Z
+
+── 6. Pembukuan & kesegaran terlihat dari aplikasi ──
+  [32m✓[0m /api/status memuat segarkanCache
+  [32m✓[0m segar = true setelah penyegaran
+  [32m✓[0m umur < 1 jam — umurJam=0
+  [32m✓[0m tidak terlewat
+  [32m✓[0m gagalBerturut kembali 0 setelah keberhasilan
+  [32m✓[0m bukti tidak memuat rahasia apa pun — kunci hanya waktu/tag/jumlah
+
+── 7. Endpoint admin (fail-closed) + uji kering ──
+  [32m✓[0m admin tanpa token ditolak — HTTP 401
+  [32m✓[0m admin dengan token menampilkan kesegaran + riwayat — riwayat=1
+  [32m✓[0m riwayat mencatat sumber jadwal (bukan "tak-diketahui")
+  [32m✓[0m uji kering diterima dan dilaporkan
+  [32m✓[0m uji kering TIDAK membatalkan cache
+  [32m✓[0m penyegaran manual lewat admin berhasil — tag=["kpi"]
+  [32m✓[0m tag tak dikenal ditolak 400 (bukan "sukses" palsu)
+  [32m✓[0m tag tak dikenal lewat /api/revalidate juga 400 dengan kategori tag-salah
+
+── 8. Mode periksa penjadwal ──
+  [32m✓[0m --periksa keluar 0 saat cache segar — kode=0
+  [32m✓[0m --periksa keluar 5 saat cache belum pernah disegarkan (sinyal "penjadwal mati") — kode=5
+
+── 9. Regresi seluruh tag, batas laju & kebersihan log ──
+  [32m✓[0m penyegaran seluruh tag (all) berhasil — tag=["sapa-analytics","kpi","stats","report"]
+  [32m✓[0m batas laju aktif (429) setelah 20 permintaan/menit — batas laju aktif pada percobaan ke-18 dari bagian ini
+  [32m✓[0m balasan 429 membawa kategori yang bisa ditindaklanjuti — kategori=dibatasi
+  [32m✓[0m setiap penyegaran menulis satu baris log [segarkan] — 25 baris
+  [32m✓[0m baris log memuat tag/mode/kategori/durasi + kesegaran
+  [32m✓[0m RAHASIA tidak pernah muncul di log aplikasi — diperiksa dengan pencarian harfiah
+  [32m✓[0m rahasia tidak muncul di keluaran penjadwal
+
+── 10. Artefak ──
+  [32m✓[0m aplikasi tetap sehat setelah seluruh uji (termasuk penolakan) — proses pendamping dikelola: 3
+
+   ringkasan: 45 ✓ / 0 ✗
+   HASIL: LULUS

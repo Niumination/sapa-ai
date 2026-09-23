@@ -631,6 +631,29 @@ else
   fi
 fi
 
+# ── 6h. Penyegaran cache terjadwal (OPS-03) ─────────────────────────────────
+# Kriteria terima OPS-03: "cache segar harian; endpoint tetap fail-closed".
+# Harness ini MENJALANKAN SENDIRI dua aplikasi: satu dengan REVALIDATE_SECRET
+# (penyegaran harus berhasil dan cap waktu data benar-benar berubah) dan satu
+# TANPA rahasia di mode produksi (endpoint harus MENOLAK, penjadwal harus gagal
+# dengan kode keluar 3 — bukan "sukses" palsu). Tanpa aplikasi kedua itu,
+# "fail-closed" hanya klaim.
+if [ "${SAPA_SKIP_SEGARKAN:-0}" = "1" ]; then
+  info "penyegaran cache dilewati (SAPA_SKIP_SEGARKAN=1)"
+else
+  judul "6h. Penyegaran cache terjadwal (OPS-03)"
+  if SAPA_SEGARKAN_RAHASIA="${SAPA_SEGARKAN_RAHASIA:-segarkan-uji-123}" \
+      node scripts/uji-segarkan.mjs --splp="${SAPA_SEGARKAN_SPLP:-auto}" \
+      --port="${SAPA_SEGARKAN_PORTA:-3171}" --port-b="${SAPA_SEGARKAN_PORTB:-3172}" \
+      --simpan=/tmp/ut-segarkan.json > /tmp/ut-segarkan.txt 2>&1; then
+    ok "penyegaran cache terjadwal: $(grep -oE 'ringkasan: [0-9]+ ✓ / [0-9]+ ✗' /tmp/ut-segarkan.txt | head -1 | sed 's/ringkasan: //')"
+    bukti=$(python3 -c "import json;d=json.load(open('/tmp/ut-segarkan.json'));print(d['buktiKesegaran']['sebelum'],'→',d['buktiKesegaran']['sesudah'])" 2>/dev/null || true)
+    [ -n "$bukti" ] && ok "cache benar-benar dihitung ulang (cap waktu data) — $bukti"
+  else
+    no "harness penyegaran cache GAGAL — lihat /tmp/ut-segarkan.txt"
+  fi
+fi
+
 # ── 7. Evaluasi set 90 item ─────────────────────────────────────────────────
 jalankan_eval() {
   local url="$1" label="$2" keluaran="$3"

@@ -3,6 +3,7 @@ import { fetchSapaData, getUniqueOpd, getUniqueIndicators } from '@/lib/sapa-cli
 import { metaSemantik } from '@/services/semantik';
 import { getAiRuntimeStatus } from '@/services/answer-compose';
 import { ringkasTelemetri, type RingkasTahap } from '@/lib/ai/telemetri';
+import { ringkasanSegarkan, ringkasSegarkan } from '@/lib/penyegar-cache';
 
 export const dynamic = 'force-dynamic';
 export const runtime = 'nodejs';
@@ -28,6 +29,13 @@ export interface SystemStatus {
    * sampel terakhir — bukan rata-rata seluruh riwayat, karena tujuan pertanyaan
    * operasional selalu "SEKARANG lambat di mana", bukan "rata-rata sejak kapan".
    */
+  /**
+   * OPS-03: kesegaran cache. Sebelum ini tidak ada cara melihat kapan cache
+   * terakhir disegarkan — bila penjadwal mati, situs menyajikan data basi
+   * tanpa satu pun sinyal. `terlewat` = jadwal harian sudah terlewat lebih dari
+   * satu jam, jadi itu bukti penjadwal berhenti, bukan sekadar data lama.
+   */
+  segarkanCache?: Record<string, unknown>;
   telemetri?: {
     aktif: boolean;
     jendela: number;
@@ -95,7 +103,7 @@ export async function GET() {
     ai: { state: 'inactive', provider: null, model: null, reason: null, dailyUsed: 0 },
   };
 
-  const [sapa, ai, telemetri] = await Promise.all([
+  const [sapa, ai, telemetri, segarkan] = await Promise.all([
     fetchSapaData()
       .then(({ records }) => ({
         state: 'active' as const,
@@ -106,11 +114,15 @@ export async function GET() {
       .catch(() => ({ state: 'down' as const, records: 0, opd: 0 })),
     getAiRuntimeStatus().catch(() => null),
     ringkasTelemetri().catch(() => null),
+    ringkasSegarkan()
+      .then((r) => ringkasanSegarkan(r.status))
+      .catch(() => null),
   ]);
 
   status.sapa = sapa;
   if (ai) status.ai = ai;
   status.semantik = metaSemantik();
   if (telemetri) status.telemetri = telemetri;
+  if (segarkan) status.segarkanCache = segarkan;
   return NextResponse.json(status);
 }
