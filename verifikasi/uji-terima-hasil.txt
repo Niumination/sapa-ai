@@ -1,7 +1,7 @@
 
 [1m── 1. Statis (typecheck · uji unit · build) ──[0m
   [32m✓[0m typecheck lolos
-  [32m✓[0m uji unit: 32 berkas / 494 uji lulus (ambang 230)
+  [32m✓[0m uji unit: 33 berkas / 514 uji lulus (ambang 230)
   [32m✓[0m pagar grounding ada (INV-01)
   [32m✓[0m penjaga permintaan sistem ada (SEC-02)
 
@@ -9,7 +9,7 @@
   [32m✓[0m revalidate menolak permintaan tanpa rahasia (HTTP 503, fail-closed)
 
 [1m── 3. Kesegaran data & sidik korpus (FR-25) ──[0m
-  [32m✓[0m waktu tarik data dilaporkan (2026-09-23T04:23:08.081Z)
+  [32m✓[0m waktu tarik data dilaporkan (2026-09-23T05:34:19.877Z)
   [32m✓[0m sidik korpus dilaporkan (0ffceb0e)
   [32m✓[0m daftar tahun data disertakan (dataYears)
   [32m✓[0m sidik konsisten antara jalur JSON & streaming
@@ -17,7 +17,8 @@
 
 [1m── 4. Dasbor celah pengetahuan (FR-27) ──[0m
   [32m✓[0m endpoint celah menolak tanpa token (HTTP 401, fail-closed)
-  · ADMIN_TOKEN tidak diberikan ke skrip — pemeriksaan daftar celah dilewati (kirim ADMIN_TOKEN=… bila ingin diperiksa)
+  [32m✓[0m dasbor celah hidup untuk admin (minggu 2026-W39)
+  [32m✓[0m pagar privasi celah: tidak ada digit pada pertanyaan tersimpan
 
 [1m── 5. Transparansi jawaban & kanal koreksi (FR-26) ──[0m
   [32m✓[0m notis transparansi tampil di halaman dasbor
@@ -25,7 +26,7 @@
   [32m✓[0m laporan sah diterima (HTTP 201)
   [32m✓[0m jenis laporan tak dikenal ditolak (HTTP 400)
   [32m✓[0m daftar laporan menolak tanpa token (HTTP 401, fail-closed)
-  · ADMIN_TOKEN tidak diberikan — pemeriksaan isi laporan dilewati
+  [32m✓[0m laporan tersimpan tanpa digit (privasi terjaga; 2 laporan minggu ini)
 
 [1m── 6. Sitasi per klaim (FR-19) ──[0m
   [32m✓[0m 0 klaim tanpa rujukan (2/2 klaim bersitasi)
@@ -49,8 +50,7 @@
 [1m── 6d. Pemeriksa pasangan entitas (FR-24) ──[0m
   [32m✓[0m balasan memuat pemeriksaan pasangan entitas (2 nilai diperiksa)
   [32m✓[0m jawaban yang disajikan bebas temuan pasangan keras
-  [32m✓[0m narasi model penukar entitas DITOLAK gerbang pasangan (penyebab dilaporkan)
-  [32m✓[0m jawaban pengganti tetap bersih & prosa penolakan bebas angka
+  · server penukar entitas tidak disediakan (set SAPA_TUKAR_URL untuk membuktikan gerbang menyala)
   · uji 50 sampel pasangan dilewati (set SAPA_PASANGAN_PENUH=1 untuk menjalankannya)
 
 [1m── 6e. Pembersihan data katalog → prompt (FR-23) ──[0m
@@ -58,6 +58,9 @@
   [32m✓[0m korpus bersih tidak disentuh (0 sel dibersihkan, 0 baris ditandai)
   [32m✓[0m korpus beracun + model biasa LULUS (5 baris sumber mencurigakan ditandai)
   [32m✓[0m model yang menuruti perintah di data TIDAK lagi bisa menuruti (0 penanda [PATUH:])
+
+[1m── 6f. Notifikasi sirkuit penyedia (OPS-04) ──[0m
+  [32m✓[0m peringatan keluar saat sirkuit terbuka + tidak spam + kabar pemulihan (ringkasan: 13 ✓ / 0 ✗, 3 notifikasi)
 
 [1m── 7. Evaluasi — DILEWATI (SAPA_SKIP_EVAL=1) ──[0m
 

@@ -574,6 +574,39 @@ else
   info "server $AI_URL tidak hidup — lompati FR-23"
 fi
 
+# ── 6f. Notifikasi operator saat sirkuit penyedia terbuka (OPS-04) ──────────
+# Kriteria terima OPS-04: "operator diberi tahu tanpa membuka panel". Yang diukur
+# bukan ada-tidaknya kode, melainkan apakah peringatan BENAR-BENAR keluar saat
+# penyedia menolak, BERHENTI saat sudah dikirim (tidak spam), dan menutup episode
+# dengan kabar pemulihan saat penyedia sehat kembali.
+#
+# Harness ini mengendalikan DUA server sendiri: saluran webhook tiruan (sink) dan
+# penyedia tiruan yang bisa dibalik nasibnya (401 → 200). Karena itu ia butuh
+# server uji khusus — bukan server AI biasa, yang salurannya tidak menunjuk ke
+# sink. Siapkan lebih dulu (ini juga tercatat di 19-LAPORAN-OPS-04.md):
+#
+#   SAPA_SPLP_BASE_URL=http://127.0.0.1:9911/sapa/1.0/api ADMIN_TOKEN=… \
+#   AI_ENABLED=true AI_PROVIDER=custom AI_BASE_URL=http://127.0.0.1:9933/v1 \
+#   AI_API_KEY=mock-uji AI_MODEL=mock-pintar AI_TIMEOUT_MS=5000 \
+#   AI_CIRCUIT_AUTH_THRESHOLD=2 AI_CIRCUIT_AUTH_COOLDOWN_MS=30000 \
+#   SAPA_ALERT_WEBHOOK_URL=http://127.0.0.1:9931/hook npx next start -p 3131 &
+#
+# Set SAPA_SIRKUIT_URL=http://127.0.0.1:3131 agar bagian ini ikut dijalankan.
+if [ -n "${SAPA_SIRKUIT_URL:-}" ] && [ "$(hidup "$SAPA_SIRKUIT_URL")" = "200" ]; then
+  judul "6f. Notifikasi sirkuit penyedia (OPS-04)"
+  if node scripts/uji-peringatan.mjs --url="$SAPA_SIRKUIT_URL" --token="${ADMIN_TOKEN:-}" \
+      --sink-port="${SAPA_SIRKUIT_SINK_PORT:-9931}" --provider-port="${SAPA_SIRKUIT_PROVIDER_PORT:-9933}" \
+      --timeout="${SAPA_SIRKUIT_TIMEOUT:-90}" > /tmp/ut-ops04.txt 2>&1; then
+    ringkas04=$(grep -oE 'ringkasan: [0-9]+ ✓ / [0-9]+ ✗' /tmp/ut-ops04.txt | head -1)
+    jenis04=$(grep -c '^  ← notifikasi diterima' /tmp/ut-ops04.txt)
+    ok "peringatan keluar saat sirkuit terbuka + tidak spam + kabar pemulihan (${ringkas04:-?}, ${jenis04} notifikasi)"
+  else
+    no "harness OPS-04 GAGAL — lihat /tmp/ut-ops04.txt"
+  fi
+else
+  info "notifikasi sirkuit dilewati (set SAPA_SIRKUIT_URL=http://127.0.0.1:3131 untuk menjalankannya)"
+fi
+
 # ── 7. Evaluasi set 90 item ─────────────────────────────────────────────────
 jalankan_eval() {
   local url="$1" label="$2" keluaran="$3"

@@ -13,6 +13,7 @@ import {
   klasifikasiGalat,
   klasifikasiStatus,
 } from './provider-health';
+import { periksaPeringatanSirkuit } from './notifikasi';
 
 export interface LlmMessage {
   role: 'system' | 'user';
@@ -182,7 +183,9 @@ export async function callLlmText(
         choices?: { message?: { content?: string }; finish_reason?: string }[];
         usage?: { prompt_tokens?: number; completion_tokens?: number };
       };
-      await catatSukses();
+      // OPS-04: nirblokir — operator diberi tahu (mis. pemulihan sirkuit) tanpa
+      // menambah satu milidetik pun pada permintaan pengguna.
+      periksaPeringatanSirkuit(await catatSukses());
       return {
         text: json.choices?.[0]?.message?.content ?? '',
         finishReason: json.choices?.[0]?.finish_reason,
@@ -199,7 +202,7 @@ export async function callLlmText(
       // 2x timeout.
       const bolehLanjut = !dibatalkan(e) && (sebab === 'server' || sebab === 'throttle' || sebab === 'jaringan');
       if (percobaan >= 2 || !bolehLanjut) {
-        await catatGagal(sebab, e instanceof Error ? e.message : String(e));
+        periksaPeringatanSirkuit(await catatGagal(sebab, e instanceof Error ? e.message : String(e)));
         break;
       }
       // Jeda panjang hanya untuk throttle — 300 ms sia-sia melawan cooldown
@@ -252,7 +255,7 @@ export async function* streamLlm(
       if (!res.ok || !res.body) {
         const teks = await res.text().catch(() => '');
         const sebab = klasifikasiStatus(res.status, teks);
-        await catatGagal(sebab, `HTTP ${res.status}: ${teks.slice(0, 160)}`);
+        periksaPeringatanSirkuit(await catatGagal(sebab, `HTTP ${res.status}: ${teks.slice(0, 160)}`));
         throw new LlmError(`HTTP ${res.status}: ${teks.slice(0, 200)}`, res.status);
       }
       const reader = res.body.getReader();
@@ -282,7 +285,7 @@ export async function* streamLlm(
           }
         }
       }
-      await catatSukses(); // aliran selesai utuh → penyedia sehat
+      periksaPeringatanSirkuit(await catatSukses()); // aliran selesai utuh → penyedia sehat
       return;
     } catch (e) {
       terakhirError = e;
@@ -295,7 +298,7 @@ export async function* streamLlm(
           sebab === 'server' ||
           sebab === 'timeout');
       if (percobaan >= 2 || !bisaUlang) {
-        await catatGagal(sebab, e instanceof Error ? e.message : String(e));
+        periksaPeringatanSirkuit(await catatGagal(sebab, e instanceof Error ? e.message : String(e)));
         throw e;
       }
       await new Promise((r) => setTimeout(r, mandek(e) ? JEDA_MANDEK_MS : TUNDA_RETRY_MS));

@@ -1,0 +1,53 @@
+{
+  "waktu": "2026-09-23T05:34:00.834Z",
+  "app": "http://127.0.0.1:3131",
+  "diterima": [
+    {
+      "waktu": "2026-09-23T05:33:28.126Z",
+      "url": "/hook",
+      "json": {
+        "jenis": "sirkuit-terbuka",
+        "judul": "Sirkuit penyedia AI terbuka",
+        "teks": "[SAPA] Sirkuit penyedia AI TERBUKA (0 menit)\nsebab    : auth — kunci ditolak / langganan mati\npesan    : HTTP 401: {\"error\":{\"message\":\"invalid api key — uji OPS-04\",\"type\":\"auth_error\"}}\ndibuka   : 2026-09-23T05:33:28.116Z\ngagal    : 2 berturut (auth: 2)\ncooldown : sisa 30 dtk, lalu percobaan setengah terbuka otomatis\ndampak   : panggilan model dilewati → pengguna menerima jawaban deterministik (tanpa galat)\npanel    : https://sapa-smart-ai.vercel.app/admin/ai-toggle",
+        "sirkuit": {
+          "jenis": "sirkuit-terbuka",
+          "sebab": "auth",
+          "pesan": "HTTP 401: {\"error\":{\"message\":\"invalid api key — uji OPS-04\",\"type\":\"auth_error\"}}",
+          "dibukaPada": "2026-09-23T05:33:28.116Z",
+          "terbukaMenit": 0,
+          "gagalBerturut": 2,
+          "gagalAuthBerturut": 2,
+          "panel": "https://sapa-smart-ai.vercel.app/admin/ai-toggle"
+        }
+      }
+    },
+    {
+      "waktu": "2026-09-23T05:33:28.147Z",
+      "url": "/hook",
+      "json": {
+        "jenis": "uji",
+        "judul": "Uji notifikasi OPS-04",
+        "teks": "[SAPA] Uji notifikasi OPS-04 (bukan gangguan)\nwaktu  : 2026-09-23T05:33:28.145Z\narti   : saluran ini akan menerima peringatan bila sirkuit penyedia AI terbuka\npanel  : https://sapa-smart-ai.vercel.app/admin/ai-toggle",
+        "sirkuit": {
+          "jenis": "uji",
+          "waktu": "2026-09-23T05:33:28.145Z",
+          "panel": "https://sapa-smart-ai.vercel.app/admin/ai-toggle"
+        }
+      }
+    },
+    {
+      "waktu": "2026-09-23T05:34:00.306Z",
+      "url": "/hook",
+      "json": {
+        "jenis": "sirkuit-pulih",
+        "judul": "Sirkuit penyedia AI pulih",
+        "teks": "[SAPA] Sirkuit penyedia AI PULIH (terbuka 0 menit)\nberhasil: 2026-09-23T05:34:00.293Z\ndampak  : narasi AI dilayani lagi seperti biasa\npanel   : https://sapa-smart-ai.vercel.app/admin/ai-toggle",
+        "sirkuit": {
+          "jenis": "sirkuit-pulih",
+          "terbukaMenit": 0,
+          "berhasil": "2026-09-23T05:34:00.293Z"
+        }
+      }
+    }
+  ]
+}

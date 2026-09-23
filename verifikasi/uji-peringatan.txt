@@ -1,0 +1,35 @@
+══ Uji OPS-04: notifikasi sirkuit penyedia ══
+   aplikasi : http://127.0.0.1:3131
+   sink     : http://127.0.0.1:9931/hook
+   penyedia : http://127.0.0.1:9933/v1 (mode awal: menolak 401)
+   pertanyaan pertama: "Berapa Jumlah Akses Internet Desa di Kecamatan Lut Tawar di Rumah Sakit Umum Daerah Datu Beru?" (8 kandidat acak dari korpus)
+   status awal: ai.state=active records=1210 health=sehat
+  ── fase A: penyedia menolak (401) ──
+     tanya #1: HTTP 200 · bukti=15 · cached=false · alasan=panggilan model gagal: HTTP 401: {"error":{"message":"invalid api key — uji OPS-04","type":"auth_error"}} · health=sehat/gagal=1
+  ← notifikasi diterima: jenis=sirkuit-terbuka (876 bita)
+     tanya #2: HTTP 200 · bukti=15 · cached=false · alasan=panggilan model gagal: HTTP 401: {"error":{"message":"invalid api key — uji OPS-04","type":"auth_error"}} · health=terbuka/gagal=2
+  ✓ model benar-benar dipanggil 2 kali (uji tidak vakum)
+  ✓ peringatan keluar saat sirkuit penyedia terbuka (tanpa membuka panel)
+  ✓ sebab yang dilaporkan benar (auth)
+  ✓ pesan memuat keadaan + tautan panel
+  ✓ pesan bebas rahasia/kunci
+  ✓ pemeriksaan ulang tidak mengirim peringatan baru (tidak spam)
+  ✓ episode peringatan tercatat aktif (keadaan tersimpan antar-permintaan)
+  ✓ pemeriksaan kering melaporkan rencana + pratinjau pesan tanpa mengirim
+  ← notifikasi diterima: jenis=uji (396 bita)
+  ✓ notifikasi uji benar-benar sampai ke saluran (siap:true)
+  ✓ tidak ada kiriman tak terduga antar-pemeriksaan
+  ── fase B: penyedia sehat kembali ──
+     cooldown tersisa 28 dtk (menunggu sirkuit setengah terbuka)
+     tanya pemulihan #1: HTTP 200 · used=true · alasan=angka halu: 9.610
+  ← notifikasi diterima: jenis=sirkuit-pulih (357 bita)
+  ✓ notifikasi pemulihan terkirim saat penyedia sehat kembali
+  ✓ sirkuit benar-benar menutup (health=sehat)
+  ✓ episode ditutup (keadaan.aktif=false)
+
+   ringkasan: 13 ✓ / 0 ✗ · notifikasi diterima sink: 3
+     - 2026-09-23T05:33:28.126Z sirkuit-terbuka
+     - 2026-09-23T05:33:28.147Z uji
+     - 2026-09-23T05:34:00.306Z sirkuit-pulih
+   HASIL: LULUS
+   bukti notifikasi disimpan: verifikasi/uji-peringatan-bukti.json

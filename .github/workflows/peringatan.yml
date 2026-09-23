@@ -1,0 +1,82 @@
+# ─── OPS-04: pemeriksa notifikasi sirkuit penyedia AI (penjadwal luar) ─────────
+#
+# MENGAPA ADA
+# Notifikasi sirkuit sudah dipicu dari jalur jawaban (setiap permintaan yang
+# menyentuh model ikut memeriksa). Tetapi bila TIDAK ADA seorang pun bertanya,
+# tidak ada yang memeriksa — dan sirkuit bisa terbuka berjam-jam tanpa kabar.
+# Penjadwal ini menutup celah itu: tiap 10 menit endpoint admin dipanggil, dan
+# bila sirkuit terbuka (≥ ambang eskalasi) notifikasi Telegram/webhook dikirim
+# oleh server itu sendiri.
+#
+# DORMAN SEHARI-HARI — DISENGAJA
+# Bila rahasia `SAPA_URL` atau `ADMIN_TOKEN` belum diisi, langkah ini hanya
+# mencetak pesan dan berhenti dengan sukses. Alasannya: repositori yang belum
+# siap tidak boleh menyalakan alarm palsu (CI merah setiap 10 menit) — kesalahan
+# konfigurasi harus mengarah ke "belum aktif", bukan ke "selalu gagal".
+#
+# CARA MENGAKTIFKAN (Settings → Secrets and variables → Actions):
+#   SAPA_URL     = https://sapa-smart-ai.vercel.app   (tanpa garis miring di akhir)
+#   ADMIN_TOKEN  = token admin produksi (sama dengan environment Vercel)
+#
+# UJI MANUAL: tab Actions → "Peringatan sirkuit AI" → Run workflow.
+# Untuk memastikan saluran benar-benar sampai: buka
+#   <SAPA_URL>/api/admin/peringatan?token=<ADMIN_TOKEN>&uji=1
+# di peramban — pesan uji akan dikirim ke Telegram/webhook.
+
+name: Peringatan sirkuit AI
+
+on:
+  schedule:
+    - cron: '*/10 * * * *'
+  workflow_dispatch:
+
+concurrency:
+  group: peringatan-sirkuit
+  cancel-in-progress: false
+
+jobs:
+  periksa:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - name: Periksa sirkuit & kirim notifikasi bila perlu
+        env:
+          SAPA_URL: ${{ secrets.SAPA_URL }}
+          ADMIN_TOKEN: ${{ secrets.ADMIN_TOKEN }}
+        run: |
+          set -euo pipefail
+          if [ -z "${SAPA_URL:-}" ] || [ -z "${ADMIN_TOKEN:-}" ]; then
+            echo "Dilewati: rahasia SAPA_URL/ADMIN_TOKEN belum diisi (lihat komentar di berkas workflow)."
+            exit 0
+          fi
+
+          kode=$(curl -sS -o /tmp/peringatan.json -w '%{http_code}' -m 30 \
+            -H "x-admin-token: $ADMIN_TOKEN" \
+            "$SAPA_URL/api/admin/peringatan" || echo 000)
+
+          echo "HTTP $kode"
+          # Token TIDAK pernah dicetak; isi balasan hanya memuat keadaan sirkuit.
+          python3 - <<'PY'
+          import json
+          try:
+              d = json.load(open('/tmp/peringatan.json'))
+          except Exception:
+              print('balasan bukan JSON — dilewati')
+              raise SystemExit(0)
+          print('siap          :', d.get('siap'))
+          print('status        :', d.get('statusPeringatan'))
+          print('pesan         :', d.get('pesan'))
+          print('terbukaMenit  :', d.get('terbukaMenit'))
+          print('dikirim       :', d.get('dikirim'))
+          PY
+
+          # 401/503 = pagar admin bekerja (token salah / belum diset di server):
+          # itu masalah konfigurasi operator, bukan gangguan produksi.
+          if [ "$kode" = "401" ] || [ "$kode" = "503" ]; then
+            echo "::warning::Pemeriksaan ditolak server (HTTP $kode) — periksa ADMIN_TOKEN di rahasia repositori."
+            exit 0
+          fi
+          # 5xx lain = aplikasi/penyimpanan sedang bermasalah; biarkan tampak sebagai kegagalan.
+          if [ "$kode" -ge 500 ]; then
+            exit 1
+          fi
