@@ -430,6 +430,87 @@ else
   info "server $DET_URL tidak hidup — lompati FR-20"
 fi
 
+# ── 6d. Pemeriksa pasangan entitas (FR-24) ──────────────────────────────────
+# Kriteria terima FR-24: 0 kesalahan pasangan pada 50 keluaran sampel. Yang
+# diperiksa otomatis di sini (tanpa korpus khusus):
+#   (1) setiap balasan membawa blok `pemeriksaan` + jumlah nilai yang diperiksa;
+#   (2) jawaban yang DISAJIKAN tidak membawa temuan keras;
+#   (3) bila SAPA_TUKAR_URL diisi (server dengan model yang sengaja menukar
+#       entitas), narasi model itu WAJIB ditolak — bukti gerbang benar-benar
+#       menyala, bukan sekadar ada;
+#   (4) laporan temuan tidak membocorkan prosa berangka pada alasan penolakan.
+if [ "$(hidup "$DET_URL")" = "200" ]; then
+  judul "6d. Pemeriksa pasangan entitas (FR-24)"
+  tanya_24() {
+    curl -s -m 90 -X POST "$1/api/query" -H 'Content-Type: application/json' \
+      -d "{\"query\":\"$2\"}" 2>/dev/null || echo '{}'
+  }
+  r24=$(tanya_24 "$DET_URL" 'berapa jumlah penduduk kabupaten ini')
+  printf '%s' "$r24" > /tmp/ut-fr24-det.json
+  if python3 -c "
+import json,sys
+d = json.load(open('/tmp/ut-fr24-det.json'))
+p = d.get('pemeriksaan') or {}
+sys.exit(0 if isinstance(p.get('jumlahNilai'), int) and isinstance(p.get('keras'), int) else 1)
+" 2>/dev/null; then
+    nilai24=$(python3 -c "import json;print((json.load(open('/tmp/ut-fr24-det.json')).get('pemeriksaan') or {}).get('jumlahNilai'))" 2>/dev/null)
+    ok "balasan memuat pemeriksaan pasangan entitas (${nilai24:-?} nilai diperiksa)"
+  else
+    no "balasan TIDAK memuat pemeriksaan pasangan entitas"
+  fi
+  keras24=$(python3 -c "import json;print((json.load(open('/tmp/ut-fr24-det.json')).get('pemeriksaan') or {}).get('keras', -1))" 2>/dev/null)
+  if [ "${keras24:-1}" = "0" ]; then ok "jawaban yang disajikan bebas temuan pasangan keras"; else no "jawaban disajikan membawa ${keras24} temuan keras"; fi
+
+  # (3) Gerbang menyala pada model yang menukar entitas (bila servernya disediakan).
+  if [ -n "${SAPA_TUKAR_URL:-}" ] && [ "$(hidup "$SAPA_TUKAR_URL")" = "200" ]; then
+    r24t=$(tanya_24 "$SAPA_TUKAR_URL" 'berapa jumlah penduduk kabupaten ini')
+    printf '%s' "$r24t" > /tmp/ut-fr24-tukar.json
+    if python3 -c "
+import json,sys
+d = json.load(open('/tmp/ut-fr24-tukar.json'))
+ai = d.get('ai') or {}
+sys.exit(0 if ai.get('nilaiTambah') == 'ditolak-pasangan-entitas' else 1)
+" 2>/dev/null; then
+      ok "narasi model penukar entitas DITOLAK gerbang pasangan (penyebab dilaporkan)"
+    else
+      no "narasi model penukar entitas lolos gerbang pasangan (gerbang tidak menyala)"
+    fi
+    if python3 -c "
+import json,re,sys
+d = json.load(open('/tmp/ut-fr24-tukar.json'))
+ai = d.get('ai') or {}
+p = d.get('pemeriksaan') or {}
+# Yang WAJIB bebas angka adalah PROSA yang dibaca pengguna (ai.reason). Rincian
+# terstruktur (ai.alasanPasangan, pemeriksaan.temuan) memang memuat angka — itu
+# data audit, bukan kalimat, dan angkanya justru penunjuk baris yang salah.
+prosa = str(ai.get('reason') or '')
+if re.search(r'[0-9]', prosa): sys.exit(1)
+sys.exit(0 if (p.get('keras') or 0) == 0 else 1)  # yang disajikan tetap bersih
+" 2>/dev/null; then
+      ok "jawaban pengganti tetap bersih & prosa penolakan bebas angka"
+    else
+      no "jawaban pengganti kotor atau prosa penolakan memuat angka"
+    fi
+  else
+    info "server penukar entitas tidak disediakan (set SAPA_TUKAR_URL untuk membuktikan gerbang menyala)"
+  fi
+
+  # (4) Harness 50 sampel (kriteria terima dokumen 10).
+  if [ "${SAPA_PASANGAN_PENUH:-0}" = "1" ]; then
+    info "menjalankan uji 50 keluaran sampel (EV-24)…"
+    if SAPA_EVAL_URL="${SAPA_TUKAR_URL:-$DET_URL}" SAPA_PASANGAN_JEDA_MS="${SAPA_PASANGAN_JEDA_MS:-2100}" timeout 1800 \
+        node scripts/uji-pasangan.mjs > /tmp/ut-fr24-penuh.txt 2>&1; then
+      ok "uji pasangan: $(grep -oE '0 kesalahan pasangan pada [0-9]+ keluaran sampel' /tmp/ut-fr24-penuh.txt | tail -1)"
+    else
+      no "uji pasangan GAGAL — lihat /tmp/ut-fr24-penuh.txt"
+    fi
+  else
+    info "uji 50 sampel pasangan dilewati (set SAPA_PASANGAN_PENUH=1 untuk menjalankannya)"
+  fi
+else
+  info "server $DET_URL tidak hidup — lompati FR-24"
+fi
+
 # ── 7. Evaluasi set 90 item ─────────────────────────────────────────────────
 jalankan_eval() {
   local url="$1" label="$2" keluaran="$3"

@@ -28,7 +28,13 @@ import { callLlmText, streamLlm, extractNarasiPartial } from '@/lib/ai/llm-clien
 import { checkRateLimit } from '@/lib/rate-limit';
 import { cacheGet, cacheSet, incrementCounter, peekCounter, type CounterResult } from '@/lib/store';
 import { bacaKesehatan, ringkasKesehatan } from '@/lib/ai/provider-health';
-import { normalizeText, dataSourceLabel, type SapaRecord } from '@/lib/sapa-client';
+import { normalizeText, dataSourceLabel, daftarKecamatan, type SapaRecord } from '@/lib/sapa-client';
+import {
+  periksaPasanganEntitas,
+  ringkasPemeriksaan,
+  penjelasanPemeriksaan,
+  type HasilPemeriksaan,
+} from '@/services/pemeriksa-entitas';
 import type { HybridResponse } from '@/types';
 
 const CACHE_TTL_MS = 15 * 60 * 1000;
@@ -84,7 +90,19 @@ export interface AiMeta {
    * keterbatasan data. Tanpa gerbang ini, mode AI = menukar kesetaraan informasi
    * dengan kehalusan bahasa. Sekarang AI hanya dipakai bila terbukti tidak kalah.
    */
-  nilaiTambah?: 'dipakai' | 'dipakai-dengan-catatan' | 'ditolak-tidak-menambah' | 'ditolak-grounding';
+  nilaiTambah?:
+    | 'dipakai'
+    | 'dipakai-dengan-catatan'
+    | 'ditolak-tidak-menambah'
+    | 'ditolak-grounding'
+    | 'ditolak-pasangan-entitas';
+  /**
+   * FR-24: hasil pemeriksaan pasangan entitas atas narasi model. Diisi hanya
+   * bila gerbang benar-benar memeriksa narasi AI (`keras > 0` ⇒ narasi ditolak).
+   */
+  pasanganEntitas?: { ok: boolean; keras: number; lunak: number; jumlahNilai: number; jumlahKalimat: number };
+  /** FR-24: rincian temuan keras yang membuat narasi model ditolak (untuk audit). */
+  alasanPasangan?: string[];
   /** Peringatan bakU yang disisipkan aplikasi karena model memarafrasekannya. */
   catatanDisisipkan?: string[];
   /** Sitasi (jumlah nilai evidence yang muncul di narasi) masing-masing jalur. */
@@ -102,6 +120,13 @@ export interface ComposeResult {
    * membandingkan "terjawab lewat makna" vs "terjawab lewat kata").
    */
   diagnosa: Diagnosa;
+  /**
+   * FR-24: hasil pemeriksaan pasangan entitas atas narasi yang BENAR-BENAR
+   * disajikan (model atau deterministik). Selalu diisi supaya: (a) uji invarians
+   * eval dapat menolak satu pun temuan keras, dan (b) operator bisa melihat
+   * angka mana yang pasangannya diragukan pada jawaban nyata.
+   */
+  pemeriksaan: HasilPemeriksaan;
   /** Jumlah record yang cocok dengan retrieval (kompatibel dengan kontrak lama). */
   matched: number;
   aggregated: ReturnType<typeof buildDeterministicAnswer>['aggregated'];
@@ -274,6 +299,8 @@ export async function composeAnswer(opts: ComposeOptions): Promise<ComposeResult
       matched: 0,
       aggregated: [],
       opds: [],
+      // Tidak ada narasi data yang disajikan ⇒ tidak ada pasangan untuk diperiksa.
+      pemeriksaan: { ok: true, jumlahNilai: 0, jumlahKalimat: 0, keras: 0, lunak: 0, temuan: [] },
       diagnosa: klasifikasiSebab({
         jumlahBukti: 0,
         pagar: pagarNik ? 'nik' : 'per-orang',
@@ -301,9 +328,43 @@ export async function composeAnswer(opts: ComposeOptions): Promise<ComposeResult
    * jawaban yang di-cache, jawaban yang ditolak gerbang, dan jawaban murni
    * deterministik tidak mungkin diberi tag yang berbeda untuk keadaan yang sama.
    */
+  /**
+   * Kosakata wilayah untuk FR-24. Dihitung SEKALI per permintaan: daftar ini
+   * berasal dari katalog yang sedang dipegang, jadi pemeriksa memakai wilayah
+   * yang benar-benar ada di data — bukan daftar kecamatan yang ditulis di kode.
+   */
+  const kosakataKecamatan = daftarKecamatan(opts.records);
+
+  /**
+   * Konstanta sistem yang sah walau bukan nilai bukti.
+   *
+   * Daftar ini SENGAJA sama dengan daftar yang dipakai uji invarians eval
+   * (`eval-run.mjs`): jumlah record katalog, jumlah OPD katalog, jumlah baris
+   * bukti, jumlah OPD & indikator UNIK DI DALAM bukti (narasi deterministik
+   * menulis "15 indikator unik dari 13 OPD"), jumlah record yang cocok, dan
+   * tahun yang diminta pengguna. Terukur 23 Sep 2026: tanpa dua hitungan unik
+   * itu, gerbang FR-24 menuduh narasi deterministik sendiri sebagai "angka tak
+   * ada" — penuduhan palsu yang akan menolak jawaban yang benar.
+   */
+  const angkaSistem = [
+    opts.records.length,
+    new Set(opts.records.map((r) => r.opds_nama_opd)).size,
+    dasar.evidence.length,
+    new Set(dasar.evidence.map((e) => e.opd)).size,
+    new Set(dasar.evidence.map((e) => e.indikator)).size,
+    dasar.hits.length,
+    ...(opts.query.match(/\b(?:19|20)\d{2}\b/g) ?? []),
+  ];
+
   const selengkap = (m: AiMeta, response: HybridResponse): ComposeResult => ({
     response,
     evidence: dasar.evidence,
+    pemeriksaan: ringkasPemeriksaan(
+      periksaPasanganEntitas(response.narasi, dasar.evidence, {
+        kecamatan: kosakataKecamatan,
+        nilaiDiizinkan: angkaSistem,
+      }),
+    ),
     ai: m,
     matched: dasar.hits.length,
     aggregated: dasar.aggregated,
@@ -600,6 +661,42 @@ export async function composeAnswer(opts: ComposeOptions): Promise<ComposeResult
       meta.nilaiTambah = 'dipakai';
     }
   }
+  // ── 10. GERBANG FR-24: pasangan entitas ─────────────────────────────────────
+  //
+  //    Gerbang grounding di atas memastikan setiap angka ADA di daftar bukti.
+  //    Yang belum tertutup: angka yang benar tetapi DIPASANGKAN ke indikator,
+  //    wilayah, atau satuan milik baris lain ("deceptive grounding"). Kalimat
+  //    seperti "Produksi kopi 29.019 Jiwa menurut Dinas Kesehatan" lolos semua
+  //    pemeriksaan sebelumnya karena 29.019 memang ada di bukti.
+  //
+  //    Ditempatkan SETELAH penolakan grounding (supaya alasan penolakan yang
+  //    lebih dulu tetap yang dilaporkan) dan SEBELUM format presentasi (supaya
+  //    yang diperiksa adalah teks akhir yang dilihat pengguna).
+  if (meta.grounded === 'pass' && !shadow) {
+    const pasangan = periksaPasanganEntitas(responsAi.narasi, dasar.evidence, {
+      kecamatan: kosakataKecamatan,
+      nilaiDiizinkan: angkaSistem,
+    });
+    meta.pasanganEntitas = {
+      ok: pasangan.ok,
+      keras: pasangan.keras,
+      lunak: pasangan.lunak,
+      jumlahNilai: pasangan.jumlahNilai,
+      jumlahKalimat: pasangan.jumlahKalimat,
+    };
+    if (!pasangan.ok) {
+      // Narasi model ditolak; pengguna menerima narasi deterministik LENGKAP
+      // (bukan potongan hasil perbaikan) — sama seperti penolakan grounding.
+      responsAi = dasar.response;
+      meta.nilaiTambah = 'ditolak-pasangan-entitas';
+      meta.reason = penjelasanPemeriksaan(pasangan) ?? 'pasangan entitas salah';
+      meta.alasanPasangan = pasangan.temuan
+        .filter((t) => t.keras)
+        .slice(0, 4)
+        .map((t) => `${t.jenis}:${t.nilai}${t.diklaim ? `→${t.diklaim}` : ''}`);
+    }
+  }
+
   responsAi = formatAngkaPresentasi(responsAi);
 
   meta.used = true;

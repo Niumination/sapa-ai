@@ -92,6 +92,7 @@ export async function POST(req: NextRequest) {
           ...sitasiBalasan(hasil.response.narasi, hasil.evidence),
           // FR-20: sebab jawaban — kontrak sama dengan jalur JSON.
           diagnosa: hasil.diagnosa,
+          pemeriksaan: hasil.pemeriksaan,
         });
       } catch (e) {
         kirim('error', { error: e instanceof Error ? e.message : 'Gagal memproses query' });

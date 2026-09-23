@@ -145,6 +145,26 @@ describe('catatCelahBilaPerlu', () => {
   });
 });
 
+// ─── FR-24: pemeriksaan pasangan entitas pada balasan API ─────────────────────
+describe('POST /api/query — pemeriksaan pasangan entitas (FR-24)', () => {
+  it('balasan JSON memuat hasil pemeriksaan beserta jumlah nilai yang diperiksa', async () => {
+    const res = await POST(
+      new NextRequest('http://uji/api/query', {
+        method: 'POST',
+        body: JSON.stringify({ query: 'berapa jumlah penduduk' }),
+        headers: { 'Content-Type': 'application/json' },
+      }),
+    );
+    expect(res.status).toBe(200);
+    const j = await res.json();
+    expect(j.pemeriksaan).toBeDefined();
+    expect(typeof j.pemeriksaan.jumlahNilai).toBe('number');
+    expect(Array.isArray(j.pemeriksaan.temuan)).toBe(true);
+    // Kontrak terpenting: jawaban yang DISAJIKAN tidak boleh membawa temuan keras.
+    expect(j.pemeriksaan.keras).toBe(0);
+  });
+});
+
 // ─── FR-19: sitasi per klaim pada balasan API ─────────────────────────────────
 describe('POST /api/query — sitasi per klaim', () => {
   it('menyertakan narasiBersitasi dan ringkasan sitasi', async () => {

@@ -93,6 +93,10 @@ export async function POST(req: NextRequest) {
       dataYears: tahunPadaBukti(hasil.evidence),
       // FR-20: sebab jawaban ini (satu tag `lapis:rincian` + status). Selalu ada.
       diagnosa: hasil.diagnosa,
+      // FR-24: pemeriksaan pasangan entitas atas narasi yang disajikan. `keras > 0`
+      // berarti ada nilai yang dipasangkan ke indikator/wilayah/satuan lain — pada
+      // jalur AI hal itu sudah membuat narasi model ditolak sebelum sampai ke sini.
+      pemeriksaan: hasil.pemeriksaan,
       // FR-19: sitasi per klaim. `narasiBersitasi` adalah narasi dengan penanda
       // [n]; `sitasi.tanpaSitasi` harus KOSONG — inilah yang diperiksa gerbang.
       ...sitasiBalasan(hasil.response.narasi, hasil.evidence),

@@ -1,3 +1,5 @@
+import { daftarKecamatanDariIndikator } from '@/services/pemeriksa-entitas';
+
 // ─── SAPA Client — SPLP only ───
 // Source: api-splp.layanan.go.id
 
@@ -556,6 +558,18 @@ export function granularitasTidakTersedia(records: SapaRecord[], query: string):
   const memuat = (g: MatchGroup, k: { ind: Set<string>; opd: Set<string> }) =>
     g.alternatives.some((alt) => alternativeHit(alt, k.ind) || alternativeHit(alt, k.opd));
   return granularitasDitolak(groups, df, kataRecord, records, memuat);
+}
+
+/**
+ * Kosakata nama KECAMATAN dari katalog (daftar tertutup).
+ *
+ * Dipakai FR-24 untuk memastikan angka dipasangkan ke wilayah yang benar.
+ * Logikanya sengaja TIDAK ditulis ulang di sini — ia tinggal di
+ * `services/pemeriksa-entitas.ts` (`daftarKecamatanDariIndikator`) supaya
+ * pemeriksa pasangan dan pembaca katalog memakai kosakata yang sama persis.
+ */
+export function daftarKecamatan(records: SapaRecord[]): string[] {
+  return daftarKecamatanDariIndikator(records.map((r) => String(r.kode_indikator_nama_indikator ?? '')));
 }
 
 /**

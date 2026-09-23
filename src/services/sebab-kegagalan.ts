@@ -38,6 +38,7 @@ export type SebabGagal =
   // ── generasi: jawaban sudah ada, model gagal dipakai
   | 'generasi:grounding'
   | 'generasi:nilai-tambah'
+  | 'generasi:pasangan-entitas'
   | 'generasi:penyedia'
   // ── penyajian: jawaban sengaja tidak disajikan (saklar pemilik aplikasi)
   | 'penyajian:dinonaktifkan';
@@ -90,7 +91,12 @@ export interface FaktaJawaban {
   ai?: {
     used?: boolean;
     grounded?: 'pass' | 'replaced' | 'skipped';
-    nilaiTambah?: 'dipakai' | 'dipakai-dengan-catatan' | 'ditolak-tidak-menambah' | 'ditolak-grounding';
+    nilaiTambah?:
+      | 'dipakai'
+      | 'dipakai-dengan-catatan'
+      | 'ditolak-tidak-menambah'
+      | 'ditolak-grounding'
+      | 'ditolak-pasangan-entitas';
     limitedBy?: string;
   };
 }
@@ -105,6 +111,7 @@ const LABEL: Record<SebabJawaban, string> = {
   'retrieval:makna-lemah': 'kemiripan makna terlalu lemah untuk dijawab',
   'generasi:grounding': 'model ditolak gerbang grounding',
   'generasi:nilai-tambah': 'model ditolak gerbang nilai-tambah',
+  'generasi:pasangan-entitas': 'angka benar tetapi dipasangkan ke entitas lain',
   'generasi:penyedia': 'penyedia model gagal',
   'penyajian:dinonaktifkan': 'jawaban dinonaktifkan oleh pengaturan',
   'selesai:leksikal': 'terjawab — kecocokan kata',
@@ -135,6 +142,7 @@ export const SEBAB_GAGAL: SebabGagal[] = [
   'retrieval:makna-lemah',
   'generasi:grounding',
   'generasi:nilai-tambah',
+  'generasi:pasangan-entitas',
   'generasi:penyedia',
   'penyajian:dinonaktifkan',
 ];
@@ -177,7 +185,11 @@ function kosong(sebab: SebabJawaban, rincian: string, fakta: FaktaJawaban): Diag
  * tetap tersaji; yang hilang hanya nilai tambahnya.
  */
 function catatanGenerasi(ai: FaktaJawaban['ai']): SebabJawaban | undefined {
+  // FR-24 lebih dulu: "nilai benar dipasangkan ke entitas lain" adalah kegagalan
+  // yang lebih spesifik daripada grounding umum, dan penolakannya punya jalur
+  // sendiri di penyusun jawaban (`ditolak-pasangan-entitas`).
   if (!ai || ai.used) return undefined;
+  if (ai.nilaiTambah === 'ditolak-pasangan-entitas') return 'generasi:pasangan-entitas';
   if (ai.grounded === 'replaced' || ai.nilaiTambah === 'ditolak-grounding') return 'generasi:grounding';
   if (ai.nilaiTambah === 'ditolak-tidak-menambah') return 'generasi:nilai-tambah';
   if (ai.limitedBy && ['provider-error', 'circuit', 'timeout', 'no-key', 'error'].includes(ai.limitedBy)) {

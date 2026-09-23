@@ -3,8 +3,14 @@
 //   node scripts/mock-llm-server.mjs  →  http://127.0.0.1:8787/v1/chat/completions
 //
 // Perilaku: membaca evidence dari payload, lalu menjawab dengan TOKEN {{id}}.
-// Bila env MOCK_MODE=halu, sengaja menulis angka karangan (12,7 / 2019) untuk
-// menguji bahwa grounding menolaknya.
+//
+// Tiga mode untuk menguji pagar yang berbeda:
+//   (bawaan)          — jujur: menyebut indikator + OPD + tahun dari BARIS ITU.
+//   MOCK_MODE=halu    — mengarang angka (12,7 / 2019) → harus ditolak grounding.
+//   MOCK_MODE=tukar   — FR-24: angka diambil dari baris pertama (tetap BENAR,
+//                       jadi lolos anti-halu & grounding) tetapi satuan/OPD/tahun
+//                       ditempel dari baris LAIN → harus ditolak gerbang
+//                       pasangan entitas. Inilah *deceptive grounding*.
 
 import http from 'node:http';
 
@@ -65,6 +71,20 @@ function susunJawaban(body) {
   }
   if (!pertama) {
     return { narasi: 'Data tidak tersedia pada evidence yang diberikan.', rekomendasi: [], followUps: [], visualHint: 'none', confidence: 'rendah' };
+  }
+  if (process.env.MOCK_MODE === 'tukar') {
+    // Angka tetap milik baris pertama, tetapi pasangannya diambil dari baris lain.
+    const kedua = payload.evidence?.[1];
+    const satuanSalah = kedua?.satuan || (String(pertama.satuan ?? '').toLowerCase().includes('persen') ? 'Jiwa' : 'Persen');
+    const opdSalah = kedua?.opd || pertama.opd;
+    const tahunSalah = kedua?.tahun || '2019';
+    return {
+      narasi: `${pertama.indikator} sebesar {{${pertama.id}}} ${satuanSalah} menurut ${opdSalah} pada tahun ${tahunSalah}.`,
+      rekomendasi: ['Gunakan angka ini untuk perencanaan.'],
+      followUps: [],
+      visualHint: 'metric',
+      confidence: 'tinggi',
+    };
   }
   return {
     narasi: `Berdasarkan data SAPA, ${pertama.indikator} tercatat {{${pertama.id}}} pada {{${pertama.id}|t}} (sumber: ${pertama.opd}).`,

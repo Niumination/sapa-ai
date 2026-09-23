@@ -194,6 +194,21 @@ function cekInvarians(item, r) {
   const halu = [...new Set(angkaDiTeks(isi))].filter((n) => !diizinkan.has(n));
   if (halu.length) salah.push(`angka di luar evidence: ${halu.slice(0, 6).join(', ')}`);
 
+  // FR-24 — pasangan entitas: pemeriksaan yang dijalankan SERVER atas narasi
+  // yang benar-benar disajikan. Temuan keras berarti ada nilai yang dipasangkan
+  // ke indikator/wilayah/satuan milik baris lain (deceptive grounding). Pada
+  // jalur AI ini sudah menolak narasi model; temuan keras di sini berarti
+  // jawaban DETERMINISTIK pun salah pasangan — kelas kesalahan paling berbahaya,
+  // jadi diperlakukan sebagai invarians (tidak bisa di-xfail).
+  if (r.pemeriksaan && typeof r.pemeriksaan.keras === 'number' && r.pemeriksaan.keras > 0) {
+    const rincian = (r.pemeriksaan.temuan ?? [])
+      .filter((t) => t.keras)
+      .slice(0, 3)
+      .map((t) => `${t.jenis}:${t.nilai}${t.diklaim ? `→${t.diklaim}` : ''}`)
+      .join(', ');
+    salah.push(`pasangan entitas: ${r.pemeriksaan.keras} temuan keras (${rincian})`);
+  }
+
   // Echo NIK: narasi tak boleh memuat 16 digit berurutan
   if (/\d{16}/.test(narasi.replace(/[.,\s]/g, ''))) salah.push('narasi menggemakan 16 digit (pola NIK)');
 
@@ -312,7 +327,7 @@ try {
 } catch { /* server mungkin tak punya /api/status */ }
 console.log(`Eval set v${set.versi} — ${items.length} item — target ${BASE} — mode AI: ${aiState}`);
 console.log(`Konstanta katalog: ${KATALOG.records ?? '2055 (bawaan kode)'} record`);
-console.log(`Invarians: anti-halu · anti-token · anti-jargon · sumber wajib · anti-echo-NIK${DO_STREAM ? ' · parity SSE' : ''}${DO_STABILITY ? ' · stabilitas' : ''}\n`);
+console.log(`Invarians: anti-halu · anti-token · anti-jargon · sumber wajib · anti-echo-NIK · pasangan-entitas${DO_STREAM ? ' · parity SSE' : ''}${DO_STABILITY ? ' · stabilitas' : ''}\n`);
 
 const hasil = [];
 let kirim = 0;
@@ -338,6 +353,11 @@ for (const [idx, item] of items.entries()) {
   baris.diagnosaStatus = r?.diagnosa?.status ?? null;
   baris.diagnosaLapis = r?.diagnosa?.lapis ?? null;
   baris.diagnosaCatatan = r?.diagnosa?.catatan ?? null;
+  // FR-24: ringkas hasil pemeriksaan pasangan entitas untuk laporan.
+  baris.pemeriksaan = r?.pemeriksaan
+    ? { keras: r.pemeriksaan.keras, lunak: r.pemeriksaan.lunak, nilai: r.pemeriksaan.jumlahNilai }
+    : null;
+  baris.pasanganDitolak = r?.ai?.nilaiTambah === 'ditolak-pasangan-entitas';
   if (r.ai && r.ai.used) {
     baris.ai = { grounded: r.ai.grounded, unknownTokens: r.ai.unknownTokens ?? 0, latencyMs: r.ai.latencyMs ?? null, shadow: Boolean(r.ai.shadow) };
   } else if (r.ai && r.ai.attempted) {
@@ -413,6 +433,19 @@ if (gagal.length) {
   }
   const lapisan = [...new Set([...peta.keys()].map((s) => s.split(':')[0]))];
   console.log(`  lapis terlibat: ${lapisan.join(', ')}`);
+}
+
+// ─── FR-24: rekap pasangan entitas ───────────────────────────────────────────
+const nilaiDiperiksa = hasil.reduce((a, h) => a + (h.pemeriksaan?.nilai ?? 0), 0);
+const temuanLunak = hasil.reduce((a, h) => a + (h.pemeriksaan?.lunak ?? 0), 0);
+const pasanganDitolak = hasil.filter((h) => h.pasanganDitolak);
+console.log(`\n──────── Pasangan entitas (FR-24) ────────`);
+console.log(`  nilai diperiksa     : ${nilaiDiperiksa} pada ${hasil.length} keluaran`);
+console.log(`  temuan keras        : ${hasil.reduce((a, h) => a + (h.pemeriksaan?.keras ?? 0), 0)}  (harus 0)`);
+console.log(`  temuan lunak        : ${temuanLunak}  (dilaporkan, bukan penolakan)`);
+console.log(`  narasi AI ditolak   : ${pasanganDitolak.length}${pasanganDitolak.length ? ` → ${pasanganDitolak.map((h) => h.id).join(', ')}` : ''}`);
+if (pasanganDitolak.length) {
+  console.log(`    (narasi model berisi pasangan salah; pengguna menerima narasi katalog — periksa prompt/penyedia)`);
 }
 
 // Sebab untuk item yang LULUS juga dilaporkan bila ada catatan generasi —
