@@ -145,7 +145,7 @@ Format: **Kode · Kebutuhan · Alasan/bukti · Kriteria terima (terukur) · Usah
 | **FR-21** | **Tolak permintaan data perorangan** (NIK/alamat/nama individu) dengan penjelasan, tanpa menjawab sebagian | UU PDP; sudah ada | item `S2`, `X1–X3` lulus | S | ✅ |
 | **FR-22** | **Tolak permintaan atas aturan internal tanpa menggemakan muatan** (INV-06) | item `S1` (angka 999999) & `S3` (jargon "system prompt") semula gagal | item `S1`, `S3` lulus; narasi tidak memuat muatan pengguna | S | ✅ |
 | **FR-23** | **Pembersihan masukan katalog** (panjang, karakter kendali) sebelum masuk prompt — mencegah injeksi tak-langsung dari data | OWASP LLM01 | uji unit baru lulus | S | ⬜ |
-| **FR-24** | **Pemeriksa pasangan entitas** (nilai ↔ indikator ↔ OPD) untuk melawan *deceptive grounding* | mencegah nilai benar dipasangkan ke indikator salah | 0 kesalahan pasangan pada 50 keluaran sampel | M | ⬜ |
+| **FR-24** | **Pemeriksa pasangan entitas** (nilai ↔ indikator ↔ OPD ↔ wilayah) untuk melawan *deceptive grounding* | mencegah nilai benar dipasangkan ke indikator salah | 0 kesalahan pasangan pada 50 keluaran sampel → **terukur 0 pada model jujur & model penukar entitas** | M | ✅ (selesai 23 Sep 2026; laporan: dokumen `17`) |
 
 ### Kelompok E — Penyajian & pengalaman
 
@@ -263,11 +263,11 @@ FR-18 di [5]/[10]; FR-25/26 di [10]/[11]; NFR-07 & FR-27 di [11].
 |---|---|---|---|
 | **A — Selesai (✅ gelombang 1–3)** | Sirkuit penyedia · status jujur · revalidate fail-closed · gerbang niat-meta · niat jawaban · gerbang nilai-tambah · lima sebab positif-palsu grounding · aturan entitas · kejujuran granularitas · preferensi satuan · penolakan injeksi · set evaluasi 90 · uji terima otomatis | 90/90 dua mode · 237 uji · kit serah terima | — |
 | **B — Cocok-makna & parafrase** | ~~FR-12 lapis semantik Indonesia + fusi RRF~~ (selesai 22 Sep 2026; penyedia `hash`, penyedia `remote` kelas e5 siap dipakai) · FR-13 indeksasi berkonteks · FR-14 fusi RRF lanjutan · EV-05 120 item · EV-06 uji model sungguhan | recall@15 **20/20** pada 20 kueri parafrase baru (ambang 90 %); luar-katalog 5/5 ditolak; latensi muat dingin **75 ms** (ambang 300 ms); artefak ± 0 MB (in-memory, tanpa berkas) | sisa 2–4 minggu |
-| **C — Mutu tertutup** | ~~FR-19 jawaban per-klaim~~ · ~~FR-20 klasifikasi sebab~~ (selesai 22 Sep 2026) · FR-24 pemeriksa pasangan entitas · FR-23 pembersihan masukan · NFR-07 telemetri `gen_ai.*` · OPS-04 notifikasi | 0 klaim tanpa rujukan pada 50 sampel ✅; tiap kegagalan bertag sebab ✅ | sisa 2–4 minggu |
+| **C — Mutu tertutup** | ~~FR-19 jawaban per-klaim~~ · ~~FR-20 klasifikasi sebab~~ · ~~FR-24 pemeriksa pasangan entitas~~ (selesai 22–23 Sep 2026) · FR-23 pembersihan masukan · NFR-07 telemetri `gen_ai.*` · OPS-04 notifikasi | 0 klaim tanpa rujukan pada 50 sampel ✅; tiap kegagalan bertag sebab ✅; 0 kesalahan pasangan pada 50 sampel ✅ | sisa 1–2 minggu |
 | **D — Tata kelola & pengalaman** | ~~FR-25 · FR-26 · FR-27~~ (selesai 22 Sep 2026) · NFR-09 aksesibilitas · OPS-03 penyegaran terjadwal · CMP-02/03/04 | notis tampil; ≥ 50 umpan balik/bulan; WCAG 2.2 AA | 3–4 minggu |
 
-**Urutan yang disarankan bila sumber daya terbatas:** ~~FR-25 → FR-27 → FR-26 → FR-19 → FR-12 → FR-20~~
-(selesai 22 Sep 2026) → **FR-24** (pemeriksa pasangan entitas) → **FR-23** → Fase D.
+**Urutan yang disarankan bila sumber daya terbatas:** ~~FR-25 → FR-27 → FR-26 → FR-19 → FR-12 → FR-20 → FR-24~~
+(selesai 22–23 Sep 2026) → **FR-23** (pembersihan masukan) → Fase D.
 Alasannya: FR-19 menaikkan kepercayaan paling tinggi per satuan usaha; FR-12 (lapis semantik) sudah
 selesai dan menutup celah parafrase; FR-20 murah dan membuat **setiap** kegagalan yang tersisa
 terjelaskan dengan satu tag sebab — termasuk kegagalan yang baru muncul dari lapis semantik.
@@ -376,5 +376,6 @@ Sebuah pekerjaan dianggap **selesai** hanya bila **semuanya** terpenuhi:
 | `14-LAPORAN-FR-19.md` | laporan bukti sitasi per klaim (343 uji; 50 sampel × 2 mode: 42/42 bersitasi, 0 penunjukan salah) |
 | `15-LAPORAN-FR-12.md` | laporan bukti lapis semantik Indonesia + fusi RRF (20/20 parafrase, 5/5 di luar katalog ditolak, muat dingin 75 ms) |
 | `16-LAPORAN-FR-20.md` | laporan bukti klasifikasi sebab kegagalan (`lapis:rincian`), wiring rute & dasbor celah, harness penanda sebab |
+| `17-LAPORAN-FR-24.md` | laporan bukti pemeriksa pasangan entitas (deceptive grounding), tiga penuduhan palsu yang diperbaiki, keputusan desain & batas |
 | `scripts/uji-sitasi.mjs` | skrip uji 50 sampel sitasi (kriteria terima FR-19) + pemeriksaan independen tiap penanda |
 | `06-USULAN-KODE/uji-terima.sh` | skrip uji terima (dipakai hermes agent/pengembang) |
