@@ -4,6 +4,7 @@ Berkas di folder ini **berdiri sendiri** — dapat dibaca tanpa dokumen lain.
 
 | Berkas | Untuk siapa | Isi singkat |
 |---|---|---|
+| `19-LAPORAN-OPS-04.md` | pengembang · operator · tim dukungan | **Pemberitahuan saat sirkuit penyedia AI terbuka**: satu episode satu peringatan (tanpa spam), kabar pemulihan, saluran Telegram/webhook dengan penyaring rahasia, endpoint admin (periksa · kering · uji), penjadwal luar untuk kasus tanpa lalu lintas, dan tiga temuan nyata dari uji ujung-ke-ujung — termasuk uji yang nyaris vakum karena cache jawaban |
 | `18-LAPORAN-FR-23.md` | pengembang · tim keamanan | **Pembersihan data katalog sebelum masuk prompt**: dua rem (masuk prompt + keluar ke layar), 7 kelompok aturan, model uji `mock-patuh` yang menuruti perintah data, kontrol negatif yang sengaja gagal, plus empat temuan yang hanya muncul lewat pengujian nyata |
 | `10-KEBUTUHAN-UPGRADE-TINGKAT-LANJUT.md` | pengembang · perencana · pemilik anggaran | **Kebutuhan upgrade disusun dari awal**: tujuan, 7 invariants, 27 kebutuhan fungsional + 10 non-fungsional dengan kriteria terima berangka, kebutuhan data/evaluasi/operasi/kepatuhan, arsitektur target, peta fase B–D |
 | `11-KIT-SERAH-TERIMA.md` | pengembang · agen repo lokal | cara menerapkan (3 cara), titik rawan konflik, batas kepemilikan berkas, cara uji di localhost, validasi dengan model sungguhan, rollback, **instruksi siap-tempel untuk agen** |

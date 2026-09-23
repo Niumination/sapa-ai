@@ -206,7 +206,7 @@ Format: **Kode · Kebutuhan · Alasan/bukti · Kriteria terima (terukur) · Usah
 | **OPS-01** | **Saklar AI/Deterministik** + status jujur untuk operator | saklar bekerja; status memuat sebab | ✅ |
 | **OPS-02** | **Sirkuit penyedia** untuk auth/throttle/server/jaringan/timeout | gagal cepat; pulih otomatis satu percobaan setelah cooldown | ✅ |
 | **OPS-03** | **Penyegaran cache terjadwal** (mis. harian) dengan rahasia | cache segar harian; endpoint tetap fail-closed | ⬜ |
-| **OPS-04** | **Log & peringatan**: bila sirkuit terbuka > 15 menit, kirim notifikasi (Surel/Telegram) | operator diberi tahu tanpa membuka panel | ⬜ |
+| **OPS-04** | **Log & peringatan**: bila sirkuit terbuka > 15 menit, kirim notifikasi (Surel/Telegram) | operator diberi tahu tanpa membuka panel | ✅ (23 Sep 2026 — dok 19: peringatan segera + eskalasi 15 mnt, Telegram/webhook, penjadwal luar, 13 butir uji ujung-ke-ujung) |
 | **OPS-05** | **Catatan rilis** per gelombang (isi, bukti, cara mundur) | setiap rilis punya catatan + tag git | 🟡 (pesan komit ✅; tag belum) |
 | **OPS-06** | **Uji terima otomatis** sebelum rilis (`uji-terima.sh`) | LULUS sebelum promosi produksi | ✅ |
 
@@ -263,11 +263,11 @@ FR-18 di [5]/[10]; FR-25/26 di [10]/[11]; NFR-07 & FR-27 di [11].
 |---|---|---|---|
 | **A — Selesai (✅ gelombang 1–3)** | Sirkuit penyedia · status jujur · revalidate fail-closed · gerbang niat-meta · niat jawaban · gerbang nilai-tambah · lima sebab positif-palsu grounding · aturan entitas · kejujuran granularitas · preferensi satuan · penolakan injeksi · set evaluasi 90 · uji terima otomatis | 90/90 dua mode · 237 uji · kit serah terima | — |
 | **B — Cocok-makna & parafrase** | ~~FR-12 lapis semantik Indonesia + fusi RRF~~ (selesai 22 Sep 2026; penyedia `hash`, penyedia `remote` kelas e5 siap dipakai) · FR-13 indeksasi berkonteks · FR-14 fusi RRF lanjutan · EV-05 120 item · EV-06 uji model sungguhan | recall@15 **20/20** pada 20 kueri parafrase baru (ambang 90 %); luar-katalog 5/5 ditolak; latensi muat dingin **75 ms** (ambang 300 ms); artefak ± 0 MB (in-memory, tanpa berkas) | sisa 2–4 minggu |
-| **C — Mutu tertutup** | ~~FR-19 jawaban per-klaim~~ · ~~FR-20 klasifikasi sebab~~ · ~~FR-24 pemeriksa pasangan entitas~~ · ~~FR-23 pembersihan masukan~~ (selesai 22–23 Sep 2026) · NFR-07 telemetri `gen_ai.*` · OPS-04 notifikasi | 0 klaim tanpa rujukan pada 50 sampel ✅; tiap kegagalan bertag sebab ✅; 0 kesalahan pasangan pada 50 sampel ✅; 0 penanda kepatuhan pada model yang menuruti perintah data ✅ (kontrol negatif ikut gagal) | sisa 1–2 minggu |
+| **C — Mutu tertutup** | ~~FR-19 jawaban per-klaim~~ · ~~FR-20 klasifikasi sebab~~ · ~~FR-24 pemeriksa pasangan entitas~~ · ~~FR-23 pembersihan masukan~~ · ~~OPS-04 notifikasi sirkuit~~ (selesai 22–23 Sep 2026) · NFR-07 telemetri `gen_ai.*` | 0 klaim tanpa rujukan pada 50 sampel ✅; tiap kegagalan bertag sebab ✅; 0 kesalahan pasangan pada 50 sampel ✅; 0 penanda kepatuhan pada model yang menuruti perintah data ✅ (kontrol negatif ikut gagal) | sisa 1–2 minggu |
 | **D — Tata kelola & pengalaman** | ~~FR-25 · FR-26 · FR-27~~ (selesai 22 Sep 2026) · NFR-09 aksesibilitas · OPS-03 penyegaran terjadwal · CMP-02/03/04 | notis tampil; ≥ 50 umpan balik/bulan; WCAG 2.2 AA | 3–4 minggu |
 
 **Urutan yang disarankan bila sumber daya terbatas:** ~~FR-25 → FR-27 → FR-26 → FR-19 → FR-12 → FR-20 → FR-24 → FR-23~~
-(selesai 22–23 Sep 2026; seluruh kelompok C kini tertutup) → **Fase D** (NFR-07 telemetri `gen_ai.*`, OPS-04 notifikasi).
+(selesai 22–23 Sep 2026; OPS-04 ikut selesai 23 Sep 2026) → **NFR-07 telemetri `gen_ai.*`** → **Fase D** (OPS-03 penyegaran terjadwal, NFR-09 aksesibilitas, CMP-02/03/04).
 Alasannya: FR-19 menaikkan kepercayaan paling tinggi per satuan usaha; FR-12 (lapis semantik) sudah
 selesai dan menutup celah parafrase; FR-20 murah dan membuat **setiap** kegagalan yang tersisa
 terjelaskan dengan satu tag sebab — termasuk kegagalan yang baru muncul dari lapis semantik.
