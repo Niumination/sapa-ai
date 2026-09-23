@@ -103,7 +103,7 @@ itu memang tidak lagi terbaca model.
 
 | Pemeriksaan | Hasil |
 |---|---|
-| `npx vitest run` | **32 berkas / 492 uji lulus** (sebelum FR-23: 31 / 452) |
+| `npx vitest run` | **32 berkas / 494 uji lulus** (sebelum FR-23: 31 / 452). *Koreksi 23 Sep 2026:* berkas ini sempat menulis 492 — angka yang benar pada komit `14d6ced` adalah **494** (berkas uji `bersih-data.test.ts` berisi 42 uji). Setelah OPS-04 jumlahnya menjadi 33 berkas / 514 uji (dokumen `19`). |
 | `npm run typecheck` | OK |
 | `npm run build` | OK (Next.js 16.2.10) |
 
