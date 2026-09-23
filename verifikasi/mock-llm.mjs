@@ -31,9 +31,12 @@
 
 import http from 'node:http';
 import fs from 'node:fs';
+import path from 'node:path';
 
 const PORT = Number(process.argv[2] ?? 8899);
-const LOG = process.env.MOCK_LLM_LOG ?? '/home/user/verifikasi/mock-llm-log.jsonl';
+// Relatif ke cwd agar portabel lintas OS (arena memakai sandbox Linux; macOS tidak punya /home/user).
+// MOCK_LLM_LOG tetap bisa diarahkan ke lokasi lain bila perlu.
+const LOG = process.env.MOCK_LLM_LOG ?? path.join(process.cwd(), 'verifikasi', 'mock-llm-log.jsonl');
 
 // ─── Pembacaan prompt: dukung JSON lama maupun markdown-KV baru ───
 function ambilPayload(userContent) {

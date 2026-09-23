@@ -17,3 +17,7 @@ data/dtsen-raw/
 
 # Rencana internal agen (Hermes) — bukan bagian aplikasi
 .hermes/
+
+# Log mock LLM (verifikasi/) tidak di-commit
+verifikasi/mock-llm-log.jsonl
+*.jsonl
