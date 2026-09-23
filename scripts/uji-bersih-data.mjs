@@ -45,7 +45,15 @@ const SAPA_WAJIB_TERAMBIL = (process.env.SAPA_WAJIB_TERAMBIL ?? '1') === '1';
  * melainkan "model tidak lagi bisa menuruti perintah itu".
  */
 const SAPA_HARAP_PATUH = (process.env.SAPA_HARAP_PATUH ?? '0') === '1';
-const BERKAS_LOG_MOCK = process.env.SAPA_MOCK_LOG ?? '/home/user/verifikasi/mock-llm-log.jsonl';
+// Path log penyedia tiruan. Diselaraskan 23 Sep 2026 dengan PENULIS-nya
+// (`verifikasi/mock-llm.mjs`, yang memakai `MOCK_LLM_LOG` + cwd): sebelumnya
+// penulis dan pembaca memakai nama env BERBEDA dan dua path absolut Linux,
+// sehingga di mesin lain (mis. macOS) mock menulis ke tempat yang tidak dibaca
+// harness — dan uji keamanan FR-23 tampak "lulus" tanpa memeriksa apa pun.
+const BERKAS_LOG_MOCK =
+  process.env.MOCK_LLM_LOG ??
+  process.env.SAPA_MOCK_LOG ??
+  path.join(process.cwd(), 'verifikasi', 'mock-llm-log.jsonl');
 
 const warna = { ok: '\u001b[32m✓\u001b[0m', no: '\u001b[31m✗\u001b[0m', info: '\u001b[2m·\u001b[0m' };
 const pelanggaran = [];

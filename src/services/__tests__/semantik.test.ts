@@ -16,6 +16,8 @@ import {
   kesamaan,
   normalisasiSemantik,
   pilihSisipanSemantik,
+  punyaJangkarIsi,
+  tokenIsi,
   penyediaDariLingkungan,
   retrieveDenganSemantik,
   saringKandidatSemantik,
@@ -297,6 +299,53 @@ describe('retrieveDenganSemantik — leksikal dulu, semantik hanya mengisi', () 
   it('dapat dimatikan sepenuhnya (SAPA_SEMANTIK=off lewat opsi)', () => {
     const hasil = retrieveDenganSemantik(KORPUS, 'prevalensi stuntng', { indeks: null, semantikAktif: false });
     expect(hasil.jalur).toBe('kosong');
+  });
+});
+
+describe('gerbang JANGKAR ISI (perbaikan 23 Sep 2026 — korpus produksi)', () => {
+  // Kasus nyata: "Berapa inflasi Aceh Tengah bulan ini?" — kata "inflasi" TIDAK ada
+  // di katalog SAPA, tetapi skor semantik mencapai 0,487 (di atas ambang 0,27)
+  // karena kata "bulan" cocok dengan "6 bulan"/"Bulanan". Akibatnya 15 indikator
+  // ASI/MP-ASI disajikan sebagai jawaban atas pertanyaan tentang inflasi.
+  const KORPUS_ASI: SapaRecord[] = [
+    rec({ id: 10, kode_indikator_nama_indikator: 'Jumlah bayi usia 6 bulan mendapatkan ASI Eksklusif', opds_nama_opd: 'Dinas Kesehatan' }),
+    rec({ id: 11, kode_indikator_nama_indikator: 'Jumlah Santunan Bulanan Lansia Miskin', opds_nama_opd: 'Sekretariat Baitul Mal' }),
+  ];
+
+  it('tokenIsi membuang kata waktu/kuantitas tetapi menyisakan kata topik', () => {
+    expect(tokenIsi('Berapa inflasi Aceh Tengah bulan ini?')).toEqual(['inflasi']);
+    expect(tokenIsi('Apa penyebab utama stunting di Aceh Tengah?')).toEqual(['penyebab', 'utama', 'stunting']);
+    // Kueri yang HANYA berisi kata generik tidak punya dasar apa pun untuk dijawab.
+    expect(tokenIsi('berapa jumlahnya bulan ini')).toEqual([]);
+  });
+
+  it('kata generik tidak pernah menjadi jangkar — kueri di luar katalog ditolak', () => {
+    expect(punyaJangkarIsi('Berapa inflasi Aceh Tengah bulan ini?', 'Jumlah bayi usia 6 bulan mendapatkan ASI Eksklusif Dinas Kesehatan')).toBe(false);
+    expect(punyaJangkarIsi('Berapa inflasi Aceh Tengah bulan ini?', 'Jumlah Santunan Bulanan Lansia Miskin Sekretariat Baitul Mal')).toBe(false);
+  });
+
+  it('kata isi yang ADA di label menjadi jangkar (termasuk salah tulis)', () => {
+    expect(punyaJangkarIsi('Apa penyebab utama stunting di Aceh Tengah?', 'Prevalensi Stunting Dinas Kesehatan')).toBe(true);
+    expect(punyaJangkarIsi('jumlah pendudk', 'Jumlah Data Penduduk Dinas Kependudukan')).toBe(true);
+    expect(punyaJangkarIsi('harapan hidup penduduk', 'Angka Harapan Hidup Bappeda')).toBe(true);
+  });
+
+  it('jalur semantik menolak kandidat tanpa jangkar — jujur kosong, bukan menjawab', () => {
+    const h = retrieveDenganSemantik(KORPUS_ASI, 'Berapa inflasi Aceh Tengah bulan ini?', { indeks: bangunIndeksHash(KORPUS_ASI) });
+    expect(h.jalur).toBe('kosong');
+    expect(h.hasil).toEqual([]);
+    // FR-20: sebabnya dapat dibedakan dari "makna lemah" — skor ada, jangkar tidak.
+    expect(h.skorSemantik).toBeGreaterThan(0);
+    expect(h.ditolakTanpaJangkar).toBeGreaterThan(0);
+  });
+
+  it('kueri yang bertopik tetap dijawab lewat jalur semantik (aturan tidak mematikan fitur)', () => {
+    // Salah tulis pada kata isi: lapis leksikal tidak menemukan apa pun, lapis
+    // makna menemukannya — dan jangkarnya kata isi itu sendiri, bukan kata umum.
+    const h = retrieveDenganSemantik(KORPUS_ASI, 'eksklusip asi', { indeks: bangunIndeksHash(KORPUS_ASI) });
+    expect(h.jalur).toBe('semantik');
+    expect(h.hasil.length).toBeGreaterThan(0);
+    expect(h.ditolakTanpaJangkar).toBeUndefined();
   });
 });
 

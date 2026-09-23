@@ -43,13 +43,27 @@
 // dan pemeriksa pasangan entitas (FR-24). FR-23 menutup pintu yang paling murah
 // ditutup; ia tidak menggantikan gerbang keluaran.
 
-/** Batas panjang per jenis sel (karakter). Dipilih dari bentuk nyata katalog SAPA. */
+/**
+ * Batas panjang per jenis sel (karakter).
+ *
+ * DIKALIBRASI ULANG 23 Sep 2026 pada korpus PRODUKSI (2.065 record), bukan pada
+ * korpus uji 1.210 record seperti sebelumnya. Dua batas lama MEMOTONG data nyata
+ * yang sah:
+ *   • `satuan: 28` memotong "Bimbingan Teknis/JP (Jam Pelajaran)" (35) dan
+ *     "Kepala Keluarga (SP.1,SP.2,SP.3)" (35) → model menerima satuan yang cacat;
+ *   • `indikator: 180` memotong 2 nama indikator terpanjang (182 dan 242 karakter).
+ * Nilai baru memberi ruang 1,3–1,8× di atas maksimum produksi (indikator 242,
+ * satuan 35, OPD 54) SEKALIGUS tetap menjaga tujuan aslinya: sel yang memang
+ * berisi serangan (mis. 5.000 karakter) tetap dipotong. Angka maksimum produksi
+ * diukur ulang oleh uji unit "batas panjang sel > maksimum korpus produksi"
+ * (membaca `verifikasi/korpus-produksi.json` bila ada) + uji serangan 5.000 sel.
+ */
 export const BATAS_SEL = {
   id: 24,
-  indikator: 180,
+  indikator: 320,
   nilai: 32,
-  satuan: 28,
-  opd: 90,
+  satuan: 64,
+  opd: 96,
   tahun: 12,
   // Batas `catatan`/`draf` SENGAJA longgar (bukan 400/900): keduanya berisi teks
   // APLIKASI SENDIRI (peringatan wajib FR-20 + draf deterministik) yang panjangnya
@@ -71,8 +85,19 @@ export interface HasilBersih {
   teks: string;
   /** Teks asli (untuk audit; tidak pernah dikirim ke model). */
   asli: string;
-  /** Teks berubah karena karakter kendali/marker/perintah/panjang. */
+  /** Teks berbeda dari aslinya (termasuk sekadar kerapian spasi). */
   berubah: boolean;
+  /**
+   * Berubah HANYA karena kerapian bentuk (spasi ganda, NFC) — bukan karena
+   * aturan keamanan atau pemotongan.
+   *
+   * Mengapa dipisah: `selDibersihkan` adalah SINYAL (ada yang mencurigakan di
+   * data?). Pada korpus produksi yang bersih, 190 sel berubah hanya karena
+   * "Tenaga Ahli Fraksi  " → "Tenaga Ahli Fraksi " — sinyal itu langsung
+   * tenggelam dalam derau, dan operator berhenti mempercayainya. Kerapian tetap
+   * dilakukan, tetapi dilaporkan terpisah sebagai `selDinormalkan`.
+   */
+  dinormalkan: boolean;
   dipotong: boolean;
   karakterDibuang: number;
   penandaDinetralkan: number;
@@ -82,8 +107,14 @@ export interface HasilBersih {
 export interface RingkasBersih {
   /** Nama berkas: jumlah sel yang diperiksa. */
   selDiperiksa: number;
-  /** Sel yang isinya berubah sesudah dibersihkan. */
+  /**
+   * Sel yang tersentuh ATURAN KEAMANAN atau dipotong — sinyal yang layak
+   * diperhatikan operator. Kerapian spasi TIDAK dihitung di sini (lihat
+   * `selDinormalkan`), supaya angkanya tidak menjadi derau.
+   */
   selDibersihkan: number;
+  /** Sel yang hanya dirapikan bentuknya (spasi ganda/NFC) — bukan ancaman. */
+  selDinormalkan: number;
   selDipotong: number;
   karakterDibuang: number;
   penandaDinetralkan: number;
@@ -95,6 +126,7 @@ export interface RingkasBersih {
 export const RINGKAS_BERSIH_KOSONG: RingkasBersih = {
   selDiperiksa: 0,
   selDibersihkan: 0,
+  selDinormalkan: 0,
   selDipotong: 0,
   karakterDibuang: 0,
   penandaDinetralkan: 0,
@@ -232,10 +264,13 @@ export function bersihkanSelData(teks: unknown, jenis: JenisSel = 'indikator', m
     dipotong = true;
   }
 
+  const berubah = s !== asli;
+  const substantif = karakterDibuang > 0 || penandaDinetralkan > 0 || perintahDinetralkan > 0 || dipotong;
   return {
     teks: s,
     asli,
-    berubah: s !== asli,
+    berubah,
+    dinormalkan: berubah && !substantif,
     dipotong,
     karakterDibuang,
     penandaDinetralkan,
@@ -269,6 +304,7 @@ export function gabungRingkas(ringkas: RingkasBersih[]): RingkasBersih {
   for (const r of ringkas) {
     hasil.selDiperiksa += r.selDiperiksa;
     hasil.selDibersihkan += r.selDibersihkan;
+    hasil.selDinormalkan += r.selDinormalkan ?? 0;
     hasil.selDipotong += r.selDipotong;
     hasil.karakterDibuang += r.karakterDibuang;
     hasil.penandaDinetralkan += r.penandaDinetralkan;
@@ -293,10 +329,12 @@ export function bersihkanSel(
     const h = bersihkanSelData(s.nilai, s.jenis);
     hasil.push(h);
     ringkas.selDiperiksa += 1;
-    if (h.berubah) {
+    const substantif = h.karakterDibuang > 0 || h.penandaDinetralkan > 0 || h.perintahDinetralkan > 0 || h.dipotong;
+    if (substantif) {
       ringkas.selDibersihkan += 1;
       jenis.add(s.jenis);
     }
+    if (h.dinormalkan) ringkas.selDinormalkan += 1;
     if (h.dipotong) ringkas.selDipotong += 1;
     ringkas.karakterDibuang += h.karakterDibuang;
     ringkas.penandaDinetralkan += h.penandaDinetralkan;

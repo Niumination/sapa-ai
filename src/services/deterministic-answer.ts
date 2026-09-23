@@ -16,8 +16,8 @@ import {
   granularitasTidakTersedia,
   type SapaRecord,
 } from '@/lib/sapa-client';
-import { retrieveDenganSemantik, metaSemantik } from '@/services/semantik';
-import { deteksiMetaIntent } from '@/lib/intent-meta';
+import { retrieveDenganSemantik, punyaJangkarIsi } from '@/services/semantik';
+import { deteksiMetaIntent, deteksiNiat } from '@/lib/intent-meta';
 import {
   buildDeterministicNarasi,
   buildVizFromEvidence,
@@ -81,6 +81,8 @@ export interface FaktaRetrieval {
   konsepAsing: string[];
   /** Skor makna teratas yang DITOLAK ambang (dananya jalur semantik kosong). */
   skorSemantik?: number;
+  /** Kandidat yang lolos ambang tetapi ditolak karena tanpa jangkar isi (FR-20). */
+  ditolakTanpaJangkar?: number;
   mintaPerDesa: boolean;
 }
 
@@ -340,6 +342,7 @@ export function buildDeterministicAnswer(query: string, records: SapaRecord[]): 
         jumlahBukti: 0,
         konsepAsing: asing,
         skorSemantik: retrieval.skorSemantik,
+        ditolakTanpaJangkar: retrieval.ditolakTanpaJangkar,
         // Sinyal presisi: bukan "kueri menyebut per desa", melainkan "penjaga
         // granularitas memang menolak kueri ini pada korpus ini".
         mintaPerDesa: granularitasTidakTersedia(records, query),
@@ -384,7 +387,40 @@ export function buildDeterministicAnswer(query: string, records: SapaRecord[]): 
       seen.set(key, { opd: a.opd, indikator: a.nama, nilai: a.nilai, satuan: a.satuan, tahun: a.tahun, id: a.id });
     }
   }
-  const evidence: EvidenceItem[] = [...seen.values()].slice(0, 15);
+  let evidence: EvidenceItem[] = [...seen.values()].slice(0, 15);
+
+  // ── Niat SEBAB: SAPA menyimpan angka, bukan sebab (perbaikan 23 Sep 2026) ──
+  //
+  // MENGAPA BUKAN HANYA DI PROMPT. Panduan prompt untuk niat `sebab` sudah ada
+  // sejak awal, tetapi hanya berlaku di mode AI dan hanya sebagai imbauan. Pada
+  // mode deterministik, pertanyaan "Apa penyebab utama stunting?" dijawab dengan
+  // 15 indikator dari 7 OPD — termasuk irigasi, arsip, dan ASI — sebagai daftar
+  // "indikator terkait". Terukur pada korpus produksi: item eval U5 gagal
+  // ("menjawab padahal data tidak ada"), dan pembaca manusia pun akan mengira
+  // angka-angka itu penyebabnya.
+  //
+  // Perbaikannya di lapis DATA, bukan lapis kalimat:
+  //   1. hanya baris yang benar-benar mengenai topik pertanyaan yang disajikan
+  //      (jangkar isi: kata isi pertanyaan muncul di nama indikator/OPD), dan
+  //      paling banyak tiga — cukup sebagai konteks, tidak menyerupai jawaban;
+  //   2. pernyataan jujur WAJIB ikut sebagai `peringatan`, sehingga jalur AI
+  //      tidak dapat menghapusnya (mekanisme `catatanWajib` di answer-compose).
+  const { niat } = deteksiNiat(query);
+  const sebabDiminta = niat === 'sebab';
+  let peringatanSebab = '';
+  if (sebabDiminta) {
+    const terjangkar = evidence.filter((e) => punyaJangkarIsi(query, `${e.indikator} ${e.opd}`));
+    const dibuang = evidence.length - terjangkar.length;
+    evidence = terjangkar.slice(0, 3);
+    peringatanSebab =
+      'Data penyebab atau kausalitas tidak tersedia di SAPA — katalog ini menyimpan angka capaian, bukan sebab. ' +
+      (evidence.length > 0
+        ? 'Angka berikut hanya konteks topik, bukan bukti sebab. '
+        : '') +
+      (dibuang > 0
+        ? `Indikator lain yang tidak mengenai topik pertanyaan tidak disajikan agar tidak terbaca sebagai penyebab. `
+        : '');
+  }
 
   const narasiRaw = buildEnrichedNarasi(evidence, query, records.length);
   // Jujur soal tahun: bila pertanyaan menyebut tahun tertentu dan tidak satu
@@ -410,6 +446,8 @@ export function buildDeterministicAnswer(query: string, records: SapaRecord[]): 
     : '';
   const daftarPeringatan: string[] = [];
   if (peringatanTahun) daftarPeringatan.push(peringatanTahun.trim());
+  // Niat sebab: pernyataan jujur ini WAJIB (dijaga `catatanWajib` pada jalur AI).
+  if (peringatanSebab) daftarPeringatan.push(peringatanSebab.trim());
   // Kejujuran jalur (FR-12): bila jawaban datang dari pencocokan makna, katakan
   // — baik pada peringatan wajib (agar jalur AI tidak menghapusnya) maupun pada
   // narasi (agar pembaca tanpa AI pun melihatnya).
@@ -432,7 +470,7 @@ export function buildDeterministicAnswer(query: string, records: SapaRecord[]): 
 
   const peringatanSemantik = retrieval.jalur === 'semantik' && retrieval.peringatan ? `${retrieval.peringatan} ` : '';
   const response = formatAngkaPresentasi({
-    narasi: peringatanTahun + peringatanKonsep + peringatanSemantik + narasiRaw,
+    narasi: peringatanTahun + peringatanSebab + peringatanKonsep + peringatanSemantik + narasiRaw,
     visualisasi,
     rekomendasi,
     dataSource: dataSourceLabel('splp'),

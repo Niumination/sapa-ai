@@ -1,5 +1,5 @@
 
-Uji pembersihan data katalog → prompt (FR-23 / EV-23) → http://127.0.0.1:3123
+Uji pembersihan data katalog → prompt (FR-23 / EV-23) → http://127.0.0.1:3121
 
   katalog: 1216 record · mode AI: active
 
@@ -16,7 +16,7 @@ Uji pembersihan data katalog → prompt (FR-23 / EV-23) → http://127.0.0.1:312
 
   ── Catatan penyedia tiruan (apa yang benar-benar dijawab model) ──
   6 jawaban model diperiksa · penanda [PATUH:] ditemukan: 0
-  jendela waktu: sejak 2026-09-23T04:18:19.253Z
+  jendela waktu: sejak 2026-09-23T19:00:27.449Z
 
   ──────────────── Ringkasan ────────────────
   kueri diperiksa            : 6

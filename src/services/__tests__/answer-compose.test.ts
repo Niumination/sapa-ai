@@ -450,3 +450,46 @@ describe('penjaga permintaan atas aturan internal (reviu 22 Sep 2026, item eval 
     expect(hasil.evidence.length).toBeGreaterThan(0);
   });
 });
+
+describe('niat SEBAB: angka bukan penyebab (perbaikan 23 Sep 2026 — item eval U5)', () => {
+  // Korpus kecil yang meniru bentuk produksi: satu indikator bertopik (stunting),
+  // beberapa indikator yang HANYA mirip karena kata umum (irigasi, arsip, ASI).
+  const korpusSebab: SapaRecord[] = [
+    { id: 1, id_kode_indikator: 511, kode_indikator_kode_indikator: 'X.1', kode_indikator_nama_indikator: 'Prevalensi Stunting', id_opds: 1, opds_nama_opd: 'Badan Perencanaan Pembangunan Daerah', jadwal_pemutakhiran: 'Tahunan', satuan: 'Persen', tahun: '2025', variabel: '31,4' },
+    { id: 2, id_kode_indikator: 512, kode_indikator_kode_indikator: 'X.2', kode_indikator_nama_indikator: 'Jumlah anak balita yang mengalami stunting (JAB(5) P stunting)', id_opds: 3, opds_nama_opd: 'Dinas Kesehatan', jadwal_pemutakhiran: 'Tahunan', satuan: 'Orang', tahun: '2025', variabel: '730' },
+    { id: 3, id_kode_indikator: 513, kode_indikator_kode_indikator: 'X.3', kode_indikator_nama_indikator: 'Luas Kondisi Baik Daerah Irigasi GENTING', id_opds: 4, opds_nama_opd: 'Dinas Pekerjaan Umum dan Penataan Ruang', jadwal_pemutakhiran: 'Tahunan', satuan: 'Ha', tahun: null, variabel: '11' },
+    { id: 4, id_kode_indikator: 514, kode_indikator_kode_indikator: 'X.4', kode_indikator_nama_indikator: 'Layanan Penyediaan Informasi dan Layanan Kearsipan', id_opds: 5, opds_nama_opd: 'Dinas Perpustakaan dan Kearsipan', jadwal_pemutakhiran: 'Tahunan', satuan: 'Arsip', tahun: null, variabel: '279' },
+  ];
+
+  it('mode deterministik: hanya baris bertopik disajikan + pernyataan jujur wajib ada', async () => {
+    const fetchMock = vi.fn();
+    vi.stubGlobal('fetch', fetchMock);
+    const hasil = await composeAnswer({ query: 'Apa penyebab utama stunting di Aceh Tengah?', records: korpusSebab, stream: false });
+
+    expect(hasil.evidence.length).toBeGreaterThan(0);
+    expect(hasil.evidence.length).toBeLessThanOrEqual(3);
+    // Semua baris yang disajikan benar-benar mengenai topik pertanyaan.
+    for (const e of hasil.evidence) expect(e.indikator.toLowerCase()).toContain('stunting');
+    // Pernyataan jujur muncul di narasi yang dilihat pengguna.
+    expect(hasil.response.narasi).toContain('tidak tersedia di SAPA');
+    expect(hasil.response.narasi.toLowerCase()).toContain('bukan sebab');
+    expect(fetchMock).not.toHaveBeenCalled();
+  });
+
+  it('mode AI: pernyataan jujur tidak dapat dihapus oleh narasi model', async () => {
+    process.env.AI_ENABLED = 'true';
+    process.env.AI_PROVIDER = 'custom';
+    process.env.AI_BASE_URL = 'https://contoh.invalid/v1';
+    process.env.AI_API_KEY = 'kunci-uji';
+    process.env.AI_MODEL = 'uji-1';
+    // Model menulis jawaban yang MENYEBABKAN angka sebagai penyebab — tanpa pernyataan jujur.
+    vi.stubGlobal('fetch', jawabModel({
+      narasi: 'Penyebab utama stunting adalah luas daerah irigasi dan layanan kearsipan, dengan prevalensi {{1}} persen.',
+      rekomendasi: [],
+      followUps: [],
+    }));
+
+    const hasil = await composeAnswer({ query: 'Apa penyebab utama stunting di Aceh Tengah?', records: korpusSebab, ip: '10.0.0.7', stream: false });
+    expect(hasil.response.narasi).toContain('tidak tersedia di SAPA');
+  });
+});

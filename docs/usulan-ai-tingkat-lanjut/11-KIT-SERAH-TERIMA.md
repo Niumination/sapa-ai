@@ -28,7 +28,7 @@ menyentuh `main` sampai Anda sendiri memutuskan.
 |---|---|---|
 | Node.js | 20.20.2 (dipakai saat pengujian) | Node 20 EOL 30 Apr 2026 — jadwalkan naik versi |
 | Next.js | 16.2.10 | tidak ada perubahan dependensi di cabang ini |
-| Uji | 35 berkas / **566 uji** | `npm test` |
+| Uji | 35 berkas / **584 uji** | `npm test` |
 | Variabel lingkungan baru | `REVALIDATE_ALLOW_UNSIGNED` (opsional) | **`REVALIDATE_SECRET` kini wajib** agar penyegaran cache tidak tertolak (fail-closed) |
 | Variabel lingkungan baru (OPS-03, penjadwal) | `SAPA_BASE_URL`, `SAPA_SEGARKAN_TAG`, `SAPA_SEGARKAN_SUMBER`, `SAPA_SEGARKAN_ULANG` (opsional) | dipakai `scripts/segarkan-cache.mjs` dan `.github/workflows/segarkan-cache.yml` (harian 05:00 WIB). Tanpa `SAPA_URL`/`REVALIDATE_SECRET` di rahasia GitHub, workflow itu **dorman** (bukan gagal) |
 | Variabel lingkungan baru (FR-27 & FR-26) | `ADMIN_TOKEN` | menjaga **dua** dasbor admin: `/api/admin/celah` dan `/api/admin/umpan-balik`. Tanpa ini keduanya menjawab **503 fail-closed** |
@@ -105,7 +105,7 @@ selaras) lalu jalankan uji terima (§7).
 ## 6. Daftar centang serah terima
 
 - [ ] `git status` bersih pada cabang kerja; `main` belum tersentuh.
-- [ ] `npm ci` selesai; `npm test` → **566 uji lulus** (≥ 550).
+- [ ] `npm ci` selesai; `npm test` → **584 uji lulus** (≥ 550).
 - [ ] `bash verifikasi/uji-terima.sh` → **LULUS** (statis + pagar). Bagian §6f (notifikasi sirkuit) butuh server uji khusus — lihat `19 §2`; tanpa itu ia dilaporkan **dilewati**, bukan gagal. Bagian §6g (telemetri) dan §6h (penyegaran cache) **menjalankan servernya sendiri** — cukup `node scripts/uji-telemetri.mjs` / `node scripts/uji-segarkan.mjs`; lewati dengan `SAPA_SKIP_TELEMETRI=1` / `SAPA_SKIP_SEGARKAN=1`. §6h sengaja menjalankan **dua** aplikasi (satu tanpa rahasia) karena hanya itu yang membuktikan fail-closed.
 - [ ] Eval dua mode → **90/90** masing-masing, invarians 0, hasil tersimpan di `verifikasi/`.
 - [ ] A/B AI vs deterministik → sitasi AI **≥** deterministik.
@@ -149,7 +149,7 @@ AI_URL=http://127.0.0.1:3116 DET_URL=http://127.0.0.1:3117 bash verifikasi/uji-t
 ```
 
 Hasil yang diharapkan pada cabang ini (terukur 22 Sep 2026): eval **90/90** dua mode ·
-grounded pass **100%** · fallback **0%** · invarians **0** · uji unit **566** ·
+grounded pass **100%** · fallback **0%** · invarians **0** · uji unit **584** ·
 A/B sitasi **4,50 vs 3,00** · pertanyaan ber-bukti saat penyedia mati **0,14–0,56 dtk**.
 
 ## 7a. Menguji tanpa internet (stub SPLP) — berguna untuk agen lokal & CI
@@ -215,7 +215,7 @@ perlu disetel — **bukan** gerbangnya dilonggarkan.
 > Langkah:
 > 1. `git switch -c kerja/ai-tingkat-lanjut main`
 > 2. `git am 06-USULAN-KODE/seri-patch/[0-9][0-9][0-9][0-9]-*.patch`
-> 3. `npm ci && npm test` → wajib **566 uji lulus**; `npm run typecheck` → bersih.
+> 3. `npm ci && npm test` → wajib **584 uji lulus**; `npm run typecheck` → bersih.
 > 4. `bash verifikasi/uji-terima.sh` → wajib **LULUS**.
 > 5. Jalankan eval dua mode (lihat `11 §7`) → wajib **90/90** masing-masing, **0 regresi**.
 > 6. Bila ada konflik, jangan menimpa; laporkan berkas konflik beserta keputusan yang diambil.

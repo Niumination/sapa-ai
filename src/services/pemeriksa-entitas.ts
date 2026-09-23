@@ -42,6 +42,21 @@
 //   Kutipan pertanyaan, rujukan peraturan ("UU No. 27/2022"), dan kalimat
 //   ketiadaan data ("Tidak ada data untuk tahun 1990 di SAPA") DIBUANG lebih
 //   dulu — ketiganya bukan klaim sistem. Bila aturan ini diubah, ubah keduanya.
+//
+// DUA JENIS ANGKA YANG BUKAN KLAIM NILAI (perbaikan 23 Sep 2026 — terukur pada
+// korpus PRODUKSI 2.065 record; sebelumnya keduanya MENUDUH jawaban yang benar):
+//   1. HITUNGAN STRUKTURAL KATALOG — "…mencakup 15 indikator unik dari 8 OPD
+//      (Badan Pengelolaan Keuangan; …)". Angka 15 dan 8 adalah ukuran daftar,
+//      bukan nilai data; tetapi aturan OPD membacanya sebagai "8 diklaim milik
+//      Badan Pengelolaan Keuangan" karena nama OPD pertama daftar itu muncul
+//      sesudah tanda kurung. Enam item eval gagal karena pola ini.
+//   2. ANGKA YANG MERUPAKAN BAGIAN DARI NAMA INDIKATOR — "Cakupan Penjaringan
+//      Kesehatan siswa kelas 7 SMP/MTs 100 Persen": 7 berasal dari nama, bukan
+//      nilai. Karena itu teks nama indikator dibuang lebih dulu dari kalimat
+//      SALINAN yang dipakai mengekstrak angka (kalimat asli tetap dipakai untuk
+//      pelaporan temuan). Nama OPD SENGAJA TIDAK dibuang: menyebut OPD adalah
+//      cara utama pemeriksa ini menautkan angka ke pemiliknya.
+// Keduanya dipisah menjadi fungsi yang dapat diuji (`angkaBukanKlaim`).
 
 export interface BarisBukti {
   indikator: string;
@@ -267,15 +282,6 @@ export function kataSatuan(satuan?: string | null): string {
   return s.split(/[\s/]+/)[0] ?? '';
 }
 
-/** Cari satuan yang mirip di kalimat (untuk memastikan kata itu kosakata katalog). */
-function satuanDikenal(kata: string, bukti: BarisBukti[]): boolean {
-  if (!kata) return false;
-  return bukti.some((b) => {
-    const kandidat = String(b.satuan ?? '').toLowerCase();
-    return kandidat.includes(kata);
-  });
-}
-
 /**
  * Kunci pencocokan nama OPD di dalam kalimat: nama OPD apa adanya, dalam bentuk
  * ternormalisasi ("Dinas Pendidikan dan Kebudayaan" → "dinas pendidikan dan kebudayaan").
@@ -346,6 +352,36 @@ function labelBaris(b: BarisBukti): string {
  * gerbang di dalam penyusun jawaban, dilaporkan pada balasan API, dan diuji
  * dengan narasi yang sengaja dirusak.
  */
+/**
+ * Buang dari kalimat hal-hal yang BUKAN klaim nilai, supaya ekstraksi angka
+ * tidak menuduh angka yang sebenarnya bukan data:
+ *   • hitungan struktural katalog — "8 OPD", "15 indikator unik", "2.065 record",
+ *     "… baris". Kata benda di sini sengaja TERBATAS pada kosakata statistik
+ *     katalog: `desa`/`kecamatan`/`tahun` TIDAK termasuk, sebab ketiganya bisa
+ *     menjadi satuan sah ("291 Desa") atau tahun data ("2025").
+ *   • teks nama indikator dari daftar bukti — angka di dalamnya ("kelas 7") adalah
+ *     bagian nama, bukan nilai. Nama OPD tidak dibuang (lihat catatan di atas).
+ */
+export function angkaBukanKlaim(kalimat: string, bukti: BarisBukti[]): string {
+  let s = String(kalimat ?? '');
+  // (1) hitungan struktural katalog
+  s = s.replace(/\b\d[\d.,]*\s*(?:opd|indikator|record|baris)\b/gi, ' [katalog] ');
+  // (2) nama indikator yang dikutip apa adanya (toleran spasi & besar-kecil huruf)
+  for (const b of bukti) {
+    const nama = String(b.indikator ?? '').trim();
+    if (nama.length < 4) continue;
+    const pola = new RegExp(
+      nama
+        .split(/\s+/)
+        .map((k) => k.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'))
+        .join('\\s+'),
+      'gi',
+    );
+    s = s.replace(pola, ' [nama] ');
+  }
+  return s;
+}
+
 export function periksaPasanganEntitas(
   narasi: string,
   bukti: BarisBukti[],
@@ -366,7 +402,9 @@ export function periksaPasanganEntitas(
   );
 
   for (const s of kalimat) {
-    const angkaS = [...new Set(angkaDalamTeks(s))];
+    // Angka diambil dari SALINAN kalimat yang sudah dibersihkan dari hitungan
+    // struktural & nama indikator; `s` (asli) tetap dipakai untuk pelaporan.
+    const angkaS = [...new Set(angkaDalamTeks(angkaBukanKlaim(s, bukti)))];
     for (const angka of angkaS) {
       const pemilik = pemilikAngka(angka, bukti);
       if (pemilik.length === 0) {

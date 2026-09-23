@@ -7,6 +7,7 @@
 
 import { describe, it, expect } from 'vitest';
 import {
+  angkaBukanKlaim,
   angkaDalamTeks,
   atribusiOpd,
   bersihkanNarasi,
@@ -241,6 +242,53 @@ describe('periksaPasanganEntitas — narasi DIRUSAK wajib tertangkap', () => {
     const h = periksaPasanganEntitas('Nilainya 88.', bukti);
     expect(h.temuan[0]?.jenis).toBe('nilai-ambigu');
     expect(h.ok).toBe(true);
+  });
+});
+
+describe('angka yang BUKAN klaim nilai (perbaikan 23 Sep 2026 — korpus produksi)', () => {
+  it('hitungan struktural katalog tidak divonis walau daftar OPD mengikuti', () => {
+    // Bentuk nyata dari narasi deterministik pada korpus 2.065 record; enam item
+    // eval gagal karena pola ini (angka 15/8 dibaca sebagai nilai milik OPD
+    // pertama daftar).
+    const narasi =
+      'Dari 2.065 record SAPA, topik "Tidak ada data untuk tahun 1990?" mencakup 15 indikator unik dari 8 OPD (Badan Pengelolaan Keuangan; Dinas Pendidikan dan Kebudayaan; Dinas Pemberdayaan Masyarakat dan Kampung …).';
+    const h = periksaPasanganEntitas(narasi, BUKTI, { kecamatan: KEC });
+    expect(h.temuan.filter((t) => t.jenis === 'opd-bertabrakan')).toHaveLength(0);
+    expect(h.temuan.filter((t) => t.jenis === 'nilai-tak-ada')).toHaveLength(0);
+  });
+
+  it('angka di dalam NAMA INDIKATOR bukan klaim nilai', () => {
+    const bukti: BarisBukti[] = [
+      { indikator: 'Cakupan Penjaringan Kesehatan siswa kelas 7 SMP/MTs', opd: 'Dinas Kesehatan', nilai: '100', satuan: 'Persen', tahun: '2025' },
+      { indikator: 'Jumlah Siswa Bimbel Sekolah Belangi', opd: 'Sekretariat Majelis Pendidikan Daerah', nilai: '200', satuan: 'Siswa', tahun: null },
+    ];
+    const narasi =
+      'Cakupan Penjaringan Kesehatan siswa kelas 7 SMP/MTs 100 Persen (Dinas Kesehatan, 2025); Jumlah Siswa Bimbel Sekolah Belangi 200 Siswa (Sekretariat Majelis Pendidikan Daerah, tahun tidak tercantum).';
+    const h = periksaPasanganEntitas(narasi, bukti, { kecamatan: KEC });
+    expect(h.temuan).toHaveLength(0);
+  });
+
+  it('penukaran OPD yang sungguhan TETAP tertangkap setelah pembersihan baru', () => {
+    const narasi = 'Jumlah produksi komoditas perkebunan Kopi Arabika 29.019 Ton/Tahun menurut Dinas Kesehatan pada tahun 2025.';
+    const h = periksaPasanganEntitas(narasi, BUKTI, { kecamatan: KEC });
+    expect(h.temuan.some((t) => t.jenis === 'opd-bertabrakan')).toBe(true);
+  });
+
+  it('angka yang ditulis di dalam nama indikator TIDAK dipakai menyamarkan nilai palsu', () => {
+    // Nilai 8.000 bukan bagian nama indikator mana pun ⇒ tetap tertangkap.
+    const narasi = 'Jumlah Guru SD PNS 8.000 Jiwa menurut Dinas Pertanian pada tahun 2025.';
+    const h = periksaPasanganEntitas(narasi, BUKTI, { kecamatan: KEC });
+    expect(h.temuan.some((t) => t.jenis === 'opd-bertabrakan' || t.jenis === 'nilai-tak-ada')).toBe(true);
+  });
+
+  it('angkaBukanKlaim: yang dibuang hanya hitungan katalog & nama indikator', () => {
+    const bukti: BarisBukti[] = [{ indikator: 'Jumlah Desa Tertinggal', opd: 'Dinas X', nilai: '291', satuan: 'Desa', tahun: '2025' }];
+    const s = angkaBukanKlaim('291 Desa (Dinas X, 2025); 12 OPD; 15 indikator; Jumlah Desa Tertinggal; tahun 2025.', bukti);
+    expect(s).toContain('291 Desa');       // satuan 'Desa' bukan hitungan struktural
+    expect(s).toContain('2025');           // tahun data tidak dibuang
+    expect(s).not.toContain('12 OPD');
+    expect(s).not.toContain('15 indikator');
+    expect(s).not.toContain('Jumlah Desa Tertinggal'); // nama indikator dibuang
   });
 });
 

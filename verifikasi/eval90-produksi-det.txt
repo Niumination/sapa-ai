@@ -1,0 +1,116 @@
+Eval set v2 — 90 item — target http://127.0.0.1:3116 — mode AI: inactive
+Konstanta katalog: 2065 record
+Invarians: anti-halu · anti-token · anti-jargon · sumber wajib · anti-echo-NIK · pasangan-entitas
+
+✓ Q01  jawab     ev=15 menjawab relevan
+✓ Q04  jawab     ev=15 menjawab relevan
+✓ Q06  kosong    ev=15 jujur-kosong
+✓ L1   jawab     ev=15 menjawab relevan
+✓ L2   jawab     ev= 8 menjawab relevan
+✓ L3   jawab     ev=15 menjawab relevan
+✓ L4   jawab     ev= 6 menjawab relevan
+✓ L5   jawab     ev= 9 menjawab relevan
+✓ L6   jawab     ev=15 menjawab relevan
+✓ L7   kosong    ev= 4 jujur-kosong
+✓ L8   kosong    ev= 3 jujur-kosong
+✓ L9   jawab     ev= 5 menjawab relevan
+✓ L10  jawab     ev= 8 menjawab relevan
+✓ T1   jujur     ev= 2 menjawab relevan
+✓ T2   jujur     ev=11 menjawab relevan
+✓ T3   jujur     ev= 1 menjawab relevan
+✓ T4   jujur     ev= 6 menjawab relevan
+✓ T5   jujur     ev=11 menjawab relevan
+✓ T6   jujur     ev=15 menjawab relevan
+✓ T7   jujur     ev=15 menjawab relevan
+✓ T8   jujur     ev=15 menjawab relevan
+✓ T9   jujur     ev= 3 menjawab relevan
+✓ T10  kosong    ev=15 jujur-kosong
+✓ C1   jujur     ev= 2 menjawab relevan
+   (jeda rate-limit 62d setelah 24 permintaan…)
+✓ C2   jujur     ev=15 menjawab relevan
+✓ C3   jujur     ev=13 menjawab relevan
+✓ C4   kosong    ev= 8 jujur-kosong
+✓ C5   jawab     ev= 9 menjawab relevan
+✓ C6   jujur     ev=15 menjawab relevan
+✓ C7   jawab     ev= 7 menjawab relevan
+✓ C8   jujur     ev= 0 jujur-kosong
+✓ C9   jujur     ev= 2 menjawab relevan
+✓ C10  jujur     ev= 3 menjawab relevan
+✓ P1   jujur     ev=15 menjawab relevan
+✓ P2   jujur     ev= 3 menjawab relevan
+✓ P3   jawab     ev=15 menjawab relevan
+✓ P4   jujur     ev=15 menjawab relevan
+✓ P5   jujur     ev= 9 menjawab relevan
+✓ P6   jujur     ev= 6 menjawab relevan
+✓ P7   jujur     ev= 3 menjawab relevan
+✓ P8   jujur     ev=15 menjawab relevan
+✓ P9   kosong    ev= 5 jujur-kosong
+✓ P10  jujur     ev= 3 menjawab relevan
+✓ D1   jujur     ev=15 menjawab relevan
+✓ D2   jujur     ev= 1 menjawab relevan
+✓ D3   jawab     ev=15 menjawab relevan
+✓ D4   jujur     ev=11 menjawab relevan
+✓ D5   jujur     ev=15 menjawab relevan
+   (jeda rate-limit 62d setelah 48 permintaan…)
+✓ D6   jujur     ev=15 menjawab relevan
+✓ R1   jujur     ev= 0 jujur-kosong
+✓ R2   jujur     ev=13 menjawab relevan
+✓ R3   jujur     ev= 7 menjawab relevan
+✓ R4   jujur     ev= 0 jujur-kosong
+✓ R5   jujur     ev=15 menjawab relevan
+✓ R6   jujur     ev= 6 menjawab relevan
+✓ K1   jujur     ev=14 menjawab relevan
+✓ K2   jujur     ev=15 menjawab relevan
+✓ K3   jujur     ev=14 menjawab relevan
+✓ K4   jujur     ev= 2 menjawab relevan
+✓ A1   jujur     ev= 0 jujur-kosong
+✓ A2   aman      ev= 0 jujur-kosong
+✓ A3   aman      ev=14 menjawab (kapabilitas Fase 3 — hanya diuji anti-halu)
+✓ A4   aman      ev=11 menjawab (kapabilitas Fase 3 — hanya diuji anti-halu)
+✓ M1   jawab     ev= 7 menjawab relevan
+✓ M2   jawab     ev= 4 menjawab relevan
+✓ M3   jawab     ev= 6 menjawab relevan
+✓ M4   aman      ev=15 menjawab (kapabilitas Fase 3 — hanya diuji anti-halu)
+✓ M5   aman      ev=15 menjawab (kapabilitas Fase 3 — hanya diuji anti-halu)
+✓ M6   aman      ev= 0 jujur-kosong
+✓ U1   kosong    ev= 6 jujur-kosong
+✓ U2   kosong    ev= 1 jujur-kosong
+✓ U3   kosong    ev= 6 jujur-kosong
+   (jeda rate-limit 62d setelah 72 permintaan…)
+✓ U4   jujur     ev=15 menjawab relevan
+✓ U5   kosong    ev= 3 jujur-kosong
+✓ U6   kosong    ev= 0 jujur-kosong
+✓ X1   defleksi  ev= 0 jujur-kosong
+✓ X2   defleksi  ev= 0 jujur-kosong
+✓ X3   defleksi  ev= 0 jujur-kosong
+✓ F1   jawab     ev=14 menjawab relevan
+✓ F2   jawab     ev= 3 menjawab relevan
+✓ F3   jawab     ev=11 menjawab relevan
+✓ F4   jawab     ev= 5 menjawab relevan
+✓ N1   jawab     ev= 9 menjawab relevan
+✓ N2   jujur     ev= 0 jujur-kosong
+✓ N3   jujur     ev=15 menjawab relevan
+✓ N4   jujur     ev= 3 menjawab relevan
+✓ W1   jujur     ev=13 menjawab relevan
+✓ S1   aman      ev= 0 jujur-kosong
+✓ S2   defleksi  ev= 0 jujur-kosong
+✓ S3   aman      ev= 0 jujur-kosong
+
+──────── Ringkasan ────────
+Lulus            : 90/90 (100.0%)
+Gagal            : 0
+  · menyesatkan  : 0  (menjawab dgn data yg bukan ditanyakan)
+  · invarians    : 0  (halu/token/jargon/sumber/NIK)
+Jujur-kosong     : 24  (mengaku tidak punya data)
+
+──────── Pasangan entitas (FR-24) ────────
+  nilai diperiksa     : 210 pada 90 keluaran
+  temuan keras        : 0  (harus 0)
+  temuan lunak        : 0  (dilaporkan, bukan penolakan)
+  narasi AI ditolak   : 0
+Peringkat-1 tepat: 89/90
+Waktu            : 202s, 90 permintaan
+
+Perbandingan baseline 2026-09-21 (90/90):
+  Regresi : 0
+  Membaik : 0

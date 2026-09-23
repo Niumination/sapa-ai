@@ -724,6 +724,11 @@ export interface KandidatSemantik {
   skor: number;
 }
 
+/** Label sebuah record seperti yang dipakai indeks (indikator + OPD + satuan). */
+export function labelRecord(r: SapaRecord): string {
+  return `${r.kode_indikator_nama_indikator ?? ''} ${r.opds_nama_opd ?? ''}`;
+}
+
 /**
  * Saring hasil semantik menjadi kandidat yang LAYAK dijadikan jawaban.
  *
@@ -734,6 +739,66 @@ export interface KandidatSemantik {
  * Tujuan: "mirip sedikit" dan "banyak yang mirip" sama-sama tidak menjadi
  * jawaban — dua-duanya menandakan sistem tidak benar-benar mengenali topiknya.
  */
+/**
+ * Kata yang TIDAK boleh menjadi jangkar isi meski muncul di kueri.
+ *
+ * Mengapa perlu daftar sendiri (di luar STOPWORD): kata waktu & kuantitas lolos
+ * STOPWORD karena berguna di tempat lain, tetapi sebagai JANGKAR ia menyesatkan.
+ * Terukur 23 Sep 2026 pada korpus produksi 2.065 record: kueri "Berapa inflasi
+ * Aceh Tengah bulan ini?" (inflasi TIDAK ada di katalog) dijawab dengan 15
+ * indikator ASI/MP-ASI — jangkarnya kata "bulan" yang cocok dengan "6 bulan"
+ * dan "Bulanan". Skor tertingginya 0,487: di atas ambang 0,27, jadi ambang saja
+ * tidak menahannya. Kata isi ("inflasi") memang tidak ada di mana pun.
+ */
+const KATA_GENERIK_JANGKAR = new Set([
+  'bulan', 'bulanan', 'hari', 'harian', 'tanggal', 'sekarang', 'terakhir', 'saat', 'kini',
+  'awal', 'akhir', 'selama', 'setiap', 'persen', 'persentase', 'perseratus',
+  'berapa', 'jumlah', 'total', 'banyak', 'angka', 'nilai', 'satuan', 'unit',
+]);
+
+/** Token isi kueri: token bermakna yang bukan kata generik jangkar. */
+export function tokenIsi(teks: string): string[] {
+  return normalisasiSemantik(teks).filter((t) => !KATA_GENERIK_JANGKAR.has(t) && !KATA_GENERIK_JANGKAR.has(stemId(t)));
+}
+
+/**
+ * Apakah label (nama indikator + OPD) memiliki JANGKAR ISI dengan kueri?
+ *
+ * Aturannya: minimal satu token isi kueri muncul di label — sama persis, sama
+ * setelah di-stem, atau mirip bentuknya (Dice 4-gram ≥ 0,6 untuk salah tulis
+ * seperti "pendudk"/"penduduk").
+ *
+ * MENGAPA ATURAN INI ADA (bukan sekadar menaikkan ambang skor):
+ *   Ambang skor mengukur KEMIRIPAN, bukan KEADAAN TOPIK. Pada korpus besar yang
+ *   penuh indikator mirip, kueri di luar katalog tetap mendapat skor tinggi dari
+ *   kata umum ("bulan", "jumlah"). Jangkar isi menguji hal yang berbeda dan
+ *   lebih mudah dipercaya: ada kata isi kueri yang benar-benar dikenal katalog.
+ *   Konsekuensinya jujur: kueri yang topiknya tidak ada di katalog TIDAK dijawab
+ *   walau skornya tinggi — dan itu memang yang diinginkan (jujur kosong).
+ */
+export function punyaJangkarIsi(kueri: string, label: string): boolean {
+  const isiKueri = tokenIsi(kueri);
+  if (isiKueri.length === 0) return false; // kueri tanpa kata isi → tidak ada dasar menjawab
+  const kataLabel = [...kataIndikatorLabel(label), ...kataIndikatorLabel(stemId(label))];
+  const gramLabel = kataLabel.map((k) => gramKata(k));
+  for (const t of isiKueri) {
+    for (let i = 0; i < kataLabel.length; i += 1) {
+      const k = kataLabel[i];
+      if (k === t || k === stemId(t)) return true;
+      // Salah tulis: cocokkan bentuk ("pendudk" ↔ "penduduk").
+      if (k.length >= 4 && t.length >= 4 && dice4(gramKata(t), gramLabel[i]) >= 0.6) return true;
+    }
+  }
+  return false;
+}
+
+/** Token sebuah label — memakai pembersih yang sama dengan indeks. */
+function kataIndikatorLabel(label: string): string[] {
+  return bersihkan(label)
+    .split(' ')
+    .filter((t) => t.length >= 3);
+}
+
 export function saringKandidatSemantik(
   hasil: Array<{ urut: number; skor: number }>,
   opsi?: { ambang?: number; kuat?: number; selisih?: number; maks?: number },
@@ -797,6 +862,12 @@ export interface HasilRetrieval {
   disisipi?: number;
   skorSemantik?: number;
   sidikIndeks?: string;
+  /**
+   * Jumlah kandidat yang LOLOS ambang skor tetapi DITOLAK karena tidak ada kata
+   * isi kueri di labelnya (gerbang jangkar isi, 23 Sep 2026). Dipakai FR-20 untuk
+   * membedakan "makna lemah" dari "topik tidak ada di katalog".
+   */
+  ditolakTanpaJangkar?: number;
   /** Peringatan WAJIB bila jalur semantik dipakai (kejujuran). */
   peringatan?: string;
 }
@@ -926,13 +997,33 @@ export function retrieveDenganSemantik(
   if (!aktif || !indeks) return { hasil: [], jalur: 'kosong' };
 
   const mentah = cariSemantik(indeks, query, opsi?.topK ?? 20);
-  const diterima = saringKandidatSemantik(mentah);
+  const lolosAmbang = saringKandidatSemantik(mentah);
+  // ── Gerbang JANGKAR ISI (perbaikan 23 Sep 2026) ─────────────────────────────
+  // Kandidat hanya diterima bila ada kata isi kueri yang dikenal label. Pengecualian
+  // satu: skor sangat tinggi (≥ ambang kuat) — bukti kemiripan yang terlalu kuat
+  // untuk diabaikan, mis. kueri panjang yang parafrase-nya menyeluruh.
+  const b = ambangDariLingkungan();
+  const diterima =
+    lolosAmbang.length > 0 && lolosAmbang[0].skor >= b.kuat
+      ? lolosAmbang
+      : lolosAmbang.filter((k) => punyaJangkarIsi(query, labelRecord(records[k.urut])));
+  const ditolakTanpaJangkar = lolosAmbang.length - diterima.length;
   if (diterima.length === 0) {
     // FR-20: sertakan skor teratas yang DITOLAK. Tanpa itu, jawaban kosong pada
     // jalur semantik tidak bisa dibedakan dari "katalog benar-benar tidak punya"
     // — padahal dua keadaan itu menuntut perbaikan yang berbeda (turunkan ambang
     // vs lengkapi katalog).
-    return { hasil: [], jalur: 'kosong', sidikIndeks: indeks.sidik, skorSemantik: mentah[0]?.skor };
+    return {
+      hasil: [],
+      jalur: 'kosong',
+      sidikIndeks: indeks.sidik,
+      skorSemantik: mentah[0]?.skor,
+      // FR-20: bedakan "makna lemah" (skor di bawah ambang) dari "makna tanpa
+      // jangkar isi" (skor lolos ambang, tetapi tak satu pun kata isi kueri ada
+      // di label). Keduanya menuntut tindakan berbeda: yang pertama lengkapi
+      // sinonim, yang kedua lengkapi KATALOG atau perjelas konsep.
+      ditolakTanpaJangkar: ditolakTanpaJangkar > 0 ? ditolakTanpaJangkar : undefined,
+    };
   }
 
   // Fusi RRF dipakai nyata di sini: daftar leksikal (kosong pada kasus ini) dan

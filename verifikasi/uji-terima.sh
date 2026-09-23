@@ -548,7 +548,7 @@ sys.exit(0 if isinstance(p.get('selDiperiksa'), int) and p['selDiperiksa'] > 0 e
   fi
   # (4) korpus beracun + model biasa
   if [ -n "${SAPA_BERACUN_JURU_URL:-}" ] && [ "$(hidup "$SAPA_BERACUN_JURU_URL")" = "200" ]; then
-    if SAPA_EVAL_URL="$SAPA_BERACUN_JURU_URL" SAPA_MOCK_LOG="${SAPA_MOCK_LOG:-/home/user/verifikasi/mock-llm-log.jsonl}" \
+    if SAPA_EVAL_URL="$SAPA_BERACUN_JURU_URL" SAPA_MOCK_LOG="${SAPA_MOCK_LOG:-$PWD/verifikasi/mock-llm-log.jsonl}" \
         timeout 300 node scripts/uji-bersih-data.mjs > /tmp/ut-fr23-jujur.txt 2>&1; then
       tandai23=$(grep -oE 'baris sumber mencurigakan +: +[0-9]+ \(ditandai: [0-9]+\)' /tmp/ut-fr23-jujur.txt | grep -oE '\(ditandai: [0-9]+' | grep -oE '[0-9]+')
       ok "korpus beracun + model biasa LULUS (${tandai23:-0} baris sumber mencurigakan ditandai)"
@@ -560,7 +560,7 @@ sys.exit(0 if isinstance(p.get('selDiperiksa'), int) and p['selDiperiksa'] > 0 e
   fi
   # (3) korpus beracun + model yang menuruti perintah
   if [ -n "${SAPA_BERACUN_URL:-}" ] && [ "$(hidup "$SAPA_BERACUN_URL")" = "200" ]; then
-    if SAPA_EVAL_URL="$SAPA_BERACUN_URL" SAPA_HARAP_PATUH=1 SAPA_MOCK_LOG="${SAPA_MOCK_LOG:-/home/user/verifikasi/mock-llm-log.jsonl}" \
+    if SAPA_EVAL_URL="$SAPA_BERACUN_URL" SAPA_HARAP_PATUH=1 SAPA_MOCK_LOG="${SAPA_MOCK_LOG:-$PWD/verifikasi/mock-llm-log.jsonl}" \
         timeout 300 node scripts/uji-bersih-data.mjs > /tmp/ut-fr23-patuh.txt 2>&1; then
       patuh23=$(grep -oE 'penanda \[PATUH:\] ditemukan: [0-9]+' /tmp/ut-fr23-patuh.txt | grep -oE '[0-9]+$')
       if [ "${patuh23:-1}" = "0" ]; then ok "model yang menuruti perintah di data TIDAK lagi bisa menuruti (0 penanda [PATUH:])"; else no "model menuruti perintah data ${patuh23} kali — pembersihan bocor"; fi

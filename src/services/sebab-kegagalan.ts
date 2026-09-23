@@ -35,6 +35,7 @@ export type SebabGagal =
   | 'retrieval:konsep-asing'
   | 'retrieval:granularitas-per-desa'
   | 'retrieval:makna-lemah'
+  | 'retrieval:makna-tanpa-jangkar'
   // ── generasi: jawaban sudah ada, model gagal dipakai
   | 'generasi:grounding'
   | 'generasi:nilai-tambah'
@@ -83,6 +84,12 @@ export interface FaktaJawaban {
   konsepAsing?: string[];
   /** Skor semantik teratas pada jalur yang ditolak (FR-12) — untuk bedakan "makna lemah". */
   skorSemantik?: number;
+  /**
+   * Kandidat yang LOLOS ambang skor tetapi ditolak karena tidak ada kata isi
+   * kueri di labelnya (gerbang jangkar isi). Membedakan "makna lemah" (turunkan
+   * ambang / lengkapi sinonim) dari "topik tidak ada di katalog" (lengkapi data).
+   */
+  ditolakTanpaJangkar?: number;
   /** Pertanyaan meminta rincian per desa/kelurahan (katalog SAPA berhenti di kecamatan). */
   mintaPerDesa?: boolean;
   /** Pagar masukan yang menyala lebih dulu. */
@@ -109,6 +116,7 @@ const LABEL: Record<SebabJawaban, string> = {
   'retrieval:konsep-asing': 'ada kata kunci yang tidak ada di katalog',
   'retrieval:granularitas-per-desa': 'data per desa tidak tersedia (katalog berhenti di kecamatan)',
   'retrieval:makna-lemah': 'kemiripan makna terlalu lemah untuk dijawab',
+  'retrieval:makna-tanpa-jangkar': 'kemiripan makna ada, tetapi kata kunci topiknya tidak ada di katalog',
   'generasi:grounding': 'model ditolak gerbang grounding',
   'generasi:nilai-tambah': 'model ditolak gerbang nilai-tambah',
   'generasi:pasangan-entitas': 'angka benar tetapi dipasangkan ke entitas lain',
@@ -140,6 +148,7 @@ export const SEBAB_GAGAL: SebabGagal[] = [
   'retrieval:konsep-asing',
   'retrieval:granularitas-per-desa',
   'retrieval:makna-lemah',
+  'retrieval:makna-tanpa-jangkar',
   'generasi:grounding',
   'generasi:nilai-tambah',
   'generasi:pasangan-entitas',
@@ -281,6 +290,19 @@ export function klasifikasiSebab(fakta: FaktaJawaban): Diagnosa {
     return kosong(
       'retrieval:granularitas-per-desa',
       'Pertanyaan meminta rincian per desa/kelurahan, sedangkan katalog SAPA berhenti di tingkat kecamatan.',
+      bersih,
+    );
+  }
+
+  // Jangkar isi lebih dulu daripada "makna lemah": pada kasus ini skornya justru
+  // TINGGI (mis. 0,487 untuk kueri tentang inflasi) — yang tidak ada adalah kata
+  // isi kueri di katalog. Menyebutnya "makna lemah" akan menuntun operator ke
+  // perbaikan yang salah (menurunkan ambang) dan justru membuka kembali jawaban
+  // atas pertanyaan yang datanya memang tidak ada.
+  if (typeof fakta.ditolakTanpaJangkar === 'number' && fakta.ditolakTanpaJangkar > 0) {
+    return kosong(
+      'retrieval:makna-tanpa-jangkar',
+      'Kemiripan makna ditemukan, tetapi tidak satu pun kata kunci topik pertanyaan ada di katalog — jawaban sengaja tidak disajikan.',
       bersih,
     );
   }

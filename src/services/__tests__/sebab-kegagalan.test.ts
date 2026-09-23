@@ -105,6 +105,29 @@ describe('klasifikasiSebab — lapis RETRIEVAL saat tidak ada bukti', () => {
     expect(d.lapis).toBe('retrieval');
   });
 
+  it('makna kuat TANPA jangkar isi ⇒ retrieval:makna-tanpa-jangkar, bukan "makna-lemah"', () => {
+    // Kasus nyata (U6, 23 Sep 2026, korpus produksi 2.065 record): kata kunci
+    // "inflasi" tidak ada di katalog, tetapi kata generik "bulan" cocok dengan
+    // "6 bulan"/"Bulanan" sehingga skor semantik tinggi (0,487) — melewati
+    // ambang. Menurunkannya ke "makna lemah" menyesatkan operator: maknanya
+    // TIDAK lemah, yang hilang adalah jangkar konsep pertanyaannya.
+    const d = klasifikasiSebab(fakta({ jalur: 'kosong', skorSemantik: 0.487, ditolakTanpaJangkar: 3 }));
+    expect(d.sebab).toBe('retrieval:makna-tanpa-jangkar');
+    expect(d.lapis).toBe('retrieval');
+    expect(SEBAB_GAGAL).toContain(d.sebab as never);
+    expect(labelSebab(d.sebab)).not.toBe(d.sebab);
+  });
+
+  it('penolakan tanpa jangkar MENDAHULUI makna lemah (sebab lebih tepat menang)', () => {
+    const d = klasifikasiSebab(fakta({ jalur: 'kosong', skorSemantik: 0.05, ditolakTanpaJangkar: 1 }));
+    expect(d.sebab).toBe('retrieval:makna-tanpa-jangkar');
+  });
+
+  it('nol penolakan tanpa jangkar bukan penolakan (ambang tetap satu kandidat)', () => {
+    const d = klasifikasiSebab(fakta({ jalur: 'kosong', skorSemantik: 0.06, ditolakTanpaJangkar: 0 }));
+    expect(d.sebab).toBe('retrieval:makna-lemah');
+  });
+
   it('tanpa kata asing & tanpa skor makna ⇒ retrieval:tanpa-bukti (paling umum)', () => {
     const d = klasifikasiSebab(fakta({ jalur: 'kosong' }));
     expect(d.sebab).toBe('retrieval:tanpa-bukti');

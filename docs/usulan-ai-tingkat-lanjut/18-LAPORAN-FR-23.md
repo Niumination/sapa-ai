@@ -6,6 +6,17 @@ end-to-end bahwa pembersih **benar-benar dipakai** pada jalur permintaan nyata.
 
 ---
 
+> ⚠️ **Koreksi 23 Sep 2026 — lihat `22-LAPORAN-KOREKSI-PASCA-DEV.md` §3.**
+> Laporan ini disusun dengan korpus uji 1.216 record. Pengukuran ulang pada **korpus produksi
+> 2.065 record** menemukan dua kekurangan yang tidak terlihat di sini:
+> (a) `BATAS_SEL.satuan = 28` dan `indikator = 180` **memotong data nyata yang sah** (satuan 35 karakter,
+> nama indikator 242 karakter) — kini 64 dan 320; (b) `selDibersihkan` menghitung kerapian spasi sehingga
+> pada korpus bersih angkanya 194 — kini dipisah menjadi `selDinormalkan` (191 dirapikan, **0 dibersihkan,
+> 0 dipotong**). Perbaikan hermes pada jalur log penyedia tiruan juga hanya menyentuh sisi penulis;
+> sisi pembaca (`scripts/uji-bersih-data.mjs`, `uji-terima.sh`) diperbaiki di patch `0038`.
+
+---
+
 ## 1. Masalah yang diselesaikan
 
 SAPA menyusun prompt dari **dua jenis teks yang berbeda asalnya**, dan sebelum FR-23 keduanya
