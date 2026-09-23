@@ -4,6 +4,7 @@ Berkas di folder ini **berdiri sendiri** — dapat dibaca tanpa dokumen lain.
 
 | Berkas | Untuk siapa | Isi singkat |
 |---|---|---|
+| `18-LAPORAN-FR-23.md` | pengembang · tim keamanan | **Pembersihan data katalog sebelum masuk prompt**: dua rem (masuk prompt + keluar ke layar), 7 kelompok aturan, model uji `mock-patuh` yang menuruti perintah data, kontrol negatif yang sengaja gagal, plus empat temuan yang hanya muncul lewat pengujian nyata |
 | `10-KEBUTUHAN-UPGRADE-TINGKAT-LANJUT.md` | pengembang · perencana · pemilik anggaran | **Kebutuhan upgrade disusun dari awal**: tujuan, 7 invariants, 27 kebutuhan fungsional + 10 non-fungsional dengan kriteria terima berangka, kebutuhan data/evaluasi/operasi/kepatuhan, arsitektur target, peta fase B–D |
 | `11-KIT-SERAH-TERIMA.md` | pengembang · agen repo lokal | cara menerapkan (3 cara), titik rawan konflik, batas kepemilikan berkas, cara uji di localhost, validasi dengan model sungguhan, rollback, **instruksi siap-tempel untuk agen** |
 | `12-LAPORAN-FR-25-FR-27.md` | pengembang · pemilik produk | **Laporan dua butir termurah**: cap kesegaran data (waktu tarik · sidik isi korpus · tahun data) + dasbor celah pengetahuan — rancangan, bukti uji, dan batas yang jujur |
