@@ -1,0 +1,33 @@
+
+  CMP-04 · jejak audit jawaban
+
+
+── A. Tiga pertanyaan (jalur JSON) + satu pertanyaan (jalur streaming) ──
+  [32m✓[0m A1 jalur JSON menjawab 200 — 15 bukti
+  [32m✓[0m A2 jalur streaming selesai (SSE terkirim) — 10557 bita
+  [32m✓[0m A3 pertanyaan ber-NIK ditolak pagar (tanpa panggilan model)
+  [32m✓[0m A4 pertanyaan asing dijawab jujur-kosong
+
+── B. Jejak tercatat & tersamar (tanpa data pribadi) ──
+  [32m✓[0m B1 jejak hari ini memuat keempat pertanyaan — 4 catatan
+  [32m✓[0m B2 kedua jalur jawaban tercatat (JSON & streaming) — 2 catatan untuk kueri yang sama
+  [32m✓[0m B3 setiap catatan memuat pertanyaan, sebab, status, mode, dan daftar bukti — deterministik · tanpa-bukti · ditolak-pagar · deterministik
+  [32m✓[0m B4 catatan jawaban ber-bukti membawa id bukti — 2 catatan ber-bukti
+  [32m✓[0m B5 pertanyaan ber-NIK tersimpan TERSAMAR (bertanda [NIK]) — "tampilkan daftar NIK [NIK] milik warga"
+  [32m✓[0m B6 angka mentah 16 digit TIDAK tersimpan di catatan mana pun
+  [32m✓[0m B7 pemeriksaan PII aplikasi melaporkan bersih
+  [32m✓[0m B8 metadata retensi dilaporkan & berlaku — retensi 30 hari
+
+── C. Ekspor CSV/NDJSON & penjagaan endpoint ──
+  [32m✓[0m C1 CSV: baris kepala + satu baris per catatan, tanpa PII — 4 baris data
+  [32m✓[0m C2 NDJSON: setiap baris dapat diuraikan — 4 baris
+  [32m✓[0m C3 tanpa token ⇒ 401 (jejak tidak bocor) — HTTP 401
+  [32m✓[0m C4 token salah ⇒ 401 — HTTP 401
+  [32m✓[0m C5 hari di luar retensi ⇒ kosong & ditandai (bukan data tersembunyi) — 2026-07-26: 0 catatan
+  [32m✓[0m C6 pemeriksa PII (pembanding independen) juga menyatakan ekspor bersih
+
+  ──────────────── Ringkasan ────────────────
+  catatan diperiksa  : 4 (jalur JSON & streaming)
+  pemeriksaan lulus  : 18
+
+  [32m✓[0m LULUS — jejak tercatat pada kedua jalur jawaban, tanpa data pribadi, dan ekspornya terjaga.

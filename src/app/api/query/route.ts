@@ -9,6 +9,7 @@ import { catatCelah, type SebabCelah } from '@/lib/insight-celah';
 import { sebabUntukCelah, type Diagnosa } from '@/services/sebab-kegagalan';
 import { denganTelemetri, ukurTahapAsync } from '@/lib/ai/telemetri';
 import { terapkanBentuk } from '@/services/bentuk-jawaban';
+import { catatJejak, jejakDariHasil } from '@/lib/jejak-audit';
 import type { NiatJawaban } from '@/lib/intent-meta';
 
 export const dynamic = 'force-dynamic';
@@ -29,6 +30,8 @@ export async function POST(req: NextRequest) {
 }
 
 async function tanganiQuery(req: NextRequest) {
+  // CMP-04: jejak audit mengukur durasi total permintaan (bukan hanya panggilan model).
+  const mulaiJejakMs = Date.now();
   let queryRaw = '';
   try {
     const body = await req.json();
@@ -84,6 +87,11 @@ async function tanganiQuery(req: NextRequest) {
   // Catat bila pertanyaan ini tidak terlayani (FR-27). Hanya kasus gagal yang
   // menulis — pertanyaan yang berhasil tidak menyentuh penyimpanan sama sekali.
   await catatCelahBilaPerlu(queryRaw, hasil.diagnosa);
+
+  // CMP-04: catat jejak audit (pertanyaan tersamar + bukti + gerbang + sebab).
+  // Fail-open: `catatJejak()` tidak pernah melempar, jadi jawaban tidak pernah
+  // tertahan oleh urusan pencatatan.
+  await catatJejak(jejakDariHasil({ query: queryRaw, hasil, durasiMs: Date.now() - mulaiJejakMs }));
 
   // FR-18: bentuk jawaban dihitung SEBELUM respons disusun, lewat pintu yang
   // sama dengan panel (`terapkanBentuk`).

@@ -5,6 +5,7 @@ import { siapkanIndeksSemantik } from '@/app/api/query/route';
 import { tahunPadaBukti } from '@/services/grounding';
 import { catatCelahBilaPerlu } from '@/app/api/query/route';
 import { composeAnswer } from '@/services/answer-compose';
+import { catatJejak, jejakDariHasil } from '@/lib/jejak-audit';
 import { getClientIp } from '@/lib/rate-limit';
 import { denganTelemetri, ukurTahapAsync } from '@/lib/ai/telemetri';
 import { terapkanBentuk } from '@/services/bentuk-jawaban';
@@ -23,6 +24,9 @@ export const maxDuration = 60;
  * dan potongan token yang belum lengkap ditahan agar tidak bocor ke layar.
  */
 export async function POST(req: NextRequest) {
+  // CMP-04: durasi jejak dihitung dari awal permintaan streaming sampai jawaban
+  // selesai disusun (bukan hanya lama model menulis token).
+  const mulaiJejakMs = Date.now();
   let queryRaw = '';
   try {
     const body = await req.json();
@@ -82,6 +86,11 @@ export async function POST(req: NextRequest) {
         // Celah pengetahuan (FR-27) — jalur inilah yang dipakai halaman utama,
         // jadi pencatatan harus ada di sini juga, bukan hanya di jalur JSON.
         await catatCelahBilaPerlu(queryRaw, hasil.diagnosa);
+
+        // CMP-04: jalur streaming mencatat jejak yang SAMA dengan jalur JSON
+        // (satu pintu: `jejakDariHasil`) — supaya pemeriksaan tidak buta pada
+        // jawaban yang disajikan lewat streaming.
+        await catatJejak(jejakDariHasil({ query: queryRaw, hasil, durasiMs: Date.now() - mulaiJejakMs }));
 
         // FR-18: bentuk jawaban — pintu yang sama dengan jalur JSON.
         const bentukJawaban = terapkanBentuk(

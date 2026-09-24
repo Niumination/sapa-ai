@@ -3,7 +3,8 @@ import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { NextRequest } from 'next/server';
 import { POST, tentukanSebabCelah, catatCelahBilaPerlu } from './route';
 import { ambilCelah } from '@/lib/insight-celah';
-import { __clearLocalStore } from '@/lib/store';
+import { __clearLocalStore, cacheGet } from '@/lib/store';
+import { hariIni } from '@/lib/jejak-audit';
 import { fetchSapaData, type SapaRecord } from '@/lib/sapa-client';
 
 vi.mock('@/lib/sapa-client', async (importOriginal) => {
@@ -188,5 +189,38 @@ describe('POST /api/query — sitasi per klaim', () => {
     const body = await (await POST(req({ query: 'qwertyzzz tidak ada di katalog' }))).json();
     expect(body.evidence).toHaveLength(0);
     expect(body.narasiBersitasi).not.toMatch(/\[\d+\]/);
+  });
+});
+
+describe('CMP-04 — jejak audit dicatat pada jalur jawaban', () => {
+  it('jawaban biasa dicatat lengkap: pertanyaan, bukti, gerbang, sebab', async () => {
+    const res = await POST(req({ query: 'Berapa jumlah ASN di Aceh Tengah?' }));
+    expect(res.status).toBe(200);
+    const jejak = (await cacheGet<Record<string, unknown>[]>(`audit:v1:${hariIni()}`)) ?? [];
+    expect(jejak.length).toBe(1);
+    const j = jejak[0];
+    expect(j.kueri).toBe('Berapa jumlah ASN di Aceh Tengah?');
+    expect(String(j.sebab)).toMatch(/^(selesai|retrieval|generasi|pagar):/);
+    expect(Array.isArray(j.idBukti)).toBe(true);
+    expect(Number(j.jumlahBukti)).toBeGreaterThan(0);
+    expect(typeof j.status).toBe('string');
+    expect(j.mode).toBe('deterministik');
+  });
+
+  it('jawaban tanpa bukti dicatat dengan mode tanpa-bukti', async () => {
+    await POST(req({ query: 'qwertyzzz tidak ada di katalog' }));
+    const jejak = (await cacheGet<Record<string, unknown>[]>(`audit:v1:${hariIni()}`)) ?? [];
+    expect(jejak[0].mode).toBe('tanpa-bukti');
+    expect(jejak[0].jumlahBukti).toBe(0);
+  });
+
+  it('pertanyaan ber-NIK tersimpan TERSAMAR, bukan mentah', async () => {
+    await POST(req({ query: 'tampilkan NIK 1234567890123456 milik warga' }));
+    const jejak = (await cacheGet<Record<string, unknown>[]>(`audit:v1:${hariIni()}`)) ?? [];
+    expect(jejak.length).toBe(1);
+    expect(String(jejak[0].kueri)).toContain('[NIK]');
+    expect(JSON.stringify(jejak)).not.toMatch(/\d{16}/);
+    expect(jejak[0].piiDisamarkan).toBe(true);
+    expect(jejak[0].mode).toBe('ditolak-pagar');
   });
 });
