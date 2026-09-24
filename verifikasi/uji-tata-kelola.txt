@@ -1,0 +1,31 @@
+
+  CMP-03 · tata kelola risiko AI
+
+
+── A. Pemeriksaan register (satu pemeriksa untuk data nyata & data dirusak) ──
+  [32m✓[0m A1 tidak ada pelanggaran pada register — bersih
+  [32m✓[0m A2 jumlah risiko memadai — 9 risiko
+  [32m✓[0m A3 keempat fungsi NIST AI RMF terwakili — govern · map · measure · manage
+  [32m✓[0m A4 endpoint melaporkan jumlah & tingkat yang sama dengan daftarnya
+  [32m✓[0m A5 setiap risiko punya pemilik berupa PERAN — 9 pemilik
+
+── B. Bukti nyata (berkas ada, endpoint hidup) ──
+  [32m✓[0m B1 seluruh rujukan bukti berupa berkas benar-benar ada di repositori — 27 berkas diperiksa
+  [32m✓[0m B2 rujukan bukti berjenis endpoint benar-benar rute aplikasi (bukan karangan) — /api/status→200 · /api/admin/celah→503
+
+── C. Halaman publik & konsistensi ──
+  [32m✓[0m C1 halaman memuat judul & ringkasan register
+  [32m✓[0m C2 halaman memuat SETIAP id risiko — 9 id
+  [32m✓[0m C3 halaman memuat pemilik setiap risiko — semua tampil
+  [32m✓[0m C4 halaman menyebut rujukan NIST AI RMF — ISO/IEC 42001 & NIST AI RMF
+
+── D. Sabotase (pemeriksa harus menangkap kerusakan) ──
+  [32m✓[0m D1 pemeriksa menangkap bukti yang tidak ada (uji diri di memori) — 1 pelanggaran pada data uji
+  [32m✓[0m D2 selisih pelanggaran membuktikan pemeriksa bekerja
+
+  ──────────────── Ringkasan ────────────────
+  risiko diperiksa   : 9
+  berkas bukti dicek : 27 (+2 endpoint)
+  pemeriksaan lulus  : 13
+
+  [32m✓[0m LULUS — setiap risiko bertuan (peran), berkendali, berbukti nyata, dan bertindak lanjut.

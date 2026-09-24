@@ -1,0 +1,38 @@
+
+  CMP-03 · tata kelola risiko AI (MODE SABOTASE — harus GAGAL)
+
+
+── A. Pemeriksaan register (satu pemeriksa untuk data nyata & data dirusak) ──
+  [31m✗[0m A1 tidak ada pelanggaran pada register — R-01: tanpa pemilik peran | R-01: tanggung jawab pemilik belum jelas | R-01: tingkat dilaporkan "rendah" padahal matriks menyebut "tinggi" | R-02: bukti menunjuk berkas yang TIDAK ADA: scripts/uji-yang-tidak-pernah-ada.mjs | R-03: tenggat tinjauan LEWAT (2026-01-01) | R-04: jenis bukti asing "catatan-lisan"
+  [32m✓[0m A2 jumlah risiko memadai — 9 risiko
+  [32m✓[0m A3 keempat fungsi NIST AI RMF terwakili — govern · map · measure · manage
+  [32m✓[0m A4 endpoint melaporkan jumlah & tingkat yang sama dengan daftarnya
+  [31m✗[0m A5 setiap risiko punya pemilik berupa PERAN — 9 pemilik
+
+── B. Bukti nyata (berkas ada, endpoint hidup) ──
+  [31m✗[0m B1 seluruh rujukan bukti berupa berkas benar-benar ada di repositori — 27 berkas diperiksa
+  [32m✓[0m B2 rujukan bukti berjenis endpoint benar-benar rute aplikasi (bukan karangan) — /api/status→200 · /api/admin/celah→503
+
+── C. Halaman publik & konsistensi ──
+  [32m✓[0m C1 halaman memuat judul & ringkasan register
+  [32m✓[0m C2 halaman memuat SETIAP id risiko — 9 id
+  [32m✓[0m C3 halaman memuat pemilik setiap risiko — semua tampil
+  [32m✓[0m C4 halaman menyebut rujukan NIST AI RMF — ISO/IEC 42001 & NIST AI RMF
+
+── D. Sabotase (pemeriksa harus menangkap kerusakan) ──
+  [32m✓[0m D1 register yang dirusak TERDETEKSI (jumlah pelanggaran ≥ 4) — 6 pelanggaran
+  [32m✓[0m D2 pelanggaran menyebut bukti yang tidak ada
+  [32m✓[0m D3 pelanggaran menyebut tenggat lewat
+  [32m✓[0m D4 pelanggaran menyebut jenis bukti asing
+  [32m✓[0m D5 pelanggaran menyebut pemilik hilang
+  [32m✓[0m D6 pelanggaran menyebut tingkat tidak cocok matriks
+
+  ──────────────── Ringkasan ────────────────
+  risiko diperiksa   : 9
+  berkas bukti dicek : 27 (+2 endpoint)
+  pemeriksaan lulus  : 14
+
+  [31m✗[0m GAGAL — 3 pemeriksaan tidak terpenuhi:
+    · A1 tidak ada pelanggaran pada register
+    · A5 setiap risiko punya pemilik berupa PERAN
+    · B1 seluruh rujukan bukti berupa berkas benar-benar ada di repositori

@@ -218,7 +218,7 @@ Format: **Kode · Kebutuhan · Alasan/bukti · Kriteria terima (terukur) · Usah
 |---|---|---|---|
 | **CMP-01** | Perlindungan data pribadi: tidak menyajikan data perorangan; tidak menyimpan NIK pada log | UU 27/2022 | ✅ |
 | **CMP-02** | Keterbukaan penggunaan AI pada layanan publik | SE Menkominfo 9/2023 | ✅ (24 Sep 2026 — halaman `/keterbukaan` + mesin `/api/keterbukaan`, 7 bagian, menyatakan keadaan **nyata** termasuk tiga tingkat kegagalan penyedia; 21 uji baru & harness 24 pemeriksaan + mode sabotase; laporan [27](27-LAPORAN-CMP-02.md)) |
-| **CMP-03** | Tata kelola risiko AI: daftar risiko, pemilik, tindak lanjut | ISO/IEC 42001 · NIST AI RMF | 🟡 (dokumen `10 §13` ✅; pemilik risiko ⬜) |
+| **CMP-03** | Tata kelola risiko AI: daftar risiko, pemilik, tindak lanjut | ISO/IEC 42001 · NIST AI RMF | ✅ (24 Sep 2026 — register **9 risiko** dalam kode: pemilik berupa **peran** + tanggung jawab, kendali berbukti (27 berkas nyata + 2 endpoint diperiksa harness), tindak lanjut bertanggal, tenggat per risiko; halaman `/tata-kelola-risiko` + mesin `/api/tata-kelola-risiko`; laporan [28](28-LAPORAN-CMP-03.md)) |
 | **CMP-04** | Jejak audit jawaban (pertanyaan, bukti, gerbang, sebab) tanpa data pribadi | kebutuhan internal & pemeriksaan | 🟡 (metadata AI ✅; retensi & ekspor ⬜) |
 
 ---
