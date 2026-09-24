@@ -22,12 +22,17 @@ MODE="${SAPA_MODE:-both}"
 SKIP_EVAL="${SAPA_SKIP_EVAL:-0}"
 GAP="${SAPA_EVAL_LLM_GAP_MS:-0}"
 
-# Ambang penerimaan
-AMBANG_LULUS=90          # item eval
-AMBANG_TOTAL=90
+# Ambang penerimaan.
+# 24 Sep 2026: jumlah item diturunkan DARI data/eval-set.json, bukan ditulis
+# tetap (dulu 90). Set kini 120 item (EV-05); ambang tetap "semua item lulus"
+# kecuali ditimpa lewat SAPA_AMBANG_LULUS — supaya skrip ini tidak pernah
+# meluluskan diri sendiri saat set bertambah.
+ITEM_SET=$(node -e "try{console.log(require('./data/eval-set.json').item.length)}catch{console.log(0)}" 2>/dev/null)
+AMBANG_TOTAL=${SAPA_AMBANG_TOTAL:-${ITEM_SET:-0}}
+AMBANG_LULUS=${SAPA_AMBANG_LULUS:-$AMBANG_TOTAL}
 AMBANG_GROUNDED=90       # % grounded pass saat model dipanggil
 AMBANG_FALLBACK=10       # % fallback (maksimum)
-AMBANG_TES_MIN=230       # jumlah uji unit minimum
+AMBANG_TES_MIN=${SAPA_AMBANG_TES_MIN:-700}   # jumlah uji unit minimum (kini 715)
 
 gagal=0
 catatan=()
@@ -294,8 +299,21 @@ if [ "$(hidup "$DET_URL")" = "200" ]; then
   sem_penyedia=$(printf '%s' "$sem_status" | python3 -c "import json,sys;d=json.load(sys.stdin);print((d.get('semantik') or {}).get('penyedia') or '-')" 2>/dev/null || echo '-')
   if [ "$sem_aktif" = "ya" ]; then ok "lapis semantik aktif (penyedia: $sem_penyedia)"; else no "lapis semantik TIDAK aktif"; fi
 
-  # (2) Salah tulis: "pendudk" — kata "penduduk" ada di katalog SAPA (indikator
-  #     penduduk). Yang dinilai: daftar bukti jawaban memuat indikator penduduk.
+  # (2) Salah tulis — DIPERBAIKI 24 Sep 2026 (audit ulang).
+  #
+  #     Versi lama hanya menguji 'pendudk' dan menuntut bukti memuat kata persis
+  #     "penduduk". Pada korpus PRODUKSI 2.065 record, tuntutan itu salah:
+  #     katalog aslinya memuat indikator bercap salah tulis
+  #     "Jumlah Pendudk Usia 13-15 Tahun", sehingga lapis LEKSIKAL (yang memang
+  #     berjalan lebih dulu) menemukan baris itu dan jawaban sah — tetapi kata
+  #     "penduduk" tidak muncul, jadi uji menyatakan GAGAL padahal perilakunya benar.
+  #
+  #     Sekarang diuji dua hal, keduanya janji yang benar-benar dibuat sistem:
+  #       (2a) salah tulis yang JUSTRU ADA di katalog ('pendudk') → ditemukan
+  #            (batang kata 'pendud' cukup, tidak menuntut ejaan kata yang benar);
+  #       (2b) salah tulis yang TIDAK ada di katalog ('panduduk') → lapis SEMANTIK
+  #            mengambil alih (`sebab` memuat 'semantik') dan buktinya relevan,
+  #            dengan daftar bukti tetap memuat indikator penduduk.
   tanya_sem() {
     curl -s -m 90 -X POST "$1/api/query" -H 'Content-Type: application/json' \
       -d "{\"query\":\"$2\"}" 2>/dev/null || echo '{}'
@@ -306,8 +324,24 @@ if [ "$(hidup "$DET_URL")" = "200" ]; then
 import json,sys
 d = json.load(open('/tmp/ut-fr12-typo.json'))
 ev = d.get('evidence') or []
-sys.exit(0 if any('penduduk' in str(e.get('indikator','')).lower() for e in ev) else 1)
-" 2>/dev/null; then ok "salah tulis 'pendudk' tetap menemukan indikator penduduk"; else no "salah tulis 'pendudk' TIDAK menemukan indikator penduduk"; fi
+sys.exit(0 if any('pendud' in str(e.get('indikator','')).lower() for e in ev) else 1)
+" 2>/dev/null; then ok "salah tulis 'pendudk' tetap menemukan indikator penduduk (batang kata)"; else no "salah tulis 'pendudk' TIDAK menemukan indikator penduduk"; fi
+
+  typo2=$(tanya_sem "$DET_URL" 'berapa jumlah panduduk Aceh Tengah')
+  printf '%s' "$typo2" > /tmp/ut-fr12-typo-semantik.json
+  sem_hasil=$(python3 -c "
+import json
+d = json.load(open('/tmp/ut-fr12-typo-semantik.json'))
+ev = d.get('evidence') or []
+sebab = str((d.get('diagnosa') or {}).get('sebab') or '')
+ada = any('penduduk' in str(e.get('indikator','')).lower() for e in ev)
+print(('ya' if (ada and 'semantik' in sebab and len(ev) > 0) else 'tidak') + '|' + sebab + '|' + str(len(ev)))
+" 2>/dev/null || echo 'tidak|-|0')
+  if [ "${sem_hasil%%|*}" = "ya" ]; then
+    ok "salah tulis di luar katalog ditangani lapis semantik (${sem_hasil##*|})"
+  else
+    no "salah tulis di luar katalog TIDAK ditangani lapis semantik — hasil: ${sem_hasil}"
+  fi
 
   # (3) Kueri di luar katalog: tidak boleh dijawab dengan bukti apa pun.
   luars=$(tanya_sem "$DET_URL" 'berapa jumlah drone di kecamatan peusangan')
@@ -659,7 +693,7 @@ else
   fi
 fi
 
-# ── 7. Evaluasi set 90 item ─────────────────────────────────────────────────
+# ── 7. Evaluasi set penuh ($AMBANG_TOTAL item dari data/eval-set.json) ──────
 jalankan_eval() {
   local url="$1" label="$2" keluaran="$3"
   if [ "$(hidup "$url")" != "200" ]; then info "server $label ($url) tidak hidup — lompati"; return; fi

@@ -4,6 +4,16 @@
 **Rujukan:** SE Menteri Kominfo No. 9 Tahun 2023 tentang Etika Kecerdasan Artifisial
 **Status dokumen 10:** `⬜ (teks notis belum ada)` → **✅**
 
+## 0. Catatan lanjutan (audit ulang 24 Sep 2026)
+
+Komponen notis dari butir ini (`src/components/NotisTransparansi.tsx`) sempat membawa **cacat
+aksesibilitas**: tautan "Keterbukaan penggunaan AI" bergaya tombol `py-1.5` tanpa kelas
+`target-min` sehingga tinggi sasarannya < 24 px (WCAG 2.2 SC 2.5.8). Cacat ini **tidak**
+tertangkap saat butir ini selesai karena harness aksesibilitas waktu itu hanya memeriksa
+`/dashboard` sementara komponen ini muncul di sana **sesudah** CMP-02 dipasang. Sudah diperbaiki
+(tautan diberi `target-min`, ditambah uji unit + sabotase, cakupan harness diperluas ke
+`/keterbukaan` dan `/tata-kelola-risiko`). Rinci: [laporan 31](31-LAPORAN-AUDIT-ULANG.md).
+
 ## 1. Ringkas
 
 | Sebelum | Sesudah |

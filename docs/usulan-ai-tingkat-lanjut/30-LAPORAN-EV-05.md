@@ -1,6 +1,9 @@
 # 30 — Laporan EV-05: perluasan set evaluasi ke 120 item + panel penilai 30 sampel
 
 **Tanggal:** 24 September 2026 · **Cabang:** `dev` (tanpa menyentuh `main`, tanpa operasi remote)
+**Catatan audit ulang:** setelah butir ini selesai, seluruh gerbang dijalankan ulang dan ditemukan
+cacat aksesibilitas dari CMP-02 + dua temuan palsu pada pemeriksa; lihat
+[laporan 31](31-LAPORAN-AUDIT-ULANG.md). Jumlah uji setelah perbaikan itu: **715 uji / 44 berkas**.
 **Kriteria terima (dokumen 10):** *≥ 3 item baru per niat lulus; skor relevansi penilai ≥ 4/5*
 **Status dokumen 10:** `⬜` → **🟡** (bagian mesin ✅ penuh; skor panel manusia **menunggu 30 penilaian orang** — instrumennya sudah jadi, lihat §5)
 
@@ -14,7 +17,7 @@
 | 3 cacat tersembunyi | **3 temuan nyata** ditemukan & diperbaiki (§4) |
 | Tidak ada jalan menilai mutu jawaban secara lintas-niat | **Panel penilai 30 sampel** (3/niat + 3 item keempat): lembar penilaian HTML/CSV + alat hitung + praskor mesin dengan kontrol mutu |
 
-Uji: **708 → 711**. Dump uji: `verifikasi/eval120-produksi.json` · artefak: `verifikasi/uji-eval-120.txt` (**exit 0, 32 pemeriksaan**), `verifikasi/uji-eval-120-sabotase.txt` (**exit 1 — 4 pelanggaran terdeteksi**).
+Uji: **708 → 711** (menjadi **715** setelah audit ulang). Dump uji: `verifikasi/eval120-produksi.json` · artefak: `verifikasi/uji-eval-120.txt` (**exit 0, 32 pemeriksaan**), `verifikasi/uji-eval-120-sabotase.txt` (**exit 1 — 4 pelanggaran terdeteksi**).
 
 ## 2. Kriteria terima — bukti
 
@@ -120,7 +123,7 @@ praskor ikut diperbaiki sebelum dipakai — rujukan hukum (`UU No. 27/2022`) dan
 ## 7. Cara mengulang
 
 ```bash
-npx vitest run                       # 711 uji lulus
+npx vitest run                       # 715 uji lulus
 SAPA_EVAL_URL=http://127.0.0.1:3181 npm run eval:120        # exit 0 — 32 pemeriksaan
 SAPA_EVAL_URL=http://127.0.0.1:3181 npm run eval:120 -- --sabotase   # exit 1 — 4 pelanggaran
 node scripts/eval-run.mjs --baseline-dari=verifikasi/eval120-produksi.json   # regenerasi dasar pembanding

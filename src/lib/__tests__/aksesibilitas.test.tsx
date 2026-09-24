@@ -2,7 +2,7 @@ import { describe, expect, it } from 'vitest';
 import { renderToStaticMarkup } from 'react-dom/server';
 import ExecutiveAnswerRenderer from '@/components/ExecutiveAnswerRenderer';
 import NotisTransparansi from '@/components/NotisTransparansi';
-import { rasioKontras, periksaHtml, periksaPotonganHtml } from '../../../verifikasi/aksesibilitas.mjs';
+import { rasioKontras, periksaHtml, periksaPotonganHtml, periksaSasaranTautan } from '../../../verifikasi/aksesibilitas.mjs';
 import type { HybridResponse } from '@/types';
 
 /**
@@ -72,12 +72,39 @@ describe('pemeriksa aksesibilitas — potongan markup', () => {
   it('wilayah live diperiksa pada tingkat dokumen, bukan potongan', () => {
     // Potongan ini punya tombol bernama dan tidak punya tabel cacat → potongan bersih,
     // tetapi sebagai DOKUMEN ia tetap gagal karena tanpa wilayah live & tanpa h1.
-    const potongan = '<button type="button">Klik</button>';
+    // 24 Sep 2026: aturan wilayah live dipersempit — hanya dituntut pada halaman
+    // yang memang punya PERMUKAAN TANYA (form/isian), karena halaman statis tidak
+    // mengumumkan apa pun. Karena itu dokumen uji ini memuat isian, persis seperti
+    // halaman utama yang menampilkan jawaban tanpa pindah halaman.
+    const potongan = '<button type="button">Klik</button><input type="text" aria-label="Pertanyaan" />';
     expect(periksaPotonganHtml(potongan, { nama: 'p' }).pelanggaran).toEqual([]);
     const dokumen = periksaHtml(potongan, { nama: 'd' });
     expect(dokumen.pelanggaran.join('\n')).toMatch(/tidak ada <main>/);
     expect(dokumen.pelanggaran.join('\n')).toMatch(/tidak ada wilayah live/);
     expect(dokumen.pelanggaran.join('\n')).toMatch(/tidak ada <h1>/);
+  });
+
+  it('halaman statis tanpa permukaan tanya TIDAK dituntut wilayah live', () => {
+    // Perbaikan positif-palsu: /keterbukaan dan /tata-kelola-risiko tidak punya
+    // isian, jadi tidak ada jawaban yang perlu diumumkan pembaca layar.
+    // Cermin halaman sebenarnya: punya navigasi → wajib tautan lompati; tidak punya
+    // isian → tidak dituntut wilayah live.
+    const statis =
+      '<html lang="id"><title>Keterbukaan</title><a href="#konten">Lompati ke konten</a>' +
+      '<nav aria-label="Navigasi"><a href="/">SAPA</a></nav>' +
+      '<main id="konten"><h1>Keterbukaan penggunaan AI</h1><p>Teks.</p></main></html>';
+    const hasil = periksaHtml(statis, { nama: 'statis' });
+    expect(hasil.pelanggaran.join('\n')).not.toMatch(/tidak ada wilayah live/);
+    expect(hasil.pelanggaran, hasil.pelanggaran.join('; ')).toEqual([]);
+  });
+
+  it('tautan lompati hanya dituntut bila ADA tautan sebelum <main> (SC 2.4.1)', () => {
+    const tanpaNav =
+      '<html lang="id"><title>Keterbukaan</title><main><h1>Judul</h1><p>Teks.</p></main></html>';
+    expect(periksaHtml(tanpaNav, { nama: 'tanpa-nav' }).pelanggaran.join('\n')).not.toMatch(/Lompati ke konten/);
+
+    const adaNav = tanpaNav.replace('<main>', '<nav aria-label="Navigasi"><a href="/">SAPA</a></nav><main>');
+    expect(periksaHtml(adaNav, { nama: 'ada-nav' }).pelanggaran.join('\n')).toMatch(/Lompati ke konten/);
   });
 });
 
@@ -137,5 +164,23 @@ describe('aksesibilitas — notis transparansi (NFR-09)', () => {
   it('pesan galat/berhasil memakai wilayah live dan kontrol bernama', () => {
     const markup = renderToStaticMarkup(<NotisTransparansi ai={null} pertanyaan="stunting" />);
     expect(periksaPotonganHtml(markup, { nama: 'notis' }).pelanggaran).toEqual([]);
+  });
+
+  it('tautan notis yang bergaya tombol membawa jaminan sasaran 24 px (temuan 24 Sep 2026)', () => {
+    // Cacat nyata: tautan "Keterbukaan penggunaan AI" ber-`py-1.5` tanpa
+    // `target-min` → tinggi < 24 px (SC 2.5.8). Ditemukan oleh harness halaman
+    // pada /dashboard, dan uji ini menjaga agar tidak kembali.
+    const markup = renderToStaticMarkup(<NotisTransparansi ai={null} pertanyaan="stunting" />);
+    const hasil = periksaSasaranTautan(markup, 'notis');
+    expect(hasil.kontrolRingkas, 'notis harus memuat tautan bergaya tombol').toBeGreaterThan(0);
+    expect(hasil.pelanggaran).toEqual([]);
+  });
+
+  it('pemeriksa sasaran tautan TETAP menangkap sabotase (kelas target-min dilepas)', () => {
+    const markup = renderToStaticMarkup(<NotisTransparansi ai={null} pertanyaan="stunting" />);
+    const dirusak = markup.replace(/target-min /g, '');
+    const hasil = periksaSasaranTautan(dirusak, 'notis-sabotase');
+    expect(hasil.pelanggaran.length, 'sabotase harus tertangkap').toBeGreaterThan(0);
+    expect(hasil.pelanggaran[0]).toContain('SC 2.5.8');
   });
 });

@@ -41,10 +41,10 @@ Lima hasil yang ingin dicapai (semuanya harus terukur):
 | # | Hasil | Ukuran |
 |---|---|---|
 | H1 | **AI unggul, bukan sekadar hadir** — saat AI aktif, jawaban harus lebih kaya bukti daripada jawaban template | sitasi AI ≥ sitasi deterministik; saat ini **4,50 vs 3,00** ✅ |
-| H2 | **Tidak pernah menyesatkan** — tidak ada jawaban dari data yang bukan ditanyakan, termasuk saat data memang tidak ada | evaluasi 90 item: `menyesatkan = 0`, invarians 0 ✅ |
+| H2 | **Tidak pernah menyesatkan** — tidak ada jawaban dari data yang bukan ditanyakan, termasuk saat data memang tidak ada | set lama 90 item: `menyesatkan = 0`, invarians 0; set sekarang **120 item**: 0 menyesatkan, 0 invarians ✅ |
 | H3 | **Hemat & tahan gangguan** — AI mati/langganan habis jangan membuat pengguna menunggu | pertanyaan ber-bukti: **11,4 dtk → 0,56 dtk** saat penyedia mati ✅ |
 | H4 | **Jujur kepada operator** — panel status melaporkan kenyataan, bukan niat konfigurasi | `reachable`, `health.sebab`, `reason` terisi saat gagal ✅ |
-| H5 | **Bisa dikembangkan tanpa merusak** — setiap perubahan diukur pada set evaluasi tetap | bar 90 item sebagai gerbang ✅ |
+| H5 | **Bisa dikembangkan tanpa merusak** — setiap perubahan diukur pada set evaluasi tetap | bar evaluasi + baseline terkunci sebagai gerbang (kini **120 item**, `setVersi 3`) ✅ |
 
 **Yang belum tercapai dan menjadi pekerjaan Fase B–D:** pemahaman parafrase awam skala luas
 (lapis semantik), jawaban per-klaim bersitasi, perluasan cakupan data (per desa), dasbor celah
@@ -58,8 +58,9 @@ pengetahuan, dan umpan balik pengguna.
 
 | Ukuran | Nilai | Bukti |
 |---|---|---|
-| Evaluasi 90 item — mode AI | **90/90 (100%)** | `verifikasi/eval90-ai-run2.txt` |
-| Evaluasi 90 item — mode deterministik | **90/90 (100%)** | `verifikasi/eval90-det.txt` |
+| Evaluasi 90 item — mode AI (set lama) | **90/90 (100%)** | `verifikasi/eval90-ai-run2.txt` |
+| Evaluasi 90 item — mode deterministik (set lama) | **90/90 (100%)** | `verifikasi/eval90-det.txt` |
+| **Evaluasi 120 item — mode deterministik (set sekarang)** | **120/120 (100%)** · akurasi niat 30/30 · invarians 0 | `verifikasi/eval120-produksi-det.txt` |
 | `grounded pass` saat model dipanggil | **61/61 (100%)** | idem |
 | Fallback (jawaban AI dibuang) | **0%** | idem |
 | Invarians (halu/token/jargon/sumber/NIK) | **0 pelanggaran** | idem |
@@ -67,7 +68,7 @@ pengetahuan, dan umpan balik pengguna.
 | Latensi pertanyaan ber-bukti (penyedia mati) | **0,14–0,56 dtk** (dari 11,4 dtk) | `verifikasi/aman-cabang-perilaku.txt` |
 | Uji unit | 20 berkas / **237 uji** | `npm test` |
 | Kontrak API `/api/query` | **identik** (14 kunci, tanpa penghapusan) | `09` §3 |
-| Baseline regresi | `data/eval-baseline.json` **90/90, setVersi 2** | `verifikasi/eval90-baseline.txt` |
+| Baseline regresi | `data/eval-baseline.json` **120/120, setVersi 3** (24 Sep 2026) | `verifikasi/eval120-produksi.json` |
 
 **Sudah diterapkan (✅)** — niat jawaban (tren/perbandingan/peringkat/komposisi/distribusi/katalog/
 sebab/personal/nilai-saat-ini), gerbang nilai-tambah, penyisipan peringatan baku, gerbang niat-meta,
@@ -76,9 +77,18 @@ granularitas per desa, preferensi satuan fisik, penolakan permintaan aturan inte
 sirkuit penyedia (auth/throttle/server/jaringan/timeout), status jujur, fail-closed revalidate,
 token angka murni dibuang dari kueri, serialisasi evidence markdown-KV.
 
-**Belum ada (⬜)** — lapis semantik berbahasa Indonesia, pengunci cache semantik, jawaban
-per-klaim bersitasi, dasbor celah pengetahuan, umpan balik pengguna, log `gen_ai.*`, jawaban
-kausal bersitasi, data per desa, penjadwal penyegaran cache, dan pengujian dengan model sungguhan.
+**Belum ada (⬜)** — mengacu keadaan **sekarang (24 Sep 2026)**, yang masih terbuka hanya:
+**skor panel penilai manusia untuk EV-05** (instrumennya siap, tinggal 30 penilaian orang), dan
+**pengujian dengan model sungguhan** (EV-06 — menunggu perpanjangan langganan penyedia model).
+
+> Daftar "belum ada" yang lebih tua sudah tertutup dan **tidak** dihapus agar riwayatnya terbaca:
+> lapis semantik Bahasa Indonesia ✔ (FR-12), pengunci cache semantik ✔ (DS-03/FR-12), jawaban
+> per-klaim bersitasi ✔ (FR-19), dasbor celah pengetahuan ✔ (FR-27/FR-25), umpan balik pengguna ✔
+> (FR-26), log `gen_ai.*` ✔ (NFR-07), jawaban kausal bersitasi ✔ (FR-18 + FR-19), data per desa ✔
+> (FR-18/FR-23), penjadwal penyegaran cache ✔ (OPS-03), aksesibilitas ✔ (NFR-09), bentuk jawaban
+> per niat ✔ (FR-18), kamus daerah ✔ (DS-05), pemeriksa pasangan entitas ✔ (FR-24), jejak audit ✔
+> (CMP-04), keterbukaan AI ✔ (CMP-02), tata kelola risiko ✔ (CMP-03), set evaluasi 120 item ✔ (EV-05
+> bagian mesin).
 
 ---
 
@@ -89,7 +99,7 @@ seberapa pun bagusnya fitur baru.
 
 | Kode | Invariant | Mengapa |
 |---|---|---|
-| **INV-01** | **Model tidak pernah menulis angka.** Angka masuk melalui token `{{id}}` yang diisi kode dari bukti SAPA, lalu diperiksa pagar grounding | inilah yang membuat aplikasi ini tidak berhalusinasi angka — terukur 0 pelanggaran pada 90 item |
+| **INV-01** | **Model tidak pernah menulis angka.** Angka masuk melalui token `{{id}}` yang diisi kode dari bukti SAPA, lalu diperiksa pagar grounding | inilah yang membuat aplikasi ini tidak berhalusinasi angka — terukur 0 pelanggaran pada set lama 90 item **dan** set sekarang 120 item |
 | **INV-02** | **Visualisasi milik aplikasi**, bukan model (`buildVizFromEvidence`). Model hanya memberi `visualHint` | memindai grafik sebagai klaim prosa pernah membuang 26% jawaban model yang benar |
 | **INV-03** | **Peringatan sistem tidak boleh hilang** karena diringkas model; boleh diparafrase, boleh disisipkan — tidak boleh dihapus | "tidak ada data untuk tahun 2025" yang hilang = jawaban menyesatkan |
 | **INV-04** | **AI hanya disajikan bila menambah nilai** (catatan wajib utuh + sitasi ≥ kepala jawaban deterministik); bila tidak, sajikan jawaban deterministik **lengkap** | jawaban mode AI tidak boleh lebih miskin daripada mode template |
@@ -190,11 +200,11 @@ Format: **Kode · Kebutuhan · Alasan/bukti · Kriteria terima (terukur) · Usah
 
 | Kode | Kebutuhan | Ambang/kriteria | Status |
 |---|---|---|---|
-| **EV-01** | Set evaluasi **90 item** mencakup 12 kelompok: metadata, level, tren, perbandingan, persentase, distribusi, peringkat, kausal, parafrase, waktu relatif, keamanan, anomalı | 90/90 lulus di kedua mode | ✅ |
-| **EV-02** | **Baseline terkunci** (`data/eval-baseline.json`, setVersi 2) — setiap perubahan dibandingkan per item | 0 regresi diterima; regresi = build ditolak | ✅ |
+| **EV-01** | Set evaluasi **120 item** (versi 3) mencakup 12 kelompok lama **dan** 9 niat router: metadata/katalog, level, tren, perbandingan, persentase/komposisi, distribusi, peringkat, kausal/sebab, per-data-orang, parafrase, waktu relatif, keamanan, anomalı | 90/90 dua mode (set lama) → **120/120** deterministik + akurasi niat 30/30 (24 Sep 2026) | ✅ (diperluas EV-05) |
+| **EV-02** | **Baseline terkunci** (`data/eval-baseline.json`, kini **120/120, setVersi 3**) — setiap perubahan dibandingkan per item | 0 regresi diterima; regresi = build ditolak | ✅ |
 | **EV-03** | **Uji A/B AI vs deterministik** (10 pertanyaan multi-niat) untuk memastikan AI benar-benar menambah | sitasi AI > sitasi deterministik | ✅ (4,50 vs 3,00) |
 | **EV-04** | **Gerbang mutu AI**: grounded pass ≥ 90%, fallback ≤ 10%, grounded fail = 0 | tercapai 100% / 0% / 0 | ✅ |
-| **EV-05** | Perluasan ke **120 item** (30 item baru E01–E30) + panel penilai manusia 30 sampel | ≥ 3 item baru per niat lulus; skor relevansi penilai ≥ 4/5 | 🟡 (24 Sep 2026 — **120 item** · 9/9 niat ≥ 3 item baru **lulus** dengan bukti kuat · akurasi niat router **30/30** · harness `uji-eval-120.mjs` 32 pemeriksaan + kontrol negatif gagal seperti seharusnya · **3 temuan nyata diperbaiki** (gerbang meta “menurut tahun”, pagar “NIK dan alamat”, niat pada jalur pagar) · panel: instrumen + praskor mesin **4,93/5** siap, **skor manusia menunggu 30 penilaian** — laporan [30](30-LAPORAN-EV-05.md)) |
+| **EV-05** | Perluasan ke **120 item** (30 item baru E01–E30) + panel penilai manusia 30 sampel ([audit ulang 24 Sep → laporan 31](31-LAPORAN-AUDIT-ULANG.md)) | ≥ 3 item baru per niat lulus; skor relevansi penilai ≥ 4/5 | 🟡 (24 Sep 2026 — **120 item** · 9/9 niat ≥ 3 item baru **lulus** dengan bukti kuat · akurasi niat router **30/30** · harness `uji-eval-120.mjs` 32 pemeriksaan + kontrol negatif gagal seperti seharusnya · **3 temuan nyata diperbaiki** (gerbang meta “menurut tahun”, pagar “NIK dan alamat”, niat pada jalur pagar) · panel: instrumen + praskor mesin **4,93/5** siap, **skor manusia menunggu 30 penilaian** — laporan [30](30-LAPORAN-EV-05.md)) |
 | **EV-06** | **Uji dengan model sungguhan** (bukan penyedia tiruan), hasil dibandingkan dengan baseline | set 90 lulus dengan `AI_BASE_URL` produksi | ⬜ |
 
 ---
@@ -296,11 +306,11 @@ AI_URL=http://127.0.0.1:3116 DET_URL=http://127.0.0.1:3117 bash verifikasi/uji-t
 
 ```bash
 AI_BASE_URL=<penyedia asli> AI_API_KEY=<kunci> AI_MODEL=<model> npx next start -p 3116 &
-SAPA_EVAL_URL=http://127.0.0.1:3116 node scripts/eval-run.mjs     # bandingkan dengan baseline 90/90
+SAPA_EVAL_URL=http://127.0.0.1:3116 node scripts/eval-run.mjs     # bandingkan dengan baseline 120/120
 python3 verifikasi/banding-ai-vs-det.py verifikasi/uji-pertanyaan.txt   # A/B AI vs deterministik
 ```
 
-**Ambang penerimaan (dipakai skrip):** eval ≥ 90/90 · invarians 0 · grounded pass ≥ 90% ·
+**Ambang penerimaan (dipakai skrip, diturunkan dari set):** eval ≥ **120/120** · invarians 0 · grounded pass ≥ 90% ·
 fallback ≤ 10% · uji unit ≥ 230 · revalidate menolak tanpa rahasia.
 
 ---
@@ -328,7 +338,7 @@ Sebuah pekerjaan dianggap **selesai** hanya bila **semuanya** terpenuhi:
 1. Kode diterapkan **tanpa melanggar satu pun INV-01…INV-07**.
 2. `npm run typecheck` bersih · **seluruh uji unit lulus** · `next build` bersih.
 3. `bash verifikasi/uji-terima.sh` **LULUS** (semua ambang, dua mode).
-4. Evaluasi **90/90** di mode AI **dan** deterministik, **0 regresi** terhadap baseline.
+4. Evaluasi **120/120** (set sekarang) di mode deterministik dan — bila model tersedia — mode AI; **0 regresi** terhadap baseline.
 5. A/B AI vs deterministik menunjukkan AI **tidak lebih miskin** (sitasi ≥ template).
 6. Ada **bukti angka tersimpan** di `verifikasi/` + pesan komit memuat alasan & hasil.
 7. Dokumentasi diperbarui (dokumen ini bila menyentuh kebutuhan; `04`/`05` bila menyentuh desain/peta jalan).
@@ -363,7 +373,8 @@ Sebuah pekerjaan dianggap **selesai** hanya bila **semuanya** terpenuhi:
 
 | Berkas | Isi |
 |---|---|
-| `verifikasi/eval90-ai-run2.txt` | eval 90 item mode AI: 90/90, grounded 100%, fallback 0% |
+| `verifikasi/eval90-ai-run2.txt` | arsip set lama: eval 90 item mode AI 90/90, grounded 100%, fallback 0% |
+| `verifikasi/eval120-produksi.json` + `eval120-produksi-det.txt` | dump & keluaran penilai **120 item** (set sekarang) — dipakai `uji-eval-120.mjs` |
 | `verifikasi/eval90-det.txt` | eval 90 item mode deterministik: 90/90 |
 | `verifikasi/eval90-baseline.txt` | penulisan baseline baru (90/90, setVersi 2) |
 | `verifikasi/uji-terima-hasil.txt` | keluaran uji terima otomatis dua mode |

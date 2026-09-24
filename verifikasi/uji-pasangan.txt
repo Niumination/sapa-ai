@@ -1,0 +1,62 @@
+
+Uji pasangan entitas (FR-24 / EV-24) → http://127.0.0.1:3181
+
+  katalog: 2065 record · mode AI: inactive · set: data/eval-set.json
+
+  [32m✓[0m Q01  15 bukti · gerbang=0 · nilai diperiksa 3 · jalur deterministik
+  [32m✓[0m Q04  15 bukti · gerbang=0 · nilai diperiksa 3 · jalur deterministik
+  [32m✓[0m Q06  15 bukti · gerbang=0 · nilai diperiksa 3 · jalur deterministik
+  [32m✓[0m L1   15 bukti · gerbang=0 · nilai diperiksa 3 · jalur deterministik
+  [32m✓[0m L2    8 bukti · gerbang=0 · nilai diperiksa 3 · jalur deterministik
+  [32m✓[0m L3   15 bukti · gerbang=0 · nilai diperiksa 3 · jalur deterministik
+  [32m✓[0m L4    6 bukti · gerbang=0 · nilai diperiksa 3 · jalur deterministik
+  [32m✓[0m L5    9 bukti · gerbang=0 · nilai diperiksa 3 · jalur deterministik
+  [32m✓[0m L6   15 bukti · gerbang=0 · nilai diperiksa 3 · jalur deterministik
+  [32m✓[0m L7    4 bukti · gerbang=0 · nilai diperiksa 3 · jalur deterministik
+  [32m✓[0m L8    3 bukti · gerbang=0 · nilai diperiksa 3 · jalur deterministik
+  [32m✓[0m L9    5 bukti · gerbang=0 · nilai diperiksa 3 · jalur deterministik
+  [32m✓[0m L10   8 bukti · gerbang=0 · nilai diperiksa 3 · jalur deterministik
+  [32m✓[0m T1    2 bukti · gerbang=0 · nilai diperiksa 2 · jalur deterministik
+  [32m✓[0m T2   11 bukti · gerbang=0 · nilai diperiksa 3 · jalur deterministik
+  [32m✓[0m T3    1 bukti · gerbang=0 · nilai diperiksa 1 · jalur deterministik
+  [32m✓[0m T4    6 bukti · gerbang=0 · nilai diperiksa 3 · jalur deterministik
+  [32m✓[0m T5   11 bukti · gerbang=0 · nilai diperiksa 3 · jalur deterministik
+  [32m✓[0m T6   15 bukti · gerbang=0 · nilai diperiksa 3 · jalur deterministik
+  [32m✓[0m T7   15 bukti · gerbang=0 · nilai diperiksa 3 · jalur deterministik
+  [32m✓[0m T8   15 bukti · gerbang=0 · nilai diperiksa 3 · jalur deterministik
+  [32m✓[0m T9    6 bukti · gerbang=0 · nilai diperiksa 3 · jalur deterministik
+  [32m✓[0m T10  15 bukti · gerbang=0 · nilai diperiksa 3 · jalur deterministik
+  [32m✓[0m C1    2 bukti · gerbang=0 · nilai diperiksa 2 · jalur deterministik
+  [32m✓[0m C2   15 bukti · gerbang=0 · nilai diperiksa 3 · jalur deterministik
+  [32m✓[0m C3   13 bukti · gerbang=0 · nilai diperiksa 3 · jalur deterministik
+  [32m✓[0m C4    8 bukti · gerbang=0 · nilai diperiksa 3 · jalur deterministik
+  [32m✓[0m C5    9 bukti · gerbang=0 · nilai diperiksa 3 · jalur deterministik
+  [32m✓[0m C6   15 bukti · gerbang=0 · nilai diperiksa 3 · jalur deterministik
+  [32m✓[0m C7    7 bukti · gerbang=0 · nilai diperiksa 3 · jalur deterministik
+  [32m✓[0m C8    0 bukti · gerbang=0 · nilai diperiksa 0 · jalur deterministik
+  [32m✓[0m C9    2 bukti · gerbang=0 · nilai diperiksa 2 · jalur deterministik
+  [32m✓[0m C10   3 bukti · gerbang=0 · nilai diperiksa 3 · jalur deterministik
+  [32m✓[0m P1   15 bukti · gerbang=0 · nilai diperiksa 3 · jalur deterministik
+  [32m✓[0m P2    3 bukti · gerbang=0 · nilai diperiksa 3 · jalur deterministik
+  [32m✓[0m P3   15 bukti · gerbang=0 · nilai diperiksa 3 · jalur deterministik
+  [32m✓[0m P4   15 bukti · gerbang=0 · nilai diperiksa 3 · jalur deterministik
+  [32m✓[0m P5    9 bukti · gerbang=0 · nilai diperiksa 3 · jalur deterministik
+  [32m✓[0m P6    6 bukti · gerbang=0 · nilai diperiksa 3 · jalur deterministik
+  [32m✓[0m P7    3 bukti · gerbang=0 · nilai diperiksa 3 · jalur deterministik
+  [32m✓[0m P8   15 bukti · gerbang=0 · nilai diperiksa 3 · jalur deterministik
+  [32m✓[0m P9    5 bukti · gerbang=0 · nilai diperiksa 3 · jalur deterministik
+  [32m✓[0m P10   3 bukti · gerbang=0 · nilai diperiksa 3 · jalur deterministik
+  [32m✓[0m D1   15 bukti · gerbang=0 · nilai diperiksa 3 · jalur deterministik
+  [32m✓[0m D2    1 bukti · gerbang=0 · nilai diperiksa 1 · jalur deterministik
+  [32m✓[0m D3   15 bukti · gerbang=0 · nilai diperiksa 3 · jalur deterministik
+  [32m✓[0m D4   11 bukti · gerbang=0 · nilai diperiksa 3 · jalur deterministik
+  [32m✓[0m D5   15 bukti · gerbang=0 · nilai diperiksa 3 · jalur deterministik
+  [32m✓[0m D6   15 bukti · gerbang=0 · nilai diperiksa 3 · jalur deterministik
+  [32m✓[0m R1    0 bukti · gerbang=0 · nilai diperiksa 0 · jalur deterministik
+
+  ──────────────── Ringkasan ────────────────
+  keluaran diperiksa      : 50
+  kesalahan pasangan      : 0  (ambang dokumen 10: 0 dari 50)
+  narasi model ditolak    : 0  (gerbang FR-24 bekerja)
+  temuan keras di balasan : 0  (harus 0 — balasan yang disajikan tidak boleh bertemuan keras)
+  [32m✓[0m LULUS — 0 kesalahan pasangan pada 50 keluaran sampel.

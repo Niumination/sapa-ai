@@ -27,8 +27,39 @@ export default function HalamanTataKelolaRisiko() {
     (a, b) => ({ tinggi: 0, sedang: 1, rendah: 2 })[a.tingkat] - ({ tinggi: 0, sedang: 1, rendah: 2 })[b.tingkat],
   );
 
-  return (
-    <main className="mx-auto w-full max-w-4xl px-5 py-10">
+    return (
+    <>
+      {/* NFR-09 + CMP: tautan lompati & navigasi halaman publik.
+          Halaman ini dibuka warga dari tautan notis/keterbukaan; tanpa navigasi
+          tidak ada jalan kembali ke aplikasi, dan tanpa tautan lompati pengguna
+          papan ketik harus melewati navigasi setiap kali. */}
+      <a
+        href="#konten"
+        className="sr-only focus:not-sr-only focus:absolute focus:left-4 focus:top-3 focus:z-50 focus:rounded-lg focus:bg-[#1B4332] focus:px-4 focus:py-2 focus:text-sm focus:font-bold focus:text-white"
+      >
+        Lompati ke konten
+      </a>
+      <nav aria-label="Navigasi halaman" className="mx-auto w-full max-w-4xl px-5 pt-6">
+        <ul className="flex flex-wrap gap-x-5 gap-y-2 text-sm text-[#1B4332]">
+          <li>
+            <Link href="/" className="underline underline-offset-2 hover:text-[#14352A]">
+              SAPA Smart AI
+            </Link>
+          </li>
+          <li>
+            <Link href="/keterbukaan" className="underline underline-offset-2 hover:text-[#14352A]">
+              Keterbukaan penggunaan AI
+            </Link>
+          </li>
+          <li>
+            <Link href="/tata-kelola-risiko" className="underline underline-offset-2 hover:text-[#14352A]">
+              Tata kelola risiko
+            </Link>
+          </li>
+        </ul>
+      </nav>
+      <main id="konten" className="mx-auto w-full max-w-4xl px-5 py-10">
+
       <p className="text-xs uppercase tracking-wide text-[#767D6F]">
         Pemerintah Kabupaten Aceh Tengah · SAPA Smart AI
       </p>
@@ -134,6 +165,7 @@ export default function HalamanTataKelolaRisiko() {
           ← Kembali ke dasbor SAPA
         </Link>
       </p>
-    </main>
+      </main>
+    </>
   );
 }

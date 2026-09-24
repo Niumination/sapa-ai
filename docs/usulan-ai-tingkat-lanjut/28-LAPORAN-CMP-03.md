@@ -4,6 +4,14 @@
 **Rujukan:** ISO/IEC 42001 · NIST AI RMF (Govern · Map · Measure · Manage)
 **Status dokumen 10:** `🟡 (dokumen 10 §13 ✅; pemilik risiko ⬜)` → **✅**
 
+## 0. Catatan lanjutan (audit ulang 24 Sep 2026)
+
+Halaman publik dari butir ini (`/tata-kelola-risiko`) awalnya tidak punya navigasi sama sekali —
+tidak ada jalan kembali ke aplikasi bagi warga yang membukanya. Pada audit ulang ditambahkan
+`<nav aria-label="Navigasi halaman">`, tautan lompati, dan `<main id="konten">`, sekaligus halaman
+ini masuk cakupan harness aksesibilitas (`uji-aksesibilitas.mjs`) bersama `/keterbukaan`.
+Rinci: [laporan 31](31-LAPORAN-AUDIT-ULANG.md).
+
 ## 1. Ringkas
 
 | Sebelum | Sesudah |

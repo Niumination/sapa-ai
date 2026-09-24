@@ -39,6 +39,21 @@ pesan jelas (HTTP 503), bukan angka kosong atau galat 500.
 - **GIS 14 kecamatan** — sebaran indikator pada peta
 - **Laporan eksekutif** — riwayat tersimpan di peramban pengguna
 - **Status jujur** — `/api/status` melaporkan keadaan sumber data dan AI apa adanya
+- **Keterbukaan penggunaan AI** — halaman publik `/keterbukaan` + endpoint mesin
+  `/api/keterbukaan`; notis per jawaban menyatakan apakah jawaban disusun model AI,
+  ditolak gerbang, atau belum ada AI aktif
+- **Tata kelola risiko** — register risiko berbasis kode di `/tata-kelola-risiko` +
+  `/api/tata-kelola-risiko`; setiap risiko bertuan (peran), berkendali, dan menunjuk
+  berkas bukti yang benar-benar ada
+- **Jejak audit jawaban** — `GET /api/admin/jejak-audit` (JSON/CSV/NDJSON, fail-closed):
+  pertanyaan tersamar, bukti, gerbang, sebab, durasi; retensi 30 hari
+- **Kanal koreksi warga** — tombol "Lapor angka" pada notis jawaban + dasbor tinjauan
+  `/admin/umpan-balik`
+- **Kesegaran data & celah pengetahuan** — stempel waktu tarik + sidik isi korpus, dan
+  dasbor `/admin/celah-pengetahuan` untuk pertanyaan yang belum terjawab
+- **Sitasi per klaim** — narasi jawaban memuat penanda `[n]` yang dapat dirujuk ke baris bukti
+- **Aksesibilitas WCAG 2.2 AA** — halaman dashboard dan dua halaman publik diperiksa
+  otomatis (kontras, sasaran 24 px, tautan lompati, wilayah live)
 
 ## Tumpukan teknologi
 
@@ -46,7 +61,9 @@ pesan jelas (HTTP 503), bukan angka kosong atau galat 500.
 - **Layanan data:** Next.js API Routes (Node.js) — tanpa ORM, tanpa basis data
 - **Sumber data:** API SPLP `https://api-splp.layanan.go.id/sapa/1.0/api`
 - **Cache:** LRU per-instance 10 menit + `unstable_cache` 600 detik terdistribusi
-- **Pengujian:** Vitest — 169 pengujian pada 17 berkas
+- **Pengujian:** Vitest — **715 pengujian pada 44 berkas**; ditambah harness
+  ujung-ke-ujung di `scripts/` (evaluasi 120 item, bentuk jawaban per niat, keterbukaan,
+  tata kelola risiko, jejak audit, aksesibilitas, kamus daerah, pembersihan data katalog)
 - **Penempatan:** Vercel, fungsi dijalankan di region `sin1` (Singapura)
 
 ## Mulai cepat
@@ -88,8 +105,12 @@ src/
 │   ├── api/sapa|kpi|stats|report/   # agregat untuk dashboard (cache 10 menit)
 │   ├── api/status/         # kesehatan sumber data dan AI (tidak di-cache)
 │   ├── api/revalidate/     # penyegaran cache {tag|tags|all}
-│   ├── api/admin/          # pengendali saklar layanan
-│   ├── admin/ai-toggle/    # panel pengelola
+│   ├── api/keterbukaan|tata-kelola-risiko/   # keterbukaan AI & register risiko (publik)
+│   ├── api/umpan-balik/    # kanal koreksi warga (tanpa menyimpan angka)
+│   ├── api/admin/          # saklar layanan, telemetri, jejak audit, celah, umpan balik, peringatan
+│   ├── admin/              # ai-toggle, umpan-balik, celah-pengetahuan
+│   ├── keterbukaan/        # halaman publik keterbukaan penggunaan AI
+│   ├── tata-kelola-risiko/ # halaman publik register risiko
 │   └── dashboard/          # dashboard, analytics, gis, laporan, status
 ├── components/             # QueryBar, KpiPanel, OpdDrilldown, ExecutiveAnswerRenderer, ...
 ├── lib/                    # sapa-client (SPLP + retrieval + LRU), format angka, ai/ (klien model, prompt, skema, guard, ejector)
@@ -106,6 +127,13 @@ src/
 - Dokumen pendukung lain: [`docs/`](docs/) — `AI_MODE_SHADOW.md`,
   `DESAIN-PIPELINE-DETERMINISTIK.md`, `archive/`, serta paket serah terima
   [`docs/serah-terima/`](docs/serah-terima/).
+- **Pekerjaan tingkat lanjut di cabang `dev`**: peta kebutuhan, laporan per butir,
+  dan kit serahterimanya ada di
+  [`docs/usulan-ai-tingkat-lanjut/`](docs/usulan-ai-tingkat-lanjut/) — mulai dari
+  [`10-KEBUTUHAN-UPGRADE-TINGKAT-LANJUT.md`](docs/usulan-ai-tingkat-lanjut/10-KEBUTUHAN-UPGRADE-TINGKAT-LANJUT.md)
+  (status per butir) dan
+  [`11-KIT-SERAH-TERIMA.md`](docs/usulan-ai-tingkat-lanjut/11-KIT-SERAH-TERIMA.md)
+  (cara memasang & memverifikasi).
 
 ## Lisensi
 

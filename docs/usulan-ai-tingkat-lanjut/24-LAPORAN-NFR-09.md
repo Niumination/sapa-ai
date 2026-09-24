@@ -131,3 +131,20 @@ ke-1). Cara lain: kembalikan satu `text-[#767D6F]` ke kepala gelap → pasangan 
 Urutan yang disetujui: DS-03 ✅ → **NFR-09 ✅** → **FR-18** (bentuk jawaban per niat: tabel tren,
 peringkat 5 besar, komposisi — minimal 3 bentuk per niat lulus) → **DS-05** (kamus sinonim daerah
 ≥ 50 entri).
+
+## Lanjutan — audit ulang 24 Sep 2026 (ringkas; rinci di laporan 31)
+
+Audit ulang menyeluruh menemukan **satu cacat aksesibilitas yang lahir setelah NFR-09** dan
+**dua temuan palsu** pada pemeriksa; ketiganya sudah diperbaiki:
+
+| Hal | Keadaan |
+| --- | --- |
+| Tautan "Keterbukaan penggunaan AI" pada notis transparansi (komponen dari CMP-02) | bergaya tombol `py-1.5` **tanpa** `target-min` → sasaran < 24 px (SC 2.5.8). Kini diberi `target-min`, dan aturan dipisah menjadi `periksaSasaranTautan()` yang **diuji unit atas markup komponen yang benar-benar dirender** + sabotase |
+| Aturan tautan lompati | dulu dituntut pada **setiap** halaman; kini hanya bila memang ada tautan sebelum `<main>` (SC 2.4.1 = blok berulang) |
+| Aturan wilayah live | dulu dituntut pada **setiap** halaman; kini hanya bila halaman punya permukaan tanya (form/isian) |
+| Cakupan halaman | `['/dashboard']` → **`['/dashboard', '/keterbukaan', '/tata-kelola-risiko']`** — dua permukaan publik dari CMP-02/CMP-03 |
+| Kedua halaman publik | kini punya `<nav aria-label="Navigasi halaman">`, tautan lompati, dan `<main id="konten">` (sebelumnya tidak ada jalan kembali ke aplikasi) |
+
+Hasil akhir: `node scripts/uji-aksesibilitas.mjs` → **exit 0** pada tiga halaman, 9/9 sabotase HTML,
+3/3 sabotase CSS, 25/25 pasangan kontras. **Aturan tetap:** setiap permukaan publik baru wajib
+masuk daftar halaman harness pada komit yang sama.

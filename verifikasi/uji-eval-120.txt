@@ -1,5 +1,3 @@
-[info] menjalankan penilai eval-120 terhadap http://127.0.0.1:3181 …
-[info] penilai selesai; dump: verifikasi/eval120-produksi.json
 ── A. Bentuk set evaluasi ──
 
 ── B/C. Lulus per niat + kekuatan mode ──

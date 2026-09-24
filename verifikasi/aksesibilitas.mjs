@@ -376,6 +376,39 @@ export function periksaPotonganHtml(html, opsi = {}) {
  * @param {{nama?: string}} opsi
  * @returns {{pelanggaran: string[], catatan: string[], statistik: Record<string, number>}}
  */
+/**
+ * Aturan (13) — ukuran sasaran sentuh untuk TAUTAN yang bergaya tombol ringkas.
+ *
+ * Dipisahkan menjadi fungsi tersendiri (24 Sep 2026) karena dua alasan:
+ *   1. uji unit dapat memanggilnya langsung atas markup komponen yang benar-benar
+ *      dirender (uji halaman tidak menjangkau komponen yang hanya muncul setelah
+ *      jawaban tampil);
+ *   2. pemeriksaan halaman dan pemeriksaan komponen memakai SATU sumber aturan.
+ *
+ * Kenapa penting: cacat ini pernah lolos — tautan "Keterbukaan penggunaan AI"
+ * pada notis transparansi bergaya tombol dengan `py-1.5` tanpa `target-min`,
+ * sehingga tingginya di bawah 24 px. Harness halaman menangkapnya; sekarang uji
+ * unit komponen pun menangkapnya lebih dulu.
+ *
+ * @returns {{pelanggaran: string[], kontrolRingkas: number}}
+ */
+export function periksaSasaranTautan(html, nama = 'potongan') {
+  const pelanggaran = [];
+  let kontrolRingkas = 0;
+  for (const el of ambilElemen(html, 'a')) {
+    const kelas = atr(el.tag, 'class') ?? '';
+    const ringkas = /text-\[(9|10)px\]|\bp-1\b|\bpy-1\b/.test(kelas);
+    if (!ringkas) continue;
+    kontrolRingkas += 1;
+    if (!/target-min|min-h-\[?24px\]?|\bmin-h-6\b/.test(kelas)) {
+      pelanggaran.push(
+        `[${nama}] tautan bergaya tombol ringkas tanpa jaminan ukuran sasaran 24 px (SC 2.5.8) — tambahkan kelas "target-min"; kelas: ${kelas.slice(0, 70)}…`,
+      );
+    }
+  }
+  return { pelanggaran, kontrolRingkas };
+}
+
 export function periksaHtml(html, opsi = {}) {
   const nama = opsi.nama ?? 'dokumen';
   const pelanggaran = [];
@@ -409,15 +442,32 @@ export function periksaHtml(html, opsi = {}) {
     sebelumnya = t;
   }
 
-  // (5) tautan lompati navigasi
+  // (5) tautan lompati navigasi.
+  //     DIRAPIKAN 24 Sep 2026: SC 2.4.1 (Bypass Blocks) menuntut mekanisme
+  //     melewati BLOK YANG BERULANG. Sebelumnya aturan ini menuntut tautan
+  //     lompati pada SETIAP halaman — halaman statis tanpa satu pun tautan
+  //     sebelum <main> (mis. /keterbukaan, /tata-kelola-risiko) akan dituduh
+  //     melanggar padahal tak ada blok berulang untuk dilewati. Kini tautan itu
+  //     dituntut HANYA bila memang ada tautan sebelum <main>.
   const tautanAwal = ambilElemen(html, 'a').filter((a) => a.mulai < (mains[0]?.mulai ?? html.length));
-  const punyaLompat = tautanAwal.some((a) => /lompati|lewati|skip/i.test(teksDari(a.isi)));
-  if (!punyaLompat) pelanggaran.push(`[${nama}] tidak ada tautan "Lompati ke konten" sebelum <main> — pengguna papan ketik terjebak di menu`);
+  if (tautanAwal.length > 0) {
+    const punyaLompat = tautanAwal.some((a) => /lompati|lewati|skip/i.test(teksDari(a.isi)));
+    if (!punyaLompat) pelanggaran.push(`[${nama}] tidak ada tautan "Lompati ke konten" sebelum <main> — pengguna papan ketik terjebak di menu`);
+  } else {
+    catatan.push(`[${nama}] tidak ada tautan sebelum <main> — tautan lompati tidak dituntut (SC 2.4.1 hanya untuk blok berulang)`);
+  }
 
-  // (11) wilayah live untuk jawaban yang muncul tanpa pindah halaman
+  // (11) wilayah live untuk jawaban yang muncul tanpa pindah halaman.
+  //      DIRAPIKAN 24 Sep 2026: hanya dituntut pada halaman yang memang punya
+  //      permukaan tanya (form/isian). Halaman statis tidak "mengumumkan"
+  //      apa pun, jadi menuntut wilayah live di sana hanya menghasilkan
+  //      temuan palsu yang melemahkan kepercayaan pada pemeriksa.
+  const adaPermukaanTanya = /<form|<input|<textarea/i.test(html);
   const adaLive = /aria-live\s*=\s*"(polite|assertive)"/i.test(html) || /role\s*=\s*"(status|alert|log)"/i.test(html);
-  if (!adaLive) {
+  if (adaPermukaanTanya && !adaLive) {
     pelanggaran.push(`[${nama}] tidak ada wilayah live (aria-live / role="status") — jawaban yang muncul setelah bertanya tidak diumumkan`);
+  } else if (!adaPermukaanTanya) {
+    catatan.push(`[${nama}] halaman statis (tanpa permukaan tanya) — wilayah live tidak dituntut`);
   }
 
   // (6)–(12) pemeriksaan tingkat potongan (dipakai bersama uji komponen)
@@ -430,18 +480,9 @@ export function periksaHtml(html, opsi = {}) {
   //      `periksaCss` atas berkas gaya yang benar-benar dikirim server. Yang
   //      masih harus membawa kelas `target-min` adalah TAUTAN yang dipakai
   //      sebagai tombol (tidak tertangkap aturan `button`).
-  let kontrolRingkas = 0;
-  for (const el of ambilElemen(html, 'a')) {
-    const kelas = atr(el.tag, 'class') ?? '';
-    const ringkas = /text-\[(9|10)px\]|\bp-1\b|\bpy-1\b/.test(kelas);
-    if (!ringkas) continue;
-    kontrolRingkas += 1;
-    if (!/target-min|min-h-\[?24px\]?|\bmin-h-6\b/.test(kelas)) {
-      pelanggaran.push(
-        `[${nama}] tautan bergaya tombol ringkas tanpa jaminan ukuran sasaran 24 px (SC 2.5.8) — tambahkan kelas "target-min"; kelas: ${kelas.slice(0, 70)}…`,
-      );
-    }
-  }
+  const sasaranTautan = periksaSasaranTautan(html, nama);
+  pelanggaran.push(...sasaranTautan.pelanggaran);
+  const kontrolRingkas = sasaranTautan.kontrolRingkas;
 
   return {
     pelanggaran,

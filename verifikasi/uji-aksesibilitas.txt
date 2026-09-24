@@ -1,11 +1,17 @@
 [1m
-  NFR-09 · aksesibilitas http://127.0.0.1:3131 (WCAG 2.2 AA)
+  NFR-09 · aksesibilitas http://127.0.0.1:3181 (WCAG 2.2 AA)
 [0m
-  [1m/dashboard[0m — 30482 bita
-  [36m·[0m statistik: judul h1 1 · tingkat judul 3 · kontrol bernama 19 · kontrol ringkas 0 · gambar 1 · tabel 0
+  [1m/dashboard[0m — 30694 bita
+  [36m·[0m statistik: judul h1 1 · tingkat judul 3 · kontrol bernama 20 · kontrol ringkas 1 · gambar 1 · tabel 0
+  [32m✓[0m struktur: tidak ada pelanggaran
+  [1m/keterbukaan[0m — 26789 bita
+  [36m·[0m statistik: judul h1 1 · tingkat judul 9 · kontrol bernama 7 · kontrol ringkas 0 · gambar 0 · tabel 0
+  [32m✓[0m struktur: tidak ada pelanggaran
+  [1m/tata-kelola-risiko[0m — 70925 bita
+  [36m·[0m statistik: judul h1 1 · tingkat judul 11 · kontrol bernama 7 · kontrol ringkas 0 · gambar 0 · tabel 0
   [32m✓[0m struktur: tidak ada pelanggaran
 
-  [1mGaya yang dikirim server[0m — 1 berkas · 56020 bita
+  [1mGaya yang dikirim server[0m — 1 berkas · 57156 bita
   [32m✓[0m janji di CSS ada: sasaran 24 px ya · cincin fokus ya · prefers-reduced-motion ya
 
   [1mUji diri pemeriksa CSS[0m — 3 sabotase
@@ -27,8 +33,12 @@
   [1mKontras token yang dipakai[0m — 25 pasangan diperiksa
   [32m✓[0m semua pasangan memenuhi ambang WCAG 2.2 AA (paling ketat: Batas kartu di latar halaman (--border di --background) 3.13:1)
 
+  [1mCatatan (bukan pelanggaran)[0m
+  [36m·[0m [/keterbukaan] halaman statis (tanpa permukaan tanya) — wilayah live tidak dituntut
+  [36m·[0m [/tata-kelola-risiko] halaman statis (tanpa permukaan tanya) — wilayah live tidak dituntut
+
   ──────────────── Ringkasan ────────────────
-  halaman diperiksa   : /dashboard
+  halaman diperiksa   : /dashboard, /keterbukaan, /tata-kelola-risiko
   sabotase tertangkap : 9/9 (HTML) · 3/3 (CSS)
   pasangan kontras    : 25/25 lulus
 

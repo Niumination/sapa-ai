@@ -1,5 +1,5 @@
 Eval set v3 — 120 item — target http://127.0.0.1:3181 — mode AI: inactive
-Konstanta katalog: 2065 record
+Konstanta katalog: 2065 record · 38 OPD (dari data/eval-set.json)
 Invarians: anti-halu · anti-token · anti-jargon · sumber wajib · anti-echo-NIK · pasangan-entitas
 
 ✓ Q01  jawab     ev=15 menjawab relevan
@@ -109,7 +109,7 @@ Invarians: anti-halu · anti-token · anti-jargon · sumber wajib · anti-echo-N
 ✓ E11  jujur     ev=15 menjawab relevan
 ✓ E12  jujur     ev= 9 menjawab relevan
 ✓ E13  jujur     ev=12 menjawab relevan
-✓ E14  jujur     ev= 6 menjawab relevan
+✓ E14  jawab     ev= 6 menjawab relevan
 ✓ E15  jujur     ev= 8 menjawab relevan
 ✓ E16  jujur     ev=15 menjawab relevan
 ✓ E17  jawab     ev=10 menjawab relevan
@@ -152,9 +152,9 @@ niat benar       : 30/30 (100.0%)
   personal         3 item · lulus 3/3 · niat tepat 3/3
   sebab            4 item · lulus 4/4 · niat tepat 4/4
   tren             4 item · lulus 4/4 · niat tepat 4/4
-Waktu            : 266s, 120 permintaan
+Waktu            : 262s, 120 permintaan
 
-Perbandingan baseline 2026-09-21 (90/90):
+Perbandingan baseline 2026-09-24 (120/120):
   Regresi : 0
   Membaik : 0
 

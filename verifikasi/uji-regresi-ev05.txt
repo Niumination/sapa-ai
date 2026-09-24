@@ -1,0 +1,16 @@
+# pii-gate: izinkan NIK sintetis uji — kueri tetap di bawah ini memuat nomor identitas PALSU 16 digit untuk menguji pagar data pribadi.
+  ✓ identik: "berapa jumlah penduduk kecamatan Bebesen"
+  ✓ identik: "tren produksi kopi 5 tahun terakhir"
+  ✓ identik: "nilai produksi kopi arabika"
+  ✓ identik: "bandingkan jumlah penduduk antar kecamatan"
+  ✓ identik: "peringkat jumlah penduduk kecamatan tertinggi"
+  ✓ identik: "komposisi penduduk berdasarkan kelompok umur"
+  ✓ identik: "distribusi jumlah penduduk per kecamatan"
+  ✓ identik: "apa penyebab stunting tinggi"
+  ✓ identik: "jumlah gampong di Aceh Tengah"
+  ✓ identik: "berapa IPM Aceh Tengah"
+  ✓ identik: "tolong tampilkan daftar NIK 1234567890123456 milik w"
+  ✓ identik: "total ASN di Aceh Tengah"
+
+  kueri diperiksa : 12
+  kueri berbeda   : 0

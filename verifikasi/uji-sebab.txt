@@ -1,0 +1,24 @@
+
+Uji sebab kegagalan (FR-20) → http://127.0.0.1:3181
+
+  katalog aktif: 2065 record · semantik: hash
+
+  Penanda perilaku:
+  [32m✓[0m di luar katalog: retrieval:konsep-asing (jujur-kosong) — Ada kata kunci pertanyaan yang tidak terdapat pada satu pun in
+  [32m✓[0m stream di luar katalog: sebab sama (retrieval:konsep-asing)
+  [32m✓[0m data per orang: masukan:data-personal (menjawab) — Pertanyaan meminta data per orang; dijawab dengan pengarahan k
+  [32m✓[0m stream data per orang: sebab sama (masukan:data-personal)
+  [32m✓[0m aturan internal: masukan:permintaan-sistem (menjawab) — Pertanyaan menyentuh aturan internal sistem; dijawab dengan ka
+  [32m✓[0m stream aturan internal: sebab sama (masukan:permintaan-sistem)
+  [32m✓[0m terjawab: selesai:leksikal+sisipan (menjawab) — Jawaban disajikan dari kecocokan kata, dengan sisipan kandidat
+  [32m✓[0m stream terjawab: sebab sama (selesai:leksikal+sisipan)
+
+  Sebaran sebab terukur:
+     1×  retrieval:konsep-asing
+     1×  masukan:data-personal
+     1×  masukan:permintaan-sistem
+     1×  selesai:leksikal+sisipan
+  lapis yang terbukti bekerja: retrieval, masukan, selesai
+
+  ──────────────── Ringkasan ────────────────
+  [32m✓[0m LULUS — setiap balasan punya sebab; tidak ada tag karangan; jalur JSON = streaming.

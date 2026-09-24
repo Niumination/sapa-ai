@@ -312,7 +312,8 @@ if (!items.length) { console.error('Tidak ada item yang cocok dengan filter.'); 
 
 // Info mode AI + konstanta katalog DINAMIS (perbaikan audit 2026-09-21).
 //
-// MASALAH TERUKUR: anti-halu mengizinkan konstanta katalog hardcode 2055.
+// MASALAH TERUKUR: anti-halu dulu mengizinkan konstanta katalog hardcode 2055.
+// Kini angkanya dibaca dari medan `korpus` di data/eval-set.json (2.065 pada 24 Sep 2026),
 // Katalog produksi kini 2.065 record, sehingga narasi deterministik yang BENAR
 // ("Dari 2.065 record SAPA…") ditandai "angka di luar evidence" — dan pada
 // pengukuran 21 Sep 2026 hal ini menggagalkan 65 dari 78 item, menutupi mutu
@@ -328,7 +329,7 @@ try {
   if (Number.isFinite(o) && o > 0) KATALOG.opd = o;
 } catch { /* server mungkin tak punya /api/status */ }
 console.log(`Eval set v${set.versi} — ${items.length} item — target ${BASE} — mode AI: ${aiState}`);
-console.log(`Konstanta katalog: ${KATALOG.records ?? '2055 (bawaan kode)'} record`);
+console.log(`Konstanta katalog: ${KATALOG.records ?? '(tidak ada di set)'} record · ${KATALOG.opd ?? '?'} OPD (dari data/eval-set.json)`);
 console.log(`Invarians: anti-halu · anti-token · anti-jargon · sumber wajib · anti-echo-NIK · pasangan-entitas${DO_STREAM ? ' · parity SSE' : ''}${DO_STABILITY ? ' · stabilitas' : ''}\n`);
 
 // EV-05: regenerasi baseline DARI dump mesin — tanpa memanggil ulang 120 item.

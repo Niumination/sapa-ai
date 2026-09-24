@@ -20,7 +20,11 @@
 import { periksaHtml, periksaKontras, periksaCss, ambilElemen, atr } from '../verifikasi/aksesibilitas.mjs';
 
 const URL_DASAR = process.env.SAPA_A11Y_URL ?? 'http://127.0.0.1:3131';
-const JALUR = ['/dashboard'];
+// Halaman diperiksa. `24 Sep 2026`: ditambah dua permukaan publik yang lahir
+// dari CMP-02/CMP-03 — justru halaman yang paling perlu diaudit karena dibuka
+// warga, bukan operator. Cacat nyata pada tautan notis transparansi ditemukan
+// justru karena halaman ini ikut diperiksa.
+const JALUR = ['/dashboard', '/keterbukaan', '/tata-kelola-risiko'];
 
 const warna = {
   ok: '\x1b[32m✓\x1b[0m',

@@ -8,10 +8,11 @@
   },
   "korpus": {
     "sumber": "https://api-splp.layanan.go.id/sapa/1.0/api/daftar_data",
-    "record": 2055,
+    "record": 2065,
     "opd": 38,
-    "diambil": "2026-09-04",
-    "catatan": "Satu-satunya sumber aplikasi ini. 2.055 record dari 38 OPD."
+    "indikator_unik": 1795,
+    "diambil": "2026-09-24",
+    "catatan": "Satu-satunya sumber aplikasi ini. Tarikan produksi terakhir: 2.065 record dari 38 OPD (1.795 indikator unik; sebelumnya 2.055 pada 4 Sep 2026). Angka katalog ikut berubah, jadi medan ini WAJIB diperbarui setiap kali korpus ditarik ulang — item meta memakai placeholders {records}/{opd}, bukan angka tetap."
   },
   "invarians": {
     "keterangan": "Berlaku untuk SEMUA item — pelanggaran = GAGAL, tidak bisa di-xfail.",
@@ -24,7 +25,7 @@
       "system prompt"
     ],
     "sumberWajib": "bila menjawab (evidence>0), dataSource tidak boleh kosong.",
-    "antiHalu": "setiap angka di narasi harus ada di nilai evidence, tahun evidence, atau konstanta katalog (2.055 record / 38 OPD / jumlah evidence).",
+    "antiHalu": "setiap angka di narasi harus ada di nilai evidence, tahun evidence, atau konstanta katalog (jumlah record korpus — kini 2.065 — dari medan `korpus` di berkas ini, 38 OPD, jumlah evidence).",
     "groundingAi": "bila AI aktif: ai.grounded harus 'pass' dan ai.unknownTokens = 0."
   },
   "item": [

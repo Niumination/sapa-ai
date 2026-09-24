@@ -263,3 +263,26 @@ tidak pernah menggagalkan jawaban.
 
 Saran paling berdaya berikutnya: **FR-20** (murah, dan membuat setiap kegagalan yang tersisa dapat
 dijelaskan dengan satu tag sebab — termasuk kegagalan yang akan muncul dari lapis semantik).
+
+## Lanjutan — audit ulang 24 Sep 2026 (ringkas; rinci di laporan 31)
+
+Saat uji terima dijalankan terhadap korpus **produksi** (2.065 record), satu pemeriksaan FR-12
+gagal: kueri salah tulis `pendudk` dinilai "tidak menemukan indikator penduduk". Setelah ditelusuri,
+**perilakunya benar**: katalog produksi memuat indikator bercap salah tulis
+`"Jumlah Pendudk Usia 13-15 Tahun"`, sehingga lapis **leksikal** (yang berjalan lebih dulu, sesuai
+invarian yang disengaja) menemukan baris itu — dan pemeriksaannya yang menuntut ejaan "penduduk".
+
+Pemeriksaan di `docs/usulan-ai-tingkat-lanjut/uji-terima.sh` dipecah menjadi dua yang menguji janji
+sebenarnya:
+
+| Pemeriksaan | Hasil |
+| --- | --- |
+| (2a) salah tulis yang **ada** di katalog (`pendudk`) → cukup batang kata `pendud` | ✓ lulus |
+| (2b) salah tulis **di luar** katalog (`panduduk`) → lapis semantik mengambil alih (`sebab` memuat `semantik`), bukti relevan | ✓ lulus — `selesai:semantik`, 15 bukti |
+| (3) kueri di luar katalog ditolak (0 bukti) | ✓ lulus |
+
+**Keterbatasan yang tetap dicatat:** bila salah tulis kebetulan cocok dengan nama indikator yang
+memang salah tulis di katalog, jawabannya menjadi sempit (1 bukti) karena lapis semantik sengaja
+tidak menambah baris selama leksikal masih menemukan sesuatu. Kandidat perbaikan (*top-up* semantik
+bila bukti leksikal sangat sedikit) **belum dikerjakan** — mengubah daftar bukti berarti membatalkan
+baseline 120/120 dan seluruh A/B; itu keputusan pemilik produk.
