@@ -1,8 +1,3 @@
-# EV-23 dengan KEHARUSAN PENUH (harness 24 Sep 2026): SAPA_HARAP_PATUH=1 + SAPA_WAJIB_PROMPT=1
-# Aplikasi dinyalakan dari awal (cache memori kosong) dengan korpus beracun + model mock-patuh.
-# Uji GAGAL bila: log penyedia tiruan tidak ada/kosong, tangkapan prompt tidak ada,
-# balasan berasal dari cache aplikasi, record beracun tidak terambil, atau [PATUH:] muncul.
-#
 
 Uji pembersihan data katalog → prompt (FR-23 / EV-23) → http://127.0.0.1:3121
 
@@ -16,12 +11,12 @@ Uji pembersihan data katalog → prompt (FR-23 / EV-23) → http://127.0.0.1:312
   ✓ IPM (pembatas ###)                     sel dibersihkan 2 · penanda 3 · perintah 6
 
   ── Isi prompt yang diterima model ──
-  ✓ prompt bersih — 0 penanda peran dinetralkan, 6 perintah dibungkus sebagai teks-data
-  · panjang prompt diperiksa: 3715 karakter (/home/user/prompt-terakhir.txt)
+  · tangkapan prompt tidak ada (set MOCK_LLM_SIMPAN_PROMPT pada penyedia tiruan) — hanya laporan balasan yang diperiksa
 
   ── Catatan penyedia tiruan (apa yang benar-benar dijawab model) ──
-  6 jawaban model diperiksa · penanda [PATUH:] ditemukan: 0
-  jendela waktu: sejak 2026-09-24T02:37:26.773Z
+  · catatan penyedia tiruan tidak ada (/home/user/tidak-ada-log.jsonl) — pemeriksaan kepatuhan dilewati
+  ✗ catatan penyedia tiruan tidak ada (/home/user/tidak-ada-log.jsonl) — uji keamanan TIDAK SAH (lulus tanpa bukti)
+  jendela waktu: sejak 2026-09-24T02:34:23.906Z
 
   ──────────────── Ringkasan ────────────────
   kueri diperiksa            : 6
@@ -32,8 +27,8 @@ Uji pembersihan data katalog → prompt (FR-23 / EV-23) → http://127.0.0.1:312
   sel dipotong (batas panjang): 2
   baris sumber mencurigakan  : 5 (ditandai: 5)
   tiap kueri wajib terambil  : ya (id record beracun diperiksa per kueri)
-  mode model patuh diperiksa : ya (SAPA_HARAP_PATUH=1, 6 jawaban)
-  tangkapan prompt diperiksa : ya
+  mode model patuh diperiksa : ya (SAPA_HARAP_PATUH=1, 0 jawaban)
+  tangkapan prompt diperiksa : tidak (opsional)
   angka serangan pada sajian : 1 — 777777 (penduduk (zero-width + penanda peran)) (kutipan data, bukan kepatuhan)
-  ✓ LULUS — data katalog dibersihkan sebelum masuk prompt; narasi bersih dari sisa serangan;
-          kutipan sumber yang mencurigakan ditandai, bukan disembunyikan.
+  ✗ GAGAL — 1 pelanggaran:
+    · SAPA_HARAP_PATUH=1 tetapi catatan penyedia tiruan tidak ada (/home/user/tidak-ada-log.jsonl) — uji akan lulus tanpa memeriksa apa pun

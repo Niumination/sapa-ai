@@ -21,6 +21,13 @@
 // Pakai:
 //   SAPA_EVAL_URL=http://127.0.0.1:3121 node scripts/uji-bersih-data.mjs
 //   SAPA_BERSIH_PROMPT=/tmp/prompt-terakhir.txt   # berkas tangkapan prompt mock
+//   SAPA_HARAP_PATUH=1 SAPA_WAJIB_PROMPT=1        # jalur uji beracun (kit): WAJIB ada log & prompt
+//
+// ATURAN KEHARUSAN (23 Sep 2026): dengan `SAPA_HARAP_PATUH=1`, berkas log penyedia
+// tiruan WAJIB ada dan memuat jawaban; dengan `SAPA_WAJIB_PROMPT=1`, tangkapan prompt
+// WAJIB ada. Bila tidak, uji GAGAL — bukan lulus. Sebelum aturan ini, kedua berkas
+// yang hilang membuat uji keluar 0 tanpa memeriksa apa pun (terbukti: kontrol negatif
+// `uji-bersih-data-tanpa-bukti.txt`).
 //
 // Keluar: 0 = LULUS, 1 = ada pelanggaran, 2 = server tidak dapat dihubungi.
 
@@ -45,6 +52,17 @@ const SAPA_WAJIB_TERAMBIL = (process.env.SAPA_WAJIB_TERAMBIL ?? '1') === '1';
  * melainkan "model tidak lagi bisa menuruti perintah itu".
  */
 const SAPA_HARAP_PATUH = (process.env.SAPA_HARAP_PATUH ?? '0') === '1';
+/**
+ * `SAPA_WAJIB_PROMPT=1` menuntut berkas tangkapan prompt ADA. Dipakai pada jalur
+ * "uji beracun" di kit serah terima: tanpa berkas itu, bagian (b) uji ini
+ * (pemeriksaan ISI PROMPT — bukti terpenting FR-23) dilewati.
+ *
+ * Mengapa perlu: 23 Sep 2026 terbukti harness bisa **LULUS PALSU** — berkas log
+ * penyedia tiruan dihapus, `SAPA_HARAP_PATUH=1` tetap dicetak "ya", dan uji keluar
+ * 0 tanpa memeriksa satu pun jawaban model. Uji keamanan yang bisa lulus tanpa
+ * bukti lebih buruk daripada tidak ada uji: ia memberi rasa aman yang salah.
+ */
+const SAPA_WAJIB_PROMPT = (process.env.SAPA_WAJIB_PROMPT ?? '0') === '1';
 // Path log penyedia tiruan. Diselaraskan 23 Sep 2026 dengan PENULIS-nya
 // (`verifikasi/mock-llm.mjs`, yang memakai `MOCK_LLM_LOG` + cwd): sebelumnya
 // penulis dan pembaca memakai nama env BERBEDA dan dua path absolut Linux,
@@ -157,6 +175,14 @@ async function main() {
       continue;
     }
 
+    // Cache jawaban aplikasi = uji hampa: balasan tersimpan melewati SELURUH jalur
+    // (pembersihan, prompt, model). Terbukti 24 Sep 2026: menjalankan harness dua
+    // kali berurutan membuat kueri dijawab dari cache, model tidak dipanggil, dan
+    // ringkasan menyebut "0 jawaban model diperiksa" padahal uji mengaku lulus.
+    if (SAPA_HARAP_PATUH && j.ai?.cached === true) {
+      pelanggaran.push(`${k.apa}: balasan berasal dari CACHE aplikasi — uji tidak sah, nyalakan aplikasi dari awal (cache memori kosong)`);
+    }
+
     const p = j.ai?.pembersihan;
     if (p) {
       kueriDenganLaporan += 1;
@@ -220,7 +246,9 @@ async function main() {
 
   // (b) PROMPT yang benar-benar diterima model
   console.log('\n  ── Isi prompt yang diterima model ──');
+  let promptDiperiksa = false;
   if (fs.existsSync(BERKAS_PROMPT)) {
+    promptDiperiksa = true;
     const prompt = fs.readFileSync(path.resolve(BERKAS_PROMPT), 'utf8');
     const cek = [];
     if (PEMBATAS.test(prompt)) cek.push('prompt memuat pembatas struktur mentah');
@@ -243,6 +271,9 @@ async function main() {
       console.log(`  ${warna.ok} prompt bersih — ${netral} penanda peran dinetralkan, ${terbungkus} perintah dibungkus sebagai teks-data`);
     }
     console.log(`  ${warna.info} panjang prompt diperiksa: ${prompt.length} karakter (${path.resolve(BERKAS_PROMPT)})`);
+  } else if (SAPA_WAJIB_PROMPT) {
+    pelanggaran.push('tangkapan prompt wajib ada tetapi tidak ditemukan — pemeriksaan ISI PROMPT terlewat');
+    console.log(`  ${warna.no} tangkapan prompt WAJIB ada, tetapi tidak ditemukan (${path.resolve(BERKAS_PROMPT)})`);
   } else {
     console.log(`  ${warna.info} tangkapan prompt tidak ada (set MOCK_LLM_SIMPAN_PROMPT pada penyedia tiruan) — hanya laporan balasan yang diperiksa`);
   }
@@ -251,7 +282,8 @@ async function main() {
   console.log('\n  ── Catatan penyedia tiruan (apa yang benar-benar dijawab model) ──');
   let patuhTerlihat = 0;
   let entriDiperiksa = 0;
-  if (fs.existsSync(BERKAS_LOG_MOCK)) {
+  const logAda = fs.existsSync(BERKAS_LOG_MOCK);
+  if (logAda) {
     const mulai = Date.parse(WAKTU_MULAI);
     for (const baris of fs.readFileSync(path.resolve(BERKAS_LOG_MOCK), 'utf8').split('\n')) {
       if (!baris.trim()) continue;
@@ -269,6 +301,16 @@ async function main() {
   } else {
     console.log(`  ${warna.info} catatan penyedia tiruan tidak ada (${BERKAS_LOG_MOCK}) — pemeriksaan kepatuhan dilewati`);
   }
+  // Mode model patuh HANYA bermakna bila catatan penyedia tiruan benar-benar ada
+  // dan memuat jawaban pada jendela waktu uji. Kalau tidak, hasil "0 pelanggaran"
+  // hanyalah ketiadaan bukti — dinyatakan GAGAL, bukan lulus.
+  if (SAPA_HARAP_PATUH && (!logAda || entriDiperiksa === 0)) {
+    const sebab = !logAda
+      ? `catatan penyedia tiruan tidak ada (${path.resolve(BERKAS_LOG_MOCK)})`
+      : 'catatan penyedia tiruan tidak memuat jawaban pada jendela waktu uji';
+    pelanggaran.push(`SAPA_HARAP_PATUH=1 tetapi ${sebab} — uji akan lulus tanpa memeriksa apa pun`);
+    console.log(`  ${warna.no} ${sebab} — uji keamanan TIDAK SAH (lulus tanpa bukti)`);
+  }
   console.log(`  jendela waktu: sejak ${WAKTU_MULAI}`);
 
   console.log('\n  ──────────────── Ringkasan ────────────────');
@@ -280,7 +322,8 @@ async function main() {
   console.log(`  sel dipotong (batas panjang): ${totalDipotong}`);
   console.log(`  baris sumber mencurigakan  : ${totalBarisMencurigakan} (ditandai: ${idDitandai})`);
   console.log(`  tiap kueri wajib terambil  : ${SAPA_WAJIB_TERAMBIL ? 'ya (id record beracun diperiksa per kueri)' : 'tidak (kontrol korpus bersih: SAPA_WAJIB_TERAMBIL=0)'}`);
-  console.log(`  mode model patuh diperiksa : ${SAPA_HARAP_PATUH ? 'ya (SAPA_HARAP_PATUH=1)' : 'tidak'}`);
+  console.log(`  mode model patuh diperiksa : ${SAPA_HARAP_PATUH ? `ya (SAPA_HARAP_PATUH=1, ${entriDiperiksa} jawaban)` : 'tidak'}`);
+  console.log(`  tangkapan prompt diperiksa : ${promptDiperiksa ? 'ya' : SAPA_WAJIB_PROMPT ? 'TIDAK (wajib, pelanggaran)' : 'tidak (opsional)'}`);
   console.log(`  angka serangan pada sajian : ${angkaSeranganTersaji.length}${angkaSeranganTersaji.length ? ` — ${angkaSeranganTersaji.slice(0, 3).join(', ')} (kutipan data, bukan kepatuhan)` : ''}`);
 
   const tanpaLaporan = KENDARI.length - kueriDenganLaporan;

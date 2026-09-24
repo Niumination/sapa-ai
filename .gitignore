@@ -21,3 +21,7 @@ data/dtsen-raw/
 # Log mock LLM (verifikasi/) tidak di-commit
 verifikasi/mock-llm-log.jsonl
 *.jsonl
+
+# Korpus uji lokal (dibangkitkan/ditarik saat verifikasi; bukan bagian aplikasi)
+verifikasi/korpus-beracun.json
+verifikasi/korpus-produksi.json

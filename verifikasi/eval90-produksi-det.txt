@@ -109,7 +109,7 @@ Jujur-kosong     : 24  (mengaku tidak punya data)
   temuan lunak        : 0  (dilaporkan, bukan penolakan)
   narasi AI ditolak   : 0
 Peringkat-1 tepat: 89/90
-Waktu            : 202s, 90 permintaan
+Waktu            : 201s, 90 permintaan
 
 Perbandingan baseline 2026-09-21 (90/90):
   Regresi : 0

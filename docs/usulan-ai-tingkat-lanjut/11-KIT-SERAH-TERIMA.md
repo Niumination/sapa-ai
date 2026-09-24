@@ -17,7 +17,7 @@ menyentuh `main` sampai Anda sendiri memutuskan.
 | **Skrip uji terima** | `06-USULAN-KODE/uji-terima.sh` | memutuskan LULUS/GAGAL sesuai ambang dokumen `10` |
 | **Alat pengukuran** | `verifikasi/mock-llm.mjs`, `verifikasi/stub-splp.mjs`, `verifikasi/banding-ai-vs-det.py`, `verifikasi/banding-main-vs-branch.py`, `scripts/uji-sitasi.mjs`, `scripts/uji-parafrase.mjs`, `scripts/uji-sebab.mjs`, `scripts/uji-pasangan.mjs`, `scripts/buat-korpus-uji.mjs`, `scripts/uji-bersih-data.mjs`, `scripts/buat-korpus-beracun.mjs` | penyedia model & SPLP tiruan + harness pembanding + uji 50 sampel sitasi (FR-19) + uji parafrase EV-05 (FR-12) + uji penanda sebab EV-20 (FR-20) + uji 50 sampel pasangan entitas EV-24 (FR-24) + uji pembersihan data katalog EV-23 (FR-23) + pembangkit korpus uji 1.210 record + pembangkit korpus uji beracun 6 bentuk serangan |
 | **Penyedia model tiruan** | `verifikasi/mock-llm.mjs` (lima kepribadian: `mock-pintar` jujur · `mock-flash` menulis digit sendiri · `mock-tukar` menukar entitas · `mock-nakal` mengarang · `mock-patuh` **menuruti perintah di dalam data**) | menguji keempat pagar: anti-halu, gerbang nilai-tambah, gerbang pasangan entitas FR-24, dan pembersih data katalog FR-23 — tanpa langganan penyedia |
-| **Bukti angka** | `verifikasi/eval90-*.txt`, `banding-G.txt`, `aman-cabang-perilaku.txt`, `uji-terima-hasil.txt`, `eval-parafrase-baseline.txt`, `eval-parafrase-hash.txt`, `eval-sebab-cek.txt`, `uji-sitasi-ai.txt`, `uji-sitasi-det.txt`, `uji-pasangan-jujur.txt`, `uji-pasangan-tukar.txt`, `uji-bersih-data.txt`, `uji-bersih-data-jujur.txt`, `uji-bersih-data-korpus-bersih.txt`, `uji-bersih-data-tanpa-pembersih.txt`, `uji-peringatan.txt`, `uji-peringatan-bukti.json`, `uji-telemetri.txt`, `uji-telemetri-bukti.json`, `uji-segarkan.txt`, `uji-segarkan-bukti.json` | semua hasil yang diklaim di dokumen `10` (termasuk A/B lapis semantik FR-12 dan kontrol negatif FR-23 yang sengaja gagal) |
+| **Bukti angka** | `verifikasi/eval90-*.txt`, `banding-G.txt`, `aman-cabang-perilaku.txt`, `uji-terima-hasil.txt`, `eval-parafrase-baseline.txt`, `eval-parafrase-hash.txt`, `eval-sebab-cek.txt`, `uji-sitasi-ai.txt`, `uji-sitasi-det.txt`, `uji-pasangan-jujur.txt`, `uji-pasangan-tukar.txt`, `uji-bersih-data.txt`, `uji-bersih-data-jujur.txt`, `uji-bersih-data-korpus-bersih.txt`, `uji-bersih-data-tanpa-pembersih.txt`, `uji-bersih-data-tanpa-bukti.txt`, `uji-bersih-data-cache-hampa.txt`, `uji-bersih-data-tanpa-prompt.txt`, `uji-peringatan.txt`, `uji-peringatan-bukti.json`, `uji-telemetri.txt`, `uji-telemetri-bukti.json`, `uji-segarkan.txt`, `uji-segarkan-bukti.json` | semua hasil yang diklaim di dokumen `10` (termasuk A/B lapis semantik FR-12 dan kontrol negatif FR-23 yang sengaja gagal) |
 | **Dua dasbor tinjauan** | `/admin/celah-pengetahuan`, `/admin/umpan-balik` | pertanyaan tak terlayani (FR-27) & laporan koreksi warga (FR-26); keduanya ber-`ADMIN_TOKEN` |
 | **Spesifikasi kebutuhan** | `10-KEBUTUHAN-UPGRADE-TINGKAT-LANJUT.md` | daftar kebutuhan `FR/NFR/DS/EV/OPS/CMP` + kriteria terima |
 | **Peta kerja tinggal-jalan** | `10` §11 (Fase B–D) | urutan pekerjaan berikutnya + perkiraan usaha |
@@ -128,6 +128,17 @@ selaras) lalu jalankan uji terima (§7).
 > dan baris sumbernya ditandai `ai.penandaData`; serta model yang menuruti perintah data tidak lagi bisa
 > menuruti — set `SAPA_BERACUN_URL` ke server ber-`AI_MODEL=mock-patuh` + korpus beracun, dan
 > `SAPA_BERACUN_JURU_URL` ke server ber-model biasa + korpus beracun).
+>
+> **Keharusan bukti (24 Sep 2026).** Kedua jalur beracun di atas kini memakai
+> `SAPA_WAJIB_PROMPT=1` (tangkapan prompt **wajib ada**) dan harnessnya sendiri menolak:
+> log penyedia tiruan yang tidak ada/kosong, dan **balasan dari cache aplikasi**. Alasannya
+> ditemukan saat pemeriksaan klien: dengan berkas log atau tangkapan prompt yang hilang,
+> harness dulu keluar **0 (LULUS)** sambil mencetak "mode model patuh diperiksa: ya" —
+> lulus tanpa memeriksa apa pun. Karena itu **jalankan jalur ini terhadap aplikasi yang
+> baru dinyalakan** (cache jawaban disimpan di memori; kueri yang sama dalam ±1 jam akan
+> dijawab dari cache sehingga model tidak dipanggil). Bukti kontrolnya:
+> `verifikasi/uji-bersih-data-tanpa-bukti.txt`, `uji-bersih-data-cache-hampa.txt`,
+> `uji-bersih-data-tanpa-prompt.txt` (ketiganya sengaja GAGAL).
 > Untuk memeriksa isi kedua daftar, sertakan `ADMIN_TOKEN` — tanpa itu pemeriksaan itu
 > dilewati, bukan gagal.
 

@@ -1,4 +1,4 @@
-Eval set v2 — 90 item — target http://127.0.0.1:3116 — mode AI: active
+Eval set v2 — 90 item — target http://127.0.0.1:3122 — mode AI: active
 Konstanta katalog: 2065 record
 Invarians: anti-halu · anti-token · anti-jargon · sumber wajib · anti-echo-NIK · pasangan-entitas
 
@@ -109,14 +109,14 @@ Jujur-kosong     : 24  (mengaku tidak punya data)
   temuan lunak        : 0  (dilaporkan, bukan penolakan)
   narasi AI ditolak   : 0
 Peringkat-1 tepat: 89/90
-Waktu            : 203s, 90 permintaan
+Waktu            : 201s, 90 permintaan
 
 ──────── Metrik AI (76 query memanggil model) ────────
 grounded pass    : 76 (100.0%)   → gerbang naik: ≥90%
 fallback (replaced): 0 (0.0%) → gerbang naik: ≤10%
 grounded fail    : 0 (0.0%)   → harus 0
 token tak dikenal: 0 → harus 0
-latensi rata²    : 193 ms
+latensi rata²    : 162 ms
 
 Perbandingan baseline 2026-09-21 (90/90):
   Regresi : 0

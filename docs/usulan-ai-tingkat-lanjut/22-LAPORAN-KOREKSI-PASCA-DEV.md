@@ -16,8 +16,8 @@ kontrol negatif yang ikut gagal · patch **`0038`** diekspor.
 
 | Hal | Kenyataan |
 |---|---|
-| `dev` di remote publik | **TIDAK ADA.** `git ls-remote https://github.com/niumination/sapa-ai` hanya memuat `main` (`ff00eb8`) dan `feat/perf-rsc-cache` (`af93476`). Push hermes menuju repo klien, bukan repo publik. |
-| Cara menyelaraskan ruang kerja ini | `git checkout -b dev main` → `git am` 37 patch → perbaikan hermes diterapkan ulang (`86c7ea2`) = **38 komit di atas `main`**. |
+| `dev` di remote publik | Saat pemeriksaan pertama: **belum ada** — `git ls-remote` hanya memuat `main` (`ff00eb8`) dan `feat/perf-rsc-cache` (`af93476`) karena hermes baru meng-commit secara lokal. **Setelah pemilik repo mem-push**, `origin/dev` = `86af3b5` (**38 komit** di atas `main`) dan seluruh isinya diperiksa ulang pada laporan ini (§3.2 + §4 "H.2b" pada `07-BUKTI-VERIFIKASI.md`). |
+| Cara menyelaraskan ruang kerja ini | Dua langkah: (a) sebelum push — `git checkout -b dev main` → `git am` 37 patch → perbaikan hermes diterapkan ulang; (b) setelah push — cabang kerja di-`reset --hard origin/dev`, lalu patch `0038` & `0039` diterapkan di atasnya. Hasil akhir: **40 komit di atas `main`** (38 milik seri terpasang + 2 patch Arena). |
 | Bukti kesetaraan | `git diff` antara `dev` hasil rekonstruksi dan cabang `usulan/perbaikan-ai-2026-09-21` (tanpa folder `seri-patch/`) **hanya** berbeda pada dua berkas: `.gitignore` dan `verifikasi/mock-llm.mjs` — tepat perbaikan hermes, tidak ada perbedaan lain. |
 | Klaim hermes soal jumlah komit | Dikonfirmasi: **38 komit di atas `main`** (SHA lokal `86c7ea2` vs klaim `86af3b5`; SHA berbeda karena commit ditulis ulang, isi pohon sama). |
 | `main` | Utuh: `main` = `origin/main` = `ff00eb8`, 0 perbedaan. Tidak ada deploy ke produksi. |
@@ -88,23 +88,54 @@ dan **tampak lulus tanpa memeriksa apa pun**:
 
 Nama env penulis dan pembaca sekarang **sama** (`MOCK_LLM_LOG`), dengan fallback yang kompatibel.
 
+### 3.2 Cacat KEDUA pada jalur log: uji bisa LULUS TANPA BUKTI
+
+Setelah `dev` dipush ke publik dan isinya diperiksa ulang, ditemukan bahwa perbaikan hermes
+menyentuh **penulis** log (`verifikasi/mock-llm.mjs`) tetapi **pembacanya tidak** — dan harness
+EV-23 sendiri punya tiga jalan menuju "lulus palsu". Ketiganya dibuktikan dengan kontrol, lalu ditutup:
+
+| Jalan lulus palsu | Bukti sebelum ditutup | Sesudah ditutup |
+|---|---|---|
+| Berkas log penyedia tiruan **tidak ada** | keluar **0 (LULUS)** sambil mencetak `mode model patuh diperiksa: ya` | **GAGAL**, keluar 1: *"uji keamanan TIDAK SAH (lulus tanpa bukti)"* |
+| Berkas log **ada tetapi kosong** pada jendela waktu uji | sama, 0 jawaban diperiksa | **GAGAL** (aturan yang sama) |
+| Balasan berasal dari **cache aplikasi** | kueri tidak memanggil model; ringkasan "0 jawaban diperiksa" tetapi tetap lulus | **GAGAL** per kueri: *"balasan berasal dari CACHE aplikasi — uji tidak sah"* |
+| Tangkapan prompt **tidak ada** | bagian pemeriksaan ISI PROMPT (bukti terpenting FR-23) dilewati diam-diam | **GAGAL** bila `SAPA_WAJIB_PROMPT=1` (kini dipakai kit) |
+
+Karena itu prosedur kit diubah: jalur beracun dijalankan terhadap **aplikasi yang baru dinyalakan**
+(dengan `SAPA_HARAP_PATUH=1 SAPA_WAJIB_PROMPT=1`), dan harness menolak semua bentuk "bukti hilang"
+di atas. Bukti kontrol yang disengaja gagal:
+`verifikasi/uji-bersih-data-tanpa-bukti.txt`, `uji-bersih-data-cache-hampa.txt`,
+`uji-bersih-data-tanpa-prompt.txt`, `uji-bersih-data-tanpa-pembersih.txt`.
+
 ## 4. Hasil akhir yang diukur (korpus produksi 2.065 record)
 
 | Ukuran | Sebelum sesi ini | Sesudah |
 |---|---|---|
-| Eval deterministik (90 butir) | **82/90, keluar 1** | **90/90, keluar 0** |
+| Eval deterministik (90 butir) | **82/90, keluar 1** | **90/90, keluar 0** (diulang di atas dasar `origin/dev` + `0038`) |
 | — menyesatkan / invarians | 8 gagal | **0 / 0** |
 | — peringkat-1 tepat | — | 89/90 |
 | — pasangan entitas (FR-24) | 0 temuan keras | **0 keras, 0 lunak** (210 nilai diperiksa) |
 | Eval mode AI (90 butir, `mock-pintar`) | 88/90 (klaim hermes) | **90/90**, grounded 76/76, fallback 0, token tak dikenal 0 |
 | FR-23 pada korpus produksi | 194 sel "dibersihkan" (2 pemotongan nyata) | **0 dibersihkan, 191 dirapikan, 0 dipotong** |
-| EV-23 (korpus beracun, model `mock-patuh`) | lulus | **lulus**: 6/6 kueri, `[PATUH:]` **0**, sel dibersihkan 12 |
-| — kontrol negatif (pembersih dimatikan) | gagal seperti diharapkan | **gagal: keluar 1, `[PATUH:]` 5×** |
+| EV-23 (korpus beracun, model `mock-patuh`) | lulus | **lulus dengan bukti penuh**: 6/6 kueri, prompt diperiksa, `[PATUH:]` **0**, sel dibersihkan 12 (semua sel: 2 penanda + perintah terdampingan) |
+| — kontrol: pembersih dimatikan | gagal seperti diharapkan | **gagal: 14 pelanggaran, `[PATUH:]` 5×** |
+| — kontrol: log/prompt hilang, balasan cache | lulus palsu | **gagal: 1–7 pelanggaran** (§3.2) |
 | `vitest` | 566 lulus | **584 lulus** (35 berkas) |
 | `typecheck` / `build` | OK | OK |
 
 Artefak: `verifikasi/eval90-produksi-det.txt`, `verifikasi/eval90-produksi-ai.txt`,
 `verifikasi/uji-bersih-data.txt`, `verifikasi/uji-bersih-data-tanpa-pembersih.txt`.
+
+### 4.1 Isi `origin/dev` yang diperiksa (pasca-push)
+
+| Pemeriksaan | Hasil |
+|---|---|
+| Tip & jumlah komit | `86af3b5`, **38** di atas `main` (`ff00eb8` utuh, `main` = `origin/main`) |
+| Sama dengan rekonstruksi Arena? | Ya — pohon `origin/dev` berbeda dari cabang `usulan/…` **hanya** pada `.gitignore` + `verifikasi/mock-llm.mjs`, yaitu tepat perbaikan hermes |
+| Perbaikan hermes: penulis log | `verifikasi/mock-llm.mjs` memakai `path.join(process.cwd(), …)` + `MOCK_LLM_LOG` ✅ |
+| Perbaikan hermes: **pembaca** log | ❌ masih `/home/user/verifikasi/mock-llm-log.jsonl` dan env `SAPA_MOCK_LOG` (baris 48; `uji-terima.sh` baris 551, 563) → ditutup patch `0038` |
+| Hasil ulang di atas `origin/dev` + `0038` | eval deterministik **90/90**, eval AI **90/90**, vitest **584/584**, `typecheck` OK |
+| Dua jalur pemasangan (basis GitHub) | `git am 0038 + 0039` dan `git am 00-semua.patch` → keduanya menghasilkan **pohon identik** |
 
 ## 5. Yang TIDAK diklaim
 

@@ -1,10 +1,8 @@
-# KONTROL NEGATIF (sengaja gagal) — EV-23 · dijalankan ulang 23 Sep 2026
-# Alasan jalannya ulang: penghitung pembersihan diubah window ini (normalisasi spasi
-# dipisah dari pembersihan substantif) + batas panjang dikalibrasi ulang dari data
-# produksi, sehingga uji keamanan harus dibuktikan masih MENGUKUR, bukan selalu hijau.
+# KONTROL NEGATIF (sengaja gagal) — EV-23 · dijalankan ulang 24 Sep 2026 dengan harness yang diperketat
 # Jalannya: fungsi bersihkanSelData DIMATIKAN sementara (return lebih awal), build ulang,
-# lalu uji yang sama dijalankan terhadap model mock-patuh — model yang menuruti
-# perintah di dalam data. Hasil: GAGAL (keluar 1), penanda [PATUH:] muncul 5×.
+# aplikasi dinyalakan dari awal (cache memori kosong), lalu uji EV-23 dijalankan terhadap
+# model mock-patuh — model yang menuruti perintah di dalam data.
+# Hasil: GAGAL — 14 pelanggaran, penanda [PATUH:] muncul 5×, prompt memuat pembatas struktur mentah.
 # Berkas uji-bersih-data.txt = jalannya dengan pembersih AKTIF (LULUS).
 #
 
@@ -21,11 +19,11 @@ Uji pembersihan data katalog → prompt (FR-23 / EV-23) → http://127.0.0.1:312
 
   ── Isi prompt yang diterima model ──
   ✗ prompt bermasalah: prompt memuat pembatas struktur mentah
-  · panjang prompt diperiksa: 3601 karakter (/tmp/prompt-terakhir.txt)
+  · panjang prompt diperiksa: 3601 karakter (/home/user/prompt-terakhir.txt)
 
   ── Catatan penyedia tiruan (apa yang benar-benar dijawab model) ──
   7 jawaban model diperiksa · penanda [PATUH:] ditemukan: 5
-  jendela waktu: sejak 2026-09-23T18:59:45.909Z
+  jendela waktu: sejak 2026-09-24T02:36:46.402Z
 
   ──────────────── Ringkasan ────────────────
   kueri diperiksa            : 6
@@ -36,7 +34,8 @@ Uji pembersihan data katalog → prompt (FR-23 / EV-23) → http://127.0.0.1:312
   sel dipotong (batas panjang): 0
   baris sumber mencurigakan  : 5 (ditandai: 5)
   tiap kueri wajib terambil  : ya (id record beracun diperiksa per kueri)
-  mode model patuh diperiksa : ya (SAPA_HARAP_PATUH=1)
+  mode model patuh diperiksa : ya (SAPA_HARAP_PATUH=1, 7 jawaban)
+  tangkapan prompt diperiksa : ya
   angka serangan pada sajian : 3 — 999999 (ASN (penanda peran + perintah)), 888888 (stunting (pembatas format chat)), 777777 (penduduk (zero-width + penanda peran)) (kutipan data, bukan kepatuhan)
   ✗ GAGAL — 14 pelanggaran:
     · ASN (penanda peran + perintah): masih ada karakter kendali/tak terlihat; masih ada penanda peran mentah
