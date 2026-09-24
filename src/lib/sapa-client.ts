@@ -4,6 +4,7 @@ import { daftarKecamatanDariIndikator } from '@/services/pemeriksa-entitas';
 // Source: api-splp.layanan.go.id
 
 import { normalisasiNilai, parseNumericId } from './parse-numeric';
+import { normalkanDaerah, terapkanFrasaDaerah } from '@/lib/kamus-daerah';
 
 /**
  * Alamat dasar SPLP. Boleh ditimpa lewat `SAPA_SPLP_BASE_URL` untuk pengujian
@@ -319,6 +320,21 @@ export function normalkanSingkatan(kata: string): string[] {
 }
 
 /**
+ * Pemetaan satu token untuk penelusuran: KAMUS DAERAH (DS-05) lebih dulu, lalu
+ * singkatan/typo. Urutan ini disengaja supaya kata daerah yang belum baku
+ * ("gampong", "peukan", "padé") dipetakan ke kata katalog terlebih dulu, dan
+ * bila hasilnya masih berbentuk singkatan (mis. "pk" dari kamus), singkatan itu
+ * ikut dibakukan.
+ *
+ * Bila kamus daerah dimatikan (`SAPA_KAMUS_DAERAH=off`), jalur ini PERSIS sama
+ * dengan sebelum DS-05 — itulah yang membuat kontrol negatif harness bermakna:
+ * mematikannya harus membuat kueri beristilah daerah gagal lagi.
+ */
+function normalkanKata(kata: string): string[] {
+  return normalkanDaerah(kata).flatMap((k) => normalkanSingkatan(k));
+}
+
+/**
  * LEKSIKON FRASA ISTILAH RESMI (usulan 22 Sep 2026, temuan uji parafrase FR-12).
  *
  * Pengguna menulis istilah pemerintahan secara LENGKAP, sedangkan katalog SAPA
@@ -381,10 +397,12 @@ export function tokenizeQuery(query: string): string[] {
     'seberapa', 'mengalami', 'menderita',
   ]);
   const teks = normalizeText(query);
-  return (teks.includes('aparatur') || teks.includes('indeks pembangunan manusia')
+  // Frasa diganti SEBELUM pemotongan token: frasa istilah resmi (FR-12) dan
+  // frasa kamus daerah (DS-05, mis. "tuha peut" → "lembaga desa").
+  const setelahFrasa = teks.includes('aparatur') || teks.includes('indeks pembangunan manusia')
     ? FRASA_ISTILAH.reduce((t, [pola, ganti]) => t.replace(pola, ganti), teks)
-    : teks
-  )
+    : teks;
+  return terapkanFrasaDaerah(setelahFrasa)
     .split(' ')
     // Reviu 2026-09-04: tanpa ini, tanda tanya menempel pada kata terakhir —
     // "…di tiap kecamatan?" menghasilkan token "kecamatan?" yang tidak pernah
@@ -393,7 +411,7 @@ export function tokenizeQuery(query: string): string[] {
     // Bentuk tidak baku → baku (audit 2026-09-21). Diletakkan SEBELUM filter
     // panjang (agar "yg", "dr", "ga" ikut dipetakan) dan sebelum filter
     // stopword (agar hasil pemetaan tetap tersaring secara normal).
-    .flatMap((w) => (w ? normalkanSingkatan(w) : []))
+    .flatMap((w) => (w ? normalkanKata(w) : []))
     // Token angka dibuang, termasuk bentuk RENTANG dan desimal Indonesia:
     // "2023-2025", "31,4", "1.000". Reviu 2026-09-21: "Bagaimana tren stunting
     // 2023-2025" dulu menghasilkan token df=0 → gerbang konsep-asing menyalakan

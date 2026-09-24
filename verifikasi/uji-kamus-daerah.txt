@@ -1,0 +1,37 @@
+
+  DS-05 · kamus sinonim daerah
+
+
+── A. Pemeriksaan statis (entri, keamanan, tenggat tinjauan) ──
+  [32m✓[0m A1 entri ≥ 50 (kriteria dok 10) — 76 baris entri (dibaca dari berkas)
+  [32m✓[0m A4 tenggat tinjauan terpasang & belum lewat — 2026-12-24
+  [32m✓[0m A5 tidak ada kata kamus yang sudah ada di katalog korpus uji — bersih
+
+── B. End-to-end — istilah daerah menemukan indikator katalog ──
+  [32m✓[0m B "jumlah gampong" (gampong → desa) — 15 bukti
+  [32m✓[0m B "peukan" (peukan → pasar) — 15 bukti
+  [32m✓[0m B "pade" (pade → padi) — 15 bukti
+  [32m✓[0m B "jurong" (jurong → jalan) — 15 bukti
+  [32m✓[0m B "keude" (keude → pasar) — 15 bukti
+  [32m✓[0m B "jumlah ureung" (ureung → penduduk) — 15 bukti
+  [32m✓[0m B "lampoh" (lampoh → perkebunan) — 15 bukti
+  [32m✓[0m B "warung" (warung → umkm) — 15 bukti
+
+── C. Kontrol negatif — SAPA_KAMUS_DAERAH=off (harus berbeda) ──
+     · "jumlah gampong": kamus AKTIF menemukan · kamus MATI tidak menemukan
+     · "peukan": kamus AKTIF menemukan · kamus MATI tidak menemukan
+     · "pade": kamus AKTIF menemukan · kamus MATI tidak menemukan
+     · "jurong": kamus AKTIF menemukan · kamus MATI tidak menemukan
+     · "keude": kamus AKTIF menemukan · kamus MATI tidak menemukan
+     · "jumlah ureung": kamus AKTIF menemukan · kamus MATI tidak menemukan
+     · "lampoh": kamus AKTIF menemukan · kamus MATI tidak menemukan
+     · "warung": kamus AKTIF menemukan · kamus MATI tidak menemukan
+  [32m✓[0m C1 SEMUA kueri beristilah daerah berubah hasil saat kamus dimatikan — 8/8 kueri berubah
+  [32m✓[0m C2 jumlah kueri yang diuji sesuai rencana — 8 kueri
+
+  ──────────────── Ringkasan ────────────────
+  entri kamus        : 57
+  kueri diuji        : 8 (8 hasilnya berubah saat kamus dimatikan)
+  pemeriksaan lulus  : 13
+
+  [32m✓[0m LULUS — kamus daerah aktif menemukan indikator katalog, dan mematikannya benar-benar mengubah hasil.

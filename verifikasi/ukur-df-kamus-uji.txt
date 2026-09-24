@@ -1,0 +1,98 @@
+
+  Tinjauan kamus daerah DS-05
+  korpus   : verifikasi/korpus-uji-besar.json (1210 record · 395 nama indikator unik)
+  ditinjau : 2026-09-24 · berikutnya: 2026-12-24
+
+  entri diperiksa       : 57
+  kata yang MULAI ada di katalog (harus dihapus): 0
+  padanan MATI di korpus ini & tidak tercatat di produksi: 0
+  padanan hanya ada di katalog PRODUKSI (bukan masalah, tidak bisa diuji end-to-end di korpus ini): 27
+    · meunasah — masjid:prod 9
+    · peutua — adat:prod 6
+    · aneuk — anak:prod 36
+    · inong — perempuan:prod 19, ibu:prod 31
+    · agam — laki:prod 4
+    · leumo — peternakan:prod 1
+    · kameng — peternakan:prod 1
+    · manok — peternakan:prod 1
+    · itik — peternakan:prod 1
+    · keubeue — peternakan:prod 1
+    · kambing — peternakan:prod 1
+    · ayam — peternakan:prod 1
+    · laot — perikanan:prod 39, ikan:prod 23
+    · laut — perikanan:prod 39, ikan:prod 23
+    · tambak — perikanan:prod 39, ikan:prod 23
+    · gle — gunung:prod 1
+    · jompo — lansia:prod 9
+    · cacat — disabilitas:prod 10
+    · muzakki — zakat:prod 2
+    · sedekah — zakat:prod 2, infaq:prod 2
+    · waqaf — wakaf:prod 2
+    · khanduri — adat:prod 6
+    · kanduri — adat:prod 6
+    · peusijuek — adat:prod 6
+    · boh — buah:prod 1
+    · dasawisma — kader:prod 8
+    · pokja — kader:prod 8
+
+  ── siap disalin ke dfProduksi / terbuktiKorpusUji (hasil ukur 2026-09-24) ──
+  { kata: 'gampong', padanan: ['desa'], dfProduksi: {desa: 15}, terbuktiKorpusUji: true },
+  { kata: 'keuchik', padanan: ['kepala', 'desa'], dfProduksi: {kepala: 0, desa: 15}, terbuktiKorpusUji: true },
+  { kata: 'geuchik', padanan: ['kepala', 'desa'], dfProduksi: {kepala: 0, desa: 15}, terbuktiKorpusUji: true },
+  { kata: 'tuha peut', padanan: ['lembaga', 'desa'], dfProduksi: {lembaga: 0, desa: 15}, terbuktiKorpusUji: true },
+  { kata: 'mukim', padanan: ['kecamatan', 'desa'], dfProduksi: {kecamatan: 353, desa: 15}, terbuktiKorpusUji: true },
+  { kata: 'sagoe', padanan: ['kecamatan'], dfProduksi: {kecamatan: 353}, terbuktiKorpusUji: true },
+  { kata: 'pamong', padanan: ['desa'], dfProduksi: {desa: 15}, terbuktiKorpusUji: true },
+  { kata: 'rumoh', padanan: ['rumah'], dfProduksi: {rumah: 31}, terbuktiKorpusUji: true },
+  { kata: 'meunasah', padanan: ['masjid'], dfProduksi: {masjid: 0}, terbuktiKorpusUji: false },
+  { kata: 'keude', padanan: ['pasar'], dfProduksi: {pasar: 7}, terbuktiKorpusUji: true },
+  { kata: 'peukan', padanan: ['pasar'], dfProduksi: {pasar: 7}, terbuktiKorpusUji: true },
+  { kata: 'jurong', padanan: ['jalan'], dfProduksi: {jalan: 21}, terbuktiKorpusUji: true },
+  { kata: 'tanoh', padanan: ['tanah', 'lahan'], dfProduksi: {tanah: 0, lahan: 11}, terbuktiKorpusUji: true },
+  { kata: 'peutua', padanan: ['adat'], dfProduksi: {adat: 0}, terbuktiKorpusUji: false },
+  { kata: 'ureung', padanan: ['orang', 'penduduk'], dfProduksi: {orang: 0, penduduk: 18}, terbuktiKorpusUji: true },
+  { kata: 'aneuk', padanan: ['anak'], dfProduksi: {anak: 0}, terbuktiKorpusUji: false },
+  { kata: 'inong', padanan: ['perempuan', 'ibu'], dfProduksi: {perempuan: 0, ibu: 0}, terbuktiKorpusUji: false },
+  { kata: 'agam', padanan: ['laki'], dfProduksi: {laki: 0}, terbuktiKorpusUji: false },
+  { kata: 'pade', padanan: ['padi'], dfProduksi: {padi: 7}, terbuktiKorpusUji: true },
+  { kata: 'banih', padanan: ['padi'], dfProduksi: {padi: 7}, terbuktiKorpusUji: true },
+  { kata: 'umong', padanan: ['padi', 'lahan'], dfProduksi: {padi: 7, lahan: 11}, terbuktiKorpusUji: true },
+  { kata: 'lampoh', padanan: ['perkebunan'], dfProduksi: {perkebunan: 17}, terbuktiKorpusUji: true },
+  { kata: 'seuneubok', padanan: ['lahan', 'perkebunan'], dfProduksi: {lahan: 11, perkebunan: 17}, terbuktiKorpusUji: true },
+  { kata: 'kebun', padanan: ['perkebunan'], dfProduksi: {perkebunan: 17}, terbuktiKorpusUji: true },
+  { kata: 'ladang', padanan: ['lahan', 'perkebunan'], dfProduksi: {lahan: 11, perkebunan: 17}, terbuktiKorpusUji: true },
+  { kata: 'leumo', padanan: ['peternakan'], dfProduksi: {peternakan: 0}, terbuktiKorpusUji: false },
+  { kata: 'kameng', padanan: ['peternakan'], dfProduksi: {peternakan: 0}, terbuktiKorpusUji: false },
+  { kata: 'manok', padanan: ['peternakan'], dfProduksi: {peternakan: 0}, terbuktiKorpusUji: false },
+  { kata: 'itik', padanan: ['peternakan'], dfProduksi: {peternakan: 0}, terbuktiKorpusUji: false },
+  { kata: 'keubeue', padanan: ['peternakan'], dfProduksi: {peternakan: 0}, terbuktiKorpusUji: false },
+  { kata: 'kambing', padanan: ['peternakan'], dfProduksi: {peternakan: 0}, terbuktiKorpusUji: false },
+  { kata: 'ayam', padanan: ['peternakan'], dfProduksi: {peternakan: 0}, terbuktiKorpusUji: false },
+  { kata: 'poktan', padanan: ['tani'], dfProduksi: {tani: 12}, terbuktiKorpusUji: true },
+  { kata: 'gapoktan', padanan: ['tani'], dfProduksi: {tani: 12}, terbuktiKorpusUji: true },
+  { kata: 'krueng', padanan: ['sungai', 'air'], dfProduksi: {sungai: 0, air: 13}, terbuktiKorpusUji: true },
+  { kata: 'ie', padanan: ['air'], dfProduksi: {air: 13}, terbuktiKorpusUji: true },
+  { kata: 'laot', padanan: ['perikanan', 'ikan'], dfProduksi: {perikanan: 0, ikan: 0}, terbuktiKorpusUji: false },
+  { kata: 'laut', padanan: ['perikanan', 'ikan'], dfProduksi: {perikanan: 0, ikan: 0}, terbuktiKorpusUji: false },
+  { kata: 'tambak', padanan: ['perikanan', 'ikan'], dfProduksi: {perikanan: 0, ikan: 0}, terbuktiKorpusUji: false },
+  { kata: 'gle', padanan: ['gunung'], dfProduksi: {gunung: 0}, terbuktiKorpusUji: false },
+  { kata: 'saket', padanan: ['kesehatan', 'penyakit'], dfProduksi: {kesehatan: 8, penyakit: 0}, terbuktiKorpusUji: true },
+  { kata: 'pukesmas', padanan: ['puskesmas', 'kesehatan'], dfProduksi: {puskesmas: 8, kesehatan: 8}, terbuktiKorpusUji: true },
+  { kata: 'jompo', padanan: ['lansia'], dfProduksi: {lansia: 0}, terbuktiKorpusUji: false },
+  { kata: 'cacat', padanan: ['disabilitas'], dfProduksi: {disabilitas: 0}, terbuktiKorpusUji: false },
+  { kata: 'muzakki', padanan: ['zakat'], dfProduksi: {zakat: 0}, terbuktiKorpusUji: false },
+  { kata: 'sedekah', padanan: ['zakat', 'infaq'], dfProduksi: {zakat: 0, infaq: 0}, terbuktiKorpusUji: false },
+  { kata: 'waqaf', padanan: ['wakaf'], dfProduksi: {wakaf: 0}, terbuktiKorpusUji: false },
+  { kata: 'khanduri', padanan: ['adat'], dfProduksi: {adat: 0}, terbuktiKorpusUji: false },
+  { kata: 'kanduri', padanan: ['adat'], dfProduksi: {adat: 0}, terbuktiKorpusUji: false },
+  { kata: 'peusijuek', padanan: ['adat'], dfProduksi: {adat: 0}, terbuktiKorpusUji: false },
+  { kata: 'warung', padanan: ['umkm'], dfProduksi: {umkm: 9}, terbuktiKorpusUji: true },
+  { kata: 'warong', padanan: ['umkm'], dfProduksi: {umkm: 9}, terbuktiKorpusUji: true },
+  { kata: 'bansos', padanan: ['bantuan', 'sosial'], dfProduksi: {bantuan: 9, sosial: 9}, terbuktiKorpusUji: true },
+  { kata: 'sinyal', padanan: ['internet'], dfProduksi: {internet: 6}, terbuktiKorpusUji: true },
+  { kata: 'boh', padanan: ['buah'], dfProduksi: {buah: 0}, terbuktiKorpusUji: false },
+  { kata: 'dasawisma', padanan: ['kader'], dfProduksi: {kader: 0}, terbuktiKorpusUji: false },
+  { kata: 'pokja', padanan: ['kader'], dfProduksi: {kader: 0}, terbuktiKorpusUji: false },
+
+  LULUS — kamus masih sehat menurut korpus ini (27 entri hanya terbukti di katalog produksi).
+

@@ -182,7 +182,7 @@ Format: **Kode · Kebutuhan · Alasan/bukti · Kriteria terima (terukur) · Usah
 | **DS-02** | **Metadata tingkat data** (kecamatan/desa/individu) ikut dibaca, sehingga sistem tahu batas granularitasnya | mencegah jawaban menyesatkan tingkat salah | sistem menolak dengan alasan bila tingkat tidak tersedia | 🟡 (per desa ✅; peta tingkat lengkap ⬜) |
 | **DS-03** | **Kesegaran**: stempel waktu pengambilan + tag versi korpus pada setiap jawaban & cache | angka lama tanpa penanda = risiko kebijakan | stempel tampil di API & UI | ✅ (24 Sep 2026) stempel & sidik tampil di API/UI (FR-25); kunci cache jawaban kini memakai **sidik isi korpus** (`ai:v2`) & "segarkan" melupakan korpus di memori — bukti: `23-LAPORAN-DS-03.md` |
 | **DS-04** | **Permintaan data tingkat desa ke OPD** (mis. jumlah keluarga per desa) | 3 item evaluasi jujur-kosong karena data ini memang tidak ada | ≥ 1 OPD menyediakan data tingkat desa | ⬜ |
-| **DS-05** | **Kamus sinonim daerah** (Aceh: gampong, meugang, mustahik, PPKBD…) yang dipelihara | pengguna memakai istilah daerah | ≥ 50 entri; tiap 3 bulan ditinjau | 🟡 (sebagian ✅) |
+| **DS-05** | **Kamus sinonim daerah** (Aceh: gampong, meugang, mustahik, PPKBD…) yang dipelihara | pengguna memakai istilah daerah | ≥ 50 entri; tiap 3 bulan ditinjau | ✅ (selesai 24 Sep 2026 — **57 entri**; tinjauan 3 bulan berjalan mekanis, tenggat 24 Des 2026; 8/8 kueri daerah terbukti & 8/8 berubah saat kamus dimatikan; meugang/mustahik/PPKBD terukur sudah ada di katalog → sengaja TIDAK dipetakan; laporan [26](26-LAPORAN-DS-05.md)) |
 
 ---
 
@@ -267,7 +267,7 @@ FR-18 di [5]/[10]; FR-25/26 di [10]/[11]; NFR-07 & FR-27 di [11].
 | **D — Tata kelola & pengalaman** | ~~FR-25 · FR-26 · FR-27~~ (selesai 22 Sep 2026) · ~~OPS-03 penyegaran terjadwal~~ (selesai 23 Sep 2026) · ~~DS-03 kesegaran cache korpus~~ · ~~NFR-09 aksesibilitas WCAG 2.2 AA~~ (keduanya selesai 24 Sep 2026) · CMP-02/03/04 | notis tampil; ≥ 50 umpan balik/bulan; WCAG 2.2 AA | 3–4 minggu |
 
 **Urutan yang disarankan bila sumber daya terbatas:** ~~FR-25 → FR-27 → FR-26 → FR-19 → FR-12 → FR-20 → FR-24 → FR-23~~
-(selesai 22–23 Sep 2026; OPS-04, NFR-07, dan OPS-03 ikut selesai 23 Sep 2026 — seluruh Fase C tertutup; DS-03 kesegaran cache korpus selesai 24 Sep 2026) → **Fase D** lanjutan: ~~NFR-09 aksesibilitas WCAG 2.2 AA~~ (selesai 24 Sep 2026) → ~~FR-18 bentuk jawaban per niat~~ (selesai 24 Sep 2026) → **DS-05 kamus sinonim daerah** (urutan yang disetujui 24 Sep 2026; CMP-02/03/04 setelahnya).
+(selesai 22–23 Sep 2026; OPS-04, NFR-07, dan OPS-03 ikut selesai 23 Sep 2026 — seluruh Fase C tertutup; DS-03 kesegaran cache korpus selesai 24 Sep 2026) → **Fase D** lanjutan: ~~NFR-09 aksesibilitas WCAG 2.2 AA~~ (selesai 24 Sep 2026) → ~~FR-18 bentuk jawaban per niat~~ (selesai 24 Sep 2026) → ~~DS-05 kamus sinonim daerah~~ (selesai 24 Sep 2026 — urutan yang disetujui sudah **tuntas**) → **CMP-02/03/04** (perbandingan antarwilayah/kecamatan) & **EV-05** (eval parafrase lanjutan) sebagai butir terbuka berikutnya.
 Alasannya: FR-19 menaikkan kepercayaan paling tinggi per satuan usaha; FR-12 (lapis semantik) sudah
 selesai dan menutup celah parafrase; FR-20 murah dan membuat **setiap** kegagalan yang tersisa
 terjelaskan dengan satu tag sebab — termasuk kegagalan yang baru muncul dari lapis semantik.
