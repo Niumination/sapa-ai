@@ -30,7 +30,7 @@ import { checkRateLimit } from '@/lib/rate-limit';
 import { cacheGet, cacheSet, incrementCounter, peekCounter, type CounterResult } from '@/lib/store';
 import { bacaKesehatan, ringkasKesehatan } from '@/lib/ai/provider-health';
 import { catatHasil, catatTahap, denganTelemetri, ukurTahap } from '@/lib/ai/telemetri';
-import { normalizeText, dataSourceLabel, daftarKecamatan, type SapaRecord } from '@/lib/sapa-client';
+import { normalizeText, dataSourceLabel, daftarKecamatan, sidikKorpus, type SapaRecord } from '@/lib/sapa-client';
 import {
   periksaPasanganEntitas,
   ringkasPemeriksaan,
@@ -59,6 +59,20 @@ export interface ComposeOptions {
   /** Streaming dari provider (SSE). Default: true bila onToken diberikan. */
   stream?: boolean;
   signal?: AbortSignal;
+  /**
+   * Sidik isi korpus (FR-25). Diserahkan pemanggil (rute sudah memegangnya dari
+   * `meta.sidik`) supaya tidak dihitung ulang; bila tidak diisi, dihitung dari
+   * `records` (ada memo per-identitas array).
+   *
+   * MENGAPA ADA DI KUNCI CACHE (DS-03). Kunci lama memakai JUMLAH record:
+   * `ai:v1:<hash(query)>:<records.length>`. Jumlah record jarang berubah ketika
+   * ISI data diperbarui — OPD memutakhirkan angka pada indikator yang sudah ada.
+   * Akibatnya jawaban lama tetap disajikan sampai TTL 15 menit habis, dan
+   * pembaruan data bersama-sama dengan penyegaran cache OPS-03 tetap terlihat
+   * "segar" padahal jawabannya dari korpus sebelumnya. Terukur pada korpus
+   * produksi 2.065 record: satu indikator berubah isi TANPA mengubah jumlah.
+   */
+  sidikKorpus?: string;
 }
 
 export interface AiMeta {
@@ -504,8 +518,11 @@ async function composeAnswerInti(opts: ComposeOptions): Promise<ComposeResult> {
     if (!perMenit.ok || !perJam.ok) return selesai('rate limit terlampaui', 'rate-limit');
   }
 
-  // 4. Cache jawaban (query dinormalisasi + ukuran katalog).
-  const cacheKey = `ai:v1:${hash(normalizeText(opts.query))}:${opts.records.length}`;
+  // 4. Cache jawaban (query dinormalisasi + VERSI ISI korpus, bukan jumlahnya).
+  //    Versi `v2`: jumlah record diganti sidik isi (DS-03) — entri lama dengan
+  //    kunci `ai:v1:*` tidak pernah cocok lagi, jadi tidak perlu dibersihkan.
+  const sidik = opts.sidikKorpus ?? sidikKorpus(opts.records);
+  const cacheKey = `ai:v2:${hash(normalizeText(opts.query))}:${sidik}`;
   const tersimpan = await cacheGet<{ response: HybridResponse; ai: AiMeta }>(cacheKey);
   if (tersimpan && aktif) {
     return { ...selengkap({ ...tersimpan.ai, cached: true }, tersimpan.response) };

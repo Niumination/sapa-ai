@@ -1,0 +1,20 @@
+
+DS-03 — kunci cache jawaban terikat versi ISI korpus → http://127.0.0.1:3131
+
+  · status: record=6 · ai=active
+  · fase A · query 1 → nilai=9439 cached=false
+  · fase A · query 2 → nilai=9439 cached=true
+  ✓ cache hidup: query kedua dilayani dari simpanan (cached=true)
+  · penyegaran (OPS-03) → HTTP 200
+  · fase B · query 3 → nilai=9446 cached=true
+  · cache-hit: bukti=9446 · narasi="Jumlah ASN tercatat 9.439 pegawai (2026) (Badan Kepegawaian dan Pengembangan SDM…"
+
+  ──────────────── Ringkasan ────────────────
+  korpus A/B          : 6 record · angka ASN 9439 → 9446 (jumlah record TIDAK berubah)
+  query 1 (dingin)    : nilai 9439 · cached=false
+  query 2 (korpus A)  : nilai 9439 · cached=true
+  query 3 (korpus B)  : nilai 9446 · cached=true
+
+  ✗ GAGAL — 2 pelanggaran:
+    · jawaban korpus BARU dilaporkan berasal dari cache (cached=true) — kunci cache tidak ikut berubah, narasi model basi disajikan
+    · narasi menyebut angka korpus LAMA (9439) sementara bukti sudah 9446 — pembaca melihat campuran yang menyesatkan

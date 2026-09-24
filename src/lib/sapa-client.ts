@@ -180,8 +180,42 @@ function barisKanonis(r: SapaRecord): string {
  * urutan penyajian.
  */
 export function sidikKorpus(records: SapaRecord[]): string {
+  // Memo per-identitas array: penyusun jawaban memakai sidik ini SETIAP
+  // permintaan (kunci cache jawaban, DS-03), sedangkan korpus berisi ~2.000
+  // record. Tanpa memo, setiap pertanyaan membayar pengurutan + pencacahan
+  // ulang yang hasilnya pasti sama. Kunci memo adalah IDENTITAS array, jadi
+  // array yang berbeda (mis. hasil tarikan SPLP baru) selalu dihitung ulang.
+  const memo = memo_sidik.get(records);
+  if (memo !== undefined) return memo;
   const baris = records.map(barisKanonis).sort();
-  return hashFnv1a(`sapa:v2:${records.length}:${baris.join('\u001e')}`);
+  const sidik = hashFnv1a(`sapa:v2:${records.length}:${baris.join('\u001e')}`);
+  memo_sidik.set(records, sidik);
+  return sidik;
+}
+
+const memo_sidik = new WeakMap<SapaRecord[], string>();
+
+/**
+ * Lupakan korpus yang dipegang proses ini (DS-03).
+ *
+ * Kapan dipakai: setelah cache dibatalkan oleh penyegaran (OPS-03). Tanpa ini,
+ * `fetchSapaData` masih menyajikan salinan dalam memori sampai TTL-nya habis
+ * (10 menit) — jadi operator yang menekan "segarkan sekarang" tetap melihat
+ * angka lama, walaupun pembukuan penyegaran berkata "berhasil". Itu jenis
+ * kebohongan yang paling mahal: bukan gagal, tetapi mengaku sudah segar.
+ *
+ * CATATAN JUJUR (pembatasan): ini hanya berlaku pada PROSES yang menjalankan
+ * penyegaran. Instance lain (mis. beberapa lambda Vercel) tetap memakai
+ * salinannya sampai TTL habis. Yang membuat hal itu tidak berbahaya bukan
+ * fungsi ini, melainkan sidik korpus pada kunci cache jawaban: begitu instance
+ * itu menarik data baru, sidik berubah dan jawaban lama tidak lagi disajikan.
+ *
+ * @returns true bila ada korpus yang benar-benar dilupakan (untuk log/uji).
+ */
+export function lupakanKorpus(): boolean {
+  const ada = splpCache !== null;
+  splpCache = null;
+  return ada;
 }
 
 let splpCache: { at: number; records: SapaRecord[]; meta: MetaKorpus } | null = null;

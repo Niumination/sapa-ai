@@ -61,6 +61,46 @@ describe('meta korpus', () => {
     expect(dua.meta.sidik).not.toBe(satu.meta.sidik);
   });
 
+  it('ISI berubah dengan JUMLAH record sama ⇒ sidik berbeda (inti DS-03)', async () => {
+    // Inilah alasan kunci cache jawaban tidak boleh memakai jumlah record:
+    // OPD memutakhirkan ANGKA pada indikator yang sudah ada, sehingga jumlah
+    // record tetap 2.065 sementara isinya berubah. Kalau sidik (dan karenanya
+    // kunci cache) tidak ikut berubah, warga tetap menerima angka lama.
+    const isiA = [{ ...record, variabel: '9610' }, { ...record, id: 2, variabel: '31,4' }];
+    const isiB = [{ ...record, variabel: '9700' }, { ...record, id: 2, variabel: '31,4' }];
+    vi.stubGlobal('fetch', vi.fn(async () => jawab(isiA)));
+    const a = await (await modulSegar()).fetchSapaData();
+    vi.stubGlobal('fetch', vi.fn(async () => jawab(isiB)));
+    const b = await (await modulSegar()).fetchSapaData();
+    expect(a.records).toHaveLength(b.records.length);
+    expect(b.meta.sidik).not.toBe(a.meta.sidik);
+  });
+
+  it('lupakanKorpus: tarikan berikutnya benar-benar mengambil ulang, sidik ikut versi baru', async () => {
+    const fetchMock = vi.fn(async () => jawab([{ ...record, variabel: '9610' }]));
+    vi.stubGlobal('fetch', fetchMock);
+    const mod = await modulSegar();
+    const lama = await mod.fetchSapaData();
+    expect(fetchMock).toHaveBeenCalledTimes(1);
+
+    // Tanpa lupakanKorpus: masih dari memori (TTL 10 menit).
+    await mod.fetchSapaData();
+    expect(fetchMock).toHaveBeenCalledTimes(1);
+
+    // Sesudah dilupakan: ambil ulang — inilah yang membuat tombol "segarkan
+    // sekarang" benar-benar terlihat hasilnya oleh operator (DS-03).
+    expect(mod.lupakanKorpus()).toBe(true);
+    fetchMock.mockImplementation(async () => jawab([{ ...record, variabel: '9700' }]));
+    const baru = await mod.fetchSapaData();
+    expect(fetchMock).toHaveBeenCalledTimes(2);
+    expect(baru.meta.sidik).not.toBe(lama.meta.sidik);
+    // Dua panggilan berurutan: yang pertama melupakan, yang kedua tidak ada
+    // apa-apa lagi untuk dilupakan (dipakai operator untuk membedakan
+    // "memang tidak ada salinan" dari "salinan baru saja dibuang").
+    expect(mod.lupakanKorpus()).toBe(true);
+    expect(mod.lupakanKorpus()).toBe(false);
+  });
+
   it('data yang SAMA pada proses berbeda (waktu tarik berbeda) menghasilkan sidik SAMA', async () => {
     vi.stubGlobal('fetch', vi.fn(async () => jawab([record, { ...record, id: 2 }])));
     const prosesA = await (await modulSegar()).fetchSapaData();

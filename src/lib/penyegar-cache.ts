@@ -29,6 +29,7 @@
 // Yang dicatat hanyalah TAG (nama kebijakan cache) dan MODE akses.
 
 import { revalidateTag } from 'next/cache';
+import { lupakanKorpus } from '@/lib/sapa-client';
 import { activeBackend, cacheGet, cacheSet } from '@/lib/store';
 
 /** Tag cache yang boleh dibatalkan (cermin allowlist di /api/revalidate). */
@@ -359,6 +360,14 @@ export async function jalankanPenyegaran(opsi: OpsiPenyegaran): Promise<HasilPen
     // { expire: 0 } = kedaluwarsa SEKETIKA (sama dengan alasan di route lama):
     // profil bawaan 'max' hanya MENANDAI basi dan masih menyajikan entri lama.
     for (const t of pilihan.tag) revalidateTag(t, { expire: 0 });
+
+    // DS-03: cache data SAPA juga dipegang di MEMORI proses (`splpCache`,
+    // TTL 10 menit). Tanpa melupakannya, "segarkan" hanya membatalkan cache
+    // Next sementara permintaan berikutnya masih menerima salinan lama —
+    // operator menekan segarkan, pembukuan berkata berhasil, tetapi angka yang
+    // dilihat warga tidak berubah. Dilupakan HANYA pada penyegaran nyata,
+    // tidak pada uji kering (kering = tidak boleh mengubah apa pun).
+    lupakanKorpus();
   }
 
   const durasiMs = Date.now() - mulai;

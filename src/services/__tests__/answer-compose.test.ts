@@ -31,6 +31,11 @@ const records: SapaRecord[] = [
 
 const ENV = ['AI_ENABLED', 'AI_SHADOW', 'AI_PROVIDER', 'AI_MODEL', 'AI_API_KEY', 'AI_BASE_URL'];
 
+/**
+ * Tiruan `fetch` penyedia model. Sengaja TIDAK di-cast ke `typeof fetch`: hasil
+ * `vi.fn()` tetap membawa `.mock.calls`, yang dipakai uji DS-03 untuk membuktikan
+ * model benar-benar tidak dipanggil saat jawaban dilayani cache.
+ */
 function jawabModel(isi: unknown) {
   return vi.fn(async () => ({
     ok: true,
@@ -40,7 +45,7 @@ function jawabModel(isi: unknown) {
       usage: { prompt_tokens: 900, completion_tokens: 120 },
     }),
     text: async () => '',
-  })) as unknown as typeof fetch;
+  }));
 }
 
 beforeEach(() => {
@@ -296,8 +301,80 @@ describe('composeAnswer — dengan model aktif', () => {
     // cacheSet juga dipakai untuk keadaan kesehatan penyedia (circuit breaker),
     // jadi yang diperiksa adalah kunci jawaban AI-nya — bukan jumlah panggilan.
     const panggilan = vi.mocked(cacheSet).mock.calls as unknown as [string, unknown, number][];
-    const kunciJawaban = panggilan.map((c) => String(c[0])).filter((k) => k.startsWith('ai:v1:'));
+    const kunciJawaban = panggilan.map((c) => String(c[0])).filter((k) => k.startsWith('ai:v2:'));
     expect(kunciJawaban).toHaveLength(1);
+  });
+});
+
+describe('composeAnswer — kunci cache memuat VERSI ISI korpus (DS-03)', () => {
+  const aktifkan = () => {
+    process.env.AI_ENABLED = 'true';
+    process.env.AI_API_KEY = 'kunci-uji';
+    process.env.AI_MODEL = 'glm-5.2';
+    process.env.AI_PROVIDER = 'opencode-go';
+  };
+
+  it('isi korpus berubah dengan jumlah record SAMA ⇒ kunci cache berbeda', async () => {
+    vi.stubGlobal('fetch', jawabModel({ narasi: 'Prevalensi stunting {{511}}.' }));
+    aktifkan();
+    await composeAnswer({ query: 'stunting', records, stream: false });
+
+    // Korpus kedua: JUMLAH record sama (2), isi angka berbeda — persis seperti
+    // pemutakhiran angka oleh OPD pada katalog produksi.
+    const recordsBaru: SapaRecord[] = [
+      { ...records[0], variabel: '29,8' },
+      { ...records[1] },
+    ];
+    await composeAnswer({ query: 'stunting', records: recordsBaru, stream: false });
+
+    const kunci = (vi.mocked(cacheSet).mock.calls as unknown as [string, unknown, number][])
+      .map((c) => String(c[0]))
+      .filter((k) => k.startsWith('ai:v2:'));
+    expect(kunci).toHaveLength(2);
+    expect(kunci[0]).not.toBe(kunci[1]);
+  });
+
+  it('jawaban tersimpan untuk korpus LAMA tidak disajikan setelah isi korpus berubah', async () => {
+    aktifkan();
+    const fetchMock = jawabModel({ narasi: 'Prevalensi stunting {{511}}.' });
+    vi.stubGlobal('fetch', fetchMock);
+
+    // Cache mengembalikan jawaban HANYA untuk kunci yang benar-benar tersimpan
+    // (meniru penyimpanan sungguhan). Kunci berisi sidik, jadi penyimpanan ini
+    // hanya cocok untuk korpus yang sama.
+    let tersimpan: { kunci: string; nilai: unknown } | null = null;
+    vi.mocked(cacheSet).mockImplementation(async (k: string, v: unknown) => {
+      if (k.startsWith('ai:v2:')) tersimpan = { kunci: k, nilai: v };
+    });
+    vi.mocked(cacheGet).mockImplementation(async (k: string) =>
+      tersimpan && tersimpan.kunci === k ? (tersimpan.nilai as never) : (null as never),
+    );
+
+    await composeAnswer({ query: 'stunting', records, stream: false });
+    const panggilanSetelahSimpan = fetchMock.mock.calls.length;
+
+    // Panggilan ulang pada korpus yang SAMA → dilayani cache (model tidak dipanggil).
+    const ulang = await composeAnswer({ query: 'stunting', records, stream: false });
+    expect(ulang.ai.cached).toBe(true);
+    expect(fetchMock.mock.calls.length).toBe(panggilanSetelahSimpan);
+
+    // Korpus berubah isinya (jumlah record sama) → kunci berbeda → TIDAK boleh
+    // tersaji dari cache; model dipanggil lagi.
+    const recordsBaru: SapaRecord[] = [{ ...records[0], variabel: '29,8' }, { ...records[1] }];
+    const sesudah = await composeAnswer({ query: 'stunting', records: recordsBaru, stream: false });
+    expect(sesudah.ai.cached).toBe(false);
+    expect(fetchMock.mock.calls.length).toBeGreaterThan(panggilanSetelahSimpan);
+  });
+
+  it('sidik dari rute dipakai apa adanya (tidak dihitung ulang) — kunci tetap stabil', async () => {
+    aktifkan();
+    vi.stubGlobal('fetch', jawabModel({ narasi: 'Prevalensi stunting {{511}}.' }));
+    await composeAnswer({ query: 'stunting', records, stream: false, sidikKorpus: 'deadbeef' });
+    const kunci = (vi.mocked(cacheSet).mock.calls as unknown as [string, unknown, number][])
+      .map((c) => String(c[0]))
+      .filter((k) => k.startsWith('ai:v2:'));
+    expect(kunci).toHaveLength(1);
+    expect(kunci[0].endsWith(':deadbeef')).toBe(true);
   });
 });
 

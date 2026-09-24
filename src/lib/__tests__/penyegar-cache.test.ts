@@ -17,6 +17,10 @@ import { beforeEach, describe, expect, it, vi } from 'vitest';
 const revalidateTag = vi.fn();
 vi.mock('next/cache', () => ({ revalidateTag: (...args: unknown[]) => revalidateTag(...args) }));
 
+// DS-03: penyegaran NYATA harus melupakan korpus di memori; uji kering tidak.
+const lupakanKorpus = vi.fn(() => true);
+vi.mock('@/lib/sapa-client', () => ({ lupakanKorpus: () => lupakanKorpus() }));
+
 import { __clearLocalStore } from '@/lib/store';
 import {
   AMBANG_BASI_JAM,
@@ -300,6 +304,21 @@ describe('jalankanPenyegaran', () => {
     expect(revalidateTag).not.toHaveBeenCalled();
     expect(h.tag).toEqual(['stats']);
     expect((await bacaKeadaanSegarkan()).jumlahOk).toBe(1);
+  });
+
+  it('penyegaran nyata melupakan korpus di memori; uji kering TIDAK (DS-03)', async () => {
+    lupakanKorpus.mockClear();
+    await jalankanPenyegaran({ tagDiminta: ['stats'], mode: 'admin' });
+    expect(lupakanKorpus).toHaveBeenCalledTimes(1);
+
+    lupakanKorpus.mockClear();
+    await jalankanPenyegaran({ tagDiminta: ['stats'], mode: 'admin', kering: true });
+    expect(lupakanKorpus).not.toHaveBeenCalled();
+
+    // Tag tak dikenal: ditolak sebelum apa pun dibatalkan/dilupakan.
+    lupakanKorpus.mockClear();
+    await jalankanPenyegaran({ tagDiminta: 'entah', mode: 'admin' });
+    expect(lupakanKorpus).not.toHaveBeenCalled();
   });
 
   it('tag tak dikenal → ditolak, tidak ada pembatalan, tidak ada penyimpanan', async () => {

@@ -12,12 +12,12 @@ menyentuh `main` sampai Anda sendiri memutuskan.
 
 | Aset | Letak | Isi |
 |---|---|---|
-| **Cabang utuh** | `usulan/perbaikan-ai-2026-09-21` @ `f3e99c1` (komit kode OPS-03 terakhir) | 0 divergensi dari `main` (fast-forward); seri patch memuat seluruh komit kode & dokumen, sedangkan folder `seri-patch/` sendiri sengaja tidak ikut dipatch (isinya memang wadah patch) |
-| **Seri patch** | `06-USULAN-KODE/seri-patch/` | **seluruh** berkas `NNNN-*.patch` di folder itu, dijalankan **urut angka** (jangan melompat), ditambah `00-semua.patch` sebagai paket tunggal. Komit dokumen dikenali dari judulnya (`Dokumen: …`). Karena setiap ekspor mengecualikan folder ini, `git am` atas semua berkas `NNNN-*.patch` menghasilkan pohon yang **sama persis** dengan ujung cabang |
+| **Cabang utuh** | `dev` @ `eb0fc5d` (ruang kerja ini; 41 komit di atas `main` `ff00eb8`, fast-forward). Basis publik `origin/dev` = `86af3b5` | patch lanjutan `0038`–`0040` duduk **di atas `origin/dev`**; seri patch memuat seluruh komit kode & dokumen, sedangkan folder `seri-patch/` sendiri sengaja tidak ikut dipatch (isinya memang wadah patch) |
+| **Seri patch** | `06-USULAN-KODE/seri-patch/` | **seluruh** berkas `NNNN-*.patch` di folder itu, dijalankan **urut angka** (jangan melompat), ditambah **dua** paket tunggal: `00-semua.patch` (basis `main` — seluruh riwayat cabang) dan `00-lanjutan-dev.patch` (basis `origin/dev` `86af3b5` — hanya komit `0038`–`0040`). Komit dokumen dikenali dari judulnya (`Dokumen: …`). Karena setiap ekspor mengecualikan folder ini, `git am` atas semua berkas `NNNN-*.patch` menghasilkan pohon yang **sama persis** dengan ujung cabang |
 | **Skrip uji terima** | `06-USULAN-KODE/uji-terima.sh` | memutuskan LULUS/GAGAL sesuai ambang dokumen `10` |
-| **Alat pengukuran** | `verifikasi/mock-llm.mjs`, `verifikasi/stub-splp.mjs`, `verifikasi/banding-ai-vs-det.py`, `verifikasi/banding-main-vs-branch.py`, `scripts/uji-sitasi.mjs`, `scripts/uji-parafrase.mjs`, `scripts/uji-sebab.mjs`, `scripts/uji-pasangan.mjs`, `scripts/buat-korpus-uji.mjs`, `scripts/uji-bersih-data.mjs`, `scripts/buat-korpus-beracun.mjs` | penyedia model & SPLP tiruan + harness pembanding + uji 50 sampel sitasi (FR-19) + uji parafrase EV-05 (FR-12) + uji penanda sebab EV-20 (FR-20) + uji 50 sampel pasangan entitas EV-24 (FR-24) + uji pembersihan data katalog EV-23 (FR-23) + pembangkit korpus uji 1.210 record + pembangkit korpus uji beracun 6 bentuk serangan |
+| **Alat pengukuran** | `verifikasi/mock-llm.mjs`, `verifikasi/stub-splp.mjs`, `verifikasi/banding-ai-vs-det.py`, `verifikasi/banding-main-vs-branch.py`, `scripts/uji-sitasi.mjs`, `scripts/uji-parafrase.mjs`, `scripts/uji-sebab.mjs`, `scripts/uji-pasangan.mjs`, `scripts/buat-korpus-uji.mjs`, `scripts/uji-bersih-data.mjs`, `scripts/buat-korpus-beracun.mjs`, `scripts/uji-cache-korpus.mjs` | penyedia model & SPLP tiruan + harness pembanding + uji 50 sampel sitasi (FR-19) + uji parafrase EV-05 (FR-12) + uji penanda sebab EV-20 (FR-20) + uji 50 sampel pasangan entitas EV-24 (FR-24) + uji pembersihan data katalog EV-23 (FR-23) + pembangkit korpus uji 1.210 record + pembangkit korpus uji beracun 6 bentuk serangan |
 | **Penyedia model tiruan** | `verifikasi/mock-llm.mjs` (lima kepribadian: `mock-pintar` jujur · `mock-flash` menulis digit sendiri · `mock-tukar` menukar entitas · `mock-nakal` mengarang · `mock-patuh` **menuruti perintah di dalam data**) | menguji keempat pagar: anti-halu, gerbang nilai-tambah, gerbang pasangan entitas FR-24, dan pembersih data katalog FR-23 — tanpa langganan penyedia |
-| **Bukti angka** | `verifikasi/eval90-*.txt`, `banding-G.txt`, `aman-cabang-perilaku.txt`, `uji-terima-hasil.txt`, `eval-parafrase-baseline.txt`, `eval-parafrase-hash.txt`, `eval-sebab-cek.txt`, `uji-sitasi-ai.txt`, `uji-sitasi-det.txt`, `uji-pasangan-jujur.txt`, `uji-pasangan-tukar.txt`, `uji-bersih-data.txt`, `uji-bersih-data-jujur.txt`, `uji-bersih-data-korpus-bersih.txt`, `uji-bersih-data-tanpa-pembersih.txt`, `uji-bersih-data-tanpa-bukti.txt`, `uji-bersih-data-cache-hampa.txt`, `uji-bersih-data-tanpa-prompt.txt`, `uji-peringatan.txt`, `uji-peringatan-bukti.json`, `uji-telemetri.txt`, `uji-telemetri-bukti.json`, `uji-segarkan.txt`, `uji-segarkan-bukti.json` | semua hasil yang diklaim di dokumen `10` (termasuk A/B lapis semantik FR-12 dan kontrol negatif FR-23 yang sengaja gagal) |
+| **Bukti angka** | `verifikasi/eval90-*.txt`, `banding-G.txt`, `aman-cabang-perilaku.txt`, `uji-terima-hasil.txt`, `eval-parafrase-baseline.txt`, `eval-parafrase-hash.txt`, `eval-sebab-cek.txt`, `uji-sitasi-ai.txt`, `uji-sitasi-det.txt`, `uji-pasangan-jujur.txt`, `uji-pasangan-tukar.txt`, `uji-bersih-data.txt`, `uji-bersih-data-jujur.txt`, `uji-bersih-data-korpus-bersih.txt`, `uji-bersih-data-tanpa-pembersih.txt`, `uji-bersih-data-tanpa-bukti.txt`, `uji-bersih-data-cache-hampa.txt`, `uji-bersih-data-tanpa-prompt.txt`, `uji-peringatan.txt`, `uji-peringatan-bukti.json`, `uji-telemetri.txt`, `uji-telemetri-bukti.json`, `uji-segarkan.txt`, `uji-segarkan-bukti.json`, `uji-cache-korpus.txt`, `uji-cache-korpus-tanpa-sidik.txt` | semua hasil yang diklaim di dokumen `10` (termasuk A/B lapis semantik FR-12 dan kontrol negatif FR-23 yang sengaja gagal) |
 | **Dua dasbor tinjauan** | `/admin/celah-pengetahuan`, `/admin/umpan-balik` | pertanyaan tak terlayani (FR-27) & laporan koreksi warga (FR-26); keduanya ber-`ADMIN_TOKEN` |
 | **Spesifikasi kebutuhan** | `10-KEBUTUHAN-UPGRADE-TINGKAT-LANJUT.md` | daftar kebutuhan `FR/NFR/DS/EV/OPS/CMP` + kriteria terima |
 | **Peta kerja tinggal-jalan** | `10` §11 (Fase B–D) | urutan pekerjaan berikutnya + perkiraan usaha |
@@ -28,7 +28,7 @@ menyentuh `main` sampai Anda sendiri memutuskan.
 |---|---|---|
 | Node.js | 20.20.2 (dipakai saat pengujian) | Node 20 EOL 30 Apr 2026 — jadwalkan naik versi |
 | Next.js | 16.2.10 | tidak ada perubahan dependensi di cabang ini |
-| Uji | 35 berkas / **584 uji** | `npm test` |
+| Uji | 35 berkas / **590 uji** | `npm test` |
 | Variabel lingkungan baru | `REVALIDATE_ALLOW_UNSIGNED` (opsional) | **`REVALIDATE_SECRET` kini wajib** agar penyegaran cache tidak tertolak (fail-closed) |
 | Variabel lingkungan baru (OPS-03, penjadwal) | `SAPA_BASE_URL`, `SAPA_SEGARKAN_TAG`, `SAPA_SEGARKAN_SUMBER`, `SAPA_SEGARKAN_ULANG` (opsional) | dipakai `scripts/segarkan-cache.mjs` dan `.github/workflows/segarkan-cache.yml` (harian 05:00 WIB). Tanpa `SAPA_URL`/`REVALIDATE_SECRET` di rahasia GitHub, workflow itu **dorman** (bukan gagal) |
 | Variabel lingkungan baru (FR-27 & FR-26) | `ADMIN_TOKEN` | menjaga **dua** dasbor admin: `/api/admin/celah` dan `/api/admin/umpan-balik`. Tanpa ini keduanya menjawab **503 fail-closed** |
@@ -61,10 +61,19 @@ git am 06-USULAN-KODE/seri-patch/[0-9][0-9][0-9][0-9]-*.patch
 **Cara C — paket tunggal (paling cepat, riwayat menjadi satu komit):**
 
 ```bash
+# Dari `main` — memuat SELURUH riwayat cabang (40 komit):
 git switch -c kerja/ai-tingkat-lanjut main
-git apply --3way 06-USULAN-KODE/seri-patch/00-semua.patch
-git add -A && git commit -m "AI tingkat lanjut: gelombang 1-3 (set 90 item)"
+git am 06-USULAN-KODE/seri-patch/00-semua.patch
+
+# ATAU dari repo yang sudah memuat `origin/dev` (`86af3b5`) — hanya komit lanjutan:
+git switch -c kerja/ai-tingkat-lanjut dev
+git am 06-USULAN-KODE/seri-patch/00-lanjutan-dev.patch
 ```
+
+> **Penting — pilih bundel sesuai basis Anda.** `00-semua.patch` berbasis `main`; menjalankannya di
+> atas `dev` akan berbenturan. `00-lanjutan-dev.patch` berbasis `origin/dev` (`86af3b5`); menjalankannya
+> di atas `main` juga akan berbenturan. Kalau ragu, pakai **Cara B** (berkas `NNNN-*.patch` urut angka)
+> dan berhenti pada berkas yang komit basisnya belum ada di repo Anda.
 
 Setelah salah satu cara: `npm ci` (walaupun dependensi tidak berubah, ini memastikan `node_modules`
 selaras) lalu jalankan uji terima (§7).
@@ -72,7 +81,9 @@ selaras) lalu jalankan uji terima (§7).
 > **Terbukti pada 22 Sep 2026:** ketiga cara diuji pada klon bersih `main`. Cara B (`git am` seluruh seri)
 > dan Cara C (`git apply --3way 00-semua.patch`) sama-sama berhasil; hasil pohon **identik dengan cabang**
 > (kecuali folder `seri-patch/` yang memang hanya wadah patch), `npm run typecheck` bersih, dan **494 uji lulus**
-> di pohon hasil patch. Cara C menyisakan perubahan tanpa komit — jalankan `git add -A && git commit` sesudahnya.
+> di pohon hasil patch.
+>
+> **Diperbarui 24 Sep 2026:** verifikasi diulang dari basis **GitHub**: `origin/dev` + `0038` + `0039` → pohon identik dengan cabang kerja (`584` uji lulus), dan `00-lanjutan-dev.patch` (3 komit: `0038`+`0039`+`0040`) diverifikasi ulang pada klon bersih (`590` uji lulus). `00-semua.patch` sekarang 40 komit di atas `main`.
 
 > **Catatan tentang bit eksekusi:** komit `0003`/`0004` hanya memulihkan bit eksekusi
 > `.githooks/pre-commit` & `scripts/pii-gate.sh` yang hilang saat pemindahan berkas. Bila Anda
@@ -100,13 +111,15 @@ selaras) lalu jalankan uji terima (§7).
 | `src/lib/penyegar-cache.ts`, `src/app/api/admin/segarkan/route.ts`, `scripts/segarkan-cache.mjs`, `scripts/uji-segarkan.mjs`, `.github/workflows/segarkan-cache.yml` | penyegaran cache (OPS-03) | kebijakan harian (jam jadwal, ambang basi, batas laju) terpusat di modul ini — ubah bersama `21-LAPORAN-OPS-03.md`; `JAM_JADWAL_UTC` harus sama dengan cron di workflow |
 | `src/lib/ai/telemetri.ts`, `src/app/api/admin/telemetri/route.ts`, `scripts/uji-telemetri.mjs` | observabilitas (NFR-07) | wilayah baru; kontrak perilakunya (satu baris per permintaan, nama medan `gen_ai.*`, tanpa isi pertanyaan) dijaga uji unit 19 butir — ubah bersama `20-LAPORAN-NFR-07.md` |
 | `src/lib/ai/notifikasi.ts`, `src/app/api/admin/peringatan/route.ts`, `scripts/uji-peringatan.mjs`, `.github/workflows/peringatan.yml` | operasi/notifikasi (OPS-04) | wilayah baru; ubah hanya bersama-sama dengan `19-LAPORAN-OPS-04.md` karena kontrak perilakunya (episode, antispam, penyaringan rahasia) dijaga uji unit 20 butir |
+| `src/services/answer-compose.ts` (kunci `ai:v2:<hash>:<sidik>`), `src/lib/sapa-client.ts` (`sidikKorpus` + memo, `lupakanKorpus`), `src/lib/penyegar-cache.ts`, `scripts/uji-cache-korpus.mjs` | kesegaran cache korpus (DS-03) | kunci cache jawaban **wajib** memuat sidik isi korpus, bukan jumlah record — mengubahnya kembali ke `records.length` membuat jawaban korpus lama disajikan; `lupakanKorpus()` hanya pada penyegaran nyata (uji kering tidak boleh mengubah apa pun). Ubah bersama `23-LAPORAN-DS-03.md` |
 | `vercel.json`, `package.json`, `middleware.ts` | rilis/keamanan | **tidak disentuh**; perubahan di sini butuh persetujuan pemilik |
 
 ## 6. Daftar centang serah terima
 
 - [ ] `git status` bersih pada cabang kerja; `main` belum tersentuh.
-- [ ] `npm ci` selesai; `npm test` → **584 uji lulus** (≥ 550).
+- [ ] `npm ci` selesai; `npm test` → **590 uji lulus** (≥ 550).
 - [ ] `bash verifikasi/uji-terima.sh` → **LULUS** (statis + pagar). Bagian §6f (notifikasi sirkuit) butuh server uji khusus — lihat `19 §2`; tanpa itu ia dilaporkan **dilewati**, bukan gagal. Bagian §6g (telemetri) dan §6h (penyegaran cache) **menjalankan servernya sendiri** — cukup `node scripts/uji-telemetri.mjs` / `node scripts/uji-segarkan.mjs`; lewati dengan `SAPA_SKIP_TELEMETRI=1` / `SAPA_SKIP_SEGARKAN=1`. §6h sengaja menjalankan **dua** aplikasi (satu tanpa rahasia) karena hanya itu yang membuktikan fail-closed.
+- [ ] `node scripts/uji-cache-korpus.mjs` → **LULUS** (menyalakan stub SPLP sendiri, ± 2 detik; butuh aplikasi + penyedia tiruan hidup). Kontrol negatifnya: kembalikan kunci cache ke `ai:v1:...:${opts.records.length}`, `npm run build`, jalankan ulang → wajib **GAGAL**.
 - [ ] Eval dua mode → **90/90** masing-masing, invarians 0, hasil tersimpan di `verifikasi/`.
 - [ ] A/B AI vs deterministik → sitasi AI **≥** deterministik.
 - [ ] `REVALIDATE_SECRET` disiapkan pada lingkungan non-lokal (Vercel/preview).
@@ -160,7 +173,7 @@ AI_URL=http://127.0.0.1:3116 DET_URL=http://127.0.0.1:3117 bash verifikasi/uji-t
 ```
 
 Hasil yang diharapkan pada cabang ini (terukur 22 Sep 2026): eval **90/90** dua mode ·
-grounded pass **100%** · fallback **0%** · invarians **0** · uji unit **584** ·
+grounded pass **100%** · fallback **0%** · invarians **0** · uji unit **590** ·
 A/B sitasi **4,50 vs 3,00** · pertanyaan ber-bukti saat penyedia mati **0,14–0,56 dtk**.
 
 ## 7a. Menguji tanpa internet (stub SPLP) — berguna untuk agen lokal & CI
@@ -226,7 +239,7 @@ perlu disetel — **bukan** gerbangnya dilonggarkan.
 > Langkah:
 > 1. `git switch -c kerja/ai-tingkat-lanjut main`
 > 2. `git am 06-USULAN-KODE/seri-patch/[0-9][0-9][0-9][0-9]-*.patch`
-> 3. `npm ci && npm test` → wajib **584 uji lulus**; `npm run typecheck` → bersih.
+> 3. `npm ci && npm test` → wajib **590 uji lulus**; `npm run typecheck` → bersih.
 > 4. `bash verifikasi/uji-terima.sh` → wajib **LULUS**.
 > 5. Jalankan eval dua mode (lihat `11 §7`) → wajib **90/90** masing-masing, **0 regresi**.
 > 6. Bila ada konflik, jangan menimpa; laporkan berkas konflik beserta keputusan yang diambil.

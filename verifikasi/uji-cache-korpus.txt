@@ -1,0 +1,20 @@
+
+DS-03 — kunci cache jawaban terikat versi ISI korpus → http://127.0.0.1:3131
+
+  [2m·[0m status: record=6 · ai=active
+  [2m·[0m fase A · query 1 → nilai=9577 cached=false
+  [2m·[0m fase A · query 2 → nilai=9577 cached=true
+  [32m✓[0m cache hidup: query kedua dilayani dari simpanan (cached=true)
+  [2m·[0m penyegaran (OPS-03) → HTTP 200
+  [2m·[0m fase B · query 3 → nilai=9584 cached=false
+  [32m✓[0m setelah korpus berubah (jumlah record tetap 6): jawaban dihitung ULANG (cached=false), bukti 9584, narasi tanpa angka lama
+
+  ──────────────── Ringkasan ────────────────
+  korpus A/B          : 6 record · angka ASN 9577 → 9584 (jumlah record TIDAK berubah)
+  query 1 (dingin)    : nilai 9577 · cached=false
+  query 2 (korpus A)  : nilai 9577 · cached=true
+  query 3 (korpus B)  : nilai 9584 · cached=false
+
+  [32m✓[0m LULUS — cache jawaban terikat VERSI ISI korpus: perubahan angka tanpa perubahan jumlah record
+          membuat jawaban dihitung ULANG (tanpa narasi basi), dan "segarkan" juga
+          melupakan korpus di memori sehingga penyegaran benar-benar terlihat.

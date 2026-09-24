@@ -69,7 +69,7 @@ async function tanganiQuery(req: NextRequest) {
   // versi korpus, bukan setiap permintaan.
   await ukurTahapAsync('indeks_semantik', () => siapkanIndeksSemantik(records, meta.sidik));
 
-  const hasil = await composeAnswer({ query: queryRaw, records, ip, stream: false });
+  const hasil = await composeAnswer({ query: queryRaw, records, ip, stream: false, sidikKorpus: meta.sidik });
 
   // Jika admin mematikan AI dan Deterministik → 503, bukan 200
   if (hasil.ai?.limitedBy === 'service-unavailable') {

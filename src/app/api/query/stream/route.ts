@@ -66,6 +66,7 @@ export async function POST(req: NextRequest) {
           ip,
           stream: true,
           signal: req.signal,
+          sidikKorpus: fetched.meta.sidik,
           onToken: (teks) => kirim('token', { text: teks }),
         });
 
