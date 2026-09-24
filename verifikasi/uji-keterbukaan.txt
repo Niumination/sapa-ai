@@ -1,0 +1,41 @@
+
+  CMP-02 · keterbukaan penggunaan AI
+
+
+── A. Keterbukaan lengkap & bebas klaim mutlak (AI mati) ──
+  [32m✓[0m A1 endpoint menjawab 200 & berstatus ok
+  [32m✓[0m A2 memuat ≥ 7 bagian keterbukaan — 7 bagian
+  [32m✓[0m A3 memuat unsur wajib SE 9/2023 (peran AI, kendali manusia, privasi, keterbatasan, koreksi) — peran-ai,keadaan-sekarang,kendali-manusia,data-dan-privasi,keterbatasan,hak-dan-koreksi,riwayat-notis
+  [32m✓[0m A4 endpoint bebas klaim mutlak yang dilarang — bersih
+  [32m✓[0m A5 halaman bebas klaim mutlak yang dilarang — bersih
+  [32m✓[0m A6 halaman memuat kalimat keadaan yang SAMA dengan endpoint (satu sumber teks) — "Saat ini layanan AI TIDAK aktif: seluruh jawaban disusun oto…"
+  [32m✓[0m A7 tenggat peninjauan teks belum lewat (lewat ⇒ wajib ditinjau ulang) — berikutnya 2027-03-24
+  [32m✓[0m A8 kanal koreksi & saklar operator dicantumkan — {"laporAngka":"/api/umpan-balik","tinjauan":"/admin/umpan-balik","status":"/api/status","saklar":"/admin/ai-toggle"}
+  [32m✓[0m A9 tidak ada kunci API yang bocor ke halaman/endpoint
+
+── B. Kalimat keadaan mengikuti keadaan nyata (bukan teks tetap) ──
+  [32m✓[0m B1 AI mati ⇒ endpoint melaporkan "mati" & teks menyatakan TIDAK aktif — keadaanAi=mati
+  [32m✓[0m B2 halaman (AI mati) tidak memuat kalimat "layanan AI aktif:"
+  [32m✓[0m B3 jawaban tanpa AI: metadata menyatakan ai.used=false — ai.used=false
+  [32m✓[0m B4 notis yang disiapkan untuk jawaban itu adalah notis "tanpa AI" (bukan "disusun AI") — kunci=tanpaAi · "Narasi jawaban ini disusun otomatis dari data resm…"
+  [32m✓[0m B5 klaim privasi: pertanyaan ber-NIK ditolak pagar masuk — Permintaan ini tidak dilayani karena memuat nomor identitas kependuduk…
+
+── C. AI hidup ⇒ keterbukaan menyatakan aktif & kalimat per jawaban cocok ──
+  [32m✓[0m C1 endpoint melaporkan keadaan aktif — keadaanAi=aktif · terjangkau=true
+  [32m✓[0m C2 penyedia & model yang dilaporkan = yang benar-benar dipakai — custom · mock-uji
+  [32m✓[0m C3 kalimat keadaan halaman tidak lagi menyatakan "TIDAK aktif"
+  [32m✓[0m C4 jawaban benar-benar disusun AI (ai.used=true) — kalau tidak, uji C5 tidak bermakna — ai.used=true · grounded=pass
+  [32m✓[0m C5 notis untuk jawaban ber-AI menyatakan narasi disusun model bahasa — kunci=digunakan
+
+── D. Penyedia model gagal/kembali mati ⇒ keterbukaan menyatakannya jujur ──
+  [32m✓[0m D1 jawaban tetap keluar walau panggilan model gagal (dari data) — ai.used=false
+  [32m✓[0m D2 satu kegagalan ⇒ keterbukaan menyebut "panggilan model terakhir gagal" (tidak disembunyikan) — gagalBerturut=1 · sebab=jaringan
+  [32m✓[0m D3 satu kegagalan ⇒ BELUM mengklaim penyedia mati (tidak melebih-lebihkan)
+  [32m✓[0m D4 tiga kegagalan berturut ⇒ sirkuit terbuka & keterbukaan menyatakan "sedang tidak menjawab" — terjangkau=false · gagalBerturut=3
+  [32m✓[0m D5 /api/status sependapat dengan keterbukaan (satu kenyataan, bukan dua cerita) — reachable=false · state=active
+
+  ──────────────── Ringkasan ────────────────
+  keadaan diuji      : mati · hidup · penyedia gagal (3 aplikasi)
+  pemeriksaan lulus  : 24
+
+  [32m✓[0m LULUS — teks keterbukaan lengkap, mengikuti keadaan nyata, dan notis per jawaban cocok dengan metadata jawaban.

@@ -62,12 +62,20 @@ export default function NotisTransparansi({
       </div>
 
       {!terbuka && (
+        <>
+        <a
+          href="/keterbukaan"
+          className="mt-3 inline-block px-3 py-1.5 bg-[var(--surface-card)] border border-[#C6C3B4] text-[#1B4332] text-xs rounded-lg hover:bg-[#DCD8C8]"
+        >
+          Keterbukaan penggunaan AI (CMP-02)
+        </a>
         <button
           onClick={() => setTerbuka(true)}
           className="mt-3 px-3 py-1.5 bg-[var(--surface-card)] border border-[#C6C3B4] text-[#1B4332] text-xs rounded-lg hover:bg-[#DCD8C8]"
         >
           Lapor angka / usulkan perbaikan
         </button>
+        </>
       )}
 
       {terbuka && (
