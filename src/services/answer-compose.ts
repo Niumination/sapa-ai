@@ -364,6 +364,17 @@ async function composeAnswerInti(opts: ComposeOptions): Promise<ComposeResult> {
     cached: false,
   };
 
+  // ─── FR-18 · NIAT pertanyaan (deterministik, tanpa model) ───
+  // Dihitung PALING AWAL supaya SEMUA jalur keluar membawanya: jawaban saat AI
+  // belum/tidak dikonfigurasi (langganan berhenti — kasus terpenting bagi
+  // pemilik aplikasi), jawaban dari cache, jawaban saat model gagal, sampai
+  // jawaban yang ditolak pagar. Sebelumnya `meta.intent` hanya diisi pada jalur
+  // "panggil model", jadi jawaban deterministik tidak punya niat sama sekali
+  // dan panel tidak dapat menyusun bentuk per niat.
+  const { niat, pemicu } = deteksiNiat(opts.query);
+  meta.intent = niat;
+  if (pemicu.length) meta.intentPemicu = pemicu;
+
   /**
    * Susun hasil akhir + sebabnya (FR-20).
    *
@@ -511,6 +522,8 @@ async function composeAnswerInti(opts: ComposeOptions): Promise<ComposeResult> {
   const dijaga = guardQuery(opts.query);
   if (!dijaga.ok) return selesai(dijaga.reason, 'unconfigured');
 
+
+
   // 3. Rate limit per-IP — lewati batas ⇒ jawab deterministik, bukan error.
   if (opts.ip) {
     const perMenit = await checkRateLimit({ key: `q:${opts.ip}`, limit: RATE_PER_MINUTE, windowMs: 60_000 });
@@ -538,10 +551,8 @@ async function composeAnswerInti(opts: ComposeOptions): Promise<ComposeResult> {
     totalOpd: new Set(opts.records.map((r) => r.opds_nama_opd)).size,
     evidenceDihitung: dasar.evidence.length,
   };
-  // Router niat (deterministik) mengisi `intent` yang selama ini selalu
-  // 'nilai_saat_ini' — terukur 10/10 permintaan pada penyedia tiruan.
-  const { niat, pemicu } = deteksiNiat(dijaga.query);
-  meta.intent = niat;
+  // Router niat sudah dijalankan di langkah 2b (satu kali, untuk semua jalur);
+  // di sini hanya dipakai sebagai masukan prompt.
   // FR-23: prompt dibangun lewat jalur terperiksa supaya pembersihan data katalog
   // (karakter kendali, penanda peran, perintah dalam data, batas panjang) terlapor.
   const tPrompt = Date.now();
@@ -556,7 +567,6 @@ async function composeAnswerInti(opts: ComposeOptions): Promise<ComposeResult> {
     catatanWajib: dasar.peringatan,
     draf: dasar.response.narasi,
   });
-  if (pemicu.length) meta.intentPemicu = pemicu;
   meta.pembersihan = pembersihan;
   // FR-23 (lapis tampilan): `evidence` pada balasan sengaja dikutip APA ADANYA dari
   // SPLP — operator perlu melihat teks sumber yang asli untuk audit, jadi pembersih

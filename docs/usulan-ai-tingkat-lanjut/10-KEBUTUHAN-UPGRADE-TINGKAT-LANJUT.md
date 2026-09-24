@@ -134,7 +134,7 @@ Format: **Kode · Kebutuhan · Alasan/bukti · Kriteria terima (terukur) · Usah
 | **FR-15** | **Narasi AI selalu bersitasi bukti** (mengutip nilai + OPD + tahun) dan tidak lebih miskin daripada template | keluhan awal: AI aktif justru lebih miskin | sitasi AI ≥ sitasi deterministik (kini 4,50 vs 3,00) | M | ✅ |
 | **FR-16** | **Peringatan sistem disisipkan** bila model memarafrasekannya | frasa baku "tidak ada data" hilang saat diparafrase | item `L7`, `T10` lulus; `nilaiTambah='dipakai-dengan-catatan'` tampil | S | ✅ |
 | **FR-17** | **Gerbang nilai-tambah** (INV-04) dengan catatan sebab (`meta.reason`) | transparansi: operator tahu mengapa AI tidak dipakai | 0 fallback pada set 90 | M | ✅ |
-| **FR-18** | **Bentuk jawaban per niat** (tabel tren, peringkat 5 besar, komposisi, dst.) | Satu bentuk untuk semua niat = pengalaman buruk | ≥ 3 item per niat lulus | M | 🟡 (niat dikenali & masuk prompt ✅; template khusus per niat ⬜) |
+| **FR-18** | **Bentuk jawaban per niat** (tabel tren, peringkat 5 besar, komposisi, dst.) | Satu bentuk untuk semua niat = pengalaman buruk | ≥ 3 item per niat lulus | M | ✅ (selesai 24 Sep 2026 — 6 niat berbentuk × 3 item lulus; urutan.batas.visual.porsi per niat; catatan kejujuran bila bukti tak cukup; laporan [25](25-LAPORAN-FR-18.md)) |
 | **FR-19** | **Jawaban per-klaim bersitasi** (setiap kalimat klaim menunjuk baris bukti) | Standar RAGAS/faithfulness; memudahkan verifikasi pembaca | 0 klaim tanpa rujukan pada 50 keluaran sampel | S–M | ✅ (`sitasi-per-klaim.ts`; penanda `[n]` pada narasi + `narasiBersitasi`/`sitasi` pada API; **42/42 klaim bersitasi, 0 penunjukan salah** pada 50 sampel di dua mode; `scripts/uji-sitasi.mjs`; laporan `14-LAPORAN-FR-19.md`) |
 | **FR-20** | **Klasifikasi sebab kegagalan** (retrieval vs generasi) per item evaluasi | supaya perbaikan tepat sasaran | setiap item gagal punya tag sebab | M | ✅ (selesai 22 Sep 2026; tag `lapis:rincian`, laporan: dokumen `16`) |
 
@@ -267,7 +267,7 @@ FR-18 di [5]/[10]; FR-25/26 di [10]/[11]; NFR-07 & FR-27 di [11].
 | **D — Tata kelola & pengalaman** | ~~FR-25 · FR-26 · FR-27~~ (selesai 22 Sep 2026) · ~~OPS-03 penyegaran terjadwal~~ (selesai 23 Sep 2026) · ~~DS-03 kesegaran cache korpus~~ · ~~NFR-09 aksesibilitas WCAG 2.2 AA~~ (keduanya selesai 24 Sep 2026) · CMP-02/03/04 | notis tampil; ≥ 50 umpan balik/bulan; WCAG 2.2 AA | 3–4 minggu |
 
 **Urutan yang disarankan bila sumber daya terbatas:** ~~FR-25 → FR-27 → FR-26 → FR-19 → FR-12 → FR-20 → FR-24 → FR-23~~
-(selesai 22–23 Sep 2026; OPS-04, NFR-07, dan OPS-03 ikut selesai 23 Sep 2026 — seluruh Fase C tertutup; DS-03 kesegaran cache korpus selesai 24 Sep 2026) → **Fase D** lanjutan: ~~NFR-09 aksesibilitas WCAG 2.2 AA~~ (selesai 24 Sep 2026) → **FR-18 bentuk jawaban per niat** → **DS-05 kamus sinonim daerah** (urutan yang disetujui 24 Sep 2026; CMP-02/03/04 setelahnya).
+(selesai 22–23 Sep 2026; OPS-04, NFR-07, dan OPS-03 ikut selesai 23 Sep 2026 — seluruh Fase C tertutup; DS-03 kesegaran cache korpus selesai 24 Sep 2026) → **Fase D** lanjutan: ~~NFR-09 aksesibilitas WCAG 2.2 AA~~ (selesai 24 Sep 2026) → ~~FR-18 bentuk jawaban per niat~~ (selesai 24 Sep 2026) → **DS-05 kamus sinonim daerah** (urutan yang disetujui 24 Sep 2026; CMP-02/03/04 setelahnya).
 Alasannya: FR-19 menaikkan kepercayaan paling tinggi per satuan usaha; FR-12 (lapis semantik) sudah
 selesai dan menutup celah parafrase; FR-20 murah dan membuat **setiap** kegagalan yang tersisa
 terjelaskan dengan satu tag sebab — termasuk kegagalan yang baru muncul dari lapis semantik.

@@ -5,6 +5,14 @@
 import { normalizeText } from '@/lib/sapa-client';
 import { beriSitasi } from '@/services/sitasi-per-klaim';
 import { headlineParts, singkatNarasi } from '@/lib/format-singkat';
+import {
+  bentukUntukNiat,
+  susunBaris,
+  hitungPorsi,
+  angkaDari,
+  type BentukJawaban,
+} from '@/services/bentuk-jawaban';
+import type { NiatJawaban } from '@/lib/intent-meta';
 import type {
   ExecutiveAnswerType,
   ExecutiveEvidence,
@@ -538,7 +546,22 @@ export function buildExecutivePresentation(response: HybridResponse): ExecutiveP
   const visual = buildVisual(response);
   let evidence: ExecutiveEvidence[] = [];
 
-  if (visual.type === 'table') evidence = toEvidenceFromTable(visual.rows, visual.columns);
+  // Sumber baris bukti: utamakan `response.evidence` (baris SPLP asli). Baris
+  // yang diturunkan dari `visualisasi` hanya dipakai untuk respons lama yang
+  // belum membawanya — jalur itu kehilangan id asli dan tahun pada visual
+  // grafik, sehingga bentuk per niat (tren, porsi) tidak dapat dibaca dengan
+  // benar. Nilai tidak diubah di sini: hanya dipindahkan apa adanya.
+  const buktiAsli = Array.isArray(response.evidence) ? response.evidence : [];
+  if (buktiAsli.length > 0) {
+    evidence = buktiAsli.map((e) => ({
+      id: e.id,
+      indikator: asText(e.indikator, '—'),
+      nilai: asText(e.nilai, '—'),
+      satuan: asText(e.satuan, ''),
+      opd: e.opd ? asText(e.opd) : undefined,
+      tahun: e.tahun ?? null,
+    }));
+  } else if (visual.type === 'table') evidence = toEvidenceFromTable(visual.rows, visual.columns);
   else if (visual.type === 'metric') evidence = toEvidenceFromMetrics(metrics);
   else if ((visual.type === 'bar' || visual.type === 'line' || visual.type === 'area') && visual.xKey) {
     evidence = toEvidenceFromChart(visual.data, visual.xKey, visual.series);
@@ -571,6 +594,73 @@ export function buildExecutivePresentation(response: HybridResponse): ExecutiveP
       metrics = evidence.slice(0, 6).map((e) => ({ label: e.indikator, value: e.nilai, unit: e.satuan, opd: e.opd, tahun: e.tahun }));
     }
   }
+  // ─── FR-18: bentuk jawaban mengikuti NIAT ───
+  // Bentuk diambil dari respons (dihitung rute dengan fungsi yang sama) atau
+  // dihitung di sini untuk respons lama yang belum membawanya. Bentuk mengubah
+  // URUTAN & JUMLAH baris yang dipajang, judul bentuk, dan kolom turunan porsi —
+  // bukan angkanya. Semua yang tidak dapat dipenuhi dari bukti dilaporkan lewat
+  // `bentuk.catatan` supaya pengguna tidak perlu menebak.
+  const bentuk: BentukJawaban =
+    response.bentuk ??
+    bentukUntukNiat((response.niat as NiatJawaban | undefined) ?? null, response.query ?? '', evidence);
+  // Jumlah bukti yang MENOPANG jawaban dihitung SEBELUM bentuk memotong baris:
+  // angka inilah yang jujur disebut "jumlah bukti" (FR-18 tidak boleh membuat
+  // jawaban tampak lebih ringan daripada dasarnya).
+  const jumlahBuktiMenopang = evidence.length;
+  const baris = susunBaris(evidence, bentuk);
+  const urutanBerubah = baris.length !== evidence.length || baris.some((b, i) => b.id !== evidence[i]?.id);
+  if (urutanBerubah) {
+    evidence = baris;
+    if (visual.type === 'table') {
+      const colKeys = visual.columns.map((c) => c.key);
+      visual.rows = evidence.map((e) => {
+        const row: Record<string, unknown> = {};
+        const values = [e.indikator, e.nilai, e.satuan, e.opd ?? '—', e.tahun ?? '—'];
+        colKeys.forEach((k, i) => { row[k] = values[i] ?? '—'; });
+        return row;
+      });
+    }
+  }
+  // Porsi hanya dihitung bila totalnya ADA di bukti (lihat hitungPorsi).
+  const petaPorsi = bentuk.kolomTurunan === 'porsi' ? hitungPorsi(evidence) : null;
+  const isiPorsi = petaPorsi ? [...petaPorsi.entries()] : [];
+  const porsi: Record<string, number> | undefined = isiPorsi.length > 0
+    ? Object.fromEntries(isiPorsi.map(([id, v]) => [String(id), Math.round(v * 10) / 10]))
+    : undefined;
+
+  // Visual yang dituntut niat, bila visual bawaan respons belum berbentuk itu:
+  //   tren → garis (butuh ≥ 2 tahun berbeda),
+  //   peringkat/distribusi → batang dari baris bukti yang sudah diurutkan.
+  // Grafik dibangun ULANG bila urutan baris berubah: kalau tidak, grafik akan
+  // memperlihatkan urutan lama sementara daftar bukti sudah berurut bentuk —
+  // dua bagian panel yang saling bertentangan.
+  if (bentuk.visual === 'garis' && (visual.type !== 'line' || urutanBerubah)) {
+    const titik = evidence
+      .map((e) => ({ name: (e.tahun ?? '').trim(), nilai: angkaDari(e.nilai) }))
+      .filter((t): t is { name: string; nilai: number } => Boolean(t.name) && t.nilai !== null);
+    const tahunUnik = [...new Set(titik.map((t) => t.name))];
+    if (tahunUnik.length >= 2) {
+      visual.type = 'line';
+      visual.title = 'Perubahan antarperiode';
+      visual.subtitle = 'Sumbu X = tahun data pada bukti';
+      visual.data = titik;
+      visual.xKey = 'name';
+      visual.series = [{ key: 'nilai', name: 'Nilai', color: '#1B4332' }];
+    }
+  } else if (bentuk.visual === 'batang' && (urutanBerubah || (visual.type !== 'bar' && visual.type !== 'line' && visual.type !== 'area'))) {
+    const titik = evidence
+      .map((e) => ({ name: shortLabel(e.indikator), nilai: angkaDari(e.nilai) }))
+      .filter((t): t is { name: string; nilai: number } => t.nilai !== null);
+    if (titik.length >= 2) {
+      visual.type = 'bar';
+      visual.title = bentuk.niat === 'peringkat' ? bentuk.judul : 'Sebaran nilai per indikator';
+      visual.subtitle = bentuk.niat === 'peringkat' ? 'Diurutkan sesuai bentuk peringkat' : 'Dibentuk dari baris bukti';
+      visual.data = titik;
+      visual.xKey = 'name';
+      visual.series = [{ key: 'nilai', name: 'Nilai', color: '#2D6A4F' }];
+    }
+  }
+
   // ─── Rekons: Bucket grouping (Tahap 3) ───
   const buckets = bucketGroup(evidence);
   const bucketSummary = buildBucketSummary(buckets);
@@ -601,6 +691,8 @@ export function buildExecutivePresentation(response: HybridResponse): ExecutiveP
     dataQuality: buildDataQuality(response, answerType, evidence.length, evidence),
     evidence,
     followUps: buildFollowUps(answerType, evidence),
+    bentuk,
+    ...(porsi ? { porsi } : {}),
     provenance: {
       source: response.dataSource || 'Sumber tidak tercantum',
       origin: detectOrigin(response.dataSource || ''),
@@ -611,7 +703,8 @@ export function buildExecutivePresentation(response: HybridResponse): ExecutiveP
       disusunPada: response.timestamp,
       dataYears: response.dataYears ?? [],
       fingerprint: response.dataFingerprint ?? null,
-      evidenceCount: evidence.length,
+      evidenceCount: jumlahBuktiMenopang,
+      evidenceDisajikan: evidence.length,
     },
   };
   return presentation;

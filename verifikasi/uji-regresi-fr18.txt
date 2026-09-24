@@ -1,0 +1,33 @@
+UJI REGRESI FR-18 — balasan API SEBELUM vs SESUDAH, korpus sama (1.210 record)
+SEBELUM: pohon 0bc661e (pra-FR-18) · SESUDAH: pohon kerja FR-18
+Dibuang dari perbandingan: bidang bergantung waktu (dataFetchedAt, disusunPada, fetchedAt, timestamp, latencyMs)
+
+  ✓ identik "Berapa jumlah penduduk Aceh Tengah?"
+  ✓ identik "tren prevalensi stunting 5 tahun terakhir"
+  ✓ identik "5 besar cakupan tertinggi"
+  ✓ identik "cakupan mana yang terendah"
+  ✓ identik "komposisi balita stunting"
+  ✓ identik "sebaran penduduk per kecamatan"
+  ✓ identik "bandingkan angka partisipasi sekolah jenjang SMA"
+  ✓ identik "berapa IPM Aceh Tengah"
+  ✓ identik "ada berapa indikator di SAPA?"
+  ✓ identik "kenapa stunting tetap tinggi?"
+  ✓ identik "berapa produksi kopi arabika"
+  ✓ identik "data per orang warga bernama Budi"
+
+Ringkasan: 12 pertanyaan · 12 identik · 0 berbeda
+KESIMPULAN: tidak ada regresi — seluruh bidang lama identik.
+
+BIDANG BARU FR-18 pada balasan SESUDAH (bukti penambahan bersifat aditif):
+  · "Berapa jumlah penduduk Aceh Tengah?"
+      niat=nilai_saat_ini · bentuk=Nilai saat ini (metric/tetap/5) · urutanBukti=5 id · porsi=tidak ada · catatan=-
+  · "tren prevalensi stunting 5 tahun terakhir"
+      niat=tren · bentuk=Tren antarperiode (garis/kronologis/null) · urutanBukti=15 id · porsi=tidak ada · catatan=-
+  · "komposisi balita stunting"
+      niat=komposisi · bentuk=Komposisi & porsi (komposisi/menurun/10) · urutanBukti=10 id · porsi=tidak ada · catatan=ya
+  · "sebaran penduduk per kecamatan"
+      niat=distribusi · bentuk=Sebaran per kelompok (batang/menurun/10) · urutanBukti=10 id · porsi=tidak ada · catatan=ya
+  · "bandingkan angka partisipasi sekolah jenja"
+      niat=perbandingan · bentuk=Perbandingan berdampingan (tabel/tetap/5) · urutanBukti=5 id · porsi=tidak ada · catatan=ya
+  · "berapa IPM Aceh Tengah"
+      niat=nilai_saat_ini · bentuk=Nilai saat ini (metric/tetap/5) · urutanBukti=5 id · porsi=tidak ada · catatan=-

@@ -8,6 +8,8 @@ import { tahunPadaBukti } from '@/services/grounding';
 import { catatCelah, type SebabCelah } from '@/lib/insight-celah';
 import { sebabUntukCelah, type Diagnosa } from '@/services/sebab-kegagalan';
 import { denganTelemetri, ukurTahapAsync } from '@/lib/ai/telemetri';
+import { terapkanBentuk } from '@/services/bentuk-jawaban';
+import type { NiatJawaban } from '@/lib/intent-meta';
 
 export const dynamic = 'force-dynamic';
 export const runtime = 'nodejs';
@@ -83,6 +85,14 @@ async function tanganiQuery(req: NextRequest) {
   // menulis — pertanyaan yang berhasil tidak menyentuh penyimpanan sama sekali.
   await catatCelahBilaPerlu(queryRaw, hasil.diagnosa);
 
+  // FR-18: bentuk jawaban dihitung SEBELUM respons disusun, lewat pintu yang
+  // sama dengan panel (`terapkanBentuk`).
+  const bentukJawaban = terapkanBentuk(
+    (hasil.ai.intent as NiatJawaban | undefined) ?? null,
+    queryRaw,
+    hasil.evidence,
+  );
+
   return Response.json(
     {
       ...hasil.response,
@@ -96,6 +106,14 @@ async function tanganiQuery(req: NextRequest) {
       evidence: hasil.evidence,
       query: queryRaw,
       ai: hasil.ai,
+      // FR-18: niat pertanyaan + bentuk jawabannya + baris bukti yang SUDAH
+      // ditata bentuk + porsi (bila ada total). Semua ADITIF, dihitung lewat
+      // satu pintu (`terapkanBentuk`) yang sama dengan panel — sehingga urutan
+      // yang dilihat pengguna dapat diperiksa lewat HTTP.
+      niat: hasil.ai.intent ?? null,
+      bentuk: bentukJawaban.bentuk,
+      urutanBukti: bentukJawaban.baris.map((b) => b.id),
+      ...(bentukJawaban.porsi ? { porsi: bentukJawaban.porsi } : {}),
       // FR-25 & DS-03: kesegaran data + sidik korpus + tahun data pada bukti.
       // Semuanya ADITIF — kunci lama tidak ada yang berubah atau hilang.
       dataFetchedAt: meta.diambilPada,

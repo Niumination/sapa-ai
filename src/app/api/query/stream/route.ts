@@ -7,6 +7,8 @@ import { catatCelahBilaPerlu } from '@/app/api/query/route';
 import { composeAnswer } from '@/services/answer-compose';
 import { getClientIp } from '@/lib/rate-limit';
 import { denganTelemetri, ukurTahapAsync } from '@/lib/ai/telemetri';
+import { terapkanBentuk } from '@/services/bentuk-jawaban';
+import type { NiatJawaban } from '@/lib/intent-meta';
 
 export const dynamic = 'force-dynamic';
 export const runtime = 'nodejs';
@@ -81,6 +83,13 @@ export async function POST(req: NextRequest) {
         // jadi pencatatan harus ada di sini juga, bukan hanya di jalur JSON.
         await catatCelahBilaPerlu(queryRaw, hasil.diagnosa);
 
+        // FR-18: bentuk jawaban — pintu yang sama dengan jalur JSON.
+        const bentukJawaban = terapkanBentuk(
+          (hasil.ai.intent as NiatJawaban | undefined) ?? null,
+          queryRaw,
+          hasil.evidence,
+        );
+
         kirim('result', {
           ...hasil.response,
           answer: hasil.response.narasi,
@@ -92,6 +101,11 @@ export async function POST(req: NextRequest) {
           evidence: hasil.evidence,
           query: queryRaw,
           ai: hasil.ai,
+          // FR-18 (aditif) — sama seperti jalur JSON.
+          niat: hasil.ai.intent ?? null,
+          bentuk: bentukJawaban.bentuk,
+          urutanBukti: bentukJawaban.baris.map((b) => b.id),
+          ...(bentukJawaban.porsi ? { porsi: bentukJawaban.porsi } : {}),
           // FR-25 & DS-03 (aditif) — sama seperti jalur JSON.
           dataFetchedAt: fetched.meta.diambilPada,
           dataFingerprint: fetched.meta.sidik,

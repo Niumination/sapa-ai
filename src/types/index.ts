@@ -84,10 +84,17 @@ export interface ExecutivePresentation {
     dataYears?: string[];
     /** Sidik versi korpus (DS-03); null bila tidak tersedia. */
     fingerprint?: string | null;
+    /** Jumlah bukti yang MENOPANG jawaban (sebelum bentuk memotong baris). */
     evidenceCount: number;
+    /** FR-18: jumlah baris yang benar-benar dipajang bentuk (≤ `evidenceCount`). */
+    evidenceDisajikan?: number;
   };
   buckets: Record<string, ExecutiveEvidence[]>;
   bucketSummary: string;
+  /** FR-18: bentuk jawaban yang dipakai panel ini + catatan kejujurannya. */
+  bentuk?: import('@/services/bentuk-jawaban').BentukJawaban;
+  /** FR-18: porsi tiap baris bukti (0–100) — hanya bila totalnya ADA di bukti. */
+  porsi?: Record<string, number>;
 }
 
 /** Ringkasan metadata AI yang ikut dikirim ke UI (label kejujuran sumber). */
@@ -121,6 +128,30 @@ export interface HybridResponse {
   dataFingerprint?: string;
   /** Tahun data pada bukti jawaban, urut menurun. Kosong = tidak ada bukti bertahun. */
   dataYears?: string[];
+  /**
+   * Niat pertanyaan hasil router deterministik (FR-18). Additif: respons lama
+   * tidak memilikinya, dan UI wajib memperlakukannya sebagai "tidak tahu".
+   */
+  niat?: string;
+  /** Pertanyaan asli — dipakai membentuk jawaban (arah peringkat). Additif. */
+  query?: string;
+  /**
+   * Baris bukti SPLP yang menopang jawaban (id, indikator, nilai, satuan, OPD,
+   * tahun) — dikirim rute apa adanya. Panel memakai baris INI sebagai baris
+   * bukti; sebelumnya baris diturunkan dari `visualisasi` sehingga id menjadi
+   * sintetis dan tahun hilang pada visual grafik.
+   */
+  evidence?: import('@/services/grounding').EvidenceItem[];
+  /** Bentuk jawaban yang dituntut niat (FR-18). Additif. */
+  bentuk?: import('@/services/bentuk-jawaban').BentukJawaban;
+  /**
+   * FR-18: urutan id bukti SETELAH ditata bentuk — inilah urutan yang dipajang
+   * panel. Rute mengirimnya supaya urutan yang dilihat pengguna dapat diperiksa
+   * lewat HTTP (dan klien lain tidak perlu meniru logikanya). Additif.
+   */
+  urutanBukti?: Array<number | string>;
+  /** FR-18: porsi tiap id bukti (0–100) — hanya bila totalnya ADA di bukti. Additif. */
+  porsi?: Record<string, number>;
   /** Optional presentation layer; legacy fields remain the source-compatible contract. */
   presentation?: ExecutivePresentation;
   /** Metadata AI — dipakai UI untuk label "dirangkai AI" vs "dihitung deterministik". */

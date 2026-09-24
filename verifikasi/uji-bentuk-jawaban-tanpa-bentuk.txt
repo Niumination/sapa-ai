@@ -1,0 +1,200 @@
+
+  FR-18 · bentuk jawaban per niat (end-to-end)
+
+  [32m✓[0m korpus tiruan terbaca (25 record) — 25 record
+
+── Bentuk per niat (≥ 3 item per niat) ──
+  [32m✓[0m [tren] "tren prevalensi stunting 5 tahun terakhir" niat dikenali — niat=tren
+  [31m✗[0m [tren] "tren prevalensi stunting 5 tahun terakhir" visual=garis — dapat teks
+  [31m✗[0m [tren] "tren prevalensi stunting 5 tahun terakhir" urutan=kronologis — dapat tetap
+  [32m✓[0m [tren] "tren prevalensi stunting 5 tahun terakhir" batas=null — dapat null
+  [31m✗[0m [tren] "tren prevalensi stunting 5 tahun terakhir" tahun naik secara kronologis — 2024 → 2023 → 2022 → 2021 → 2020
+  [32m✓[0m [tren] "tren prevalensi stunting 5 tahun terakhir" urutan sajian dikirim API (urutanBukti) — 7 id
+  [32m✓[0m [tren] "bagaimana perkembangan prevalensi stunting" niat dikenali — niat=tren
+  [31m✗[0m [tren] "bagaimana perkembangan prevalensi stunting" visual=garis — dapat teks
+  [31m✗[0m [tren] "bagaimana perkembangan prevalensi stunting" urutan=kronologis — dapat tetap
+  [32m✓[0m [tren] "bagaimana perkembangan prevalensi stunting" batas=null — dapat null
+  [31m✗[0m [tren] "bagaimana perkembangan prevalensi stunting" tahun naik secara kronologis — 2024 → 2019 → 2023 → 2022 → 2021
+  [32m✓[0m [tren] "bagaimana perkembangan prevalensi stunting" urutan sajian dikirim API (urutanBukti) — 7 id
+  [32m✓[0m [tren] "prevalensi stunting naik atau turun dari t" niat dikenali — niat=tren
+  [31m✗[0m [tren] "prevalensi stunting naik atau turun dari t" visual=garis — dapat teks
+  [31m✗[0m [tren] "prevalensi stunting naik atau turun dari t" urutan=kronologis — dapat tetap
+  [32m✓[0m [tren] "prevalensi stunting naik atau turun dari t" batas=null — dapat null
+  [31m✗[0m [tren] "prevalensi stunting naik atau turun dari t" tahun naik secara kronologis — 2024 → 2023 → 2022 → 2021 → 2020
+  [32m✓[0m [tren] "prevalensi stunting naik atau turun dari t" urutan sajian dikirim API (urutanBukti) — 7 id
+  [32m✓[0m [peringkat] "5 besar cakupan tertinggi" niat dikenali — niat=peringkat
+  [31m✗[0m [peringkat] "5 besar cakupan tertinggi" visual=batang — dapat teks
+  [31m✗[0m [peringkat] "5 besar cakupan tertinggi" urutan=menurun — dapat tetap
+  [31m✗[0m [peringkat] "5 besar cakupan tertinggi" batas=5 — dapat null
+  [31m✗[0m [peringkat] "5 besar cakupan tertinggi" baris bukti benar-benar menurun — 88.2 ≥ 91.4 ≥ 72.5 ≥ 79.8
+  [31m✗[0m [peringkat] "5 besar cakupan tertinggi" baris SAJIAN dipotong ≤ 5 — 7 baris (bukti audit 7)
+  [32m✓[0m [peringkat] "5 besar cakupan tertinggi" urutan sajian dikirim API (urutanBukti) — 7 id
+  [32m✓[0m [peringkat] "urutkan cakupan imunisasi dari yang tertin" niat dikenali — niat=peringkat
+  [31m✗[0m [peringkat] "urutkan cakupan imunisasi dari yang tertin" visual=batang — dapat teks
+  [31m✗[0m [peringkat] "urutkan cakupan imunisasi dari yang tertin" urutan=menurun — dapat tetap
+  [31m✗[0m [peringkat] "urutkan cakupan imunisasi dari yang tertin" batas=5 — dapat null
+  [31m✗[0m [peringkat] "urutkan cakupan imunisasi dari yang tertin" baris bukti benar-benar menurun — 88.2 ≥ 8820 ≥ 96.1 ≥ 92.3
+  [31m✗[0m [peringkat] "urutkan cakupan imunisasi dari yang tertin" baris SAJIAN dipotong ≤ 5 — 8 baris (bukti audit 8)
+  [32m✓[0m [peringkat] "urutkan cakupan imunisasi dari yang tertin" urutan sajian dikirim API (urutanBukti) — 8 id
+  [32m✓[0m [peringkat] "cakupan mana yang terendah" niat dikenali — niat=peringkat
+  [31m✗[0m [peringkat] "cakupan mana yang terendah" visual=batang — dapat teks
+  [31m✗[0m [peringkat] "cakupan mana yang terendah" urutan=menaik — dapat tetap
+  [31m✗[0m [peringkat] "cakupan mana yang terendah" batas=5 — dapat null
+  [31m✗[0m [peringkat] "cakupan mana yang terendah" baris bukti benar-benar menaik — 72.5 ≤ 79.8 ≤ 91.4 ≤ 84.7
+  [31m✗[0m [peringkat] "cakupan mana yang terendah" baris SAJIAN dipotong ≤ 5 — 7 baris (bukti audit 7)
+  [32m✓[0m [peringkat] "cakupan mana yang terendah" urutan sajian dikirim API (urutanBukti) — 7 id
+  [32m✓[0m [komposisi] "komposisi balita stunting" niat dikenali — niat=komposisi
+  [31m✗[0m [komposisi] "komposisi balita stunting" visual=komposisi — dapat teks
+  [31m✗[0m [komposisi] "komposisi balita stunting" urutan=menurun — dapat tetap
+  [31m✗[0m [komposisi] "komposisi balita stunting" batas=10 — dapat null
+  [31m✗[0m [komposisi] "komposisi balita stunting" kolom turunan "porsi" — dapat null
+  [31m✗[0m [komposisi] "komposisi balita stunting" baris bukti benar-benar menurun — 3140 ≥ 10000 ≥ 8820 ≥ 92.3
+  [32m✓[0m [komposisi] "komposisi balita stunting" baris SAJIAN dipotong ≤ 10 — 10 baris (bukti audit 10)
+  [32m✓[0m [komposisi] "komposisi balita stunting" urutan sajian dikirim API (urutanBukti) — 10 id
+  [31m✗[0m [komposisi] "komposisi balita stunting" porsi dihitung dari total yang ada — tidak ada porsi
+  [32m✓[0m [komposisi] "berapa porsi balita stunting dari total ba" niat dikenali — niat=komposisi
+  [31m✗[0m [komposisi] "berapa porsi balita stunting dari total ba" visual=komposisi — dapat teks
+  [31m✗[0m [komposisi] "berapa porsi balita stunting dari total ba" urutan=menurun — dapat tetap
+  [31m✗[0m [komposisi] "berapa porsi balita stunting dari total ba" batas=10 — dapat null
+  [31m✗[0m [komposisi] "berapa porsi balita stunting dari total ba" baris bukti benar-benar menurun — 3140 ≥ 10000 ≥ 8820 ≥ 92.3
+  [32m✓[0m [komposisi] "berapa porsi balita stunting dari total ba" baris SAJIAN dipotong ≤ 10 — 4 baris (bukti audit 4)
+  [32m✓[0m [komposisi] "berapa porsi balita stunting dari total ba" urutan sajian dikirim API (urutanBukti) — 4 id
+  [32m✓[0m [komposisi] "proporsi balita imunisasi lengkap" niat dikenali — niat=komposisi
+  [31m✗[0m [komposisi] "proporsi balita imunisasi lengkap" visual=komposisi — dapat teks
+  [31m✗[0m [komposisi] "proporsi balita imunisasi lengkap" urutan=menurun — dapat tetap
+  [31m✗[0m [komposisi] "proporsi balita imunisasi lengkap" batas=10 — dapat null
+  [32m✓[0m [komposisi] "proporsi balita imunisasi lengkap" baris bukti benar-benar menurun — 8820 ≥ 88.2
+  [32m✓[0m [komposisi] "proporsi balita imunisasi lengkap" baris SAJIAN dipotong ≤ 10 — 2 baris (bukti audit 2)
+  [32m✓[0m [komposisi] "proporsi balita imunisasi lengkap" urutan sajian dikirim API (urutanBukti) — 2 id
+  [32m✓[0m [distribusi] "sebaran penduduk per kecamatan" niat dikenali — niat=distribusi
+  [31m✗[0m [distribusi] "sebaran penduduk per kecamatan" visual=batang — dapat teks
+  [31m✗[0m [distribusi] "sebaran penduduk per kecamatan" urutan=menurun — dapat tetap
+  [31m✗[0m [distribusi] "sebaran penduduk per kecamatan" batas=10 — dapat null
+  [32m✓[0m [distribusi] "sebaran penduduk per kecamatan" baris bukti benar-benar menurun — 21840 ≥ 17320 ≥ 12460 ≥ 9870
+  [32m✓[0m [distribusi] "sebaran penduduk per kecamatan" baris SAJIAN dipotong ≤ 10 — 5 baris (bukti audit 5)
+  [32m✓[0m [distribusi] "sebaran penduduk per kecamatan" urutan sajian dikirim API (urutanBukti) — 5 id
+  [32m✓[0m [distribusi] "distribusi penduduk menurut kecamatan" niat dikenali — niat=distribusi
+  [31m✗[0m [distribusi] "distribusi penduduk menurut kecamatan" visual=batang — dapat teks
+  [31m✗[0m [distribusi] "distribusi penduduk menurut kecamatan" urutan=menurun — dapat tetap
+  [31m✗[0m [distribusi] "distribusi penduduk menurut kecamatan" batas=10 — dapat null
+  [32m✓[0m [distribusi] "distribusi penduduk menurut kecamatan" baris bukti benar-benar menurun — 21840 ≥ 17320 ≥ 12460 ≥ 9870
+  [32m✓[0m [distribusi] "distribusi penduduk menurut kecamatan" baris SAJIAN dipotong ≤ 10 — 5 baris (bukti audit 5)
+  [32m✓[0m [distribusi] "distribusi penduduk menurut kecamatan" urutan sajian dikirim API (urutanBukti) — 5 id
+  [32m✓[0m [distribusi] "persebaran penduduk kecamatan Bebesen" niat dikenali — niat=distribusi
+  [31m✗[0m [distribusi] "persebaran penduduk kecamatan Bebesen" visual=batang — dapat teks
+  [31m✗[0m [distribusi] "persebaran penduduk kecamatan Bebesen" urutan=menurun — dapat tetap
+  [31m✗[0m [distribusi] "persebaran penduduk kecamatan Bebesen" batas=10 — dapat null
+  [32m✓[0m [distribusi] "persebaran penduduk kecamatan Bebesen" baris bukti benar-benar menurun — 21840 ≥ 17320 ≥ 12460 ≥ 9870
+  [32m✓[0m [distribusi] "persebaran penduduk kecamatan Bebesen" baris SAJIAN dipotong ≤ 10 — 5 baris (bukti audit 5)
+  [32m✓[0m [distribusi] "persebaran penduduk kecamatan Bebesen" urutan sajian dikirim API (urutanBukti) — 5 id
+  [32m✓[0m [perbandingan] "bandingkan angka partisipasi sekolah jenja" niat dikenali — niat=perbandingan
+  [31m✗[0m [perbandingan] "bandingkan angka partisipasi sekolah jenja" visual=tabel — dapat teks
+  [32m✓[0m [perbandingan] "bandingkan angka partisipasi sekolah jenja" urutan=tetap — dapat tetap
+  [31m✗[0m [perbandingan] "bandingkan angka partisipasi sekolah jenja" batas=5 — dapat null
+  [32m✓[0m [perbandingan] "bandingkan angka partisipasi sekolah jenja" baris SAJIAN dipotong ≤ 5 — 2 baris (bukti audit 2)
+  [32m✓[0m [perbandingan] "bandingkan angka partisipasi sekolah jenja" urutan sajian dikirim API (urutanBukti) — 2 id
+  [32m✓[0m [perbandingan] "perbedaan angka partisipasi sekolah antar " niat dikenali — niat=perbandingan
+  [31m✗[0m [perbandingan] "perbedaan angka partisipasi sekolah antar " visual=tabel — dapat teks
+  [32m✓[0m [perbandingan] "perbedaan angka partisipasi sekolah antar " urutan=tetap — dapat tetap
+  [31m✗[0m [perbandingan] "perbedaan angka partisipasi sekolah antar " batas=5 — dapat null
+  [32m✓[0m [perbandingan] "perbedaan angka partisipasi sekolah antar " baris SAJIAN dipotong ≤ 5 — 2 baris (bukti audit 2)
+  [32m✓[0m [perbandingan] "perbedaan angka partisipasi sekolah antar " urutan sajian dikirim API (urutanBukti) — 2 id
+  [32m✓[0m [perbandingan] "selisih cakupan imunisasi dasar lengkap da" niat dikenali — niat=perbandingan
+  [31m✗[0m [perbandingan] "selisih cakupan imunisasi dasar lengkap da" visual=tabel — dapat teks
+  [32m✓[0m [perbandingan] "selisih cakupan imunisasi dasar lengkap da" urutan=tetap — dapat tetap
+  [31m✗[0m [perbandingan] "selisih cakupan imunisasi dasar lengkap da" batas=5 — dapat null
+  [31m✗[0m [perbandingan] "selisih cakupan imunisasi dasar lengkap da" baris SAJIAN dipotong ≤ 5 — 8 baris (bukti audit 8)
+  [32m✓[0m [perbandingan] "selisih cakupan imunisasi dasar lengkap da" urutan sajian dikirim API (urutanBukti) — 8 id
+  [32m✓[0m [nilai_saat_ini] "berapa IPM Aceh Tengah" niat dikenali — niat=nilai_saat_ini
+  [31m✗[0m [nilai_saat_ini] "berapa IPM Aceh Tengah" visual=metric — dapat teks
+  [32m✓[0m [nilai_saat_ini] "berapa IPM Aceh Tengah" urutan=tetap — dapat tetap
+  [31m✗[0m [nilai_saat_ini] "berapa IPM Aceh Tengah" batas=5 — dapat null
+  [32m✓[0m [nilai_saat_ini] "berapa IPM Aceh Tengah" baris SAJIAN dipotong ≤ 5 — 1 baris (bukti audit 1)
+  [32m✓[0m [nilai_saat_ini] "berapa IPM Aceh Tengah" urutan sajian dikirim API (urutanBukti) — 1 id
+  [32m✓[0m [nilai_saat_ini] "nilai produksi kopi arabika" niat dikenali — niat=nilai_saat_ini
+  [31m✗[0m [nilai_saat_ini] "nilai produksi kopi arabika" visual=metric — dapat teks
+  [32m✓[0m [nilai_saat_ini] "nilai produksi kopi arabika" urutan=tetap — dapat tetap
+  [31m✗[0m [nilai_saat_ini] "nilai produksi kopi arabika" batas=5 — dapat null
+  [32m✓[0m [nilai_saat_ini] "nilai produksi kopi arabika" baris SAJIAN dipotong ≤ 5 — 1 baris (bukti audit 1)
+  [32m✓[0m [nilai_saat_ini] "nilai produksi kopi arabika" urutan sajian dikirim API (urutanBukti) — 1 id
+  [32m✓[0m [nilai_saat_ini] "jumlah penduduk kecamatan Bebesen" niat dikenali — niat=nilai_saat_ini
+  [31m✗[0m [nilai_saat_ini] "jumlah penduduk kecamatan Bebesen" visual=metric — dapat teks
+  [32m✓[0m [nilai_saat_ini] "jumlah penduduk kecamatan Bebesen" urutan=tetap — dapat tetap
+  [31m✗[0m [nilai_saat_ini] "jumlah penduduk kecamatan Bebesen" batas=5 — dapat null
+  [32m✓[0m [nilai_saat_ini] "jumlah penduduk kecamatan Bebesen" baris SAJIAN dipotong ≤ 5 — 5 baris (bukti audit 5)
+  [32m✓[0m [nilai_saat_ini] "jumlah penduduk kecamatan Bebesen" urutan sajian dikirim API (urutanBukti) — 5 id
+
+── Catatan kejujuran saat bukti tidak cukup ──
+  [31m✗[0m tren dengan satu tahun → catatan "satu titik data" — tidak ada catatan
+
+── Kontrol negatif — SAPA_BENTUK_NIAT=off (harus GAGAL) ──
+  [32m✓[0m bentuk netral terdeteksi sebagai pelanggaran — 9/9 item menyimpang dari kontrak
+
+  ──────────────── Ringkasan ────────────────
+  niat diuji          : tren 0/3 · peringkat 0/3 · komposisi 0/3 · distribusi 0/3 · perbandingan 0/3 · nilai_saat_ini 0/3
+  kriteria dok 10     : ≥ 3 item per niat lulus → 0/6 niat terpenuhi
+  item diperiksa      : 18
+  pemeriksaan lulus   : 62
+  kontrol negatif     : 9/9 item menyimpang (harus semuanya)
+
+  [31m✗[0m GAGAL — 60 pemeriksaan tidak terpenuhi:
+    · [tren] "tren prevalensi stunting 5 tahun terakhir" visual=garis
+    · [tren] "tren prevalensi stunting 5 tahun terakhir" urutan=kronologis
+    · [tren] "tren prevalensi stunting 5 tahun terakhir" tahun naik secara kronologis
+    · [tren] "bagaimana perkembangan prevalensi stunting" visual=garis
+    · [tren] "bagaimana perkembangan prevalensi stunting" urutan=kronologis
+    · [tren] "bagaimana perkembangan prevalensi stunting" tahun naik secara kronologis
+    · [tren] "prevalensi stunting naik atau turun dari t" visual=garis
+    · [tren] "prevalensi stunting naik atau turun dari t" urutan=kronologis
+    · [tren] "prevalensi stunting naik atau turun dari t" tahun naik secara kronologis
+    · [peringkat] "5 besar cakupan tertinggi" visual=batang
+    · [peringkat] "5 besar cakupan tertinggi" urutan=menurun
+    · [peringkat] "5 besar cakupan tertinggi" batas=5
+    · [peringkat] "5 besar cakupan tertinggi" baris bukti benar-benar menurun
+    · [peringkat] "5 besar cakupan tertinggi" baris SAJIAN dipotong ≤ 5
+    · [peringkat] "urutkan cakupan imunisasi dari yang tertin" visual=batang
+    · [peringkat] "urutkan cakupan imunisasi dari yang tertin" urutan=menurun
+    · [peringkat] "urutkan cakupan imunisasi dari yang tertin" batas=5
+    · [peringkat] "urutkan cakupan imunisasi dari yang tertin" baris bukti benar-benar menurun
+    · [peringkat] "urutkan cakupan imunisasi dari yang tertin" baris SAJIAN dipotong ≤ 5
+    · [peringkat] "cakupan mana yang terendah" visual=batang
+    · [peringkat] "cakupan mana yang terendah" urutan=menaik
+    · [peringkat] "cakupan mana yang terendah" batas=5
+    · [peringkat] "cakupan mana yang terendah" baris bukti benar-benar menaik
+    · [peringkat] "cakupan mana yang terendah" baris SAJIAN dipotong ≤ 5
+    · [komposisi] "komposisi balita stunting" visual=komposisi
+    · [komposisi] "komposisi balita stunting" urutan=menurun
+    · [komposisi] "komposisi balita stunting" batas=10
+    · [komposisi] "komposisi balita stunting" kolom turunan "porsi"
+    · [komposisi] "komposisi balita stunting" baris bukti benar-benar menurun
+    · [komposisi] "komposisi balita stunting" porsi dihitung dari total yang ada
+    · [komposisi] "berapa porsi balita stunting dari total ba" visual=komposisi
+    · [komposisi] "berapa porsi balita stunting dari total ba" urutan=menurun
+    · [komposisi] "berapa porsi balita stunting dari total ba" batas=10
+    · [komposisi] "berapa porsi balita stunting dari total ba" baris bukti benar-benar menurun
+    · [komposisi] "proporsi balita imunisasi lengkap" visual=komposisi
+    · [komposisi] "proporsi balita imunisasi lengkap" urutan=menurun
+    · [komposisi] "proporsi balita imunisasi lengkap" batas=10
+    · [distribusi] "sebaran penduduk per kecamatan" visual=batang
+    · [distribusi] "sebaran penduduk per kecamatan" urutan=menurun
+    · [distribusi] "sebaran penduduk per kecamatan" batas=10
+    · [distribusi] "distribusi penduduk menurut kecamatan" visual=batang
+    · [distribusi] "distribusi penduduk menurut kecamatan" urutan=menurun
+    · [distribusi] "distribusi penduduk menurut kecamatan" batas=10
+    · [distribusi] "persebaran penduduk kecamatan Bebesen" visual=batang
+    · [distribusi] "persebaran penduduk kecamatan Bebesen" urutan=menurun
+    · [distribusi] "persebaran penduduk kecamatan Bebesen" batas=10
+    · [perbandingan] "bandingkan angka partisipasi sekolah jenja" visual=tabel
+    · [perbandingan] "bandingkan angka partisipasi sekolah jenja" batas=5
+    · [perbandingan] "perbedaan angka partisipasi sekolah antar " visual=tabel
+    · [perbandingan] "perbedaan angka partisipasi sekolah antar " batas=5
+    · [perbandingan] "selisih cakupan imunisasi dasar lengkap da" visual=tabel
+    · [perbandingan] "selisih cakupan imunisasi dasar lengkap da" batas=5
+    · [perbandingan] "selisih cakupan imunisasi dasar lengkap da" baris SAJIAN dipotong ≤ 5
+    · [nilai_saat_ini] "berapa IPM Aceh Tengah" visual=metric
+    · [nilai_saat_ini] "berapa IPM Aceh Tengah" batas=5
+    · [nilai_saat_ini] "nilai produksi kopi arabika" visual=metric
+    · [nilai_saat_ini] "nilai produksi kopi arabika" batas=5
+    · [nilai_saat_ini] "jumlah penduduk kecamatan Bebesen" visual=metric
+    · [nilai_saat_ini] "jumlah penduduk kecamatan Bebesen" batas=5
+    · tren dengan satu tahun → catatan "satu titik data"

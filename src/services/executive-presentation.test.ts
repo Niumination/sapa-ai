@@ -100,3 +100,99 @@ describe('sitasi per klaim (FR-19)', () => {
     expect(p2.narrative).not.toContain('[');
   });
 });
+
+// ─── FR-18: bentuk jawaban per niat pada panel ────────────────────────────────
+describe('bentuk jawaban per niat pada presentasi (FR-18)', () => {
+  const cakupan: EvidenceItem[] = [
+    { opd: 'Dinas Kesehatan', indikator: 'Cakupan imunisasi dasar lengkap', nilai: '88,2', satuan: 'Persen', tahun: '2024', id: 1 },
+    { opd: 'Dinas Kesehatan', indikator: 'Cakupan air minum layak', nilai: '91,4', satuan: 'Persen', tahun: '2024', id: 2 },
+    { opd: 'Dinas Kesehatan', indikator: 'Cakupan sanitasi layak', nilai: '84,7', satuan: 'Persen', tahun: '2024', id: 3 },
+    { opd: 'Dinas Kesehatan', indikator: 'Cakupan kunjungan ibu hamil K4', nilai: '96,1', satuan: 'Persen', tahun: '2024', id: 4 },
+    { opd: 'Dinas Kesehatan', indikator: 'Cakupan ASI eksklusif', nilai: '72,5', satuan: 'Persen', tahun: '2024', id: 5 },
+    { opd: 'Dinas Kesehatan', indikator: 'Cakupan balita ditimbang', nilai: '92,3', satuan: 'Persen', tahun: '2024', id: 6 },
+    { opd: 'Dinas Kesehatan', indikator: 'Cakupan rumah tangga bersih', nilai: '79,8', satuan: 'Persen', tahun: '2024', id: 7 },
+  ];
+  const panel = (niat: HybridResponse['niat'], query: string, evidence: EvidenceItem[] = cakupan) =>
+    buildExecutivePresentation({
+      narasi: 'Ringkasan jawaban atas pertanyaan.',
+      visualisasi: buildVizFromEvidence(evidence),
+      // Balasan rute nyata selalu membawa baris bukti; panel memakainya.
+      evidence,
+      rekomendasi: [],
+      dataSource: 'SAPA SPLP',
+      timestamp: new Date().toISOString(),
+      niat,
+      query,
+    });
+
+  it('peringkat: panel memajang 5 besar terurut menurun, jumlah bukti penopang tetap utuh', () => {
+    const p = panel('peringkat', '5 besar cakupan tertinggi');
+    expect(p.bentuk?.urutan).toBe('menurun');
+    expect(p.evidence).toHaveLength(5);
+    expect(p.evidence.map((e) => e.id)).toEqual([4, 6, 2, 1, 3]);
+    expect(p.provenance.evidenceCount).toBe(7);
+    expect(p.provenance.evidenceDisajikan).toBe(5);
+  });
+
+  it('peringkat: catatan menyebut baris yang tidak dipajang (bukan disembunyikan)', () => {
+    const p = panel('peringkat', '5 besar cakupan tertinggi');
+    expect(p.bentuk?.catatan).toMatch(/2 baris bukti lain tidak dipajang/);
+    expect(p.bentuk?.catatan).not.toMatch(/terlihat di daftar bukti/);
+  });
+
+  it('peringkat terendah: urutan menaik mengikuti kata "terendah" pada pertanyaan', () => {
+    const p = panel('peringkat', 'cakupan mana yang terendah');
+    expect(p.bentuk?.urutan).toBe('menaik');
+    expect(p.evidence[0].nilai).toBe('72,5');
+  });
+
+  it('komposisi: porsi dihitung dari baris total yang ADA dan dipasang ke id baris bagian', () => {
+    const denganTotal: EvidenceItem[] = [
+      { opd: 'Dinas Kesehatan', indikator: 'Total balita', nilai: '10000', satuan: 'Jiwa', tahun: '2024', id: 10 },
+      { opd: 'Dinas Kesehatan', indikator: 'Balita stunting', nilai: '3140', satuan: 'Jiwa', tahun: '2024', id: 11 },
+      { opd: 'Dinas Kesehatan', indikator: 'Balita imunisasi lengkap', nilai: '8820', satuan: 'Jiwa', tahun: '2024', id: 12 },
+    ];
+    const p = panel('komposisi', 'komposisi balita', denganTotal);
+    expect(p.bentuk?.kolomTurunan).toBe('porsi');
+    expect(p.porsi?.['11']).toBeCloseTo(31.4, 1);
+    expect(p.porsi?.['12']).toBeCloseTo(88.2, 1);
+    expect(p.porsi?.['10']).toBeUndefined();
+  });
+
+  it('komposisi tanpa total: porsi KOSONG + catatan jujur (tidak menjumlahkan sendiri)', () => {
+    const p = panel('komposisi', 'komposisi balita', cakupan.slice(0, 3));
+    expect(p.porsi).toBeUndefined();
+    expect(p.bentuk?.catatan).toMatch(/total keseluruhan tidak ada/i);
+  });
+
+  it('tren: baris menjadi kronologis dan visual berubah menjadi garis', () => {
+    const seri: EvidenceItem[] = [
+      { opd: 'Dinas Kesehatan', indikator: 'Prevalensi stunting', nilai: '31,4', satuan: 'Persen', tahun: '2024', id: 21 },
+      { opd: 'Dinas Kesehatan', indikator: 'Prevalensi stunting', nilai: '24,1', satuan: 'Persen', tahun: '2019', id: 22 },
+      { opd: 'Dinas Kesehatan', indikator: 'Prevalensi stunting', nilai: '27,8', satuan: 'Persen', tahun: '2021', id: 23 },
+    ];
+    const p = panel('tren', 'tren prevalensi stunting', seri);
+    expect(p.evidence.map((e) => e.tahun)).toEqual(['2019', '2021', '2024']);
+    expect(p.visual.type).toBe('line');
+    expect(p.visual.data.map((d) => d.name)).toEqual(['2019', '2021', '2024']);
+  });
+
+  it('niat null: berlaku sebagai nilai_saat_ini (tidak ada bentuk liar)', () => {
+    const p = panel(undefined, 'berapa cakupan imunisasi dasar lengkap', cakupan.slice(0, 2));
+    expect(p.bentuk?.visual).toBe('metric');
+    expect(p.bentuk?.catatan).toBeUndefined();
+  });
+
+  it('respons lama (tanpa niat/query) tetap aman — bentuk dihitung dari niat null', () => {
+    const p = buildExecutivePresentation({
+      narasi: 'Ringkasan jawaban atas pertanyaan.',
+      visualisasi: buildVizFromEvidence(cakupan),
+      evidence: cakupan,
+      rekomendasi: [],
+      dataSource: 'SAPA SPLP',
+      timestamp: new Date().toISOString(),
+    });
+    expect(p.bentuk?.label).toBe('Nilai saat ini');
+    expect(p.evidence).toHaveLength(5);
+  });
+});
