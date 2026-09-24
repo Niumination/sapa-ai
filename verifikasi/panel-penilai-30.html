@@ -1,0 +1,843 @@
+<!doctype html><html lang="id"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Panel penilai — SAPA (EV-05)</title>
+<style>
+  :root { color-scheme: light; }
+  body { font: 16px/1.55 system-ui, sans-serif; margin: 0; padding: 1.25rem; max-width: 60rem; background: #f7f7f5; color: #14181d; }
+  h1 { font-size: 1.5rem; margin: 0 0 .35rem; } h2 { font-size: 1.05rem; margin: 1.4rem 0 .5rem; }
+  .pengantar { background: #fff; border: 1px solid #d8d8d2; border-radius: .5rem; padding: .9rem 1rem; }
+  .kartu { background: #fff; border: 1px solid #d8d8d2; border-radius: .5rem; padding: .9rem 1rem; margin: 0 0 1rem; }
+  .kartu h3 { margin: 0 0 .5rem; font-size: 1rem; }
+  .niat { font-weight: 600; color: #26456b; } .mode { color: #5b6270; font-weight: 400; font-size: .85rem; }
+  .tanya, .jawab { margin: .3rem 0; } .jawab { background: #f2f6f2; border-left: 3px solid #4a7d4a; padding: .5rem .6rem; }
+  details { margin: .5rem 0; } details ul { margin: .35rem 0 .35rem 1.1rem; font-size: .9rem; color: #404652; }
+  fieldset.rubrik { border: 1px solid #dfdfd8; border-radius: .4rem; padding: .5rem .6rem; margin: .45rem 0; }
+  fieldset.rubrik legend { font-weight: 600; font-size: .9rem; }
+  fieldset.rubrik label { margin-right: .75rem; }
+  .petunjuk { display: block; font-size: .8rem; color: #5b6270; margin-top: .2rem; }
+  textarea { width: 100%; font: inherit; }
+  .tombol { position: sticky; bottom: 0; background: #f7f7f5; padding: .75rem 0; border-top: 1px solid #d8d8d2; display: flex; gap: .6rem; flex-wrap: wrap; }
+  button { font: inherit; padding: .5rem .9rem; border-radius: .4rem; border: 1px solid #26456b; background: #26456b; color: #fff; cursor: pointer; }
+  button.jenis2 { background: #fff; color: #26456b; }
+  #status { align-self: center; color: #404652; }
+  @media (prefers-color-scheme: dark) { body { background: #14181d; color: #eceff3; } .kartu, .pengantar { background: #1d232b; border-color: #333b46; } .jawab { background: #1b2a1e; } #status { color: #c3c9d2; } }
+</style></head><body>
+<h1>Panel penilai manusia — SAPA (EV-05)</h1>
+<div class="pengantar">
+  <p><strong>30 sampel</strong> (3 per niat; 30 total), diambil 2026-09-24 dari
+  <code>http://127.0.0.1:3181</code>. Nilailah <em>setiap</em> sampel pada tiga dimensi 1–5.
+  Ambang kriteria terima: <strong>rata-rata dimensi “relevansi” ≥ 4,0</strong>.</p>
+  <p>Berkas ini berjalan tanpa jaringan. Isian disimpan di peramban (localStorage) sementara Anda mengerjakan;
+  tekan <em>Unduh CSV</em> lalu jalankan:</p>
+  <p><code>node scripts/hitung-panel.mjs --berkas=panel-penilai-hasil.csv</code></p>
+</div>
+<h2>Sampel</h2>
+
+  <section class="kartu" data-id="E01">
+    <h3>E01 · <span class="niat">nilai_saat_ini</span> <span class="mode">mode jawab</span></h3>
+    <p class="tanya"><strong>Pertanyaan:</strong> Berapa nilai Indeks Pembangunan Manusia Aceh Tengah pada data terbaru?</p>
+    <p class="jawab"><strong>Jawaban sistem:</strong> Berdasarkan data SAPA untuk &quot;Berapa nilai Indeks Pembangunan Manusia Aceh Tengah pada data terbaru?&quot;, ditemukan 1 indikator terkait: Indeks Pembangunan Manusia 78,09 Indeks (Badan Perencanaan Pembangunan Daerah., 2025).</p>
+    <details><summary>Bukti yang dipakai (1 dari 1)</summary>
+      <ul><li>Indeks Pembangunan Manusia — 78,09 2025 (Badan Perencanaan Pembangunan Daerah.)</li></ul>
+    </details>
+    
+    <fieldset class="rubrik" data-dimensi="relevansi">
+      <legend>Apakah jawaban menjawab pertanyaan yang diajukan?</legend>
+      <label><input type="radio" name="p1-E01-relevansi" value="1" data-berkas="penilai1" data-id="E01" data-dim="relevansi"> 1</label><label><input type="radio" name="p1-E01-relevansi" value="2" data-berkas="penilai1" data-id="E01" data-dim="relevansi"> 2</label><label><input type="radio" name="p1-E01-relevansi" value="3" data-berkas="penilai1" data-id="E01" data-dim="relevansi"> 3</label><label><input type="radio" name="p1-E01-relevansi" value="4" data-berkas="penilai1" data-id="E01" data-dim="relevansi"> 4</label><label><input type="radio" name="p1-E01-relevansi" value="5" data-berkas="penilai1" data-id="E01" data-dim="relevansi"> 5</label>
+      <span class="petunjuk">1 = tidak menjawab / salah topik · 3 = menjawab sebagian · 5 = menjawab tepat sasaran</span>
+    </fieldset>
+    <fieldset class="rubrik" data-dimensi="bukti">
+      <legend>Apakah angka &amp; klaim di jawaban benar-benar ada di daftar bukti?</legend>
+      <label><input type="radio" name="p1-E01-bukti" value="1" data-berkas="penilai1" data-id="E01" data-dim="bukti"> 1</label><label><input type="radio" name="p1-E01-bukti" value="2" data-berkas="penilai1" data-id="E01" data-dim="bukti"> 2</label><label><input type="radio" name="p1-E01-bukti" value="3" data-berkas="penilai1" data-id="E01" data-dim="bukti"> 3</label><label><input type="radio" name="p1-E01-bukti" value="4" data-berkas="penilai1" data-id="E01" data-dim="bukti"> 4</label><label><input type="radio" name="p1-E01-bukti" value="5" data-berkas="penilai1" data-id="E01" data-dim="bukti"> 5</label>
+      <span class="petunjuk">1 = ada angka/klaim di luar bukti · 3 = sebagian tidak dapat ditelusuri · 5 = semua dapat ditelusuri ke bukti</span>
+    </fieldset>
+    <fieldset class="rubrik" data-dimensi="jujur">
+      <legend>Apakah batas data dinyatakan apa adanya (tidak mengarang)?</legend>
+      <label><input type="radio" name="p1-E01-jujur" value="1" data-berkas="penilai1" data-id="E01" data-dim="jujur"> 1</label><label><input type="radio" name="p1-E01-jujur" value="2" data-berkas="penilai1" data-id="E01" data-dim="jujur"> 2</label><label><input type="radio" name="p1-E01-jujur" value="3" data-berkas="penilai1" data-id="E01" data-dim="jujur"> 3</label><label><input type="radio" name="p1-E01-jujur" value="4" data-berkas="penilai1" data-id="E01" data-dim="jujur"> 4</label><label><input type="radio" name="p1-E01-jujur" value="5" data-berkas="penilai1" data-id="E01" data-dim="jujur"> 5</label>
+      <span class="petunjuk">1 = mengarang / menyembunyikan batas · 3 = batas disebut samar · 5 = batas/ketiadaan data dinyatakan tegas</span>
+    </fieldset>
+    <label class="catatan">Catatan (opsional)<br><textarea rows="2" data-id="E01"></textarea></label>
+  </section>
+  <section class="kartu" data-id="E02">
+    <h3>E02 · <span class="niat">nilai_saat_ini</span> <span class="mode">mode jawab</span></h3>
+    <p class="tanya"><strong>Pertanyaan:</strong> Berapa persen tingkat kemiskinan Kabupaten Aceh Tengah tahun 2025?</p>
+    <p class="jawab"><strong>Jawaban sistem:</strong> Berdasarkan data SAPA untuk &quot;Berapa persen tingkat kemiskinan Kabupaten Aceh Tengah tahun 2025?&quot;, ditemukan 11 indikator terkait: jumlah data Insidentil Mustahik Miskin 1.000 Orang (Sekretariat Baitul Mal, 2026); tingkat Kemiskinan 12,29 Persen (Badan Perencanaan Pembangunan Daerah., 2025); jumlah Hari Meugang Mustahik Miskin 637 Orang (Sekretariat Baitul Mal, 2026). Dari 2.065 record SAPA, topik &quot;Berapa persen tingkat kemiskinan Kabupaten Aceh Tengah tahun 2025?&quot; mencakup 11 indikator unik dari 3 OPD (Sekretariat Baitul Mal; Badan Perencanaan Pembangunan Daerah.; Dinas Sosial). Tiga teratas: &quot;jumlah data Insidentil Mustahik Miskin&quot; — 1.000 Orang (Sekretariat Baitul Mal, 2026); &quot;tingkat Kemiskinan&quot; — 12,29 Persen (Badan Perencanaan Pembangunan Daerah., 2025); &quot;jumlah Hari Meugang Mustahik Miskin&quot; — 637 Orang (Sekretariat Baitul Mal, 2026). Selengkapnya pada visualisasi.</p>
+    <details><summary>Bukti yang dipakai (6 dari 11)</summary>
+      <ul><li>jumlah data Insidentil Mustahik Miskin — 1000 2026 (Sekretariat Baitul Mal)</li><li>tingkat Kemiskinan — 12,29 2025 (Badan Perencanaan Pembangunan Daerah.)</li><li>jumlah  Hari Meugang Mustahik  Miskin — 637 2026 (Sekretariat Baitul Mal)</li><li>Jumlah  Santunan Bulanan Lansia Miskin — 450 2026 (Sekretariat Baitul Mal)</li><li>Jumlah Miskin — 189 2025 (Sekretariat Baitul Mal)</li><li>Jumlah  Santunan bagi Mustahik Miskin penderita Penyakit Kronis — 100 2026 (Sekretariat Baitul Mal)</li></ul>
+    </details>
+    
+    <fieldset class="rubrik" data-dimensi="relevansi">
+      <legend>Apakah jawaban menjawab pertanyaan yang diajukan?</legend>
+      <label><input type="radio" name="p1-E02-relevansi" value="1" data-berkas="penilai1" data-id="E02" data-dim="relevansi"> 1</label><label><input type="radio" name="p1-E02-relevansi" value="2" data-berkas="penilai1" data-id="E02" data-dim="relevansi"> 2</label><label><input type="radio" name="p1-E02-relevansi" value="3" data-berkas="penilai1" data-id="E02" data-dim="relevansi"> 3</label><label><input type="radio" name="p1-E02-relevansi" value="4" data-berkas="penilai1" data-id="E02" data-dim="relevansi"> 4</label><label><input type="radio" name="p1-E02-relevansi" value="5" data-berkas="penilai1" data-id="E02" data-dim="relevansi"> 5</label>
+      <span class="petunjuk">1 = tidak menjawab / salah topik · 3 = menjawab sebagian · 5 = menjawab tepat sasaran</span>
+    </fieldset>
+    <fieldset class="rubrik" data-dimensi="bukti">
+      <legend>Apakah angka &amp; klaim di jawaban benar-benar ada di daftar bukti?</legend>
+      <label><input type="radio" name="p1-E02-bukti" value="1" data-berkas="penilai1" data-id="E02" data-dim="bukti"> 1</label><label><input type="radio" name="p1-E02-bukti" value="2" data-berkas="penilai1" data-id="E02" data-dim="bukti"> 2</label><label><input type="radio" name="p1-E02-bukti" value="3" data-berkas="penilai1" data-id="E02" data-dim="bukti"> 3</label><label><input type="radio" name="p1-E02-bukti" value="4" data-berkas="penilai1" data-id="E02" data-dim="bukti"> 4</label><label><input type="radio" name="p1-E02-bukti" value="5" data-berkas="penilai1" data-id="E02" data-dim="bukti"> 5</label>
+      <span class="petunjuk">1 = ada angka/klaim di luar bukti · 3 = sebagian tidak dapat ditelusuri · 5 = semua dapat ditelusuri ke bukti</span>
+    </fieldset>
+    <fieldset class="rubrik" data-dimensi="jujur">
+      <legend>Apakah batas data dinyatakan apa adanya (tidak mengarang)?</legend>
+      <label><input type="radio" name="p1-E02-jujur" value="1" data-berkas="penilai1" data-id="E02" data-dim="jujur"> 1</label><label><input type="radio" name="p1-E02-jujur" value="2" data-berkas="penilai1" data-id="E02" data-dim="jujur"> 2</label><label><input type="radio" name="p1-E02-jujur" value="3" data-berkas="penilai1" data-id="E02" data-dim="jujur"> 3</label><label><input type="radio" name="p1-E02-jujur" value="4" data-berkas="penilai1" data-id="E02" data-dim="jujur"> 4</label><label><input type="radio" name="p1-E02-jujur" value="5" data-berkas="penilai1" data-id="E02" data-dim="jujur"> 5</label>
+      <span class="petunjuk">1 = mengarang / menyembunyikan batas · 3 = batas disebut samar · 5 = batas/ketiadaan data dinyatakan tegas</span>
+    </fieldset>
+    <label class="catatan">Catatan (opsional)<br><textarea rows="2" data-id="E02"></textarea></label>
+  </section>
+  <section class="kartu" data-id="E03">
+    <h3>E03 · <span class="niat">nilai_saat_ini</span> <span class="mode">mode jawab</span></h3>
+    <p class="tanya"><strong>Pertanyaan:</strong> Berapa jumlah Puskesmas di Kabupaten Aceh Tengah?</p>
+    <p class="jawab"><strong>Jawaban sistem:</strong> Berdasarkan data SAPA untuk &quot;Berapa jumlah Puskesmas di Kabupaten Aceh Tengah?&quot;, ditemukan 15 indikator terkait: Cakupan Kunjungan Rawat Jalan Puskesmas 224.814 Orang (Dinas Kesehatan, 2025); Jumlah Puskesmas 17 Unit (Dinas Kesehatan, 2025); Jumlah Puskesmas Rawat inap 7 Unit (Dinas Kesehatan, 2025). Dari 2.065 record SAPA, topik &quot;Berapa jumlah Puskesmas di Kabupaten Aceh Tengah?&quot; mencakup 15 indikator unik dari Dinas Kesehatan. Tiga teratas: &quot;Cakupan Kunjungan Rawat Jalan Puskesmas&quot; — 224.814 Orang (Dinas Kesehatan, 2025); &quot;Jumlah Puskesmas&quot; — 17 Unit (Dinas Kesehatan, 2025); &quot;Jumlah Puskesmas Rawat inap&quot; — 7 Unit (Dinas Kesehatan, 2025). Selengkapnya pada visualisasi.</p>
+    <details><summary>Bukti yang dipakai (6 dari 15)</summary>
+      <ul><li>Cakupan Kunjungan Rawat Jalan Puskesmas — 224.814 2025 (Dinas Kesehatan)</li><li>Jumlah Puskesmas — 17 2025 (Dinas Kesehatan)</li><li>Jumlah Puskesmas Rawat inap — 7 2025 (Dinas Kesehatan)</li><li>Peserta Jaminan Kesehatan  Yang Berobat Di Puskesmas — 189759 tanpa tahun (Dinas Kesehatan)</li><li>Cakupan Kunjungan Rawat Inap Puskesmas — 2816 2025 (Dinas Kesehatan)</li><li>Jumlah Bidan di Puskesmas — 968 2025 (Dinas Kesehatan)</li></ul>
+    </details>
+    
+    <fieldset class="rubrik" data-dimensi="relevansi">
+      <legend>Apakah jawaban menjawab pertanyaan yang diajukan?</legend>
+      <label><input type="radio" name="p1-E03-relevansi" value="1" data-berkas="penilai1" data-id="E03" data-dim="relevansi"> 1</label><label><input type="radio" name="p1-E03-relevansi" value="2" data-berkas="penilai1" data-id="E03" data-dim="relevansi"> 2</label><label><input type="radio" name="p1-E03-relevansi" value="3" data-berkas="penilai1" data-id="E03" data-dim="relevansi"> 3</label><label><input type="radio" name="p1-E03-relevansi" value="4" data-berkas="penilai1" data-id="E03" data-dim="relevansi"> 4</label><label><input type="radio" name="p1-E03-relevansi" value="5" data-berkas="penilai1" data-id="E03" data-dim="relevansi"> 5</label>
+      <span class="petunjuk">1 = tidak menjawab / salah topik · 3 = menjawab sebagian · 5 = menjawab tepat sasaran</span>
+    </fieldset>
+    <fieldset class="rubrik" data-dimensi="bukti">
+      <legend>Apakah angka &amp; klaim di jawaban benar-benar ada di daftar bukti?</legend>
+      <label><input type="radio" name="p1-E03-bukti" value="1" data-berkas="penilai1" data-id="E03" data-dim="bukti"> 1</label><label><input type="radio" name="p1-E03-bukti" value="2" data-berkas="penilai1" data-id="E03" data-dim="bukti"> 2</label><label><input type="radio" name="p1-E03-bukti" value="3" data-berkas="penilai1" data-id="E03" data-dim="bukti"> 3</label><label><input type="radio" name="p1-E03-bukti" value="4" data-berkas="penilai1" data-id="E03" data-dim="bukti"> 4</label><label><input type="radio" name="p1-E03-bukti" value="5" data-berkas="penilai1" data-id="E03" data-dim="bukti"> 5</label>
+      <span class="petunjuk">1 = ada angka/klaim di luar bukti · 3 = sebagian tidak dapat ditelusuri · 5 = semua dapat ditelusuri ke bukti</span>
+    </fieldset>
+    <fieldset class="rubrik" data-dimensi="jujur">
+      <legend>Apakah batas data dinyatakan apa adanya (tidak mengarang)?</legend>
+      <label><input type="radio" name="p1-E03-jujur" value="1" data-berkas="penilai1" data-id="E03" data-dim="jujur"> 1</label><label><input type="radio" name="p1-E03-jujur" value="2" data-berkas="penilai1" data-id="E03" data-dim="jujur"> 2</label><label><input type="radio" name="p1-E03-jujur" value="3" data-berkas="penilai1" data-id="E03" data-dim="jujur"> 3</label><label><input type="radio" name="p1-E03-jujur" value="4" data-berkas="penilai1" data-id="E03" data-dim="jujur"> 4</label><label><input type="radio" name="p1-E03-jujur" value="5" data-berkas="penilai1" data-id="E03" data-dim="jujur"> 5</label>
+      <span class="petunjuk">1 = mengarang / menyembunyikan batas · 3 = batas disebut samar · 5 = batas/ketiadaan data dinyatakan tegas</span>
+    </fieldset>
+    <label class="catatan">Catatan (opsional)<br><textarea rows="2" data-id="E03"></textarea></label>
+  </section>
+  <section class="kartu" data-id="E04">
+    <h3>E04 · <span class="niat">tren</span> <span class="mode">mode jujur</span></h3>
+    <p class="tanya"><strong>Pertanyaan:</strong> Bagaimana tren jumlah penerimaan laporan dan pengaduan masyarakat di Inspektorat?</p>
+    <p class="jawab"><strong>Jawaban sistem:</strong> Berdasarkan data SAPA untuk &quot;Bagaimana tren jumlah penerimaan laporan dan pengaduan masyarakat di Inspektorat?&quot;, ditemukan 5 indikator terkait: Jumlah Penerimaan Laporan dan Pengaduan Masyarakat 5 Laporan (Inspektorat, 2026); Jumlah Laporan Atau Pengaduan Masyarakat Yang Ditindak Lanjuti Sesuai SOP 5 Dokumen (Dinas Lingkungan Hidup, tahun tidak tercantum di SAPA); Jumlah Kanal pengaduan masyarakat yang dimiliki atau dikelola pemerintah daerah 6 Kanal (Dinas Komunikasi dan Informatika, 2026). Dari 2.065 record SAPA, topik &quot;Bagaimana tren jumlah penerimaan laporan dan pengaduan masyarakat di Inspektorat?&quot; mencakup 5 indikator unik dari 4 OPD (Inspektorat; Dinas Lingkungan Hidup; Dinas Komunikasi dan Informatika …). Tiga teratas: &quot;Jumlah Penerimaan Laporan dan Pengaduan Masyarakat&quot; — 5 Laporan (Inspektorat, 2026); &quot;Jumlah Laporan Atau Pengaduan Masyarakat Yang Ditindak Lanjuti Sesuai SOP&quot; — 5 Dokumen (Dinas Lingkungan Hidup, tahun tidak tercantum); &quot;Jumlah Kanal pengaduan masyarakat yang dimiliki atau dikelola pemerintah daerah&quot; — 6 Kanal (Dinas Komunikasi dan Informatika, 2026). Selengkapnya pada visualisasi.</p>
+    <details><summary>Bukti yang dipakai (5 dari 5)</summary>
+      <ul><li>Jumlah Penerimaan Laporan dan Pengaduan Masyarakat — 5 2026 (Inspektorat)</li><li>Jumlah Laporan Atau Pengaduan Masyarakat Yang Ditindak Lanjuti Sesuai SOP — 5 tanpa tahun (Dinas Lingkungan Hidup)</li><li>Jumlah Kanal pengaduan masyarakat yang dimiliki atau dikelola pemerintah daerah — 6 2026 (Dinas Komunikasi dan Informatika)</li><li>Aduan Masyarakat yang masuk ke kanal selain SP4N LAPOR — 3 2026 (Dinas Komunikasi dan Informatika)</li><li>Jumlah Dokumen Data Bakal Calon Penerima Rumah bagi Masyarakat yang Terkena 
+Relokasi ProgramKabupaten/Kota yang Terverifikasi — 1 2026 (Dinas Perumahan dan Permukiman)</li></ul>
+    </details>
+    
+    <fieldset class="rubrik" data-dimensi="relevansi">
+      <legend>Apakah jawaban menjawab pertanyaan yang diajukan?</legend>
+      <label><input type="radio" name="p1-E04-relevansi" value="1" data-berkas="penilai1" data-id="E04" data-dim="relevansi"> 1</label><label><input type="radio" name="p1-E04-relevansi" value="2" data-berkas="penilai1" data-id="E04" data-dim="relevansi"> 2</label><label><input type="radio" name="p1-E04-relevansi" value="3" data-berkas="penilai1" data-id="E04" data-dim="relevansi"> 3</label><label><input type="radio" name="p1-E04-relevansi" value="4" data-berkas="penilai1" data-id="E04" data-dim="relevansi"> 4</label><label><input type="radio" name="p1-E04-relevansi" value="5" data-berkas="penilai1" data-id="E04" data-dim="relevansi"> 5</label>
+      <span class="petunjuk">1 = tidak menjawab / salah topik · 3 = menjawab sebagian · 5 = menjawab tepat sasaran</span>
+    </fieldset>
+    <fieldset class="rubrik" data-dimensi="bukti">
+      <legend>Apakah angka &amp; klaim di jawaban benar-benar ada di daftar bukti?</legend>
+      <label><input type="radio" name="p1-E04-bukti" value="1" data-berkas="penilai1" data-id="E04" data-dim="bukti"> 1</label><label><input type="radio" name="p1-E04-bukti" value="2" data-berkas="penilai1" data-id="E04" data-dim="bukti"> 2</label><label><input type="radio" name="p1-E04-bukti" value="3" data-berkas="penilai1" data-id="E04" data-dim="bukti"> 3</label><label><input type="radio" name="p1-E04-bukti" value="4" data-berkas="penilai1" data-id="E04" data-dim="bukti"> 4</label><label><input type="radio" name="p1-E04-bukti" value="5" data-berkas="penilai1" data-id="E04" data-dim="bukti"> 5</label>
+      <span class="petunjuk">1 = ada angka/klaim di luar bukti · 3 = sebagian tidak dapat ditelusuri · 5 = semua dapat ditelusuri ke bukti</span>
+    </fieldset>
+    <fieldset class="rubrik" data-dimensi="jujur">
+      <legend>Apakah batas data dinyatakan apa adanya (tidak mengarang)?</legend>
+      <label><input type="radio" name="p1-E04-jujur" value="1" data-berkas="penilai1" data-id="E04" data-dim="jujur"> 1</label><label><input type="radio" name="p1-E04-jujur" value="2" data-berkas="penilai1" data-id="E04" data-dim="jujur"> 2</label><label><input type="radio" name="p1-E04-jujur" value="3" data-berkas="penilai1" data-id="E04" data-dim="jujur"> 3</label><label><input type="radio" name="p1-E04-jujur" value="4" data-berkas="penilai1" data-id="E04" data-dim="jujur"> 4</label><label><input type="radio" name="p1-E04-jujur" value="5" data-berkas="penilai1" data-id="E04" data-dim="jujur"> 5</label>
+      <span class="petunjuk">1 = mengarang / menyembunyikan batas · 3 = batas disebut samar · 5 = batas/ketiadaan data dinyatakan tegas</span>
+    </fieldset>
+    <label class="catatan">Catatan (opsional)<br><textarea rows="2" data-id="E04"></textarea></label>
+  </section>
+  <section class="kartu" data-id="E05">
+    <h3>E05 · <span class="niat">tren</span> <span class="mode">mode jawab</span></h3>
+    <p class="tanya"><strong>Pertanyaan:</strong> Bagaimana perkembangan jumlah pemuda yang mendapat pelatihan kepeloporan pemuda?</p>
+    <p class="jawab"><strong>Jawaban sistem:</strong> Berdasarkan data SAPA untuk &quot;Bagaimana perkembangan jumlah pemuda yang mendapat pelatihan kepeloporan pemuda?&quot;, ditemukan 6 indikator terkait: jumlah pemuda yang mendapatkan pelatihan kepeloporan pemuda 30 orang (Dinas Pemuda dan Olahraga, 2025); Jumlah pemuda yang mendapatkan pelatihan kewirausahaan 40 orang (Dinas Pemuda dan Olahraga, 2025); Persentase Sumber daya manusia kesehatan (SDMK) yang mendapatkan pelatihan bidang kesehatan 80 persen (Dinas Kesehatan, tahun tidak tercantum di SAPA). Dari 2.065 record SAPA, topik &quot;Bagaimana perkembangan jumlah pemuda yang mendapat pelatihan kepeloporan pemuda?&quot; mencakup 6 indikator unik dari 3 OPD (Dinas Pemuda dan Olahraga; Dinas Kesehatan; Dinas Keluarga Berencana PPPA). Tiga teratas: &quot;jumlah pemuda yang mendapatkan pelatihan kepeloporan pemuda&quot; — 30 orang (Dinas Pemuda dan Olahraga, 2025); &quot;Jumlah pemuda yang mendapatkan pelatihan kewirausahaan&quot; — 40 orang (Dinas Pemuda dan Olahraga, 2025); &quot;Persentase Sumber daya manusia kesehatan (SDMK) yang mendapatkan pelatihan bidang kesehatan&quot; — 80 persen (Dinas Kesehatan, tahun tidak tercantum). Selengkapnya pada visualisasi.</p>
+    <details><summary>Bukti yang dipakai (6 dari 6)</summary>
+      <ul><li>jumlah pemuda yang  mendapatkan pelatihan kepeloporan pemuda — 30 2025 (Dinas Pemuda dan Olahraga)</li><li>Jumlah pemuda yang mendapatkan pelatihan kewirausahaan — 40 2025 (Dinas Pemuda dan Olahraga)</li><li>Persentase Sumber daya manusia kesehatan (SDMK) yang mendapatkan pelatihan bidang kesehatan — 80 tanpa tahun (Dinas Kesehatan)</li><li>Jumlah Bumil Terlegister Berdasarkan 4T Terlalu Muda (&lt;20 Tahun) — 59 2026 (Dinas Keluarga Berencana PPPA)</li><li>Organisasi Kepemudaan — 47 tanpa tahun (Dinas Pemuda dan Olahraga)</li><li>atlet/olahragawan talenta muda — 18 tanpa tahun (Dinas Pemuda dan Olahraga)</li></ul>
+    </details>
+    
+    <fieldset class="rubrik" data-dimensi="relevansi">
+      <legend>Apakah jawaban menjawab pertanyaan yang diajukan?</legend>
+      <label><input type="radio" name="p1-E05-relevansi" value="1" data-berkas="penilai1" data-id="E05" data-dim="relevansi"> 1</label><label><input type="radio" name="p1-E05-relevansi" value="2" data-berkas="penilai1" data-id="E05" data-dim="relevansi"> 2</label><label><input type="radio" name="p1-E05-relevansi" value="3" data-berkas="penilai1" data-id="E05" data-dim="relevansi"> 3</label><label><input type="radio" name="p1-E05-relevansi" value="4" data-berkas="penilai1" data-id="E05" data-dim="relevansi"> 4</label><label><input type="radio" name="p1-E05-relevansi" value="5" data-berkas="penilai1" data-id="E05" data-dim="relevansi"> 5</label>
+      <span class="petunjuk">1 = tidak menjawab / salah topik · 3 = menjawab sebagian · 5 = menjawab tepat sasaran</span>
+    </fieldset>
+    <fieldset class="rubrik" data-dimensi="bukti">
+      <legend>Apakah angka &amp; klaim di jawaban benar-benar ada di daftar bukti?</legend>
+      <label><input type="radio" name="p1-E05-bukti" value="1" data-berkas="penilai1" data-id="E05" data-dim="bukti"> 1</label><label><input type="radio" name="p1-E05-bukti" value="2" data-berkas="penilai1" data-id="E05" data-dim="bukti"> 2</label><label><input type="radio" name="p1-E05-bukti" value="3" data-berkas="penilai1" data-id="E05" data-dim="bukti"> 3</label><label><input type="radio" name="p1-E05-bukti" value="4" data-berkas="penilai1" data-id="E05" data-dim="bukti"> 4</label><label><input type="radio" name="p1-E05-bukti" value="5" data-berkas="penilai1" data-id="E05" data-dim="bukti"> 5</label>
+      <span class="petunjuk">1 = ada angka/klaim di luar bukti · 3 = sebagian tidak dapat ditelusuri · 5 = semua dapat ditelusuri ke bukti</span>
+    </fieldset>
+    <fieldset class="rubrik" data-dimensi="jujur">
+      <legend>Apakah batas data dinyatakan apa adanya (tidak mengarang)?</legend>
+      <label><input type="radio" name="p1-E05-jujur" value="1" data-berkas="penilai1" data-id="E05" data-dim="jujur"> 1</label><label><input type="radio" name="p1-E05-jujur" value="2" data-berkas="penilai1" data-id="E05" data-dim="jujur"> 2</label><label><input type="radio" name="p1-E05-jujur" value="3" data-berkas="penilai1" data-id="E05" data-dim="jujur"> 3</label><label><input type="radio" name="p1-E05-jujur" value="4" data-berkas="penilai1" data-id="E05" data-dim="jujur"> 4</label><label><input type="radio" name="p1-E05-jujur" value="5" data-berkas="penilai1" data-id="E05" data-dim="jujur"> 5</label>
+      <span class="petunjuk">1 = mengarang / menyembunyikan batas · 3 = batas disebut samar · 5 = batas/ketiadaan data dinyatakan tegas</span>
+    </fieldset>
+    <label class="catatan">Catatan (opsional)<br><textarea rows="2" data-id="E05"></textarea></label>
+  </section>
+  <section class="kartu" data-id="E06">
+    <h3>E06 · <span class="niat">tren</span> <span class="mode">mode jujur</span></h3>
+    <p class="tanya"><strong>Pertanyaan:</strong> Bagaimana tren jumlah anggota perpustakaan dari tahun ke tahun?</p>
+    <p class="jawab"><strong>Jawaban sistem:</strong> Berdasarkan data SAPA untuk &quot;Bagaimana tren jumlah anggota perpustakaan dari tahun ke tahun?&quot;, ditemukan 9 indikator terkait: Anggota perpustakaan sekolah dasar binaan Kabupaten/kota 4.800 Orang (Dinas Perpustakaan dan Kearsipan, 2026); Anggota perpustakaan kecamatan binaan Kabupaten/kota 420 Orang (Dinas Perpustakaan dan Kearsipan, 2026); Jumlah anggota perpustakaan 8.730 Orang (Dinas Perpustakaan dan Kearsipan, 2026). Dari 2.065 record SAPA, topik &quot;Bagaimana tren jumlah anggota perpustakaan dari tahun ke tahun?&quot; mencakup 9 indikator unik dari 2 OPD (Dinas Perpustakaan dan Kearsipan; Dinas Keluarga Berencana PPPA). Tiga teratas: &quot;Anggota perpustakaan sekolah dasar binaan Kabupaten/kota&quot; — 4.800 Orang (Dinas Perpustakaan dan Kearsipan, 2026); &quot;Anggota perpustakaan kecamatan binaan Kabupaten/kota&quot; — 420 Orang (Dinas Perpustakaan dan Kearsipan, 2026); &quot;Jumlah anggota perpustakaan&quot; — 8.730 Orang (Dinas Perpustakaan dan Kearsipan, 2026). Selengkapnya pada visualisasi.</p>
+    <details><summary>Bukti yang dipakai (6 dari 9)</summary>
+      <ul><li>Anggota perpustakaan sekolah dasar binaan Kabupaten/kota — 4800 2026 (Dinas Perpustakaan dan Kearsipan)</li><li>Anggota perpustakaan kecamatan binaan Kabupaten/kota — 420 2026 (Dinas Perpustakaan dan Kearsipan)</li><li>Jumlah anggota perpustakaan — 8730 2026 (Dinas Perpustakaan dan Kearsipan)</li><li>Anggota perpustakaan umum binaan Kabupaten/kota — 8621 tanpa tahun (Dinas Perpustakaan dan Kearsipan)</li><li>Anggota perpustakaan khusus binaan Kabupaten/kota — 6435 2024 (Dinas Perpustakaan dan Kearsipan)</li><li>Anggota perpustakaan desa/Kelurahan binaan Kabupaten/kota — 5206 2024 (Dinas Perpustakaan dan Kearsipan)</li></ul>
+    </details>
+    
+    <fieldset class="rubrik" data-dimensi="relevansi">
+      <legend>Apakah jawaban menjawab pertanyaan yang diajukan?</legend>
+      <label><input type="radio" name="p1-E06-relevansi" value="1" data-berkas="penilai1" data-id="E06" data-dim="relevansi"> 1</label><label><input type="radio" name="p1-E06-relevansi" value="2" data-berkas="penilai1" data-id="E06" data-dim="relevansi"> 2</label><label><input type="radio" name="p1-E06-relevansi" value="3" data-berkas="penilai1" data-id="E06" data-dim="relevansi"> 3</label><label><input type="radio" name="p1-E06-relevansi" value="4" data-berkas="penilai1" data-id="E06" data-dim="relevansi"> 4</label><label><input type="radio" name="p1-E06-relevansi" value="5" data-berkas="penilai1" data-id="E06" data-dim="relevansi"> 5</label>
+      <span class="petunjuk">1 = tidak menjawab / salah topik · 3 = menjawab sebagian · 5 = menjawab tepat sasaran</span>
+    </fieldset>
+    <fieldset class="rubrik" data-dimensi="bukti">
+      <legend>Apakah angka &amp; klaim di jawaban benar-benar ada di daftar bukti?</legend>
+      <label><input type="radio" name="p1-E06-bukti" value="1" data-berkas="penilai1" data-id="E06" data-dim="bukti"> 1</label><label><input type="radio" name="p1-E06-bukti" value="2" data-berkas="penilai1" data-id="E06" data-dim="bukti"> 2</label><label><input type="radio" name="p1-E06-bukti" value="3" data-berkas="penilai1" data-id="E06" data-dim="bukti"> 3</label><label><input type="radio" name="p1-E06-bukti" value="4" data-berkas="penilai1" data-id="E06" data-dim="bukti"> 4</label><label><input type="radio" name="p1-E06-bukti" value="5" data-berkas="penilai1" data-id="E06" data-dim="bukti"> 5</label>
+      <span class="petunjuk">1 = ada angka/klaim di luar bukti · 3 = sebagian tidak dapat ditelusuri · 5 = semua dapat ditelusuri ke bukti</span>
+    </fieldset>
+    <fieldset class="rubrik" data-dimensi="jujur">
+      <legend>Apakah batas data dinyatakan apa adanya (tidak mengarang)?</legend>
+      <label><input type="radio" name="p1-E06-jujur" value="1" data-berkas="penilai1" data-id="E06" data-dim="jujur"> 1</label><label><input type="radio" name="p1-E06-jujur" value="2" data-berkas="penilai1" data-id="E06" data-dim="jujur"> 2</label><label><input type="radio" name="p1-E06-jujur" value="3" data-berkas="penilai1" data-id="E06" data-dim="jujur"> 3</label><label><input type="radio" name="p1-E06-jujur" value="4" data-berkas="penilai1" data-id="E06" data-dim="jujur"> 4</label><label><input type="radio" name="p1-E06-jujur" value="5" data-berkas="penilai1" data-id="E06" data-dim="jujur"> 5</label>
+      <span class="petunjuk">1 = mengarang / menyembunyikan batas · 3 = batas disebut samar · 5 = batas/ketiadaan data dinyatakan tegas</span>
+    </fieldset>
+    <label class="catatan">Catatan (opsional)<br><textarea rows="2" data-id="E06"></textarea></label>
+  </section>
+  <section class="kartu" data-id="E08">
+    <h3>E08 · <span class="niat">perbandingan</span> <span class="mode">mode jawab</span></h3>
+    <p class="tanya"><strong>Pertanyaan:</strong> Bandingkan jumlah Puskesmas dan Puskesmas Pembantu</p>
+    <p class="jawab"><strong>Jawaban sistem:</strong> Berdasarkan data SAPA untuk &quot;Bandingkan jumlah Puskesmas dan Puskesmas Pembantu&quot;, ditemukan 15 indikator terkait: Jumlah Puskesmas Pembantu 56 Unit (Dinas Kesehatan, 2025); Cakupan Kunjungan Rawat Jalan Puskesmas 224.814 Orang (Dinas Kesehatan, 2025); Peserta Jaminan Kesehatan Yang Berobat Di Puskesmas 189.759 Orang (Dinas Kesehatan, tahun tidak tercantum di SAPA). Dari 2.065 record SAPA, topik &quot;Bandingkan jumlah Puskesmas dan Puskesmas Pembantu&quot; mencakup 15 indikator unik dari Dinas Kesehatan. Tiga teratas: &quot;Jumlah Puskesmas Pembantu&quot; — 56 Unit (Dinas Kesehatan, 2025); &quot;Cakupan Kunjungan Rawat Jalan Puskesmas&quot; — 224.814 Orang (Dinas Kesehatan, 2025); &quot;Peserta Jaminan Kesehatan Yang Berobat Di Puskesmas&quot; — 189.759 Orang (Dinas Kesehatan, tahun tidak tercantum). Selengkapnya pada visualisasi.</p>
+    <details><summary>Bukti yang dipakai (6 dari 15)</summary>
+      <ul><li>Jumlah Puskesmas Pembantu — 56 2025 (Dinas Kesehatan)</li><li>Cakupan Kunjungan Rawat Jalan Puskesmas — 224.814 2025 (Dinas Kesehatan)</li><li>Peserta Jaminan Kesehatan  Yang Berobat Di Puskesmas — 189759 tanpa tahun (Dinas Kesehatan)</li><li>Cakupan Kunjungan Rawat Inap Puskesmas — 2816 2025 (Dinas Kesehatan)</li><li>Jumlah Bidan di Puskesmas — 968 2025 (Dinas Kesehatan)</li><li>Jumlah Perawat di Puskesmas — 397 2025 (Dinas Kesehatan)</li></ul>
+    </details>
+    
+    <fieldset class="rubrik" data-dimensi="relevansi">
+      <legend>Apakah jawaban menjawab pertanyaan yang diajukan?</legend>
+      <label><input type="radio" name="p1-E08-relevansi" value="1" data-berkas="penilai1" data-id="E08" data-dim="relevansi"> 1</label><label><input type="radio" name="p1-E08-relevansi" value="2" data-berkas="penilai1" data-id="E08" data-dim="relevansi"> 2</label><label><input type="radio" name="p1-E08-relevansi" value="3" data-berkas="penilai1" data-id="E08" data-dim="relevansi"> 3</label><label><input type="radio" name="p1-E08-relevansi" value="4" data-berkas="penilai1" data-id="E08" data-dim="relevansi"> 4</label><label><input type="radio" name="p1-E08-relevansi" value="5" data-berkas="penilai1" data-id="E08" data-dim="relevansi"> 5</label>
+      <span class="petunjuk">1 = tidak menjawab / salah topik · 3 = menjawab sebagian · 5 = menjawab tepat sasaran</span>
+    </fieldset>
+    <fieldset class="rubrik" data-dimensi="bukti">
+      <legend>Apakah angka &amp; klaim di jawaban benar-benar ada di daftar bukti?</legend>
+      <label><input type="radio" name="p1-E08-bukti" value="1" data-berkas="penilai1" data-id="E08" data-dim="bukti"> 1</label><label><input type="radio" name="p1-E08-bukti" value="2" data-berkas="penilai1" data-id="E08" data-dim="bukti"> 2</label><label><input type="radio" name="p1-E08-bukti" value="3" data-berkas="penilai1" data-id="E08" data-dim="bukti"> 3</label><label><input type="radio" name="p1-E08-bukti" value="4" data-berkas="penilai1" data-id="E08" data-dim="bukti"> 4</label><label><input type="radio" name="p1-E08-bukti" value="5" data-berkas="penilai1" data-id="E08" data-dim="bukti"> 5</label>
+      <span class="petunjuk">1 = ada angka/klaim di luar bukti · 3 = sebagian tidak dapat ditelusuri · 5 = semua dapat ditelusuri ke bukti</span>
+    </fieldset>
+    <fieldset class="rubrik" data-dimensi="jujur">
+      <legend>Apakah batas data dinyatakan apa adanya (tidak mengarang)?</legend>
+      <label><input type="radio" name="p1-E08-jujur" value="1" data-berkas="penilai1" data-id="E08" data-dim="jujur"> 1</label><label><input type="radio" name="p1-E08-jujur" value="2" data-berkas="penilai1" data-id="E08" data-dim="jujur"> 2</label><label><input type="radio" name="p1-E08-jujur" value="3" data-berkas="penilai1" data-id="E08" data-dim="jujur"> 3</label><label><input type="radio" name="p1-E08-jujur" value="4" data-berkas="penilai1" data-id="E08" data-dim="jujur"> 4</label><label><input type="radio" name="p1-E08-jujur" value="5" data-berkas="penilai1" data-id="E08" data-dim="jujur"> 5</label>
+      <span class="petunjuk">1 = mengarang / menyembunyikan batas · 3 = batas disebut samar · 5 = batas/ketiadaan data dinyatakan tegas</span>
+    </fieldset>
+    <label class="catatan">Catatan (opsional)<br><textarea rows="2" data-id="E08"></textarea></label>
+  </section>
+  <section class="kartu" data-id="E09">
+    <h3>E09 · <span class="niat">perbandingan</span> <span class="mode">mode jawab</span></h3>
+    <p class="tanya"><strong>Pertanyaan:</strong> Bandingkan jumlah penerima bantuan sosial PKH dan sembako</p>
+    <p class="jawab"><strong>Jawaban sistem:</strong> Tidak ada data SAPA yang memuat seluruh kata kunci sekaligus — tidak ada indikator yang memuat &quot;sembako&quot; bersama kata kunci lainnya. Berikut indikator terdekat. Berdasarkan data SAPA untuk &quot;Bandingkan jumlah penerima bantuan sosial PKH dan sembako&quot;, ditemukan 5 indikator terkait: Jumlah Penerima Bantuan Sosial PKH 13.101 Keluarga (Dinas Sosial, 2026); Jumlah Penerima Bantuan Sosial Sembako 18.605 KPM (Dinas Sosial, 2026); Jumlah Total Nilai Bantuan Sosial PKH (Berhasil Salur) 9.099.700.000 Rupiah (Dinas Sosial, 2026). Dari 2.065 record SAPA, topik &quot;Bandingkan jumlah penerima bantuan sosial PKH dan sembako&quot; mencakup 5 indikator unik dari Dinas Sosial. Tiga teratas: &quot;Jumlah Penerima Bantuan Sosial PKH&quot; — 13.101 Keluarga (Dinas Sosial, 2026); &quot;Jumlah Penerima Bantuan Sosial Sembako&quot; — 18.605 KPM (Dinas Sosial, 2026); &quot;Jumlah Total Nilai Bantuan Sosial PKH (Berhasil Salur)&quot; — 9.099.700.000 Rupiah (Dinas Sosial, 2026). Selengkapnya pada visualisasi.</p>
+    <details><summary>Bukti yang dipakai (5 dari 5)</summary>
+      <ul><li>Jumlah Penerima Bantuan Sosial PKH — 13101 2026 (Dinas Sosial)</li><li>Jumlah Penerima Bantuan Sosial Sembako — 18605 2026 (Dinas Sosial)</li><li>Jumlah Total Nilai Bantuan Sosial PKH (Berhasil Salur) — 9099700000 2026 (Dinas Sosial)</li><li>Jumlah Total Nilai Bantuan Sosial Sembako (Berhasil Salur) — 10986000000 2026 (Dinas Sosial)</li><li>Jumlah Aktif Penerima Bantuan Iuran Jaminan Kesehatan Nasional — 133897 2026 (Dinas Sosial)</li></ul>
+    </details>
+    
+    <fieldset class="rubrik" data-dimensi="relevansi">
+      <legend>Apakah jawaban menjawab pertanyaan yang diajukan?</legend>
+      <label><input type="radio" name="p1-E09-relevansi" value="1" data-berkas="penilai1" data-id="E09" data-dim="relevansi"> 1</label><label><input type="radio" name="p1-E09-relevansi" value="2" data-berkas="penilai1" data-id="E09" data-dim="relevansi"> 2</label><label><input type="radio" name="p1-E09-relevansi" value="3" data-berkas="penilai1" data-id="E09" data-dim="relevansi"> 3</label><label><input type="radio" name="p1-E09-relevansi" value="4" data-berkas="penilai1" data-id="E09" data-dim="relevansi"> 4</label><label><input type="radio" name="p1-E09-relevansi" value="5" data-berkas="penilai1" data-id="E09" data-dim="relevansi"> 5</label>
+      <span class="petunjuk">1 = tidak menjawab / salah topik · 3 = menjawab sebagian · 5 = menjawab tepat sasaran</span>
+    </fieldset>
+    <fieldset class="rubrik" data-dimensi="bukti">
+      <legend>Apakah angka &amp; klaim di jawaban benar-benar ada di daftar bukti?</legend>
+      <label><input type="radio" name="p1-E09-bukti" value="1" data-berkas="penilai1" data-id="E09" data-dim="bukti"> 1</label><label><input type="radio" name="p1-E09-bukti" value="2" data-berkas="penilai1" data-id="E09" data-dim="bukti"> 2</label><label><input type="radio" name="p1-E09-bukti" value="3" data-berkas="penilai1" data-id="E09" data-dim="bukti"> 3</label><label><input type="radio" name="p1-E09-bukti" value="4" data-berkas="penilai1" data-id="E09" data-dim="bukti"> 4</label><label><input type="radio" name="p1-E09-bukti" value="5" data-berkas="penilai1" data-id="E09" data-dim="bukti"> 5</label>
+      <span class="petunjuk">1 = ada angka/klaim di luar bukti · 3 = sebagian tidak dapat ditelusuri · 5 = semua dapat ditelusuri ke bukti</span>
+    </fieldset>
+    <fieldset class="rubrik" data-dimensi="jujur">
+      <legend>Apakah batas data dinyatakan apa adanya (tidak mengarang)?</legend>
+      <label><input type="radio" name="p1-E09-jujur" value="1" data-berkas="penilai1" data-id="E09" data-dim="jujur"> 1</label><label><input type="radio" name="p1-E09-jujur" value="2" data-berkas="penilai1" data-id="E09" data-dim="jujur"> 2</label><label><input type="radio" name="p1-E09-jujur" value="3" data-berkas="penilai1" data-id="E09" data-dim="jujur"> 3</label><label><input type="radio" name="p1-E09-jujur" value="4" data-berkas="penilai1" data-id="E09" data-dim="jujur"> 4</label><label><input type="radio" name="p1-E09-jujur" value="5" data-berkas="penilai1" data-id="E09" data-dim="jujur"> 5</label>
+      <span class="petunjuk">1 = mengarang / menyembunyikan batas · 3 = batas disebut samar · 5 = batas/ketiadaan data dinyatakan tegas</span>
+    </fieldset>
+    <label class="catatan">Catatan (opsional)<br><textarea rows="2" data-id="E09"></textarea></label>
+  </section>
+  <section class="kartu" data-id="E10">
+    <h3>E10 · <span class="niat">perbandingan</span> <span class="mode">mode jujur</span></h3>
+    <p class="tanya"><strong>Pertanyaan:</strong> Bandingkan tingkat kemiskinan dan prevalensi stunting Aceh Tengah</p>
+    <p class="jawab"><strong>Jawaban sistem:</strong> Tidak ada data SAPA yang memuat seluruh kata kunci sekaligus — tidak ada indikator yang memuat &quot;kemiskinan&quot; bersama kata kunci lainnya. Berikut indikator terdekat. Berdasarkan data SAPA untuk &quot;Bandingkan tingkat kemiskinan dan prevalensi stunting Aceh Tengah&quot;, ditemukan 2 indikator terkait: Prevalensi Stunting 31,4 Persen (Badan Perencanaan Pembangunan Daerah., 2025); Prevalensi Stunting (Pendek dam Sangat Pendek) 4,9 Persen (Dinas Kesehatan, tahun tidak tercantum di SAPA).</p>
+    <details><summary>Bukti yang dipakai (2 dari 2)</summary>
+      <ul><li>Prevalensi Stunting — 31,4 2025 (Badan Perencanaan Pembangunan Daerah.)</li><li>Prevalensi Stunting (Pendek dam Sangat Pendek) — 4,9 tanpa tahun (Dinas Kesehatan)</li></ul>
+    </details>
+    
+    <fieldset class="rubrik" data-dimensi="relevansi">
+      <legend>Apakah jawaban menjawab pertanyaan yang diajukan?</legend>
+      <label><input type="radio" name="p1-E10-relevansi" value="1" data-berkas="penilai1" data-id="E10" data-dim="relevansi"> 1</label><label><input type="radio" name="p1-E10-relevansi" value="2" data-berkas="penilai1" data-id="E10" data-dim="relevansi"> 2</label><label><input type="radio" name="p1-E10-relevansi" value="3" data-berkas="penilai1" data-id="E10" data-dim="relevansi"> 3</label><label><input type="radio" name="p1-E10-relevansi" value="4" data-berkas="penilai1" data-id="E10" data-dim="relevansi"> 4</label><label><input type="radio" name="p1-E10-relevansi" value="5" data-berkas="penilai1" data-id="E10" data-dim="relevansi"> 5</label>
+      <span class="petunjuk">1 = tidak menjawab / salah topik · 3 = menjawab sebagian · 5 = menjawab tepat sasaran</span>
+    </fieldset>
+    <fieldset class="rubrik" data-dimensi="bukti">
+      <legend>Apakah angka &amp; klaim di jawaban benar-benar ada di daftar bukti?</legend>
+      <label><input type="radio" name="p1-E10-bukti" value="1" data-berkas="penilai1" data-id="E10" data-dim="bukti"> 1</label><label><input type="radio" name="p1-E10-bukti" value="2" data-berkas="penilai1" data-id="E10" data-dim="bukti"> 2</label><label><input type="radio" name="p1-E10-bukti" value="3" data-berkas="penilai1" data-id="E10" data-dim="bukti"> 3</label><label><input type="radio" name="p1-E10-bukti" value="4" data-berkas="penilai1" data-id="E10" data-dim="bukti"> 4</label><label><input type="radio" name="p1-E10-bukti" value="5" data-berkas="penilai1" data-id="E10" data-dim="bukti"> 5</label>
+      <span class="petunjuk">1 = ada angka/klaim di luar bukti · 3 = sebagian tidak dapat ditelusuri · 5 = semua dapat ditelusuri ke bukti</span>
+    </fieldset>
+    <fieldset class="rubrik" data-dimensi="jujur">
+      <legend>Apakah batas data dinyatakan apa adanya (tidak mengarang)?</legend>
+      <label><input type="radio" name="p1-E10-jujur" value="1" data-berkas="penilai1" data-id="E10" data-dim="jujur"> 1</label><label><input type="radio" name="p1-E10-jujur" value="2" data-berkas="penilai1" data-id="E10" data-dim="jujur"> 2</label><label><input type="radio" name="p1-E10-jujur" value="3" data-berkas="penilai1" data-id="E10" data-dim="jujur"> 3</label><label><input type="radio" name="p1-E10-jujur" value="4" data-berkas="penilai1" data-id="E10" data-dim="jujur"> 4</label><label><input type="radio" name="p1-E10-jujur" value="5" data-berkas="penilai1" data-id="E10" data-dim="jujur"> 5</label>
+      <span class="petunjuk">1 = mengarang / menyembunyikan batas · 3 = batas disebut samar · 5 = batas/ketiadaan data dinyatakan tegas</span>
+    </fieldset>
+    <label class="catatan">Catatan (opsional)<br><textarea rows="2" data-id="E10"></textarea></label>
+  </section>
+  <section class="kartu" data-id="E11">
+    <h3>E11 · <span class="niat">peringkat</span> <span class="mode">mode jujur</span></h3>
+    <p class="tanya"><strong>Pertanyaan:</strong> Urutkan tiga indikator Dinas Koperasi dan UKM dengan jumlah unit terbanyak</p>
+    <p class="jawab"><strong>Jawaban sistem:</strong> Tidak ada data SAPA yang memuat seluruh kata kunci sekaligus — tidak ada indikator yang memuat &quot;unit&quot; bersama kata kunci lainnya. Berikut indikator terdekat. Dijawab lewat pencocokan MAKNA (semantik), bukan kecocokan kata: katalog SAPA tidak memuat kata kunci pertanyaan secara langsung. Periksa kesesuaian indikatornya sebelum angka ini dipakai. Ada indikator lain yang kemiripannya hampir sama; periksa pula namanya bila angka ini tidak sesuai. Berdasarkan data SAPA untuk &quot;Urutkan tiga indikator Dinas Koperasi dan UKM dengan jumlah unit terbanyak&quot;, ditemukan 15 indikator terkait: Jumlah Koperasi Serba Usaha 124 Unit (Dinas Koperasi dan UKM, tahun tidak tercantum di SAPA); Jumlah Koperasi di Kecamatan Kebayakan 77 Unit (Dinas Koperasi dan UKM, 2026); Jumlah Koperasi Jasa 14 Unit (Dinas Koperasi dan UKM, 2026). Dari 2.065 record SAPA, topik &quot;Urutkan tiga indikator Dinas Koperasi dan UKM dengan jumlah unit terbanyak&quot; mencakup 15 indikator unik dari Dinas Koperasi dan UKM. Tiga teratas: &quot;Jumlah Koperasi Serba Usaha&quot; — 124 Unit (Dinas Koperasi dan UKM, tahun tidak tercantum); &quot;Jumlah Koperasi di Kecamatan Kebayakan&quot; — 77 Unit (Dinas Koperasi dan UKM, 2026); &quot;Jumlah Koperasi Jasa&quot; — 14 Unit (Dinas Koperasi dan UKM, 2026). Selengkapnya pada visualisasi.</p>
+    <details><summary>Bukti yang dipakai (6 dari 15)</summary>
+      <ul><li>Jumlah Koperasi Serba Usaha — 124 tanpa tahun (Dinas Koperasi dan UKM)</li><li>Jumlah Koperasi di Kecamatan Kebayakan — 77 2026 (Dinas Koperasi dan UKM)</li><li>Jumlah Koperasi Jasa — 14 2026 (Dinas Koperasi dan UKM)</li><li>Jumlah Koperasi Peternakan — 12 tanpa tahun (Dinas Koperasi dan UKM)</li><li>Jenis Koperasi — 6 2026 (Dinas Koperasi dan UKM)</li><li>Jumlah Koperasi di Kecamatan Kute Panang — 31 2026 (Dinas Koperasi dan UKM)</li></ul>
+    </details>
+    
+    <fieldset class="rubrik" data-dimensi="relevansi">
+      <legend>Apakah jawaban menjawab pertanyaan yang diajukan?</legend>
+      <label><input type="radio" name="p1-E11-relevansi" value="1" data-berkas="penilai1" data-id="E11" data-dim="relevansi"> 1</label><label><input type="radio" name="p1-E11-relevansi" value="2" data-berkas="penilai1" data-id="E11" data-dim="relevansi"> 2</label><label><input type="radio" name="p1-E11-relevansi" value="3" data-berkas="penilai1" data-id="E11" data-dim="relevansi"> 3</label><label><input type="radio" name="p1-E11-relevansi" value="4" data-berkas="penilai1" data-id="E11" data-dim="relevansi"> 4</label><label><input type="radio" name="p1-E11-relevansi" value="5" data-berkas="penilai1" data-id="E11" data-dim="relevansi"> 5</label>
+      <span class="petunjuk">1 = tidak menjawab / salah topik · 3 = menjawab sebagian · 5 = menjawab tepat sasaran</span>
+    </fieldset>
+    <fieldset class="rubrik" data-dimensi="bukti">
+      <legend>Apakah angka &amp; klaim di jawaban benar-benar ada di daftar bukti?</legend>
+      <label><input type="radio" name="p1-E11-bukti" value="1" data-berkas="penilai1" data-id="E11" data-dim="bukti"> 1</label><label><input type="radio" name="p1-E11-bukti" value="2" data-berkas="penilai1" data-id="E11" data-dim="bukti"> 2</label><label><input type="radio" name="p1-E11-bukti" value="3" data-berkas="penilai1" data-id="E11" data-dim="bukti"> 3</label><label><input type="radio" name="p1-E11-bukti" value="4" data-berkas="penilai1" data-id="E11" data-dim="bukti"> 4</label><label><input type="radio" name="p1-E11-bukti" value="5" data-berkas="penilai1" data-id="E11" data-dim="bukti"> 5</label>
+      <span class="petunjuk">1 = ada angka/klaim di luar bukti · 3 = sebagian tidak dapat ditelusuri · 5 = semua dapat ditelusuri ke bukti</span>
+    </fieldset>
+    <fieldset class="rubrik" data-dimensi="jujur">
+      <legend>Apakah batas data dinyatakan apa adanya (tidak mengarang)?</legend>
+      <label><input type="radio" name="p1-E11-jujur" value="1" data-berkas="penilai1" data-id="E11" data-dim="jujur"> 1</label><label><input type="radio" name="p1-E11-jujur" value="2" data-berkas="penilai1" data-id="E11" data-dim="jujur"> 2</label><label><input type="radio" name="p1-E11-jujur" value="3" data-berkas="penilai1" data-id="E11" data-dim="jujur"> 3</label><label><input type="radio" name="p1-E11-jujur" value="4" data-berkas="penilai1" data-id="E11" data-dim="jujur"> 4</label><label><input type="radio" name="p1-E11-jujur" value="5" data-berkas="penilai1" data-id="E11" data-dim="jujur"> 5</label>
+      <span class="petunjuk">1 = mengarang / menyembunyikan batas · 3 = batas disebut samar · 5 = batas/ketiadaan data dinyatakan tegas</span>
+    </fieldset>
+    <label class="catatan">Catatan (opsional)<br><textarea rows="2" data-id="E11"></textarea></label>
+  </section>
+  <section class="kartu" data-id="E12">
+    <h3>E12 · <span class="niat">peringkat</span> <span class="mode">mode jujur</span></h3>
+    <p class="tanya"><strong>Pertanyaan:</strong> Kecamatan mana dengan produksi kopi arabika terbesar?</p>
+    <p class="jawab"><strong>Jawaban sistem:</strong> Tidak ada data SAPA yang memuat seluruh kata kunci sekaligus — tidak ada indikator yang memuat &quot;kecamatan&quot; bersama kata kunci lainnya. Berikut indikator terdekat. Berdasarkan data SAPA untuk &quot;Kecamatan mana dengan produksi kopi arabika terbesar?&quot;, ditemukan 9 indikator terkait: Jumlah produksi komoditas perkebunan Kopi Arabika 29.019 Ton/Tahun (Dinas Perkebunan, tahun tidak tercantum di SAPA); Luas areal komoditas perkebunan Kopi Arabika 50.162 Ha (Dinas Perkebunan, tahun tidak tercantum di SAPA); Jumlah petani komoditas perkebunan Kopi Arabika 38.294 KK (Dinas Perkebunan, tahun tidak tercantum di SAPA). Dari 2.065 record SAPA, topik &quot;Kecamatan mana dengan produksi kopi arabika terbesar?&quot; mencakup 9 indikator unik dari 2 OPD (Dinas Perkebunan; Dinas Syari'at Islam). Tiga teratas: &quot;Jumlah produksi komoditas perkebunan Kopi Arabika&quot; — 29.019 Ton/Tahun (Dinas Perkebunan, tahun tidak tercantum); &quot;Luas areal komoditas perkebunan Kopi Arabika&quot; — 50.162 Ha (Dinas Perkebunan, tahun tidak tercantum); &quot;Jumlah petani komoditas perkebunan Kopi Arabika&quot; — 38.294 KK (Dinas Perkebunan, tahun tidak tercantum). Selengkapnya pada visualisasi.</p>
+    <details><summary>Bukti yang dipakai (6 dari 9)</summary>
+      <ul><li>Jumlah produksi komoditas perkebunan Kopi Arabika — 29.019 tanpa tahun (Dinas Perkebunan)</li><li>Luas areal komoditas perkebunan Kopi Arabika — 50.162 tanpa tahun (Dinas Perkebunan)</li><li>Jumlah petani komoditas perkebunan Kopi Arabika — 38.294 tanpa tahun (Dinas Perkebunan)</li><li>Jumlah produktivitas komoditas perkebunan Kopi Arabika — 817 tanpa tahun (Dinas Perkebunan)</li><li>Jumlah Muadzin Masjid Besar Kecamatan — 28 tanpa tahun (Dinas Syari'at Islam)</li><li>Jumlah Masjid Besar Kecamatan — 14 tanpa tahun (Dinas Syari'at Islam)</li></ul>
+    </details>
+    
+    <fieldset class="rubrik" data-dimensi="relevansi">
+      <legend>Apakah jawaban menjawab pertanyaan yang diajukan?</legend>
+      <label><input type="radio" name="p1-E12-relevansi" value="1" data-berkas="penilai1" data-id="E12" data-dim="relevansi"> 1</label><label><input type="radio" name="p1-E12-relevansi" value="2" data-berkas="penilai1" data-id="E12" data-dim="relevansi"> 2</label><label><input type="radio" name="p1-E12-relevansi" value="3" data-berkas="penilai1" data-id="E12" data-dim="relevansi"> 3</label><label><input type="radio" name="p1-E12-relevansi" value="4" data-berkas="penilai1" data-id="E12" data-dim="relevansi"> 4</label><label><input type="radio" name="p1-E12-relevansi" value="5" data-berkas="penilai1" data-id="E12" data-dim="relevansi"> 5</label>
+      <span class="petunjuk">1 = tidak menjawab / salah topik · 3 = menjawab sebagian · 5 = menjawab tepat sasaran</span>
+    </fieldset>
+    <fieldset class="rubrik" data-dimensi="bukti">
+      <legend>Apakah angka &amp; klaim di jawaban benar-benar ada di daftar bukti?</legend>
+      <label><input type="radio" name="p1-E12-bukti" value="1" data-berkas="penilai1" data-id="E12" data-dim="bukti"> 1</label><label><input type="radio" name="p1-E12-bukti" value="2" data-berkas="penilai1" data-id="E12" data-dim="bukti"> 2</label><label><input type="radio" name="p1-E12-bukti" value="3" data-berkas="penilai1" data-id="E12" data-dim="bukti"> 3</label><label><input type="radio" name="p1-E12-bukti" value="4" data-berkas="penilai1" data-id="E12" data-dim="bukti"> 4</label><label><input type="radio" name="p1-E12-bukti" value="5" data-berkas="penilai1" data-id="E12" data-dim="bukti"> 5</label>
+      <span class="petunjuk">1 = ada angka/klaim di luar bukti · 3 = sebagian tidak dapat ditelusuri · 5 = semua dapat ditelusuri ke bukti</span>
+    </fieldset>
+    <fieldset class="rubrik" data-dimensi="jujur">
+      <legend>Apakah batas data dinyatakan apa adanya (tidak mengarang)?</legend>
+      <label><input type="radio" name="p1-E12-jujur" value="1" data-berkas="penilai1" data-id="E12" data-dim="jujur"> 1</label><label><input type="radio" name="p1-E12-jujur" value="2" data-berkas="penilai1" data-id="E12" data-dim="jujur"> 2</label><label><input type="radio" name="p1-E12-jujur" value="3" data-berkas="penilai1" data-id="E12" data-dim="jujur"> 3</label><label><input type="radio" name="p1-E12-jujur" value="4" data-berkas="penilai1" data-id="E12" data-dim="jujur"> 4</label><label><input type="radio" name="p1-E12-jujur" value="5" data-berkas="penilai1" data-id="E12" data-dim="jujur"> 5</label>
+      <span class="petunjuk">1 = mengarang / menyembunyikan batas · 3 = batas disebut samar · 5 = batas/ketiadaan data dinyatakan tegas</span>
+    </fieldset>
+    <label class="catatan">Catatan (opsional)<br><textarea rows="2" data-id="E12"></textarea></label>
+  </section>
+  <section class="kartu" data-id="E13">
+    <h3>E13 · <span class="niat">peringkat</span> <span class="mode">mode jujur</span></h3>
+    <p class="tanya"><strong>Pertanyaan:</strong> Komoditas perkebunan apa yang luas serangan organisme pengganggu tanamannya terbesar?</p>
+    <p class="jawab"><strong>Jawaban sistem:</strong> Tidak ada data SAPA yang memuat seluruh kata kunci sekaligus — tidak ada indikator yang memuat &quot;komoditas&quot; bersama kata kunci lainnya. Berikut indikator terdekat. Berdasarkan data SAPA untuk &quot;Komoditas perkebunan apa yang luas serangan organisme pengganggu tanamannya terbesar?&quot;, ditemukan 12 indikator terkait: Luas serangan Organisme Pengganggu Tanaman Jamur Akar (OPT JAP) di Kabupaten Aceh Tengah 4.913 Ha (Dinas Perkebunan, tahun tidak tercantum di SAPA); Luas serangan Organisme Pengganggu Tanaman Penggerek Buah Kopi (OPT PBKo) di Kabupaten Aceh Tengah 3.012 Ha (Dinas Perkebunan, tahun tidak tercantum di SAPA); Luas areal komoditas perkebunan Kopi Arabika 50.162 Ha (Dinas Perkebunan, tahun tidak tercantum di SAPA). Dari 2.065 record SAPA, topik &quot;Komoditas perkebunan apa yang luas serangan organisme pengganggu tanamannya terbesar?&quot; mencakup 12 indikator unik dari Dinas Perkebunan. Tiga teratas: &quot;Luas serangan Organisme Pengganggu Tanaman Jamur Akar (OPT JAP) di Kabupaten Aceh Tengah&quot; — 4.913 Ha (Dinas Perkebunan, tahun tidak tercantum); &quot;Luas serangan Organisme Pengganggu Tanaman Penggerek Buah Kopi (OPT PBKo) di Kabupaten Aceh Tengah&quot; — 3.012 Ha (Dinas Perkebunan, tahun tidak tercantum); &quot;Luas areal komoditas perkebunan Kopi Arabika&quot; — 50.162 Ha (Dinas Perkebunan, tahun tidak tercantum). Selengkapnya pada visualisasi.</p>
+    <details><summary>Bukti yang dipakai (6 dari 12)</summary>
+      <ul><li>Luas serangan Organisme Pengganggu Tanaman  Jamur Akar (OPT JAP) di Kabupaten Aceh Tengah — 4.913 tanpa tahun (Dinas Perkebunan)</li><li>Luas serangan Organisme Pengganggu Tanaman Penggerek Buah Kopi (OPT PBKo) di Kabupaten Aceh Tengah — 3.012 tanpa tahun (Dinas Perkebunan)</li><li>Luas areal komoditas perkebunan Kopi Arabika — 50.162 tanpa tahun (Dinas Perkebunan)</li><li>Luas areal komoditas perkebunan Serewangi — 1.672 tanpa tahun (Dinas Perkebunan)</li><li>Luas areal komoditas perkebunan Kopi Robusta — 1.133 tanpa tahun (Dinas Perkebunan)</li><li>Luas areal komoditas perkebunan Tebu — 1.102 tanpa tahun (Dinas Perkebunan)</li></ul>
+    </details>
+    
+    <fieldset class="rubrik" data-dimensi="relevansi">
+      <legend>Apakah jawaban menjawab pertanyaan yang diajukan?</legend>
+      <label><input type="radio" name="p1-E13-relevansi" value="1" data-berkas="penilai1" data-id="E13" data-dim="relevansi"> 1</label><label><input type="radio" name="p1-E13-relevansi" value="2" data-berkas="penilai1" data-id="E13" data-dim="relevansi"> 2</label><label><input type="radio" name="p1-E13-relevansi" value="3" data-berkas="penilai1" data-id="E13" data-dim="relevansi"> 3</label><label><input type="radio" name="p1-E13-relevansi" value="4" data-berkas="penilai1" data-id="E13" data-dim="relevansi"> 4</label><label><input type="radio" name="p1-E13-relevansi" value="5" data-berkas="penilai1" data-id="E13" data-dim="relevansi"> 5</label>
+      <span class="petunjuk">1 = tidak menjawab / salah topik · 3 = menjawab sebagian · 5 = menjawab tepat sasaran</span>
+    </fieldset>
+    <fieldset class="rubrik" data-dimensi="bukti">
+      <legend>Apakah angka &amp; klaim di jawaban benar-benar ada di daftar bukti?</legend>
+      <label><input type="radio" name="p1-E13-bukti" value="1" data-berkas="penilai1" data-id="E13" data-dim="bukti"> 1</label><label><input type="radio" name="p1-E13-bukti" value="2" data-berkas="penilai1" data-id="E13" data-dim="bukti"> 2</label><label><input type="radio" name="p1-E13-bukti" value="3" data-berkas="penilai1" data-id="E13" data-dim="bukti"> 3</label><label><input type="radio" name="p1-E13-bukti" value="4" data-berkas="penilai1" data-id="E13" data-dim="bukti"> 4</label><label><input type="radio" name="p1-E13-bukti" value="5" data-berkas="penilai1" data-id="E13" data-dim="bukti"> 5</label>
+      <span class="petunjuk">1 = ada angka/klaim di luar bukti · 3 = sebagian tidak dapat ditelusuri · 5 = semua dapat ditelusuri ke bukti</span>
+    </fieldset>
+    <fieldset class="rubrik" data-dimensi="jujur">
+      <legend>Apakah batas data dinyatakan apa adanya (tidak mengarang)?</legend>
+      <label><input type="radio" name="p1-E13-jujur" value="1" data-berkas="penilai1" data-id="E13" data-dim="jujur"> 1</label><label><input type="radio" name="p1-E13-jujur" value="2" data-berkas="penilai1" data-id="E13" data-dim="jujur"> 2</label><label><input type="radio" name="p1-E13-jujur" value="3" data-berkas="penilai1" data-id="E13" data-dim="jujur"> 3</label><label><input type="radio" name="p1-E13-jujur" value="4" data-berkas="penilai1" data-id="E13" data-dim="jujur"> 4</label><label><input type="radio" name="p1-E13-jujur" value="5" data-berkas="penilai1" data-id="E13" data-dim="jujur"> 5</label>
+      <span class="petunjuk">1 = mengarang / menyembunyikan batas · 3 = batas disebut samar · 5 = batas/ketiadaan data dinyatakan tegas</span>
+    </fieldset>
+    <label class="catatan">Catatan (opsional)<br><textarea rows="2" data-id="E13"></textarea></label>
+  </section>
+  <section class="kartu" data-id="E15">
+    <h3>E15 · <span class="niat">komposisi</span> <span class="mode">mode jujur</span></h3>
+    <p class="tanya"><strong>Pertanyaan:</strong> Berapa porsi jumlah sampah yang tertangani terhadap total produksi sampah?</p>
+    <p class="jawab"><strong>Jawaban sistem:</strong> Tidak ada data SAPA yang memuat seluruh kata kunci sekaligus — tidak ada indikator yang memuat &quot;terhadap&quot;, &quot;produksi&quot; bersama kata kunci lainnya. Berikut indikator terdekat. Berdasarkan data SAPA untuk &quot;Berapa porsi jumlah sampah yang tertangani terhadap total produksi sampah?&quot;, ditemukan 8 indikator terkait: Jumlah Sampah Yang Tertangani 1.109,97 Ton/Tahun (Dinas Lingkungan Hidup, tahun tidak tercantum di SAPA); Jumlah Produksi Sampah 41.601,58 Ton/Tahun (Dinas Lingkungan Hidup, tahun tidak tercantum di SAPA); Jumlah sarana pengangkutan sampah 42 unit (Dinas Lingkungan Hidup, tahun tidak tercantum di SAPA). Dari 2.065 record SAPA, topik &quot;Berapa porsi jumlah sampah yang tertangani terhadap total produksi sampah?&quot; mencakup 8 indikator unik dari 4 OPD (Dinas Lingkungan Hidup; Dinas Keluarga Berencana PPPA; Dinas Pendidikan dan Kebudayaan …). Tiga teratas: &quot;Jumlah Sampah Yang Tertangani&quot; — 1.109,97 Ton/Tahun (Dinas Lingkungan Hidup, tahun tidak tercantum); &quot;Jumlah Produksi Sampah&quot; — 41.601,58 Ton/Tahun (Dinas Lingkungan Hidup, tahun tidak tercantum); &quot;Jumlah sarana pengangkutan sampah&quot; — 42 unit (Dinas Lingkungan Hidup, tahun tidak tercantum). Selengkapnya pada visualisasi.</p>
+    <details><summary>Bukti yang dipakai (6 dari 8)</summary>
+      <ul><li>Jumlah Sampah Yang Tertangani — 1.109,97 tanpa tahun (Dinas Lingkungan Hidup)</li><li>Jumlah Produksi Sampah — 41.601,58 tanpa tahun (Dinas Lingkungan Hidup)</li><li>Jumlah sarana pengangkutan sampah — 42 tanpa tahun (Dinas Lingkungan Hidup)</li><li>Jumlah program Sosialisasi dan Edukasi untuk mendukung pengelolaan sampah — 4 2025 (Dinas Lingkungan Hidup)</li><li>Persentase Sampah yang Terkelola — 2,68 tanpa tahun (Dinas Lingkungan Hidup)</li><li>Jumlah  Kasus Kekerasan Terhadap Perempuan Dan Anak Yang Ditangani Secara Komprehensif — 118 2025 (Dinas Keluarga Berencana PPPA)</li></ul>
+    </details>
+    
+    <fieldset class="rubrik" data-dimensi="relevansi">
+      <legend>Apakah jawaban menjawab pertanyaan yang diajukan?</legend>
+      <label><input type="radio" name="p1-E15-relevansi" value="1" data-berkas="penilai1" data-id="E15" data-dim="relevansi"> 1</label><label><input type="radio" name="p1-E15-relevansi" value="2" data-berkas="penilai1" data-id="E15" data-dim="relevansi"> 2</label><label><input type="radio" name="p1-E15-relevansi" value="3" data-berkas="penilai1" data-id="E15" data-dim="relevansi"> 3</label><label><input type="radio" name="p1-E15-relevansi" value="4" data-berkas="penilai1" data-id="E15" data-dim="relevansi"> 4</label><label><input type="radio" name="p1-E15-relevansi" value="5" data-berkas="penilai1" data-id="E15" data-dim="relevansi"> 5</label>
+      <span class="petunjuk">1 = tidak menjawab / salah topik · 3 = menjawab sebagian · 5 = menjawab tepat sasaran</span>
+    </fieldset>
+    <fieldset class="rubrik" data-dimensi="bukti">
+      <legend>Apakah angka &amp; klaim di jawaban benar-benar ada di daftar bukti?</legend>
+      <label><input type="radio" name="p1-E15-bukti" value="1" data-berkas="penilai1" data-id="E15" data-dim="bukti"> 1</label><label><input type="radio" name="p1-E15-bukti" value="2" data-berkas="penilai1" data-id="E15" data-dim="bukti"> 2</label><label><input type="radio" name="p1-E15-bukti" value="3" data-berkas="penilai1" data-id="E15" data-dim="bukti"> 3</label><label><input type="radio" name="p1-E15-bukti" value="4" data-berkas="penilai1" data-id="E15" data-dim="bukti"> 4</label><label><input type="radio" name="p1-E15-bukti" value="5" data-berkas="penilai1" data-id="E15" data-dim="bukti"> 5</label>
+      <span class="petunjuk">1 = ada angka/klaim di luar bukti · 3 = sebagian tidak dapat ditelusuri · 5 = semua dapat ditelusuri ke bukti</span>
+    </fieldset>
+    <fieldset class="rubrik" data-dimensi="jujur">
+      <legend>Apakah batas data dinyatakan apa adanya (tidak mengarang)?</legend>
+      <label><input type="radio" name="p1-E15-jujur" value="1" data-berkas="penilai1" data-id="E15" data-dim="jujur"> 1</label><label><input type="radio" name="p1-E15-jujur" value="2" data-berkas="penilai1" data-id="E15" data-dim="jujur"> 2</label><label><input type="radio" name="p1-E15-jujur" value="3" data-berkas="penilai1" data-id="E15" data-dim="jujur"> 3</label><label><input type="radio" name="p1-E15-jujur" value="4" data-berkas="penilai1" data-id="E15" data-dim="jujur"> 4</label><label><input type="radio" name="p1-E15-jujur" value="5" data-berkas="penilai1" data-id="E15" data-dim="jujur"> 5</label>
+      <span class="petunjuk">1 = mengarang / menyembunyikan batas · 3 = batas disebut samar · 5 = batas/ketiadaan data dinyatakan tegas</span>
+    </fieldset>
+    <label class="catatan">Catatan (opsional)<br><textarea rows="2" data-id="E15"></textarea></label>
+  </section>
+  <section class="kartu" data-id="E16">
+    <h3>E16 · <span class="niat">komposisi</span> <span class="mode">mode jujur</span></h3>
+    <p class="tanya"><strong>Pertanyaan:</strong> Berapa porsi jumlah koperasi serba usaha terhadap seluruh koperasi di Aceh Tengah?</p>
+    <p class="jawab"><strong>Jawaban sistem:</strong> Tidak ada data SAPA yang memuat seluruh kata kunci sekaligus — tidak ada indikator yang memuat &quot;terhadap&quot; bersama kata kunci lainnya. Berikut indikator terdekat. Berdasarkan data SAPA untuk &quot;Berapa porsi jumlah koperasi serba usaha terhadap seluruh koperasi di Aceh Tengah?&quot;, ditemukan 15 indikator terkait: Jumlah Koperasi Serba Usaha 124 Unit (Dinas Koperasi dan UKM, tahun tidak tercantum di SAPA); Persentase Badan Usaha yang taat terhadap peraturan pengelolaan lingkungan hidup 100 % (Dinas Lingkungan Hidup, tahun tidak tercantum di SAPA); Jumlah koperasi aktif 614 Unit (Dinas Koperasi dan UKM, 2026). Dari 2.065 record SAPA, topik &quot;Berapa porsi jumlah koperasi serba usaha terhadap seluruh koperasi di Aceh Tengah?&quot; mencakup 15 indikator unik dari 2 OPD (Dinas Koperasi dan UKM; Dinas Lingkungan Hidup). Tiga teratas: &quot;Jumlah Koperasi Serba Usaha&quot; — 124 Unit (Dinas Koperasi dan UKM, tahun tidak tercantum); &quot;Persentase Badan Usaha yang taat terhadap peraturan pengelolaan lingkungan hidup&quot; — 100 % (Dinas Lingkungan Hidup, tahun tidak tercantum); &quot;Jumlah koperasi aktif&quot; — 614 Unit (Dinas Koperasi dan UKM, 2026). Selengkapnya pada visualisasi.</p>
+    <details><summary>Bukti yang dipakai (6 dari 15)</summary>
+      <ul><li>Jumlah Koperasi Serba Usaha — 124 tanpa tahun (Dinas Koperasi dan UKM)</li><li>Persentase Badan Usaha yang taat terhadap peraturan pengelolaan lingkungan hidup — 100 tanpa tahun (Dinas Lingkungan Hidup)</li><li>Jumlah koperasi aktif — 614 2026 (Dinas Koperasi dan UKM)</li><li>Jumlah Koperasi Desa Merah Putih — 295 2026 (Dinas Koperasi dan UKM)</li><li>Jumlah Koperasi konsumen — 264 2026 (Dinas Koperasi dan UKM)</li><li>Jumlah Koperasi di Kecamatan Bebesen — 159 2026 (Dinas Koperasi dan UKM)</li></ul>
+    </details>
+    
+    <fieldset class="rubrik" data-dimensi="relevansi">
+      <legend>Apakah jawaban menjawab pertanyaan yang diajukan?</legend>
+      <label><input type="radio" name="p1-E16-relevansi" value="1" data-berkas="penilai1" data-id="E16" data-dim="relevansi"> 1</label><label><input type="radio" name="p1-E16-relevansi" value="2" data-berkas="penilai1" data-id="E16" data-dim="relevansi"> 2</label><label><input type="radio" name="p1-E16-relevansi" value="3" data-berkas="penilai1" data-id="E16" data-dim="relevansi"> 3</label><label><input type="radio" name="p1-E16-relevansi" value="4" data-berkas="penilai1" data-id="E16" data-dim="relevansi"> 4</label><label><input type="radio" name="p1-E16-relevansi" value="5" data-berkas="penilai1" data-id="E16" data-dim="relevansi"> 5</label>
+      <span class="petunjuk">1 = tidak menjawab / salah topik · 3 = menjawab sebagian · 5 = menjawab tepat sasaran</span>
+    </fieldset>
+    <fieldset class="rubrik" data-dimensi="bukti">
+      <legend>Apakah angka &amp; klaim di jawaban benar-benar ada di daftar bukti?</legend>
+      <label><input type="radio" name="p1-E16-bukti" value="1" data-berkas="penilai1" data-id="E16" data-dim="bukti"> 1</label><label><input type="radio" name="p1-E16-bukti" value="2" data-berkas="penilai1" data-id="E16" data-dim="bukti"> 2</label><label><input type="radio" name="p1-E16-bukti" value="3" data-berkas="penilai1" data-id="E16" data-dim="bukti"> 3</label><label><input type="radio" name="p1-E16-bukti" value="4" data-berkas="penilai1" data-id="E16" data-dim="bukti"> 4</label><label><input type="radio" name="p1-E16-bukti" value="5" data-berkas="penilai1" data-id="E16" data-dim="bukti"> 5</label>
+      <span class="petunjuk">1 = ada angka/klaim di luar bukti · 3 = sebagian tidak dapat ditelusuri · 5 = semua dapat ditelusuri ke bukti</span>
+    </fieldset>
+    <fieldset class="rubrik" data-dimensi="jujur">
+      <legend>Apakah batas data dinyatakan apa adanya (tidak mengarang)?</legend>
+      <label><input type="radio" name="p1-E16-jujur" value="1" data-berkas="penilai1" data-id="E16" data-dim="jujur"> 1</label><label><input type="radio" name="p1-E16-jujur" value="2" data-berkas="penilai1" data-id="E16" data-dim="jujur"> 2</label><label><input type="radio" name="p1-E16-jujur" value="3" data-berkas="penilai1" data-id="E16" data-dim="jujur"> 3</label><label><input type="radio" name="p1-E16-jujur" value="4" data-berkas="penilai1" data-id="E16" data-dim="jujur"> 4</label><label><input type="radio" name="p1-E16-jujur" value="5" data-berkas="penilai1" data-id="E16" data-dim="jujur"> 5</label>
+      <span class="petunjuk">1 = mengarang / menyembunyikan batas · 3 = batas disebut samar · 5 = batas/ketiadaan data dinyatakan tegas</span>
+    </fieldset>
+    <label class="catatan">Catatan (opsional)<br><textarea rows="2" data-id="E16"></textarea></label>
+  </section>
+  <section class="kartu" data-id="E17">
+    <h3>E17 · <span class="niat">komposisi</span> <span class="mode">mode jawab</span></h3>
+    <p class="tanya"><strong>Pertanyaan:</strong> Berapa komposisi jumlah anggota perpustakaan menurut jenjang sekolah?</p>
+    <p class="jawab"><strong>Jawaban sistem:</strong> Tidak ada data SAPA yang memuat seluruh kata kunci sekaligus — tidak ada indikator yang memuat &quot;jenjang&quot; bersama kata kunci lainnya. Berikut indikator terdekat. Berdasarkan data SAPA untuk &quot;Berapa komposisi jumlah anggota perpustakaan menurut jenjang sekolah?&quot;, ditemukan 10 indikator terkait: Anggota perpustakaan sekolah dasar binaan Kabupaten/kota 4.800 Orang (Dinas Perpustakaan dan Kearsipan, 2026); Tenaga Teknis Perpustakaan Sekolah Menengah Pertama binaan Kabupaten/kota 14 Orang (Dinas Perpustakaan dan Kearsipan, 2024); Jumlah anggota perpustakaan 8.730 Orang (Dinas Perpustakaan dan Kearsipan, 2026). Dari 2.065 record SAPA, topik &quot;Berapa komposisi jumlah anggota perpustakaan menurut jenjang sekolah?&quot; mencakup 10 indikator unik dari Dinas Perpustakaan dan Kearsipan. Tiga teratas: &quot;Anggota perpustakaan sekolah dasar binaan Kabupaten/kota&quot; — 4.800 Orang (Dinas Perpustakaan dan Kearsipan, 2026); &quot;Tenaga Teknis Perpustakaan Sekolah Menengah Pertama binaan Kabupaten/kota&quot; — 14 Orang (Dinas Perpustakaan dan Kearsipan, 2024); &quot;Jumlah anggota perpustakaan&quot; — 8.730 Orang (Dinas Perpustakaan dan Kearsipan, 2026). Selengkapnya pada visualisasi.</p>
+    <details><summary>Bukti yang dipakai (6 dari 10)</summary>
+      <ul><li>Anggota perpustakaan sekolah dasar binaan Kabupaten/kota — 4800 2026 (Dinas Perpustakaan dan Kearsipan)</li><li>Tenaga Teknis Perpustakaan Sekolah Menengah Pertama binaan Kabupaten/kota — 14 2024 (Dinas Perpustakaan dan Kearsipan)</li><li>Jumlah anggota perpustakaan — 8730 2026 (Dinas Perpustakaan dan Kearsipan)</li><li>Anggota perpustakaan umum binaan Kabupaten/kota — 8621 tanpa tahun (Dinas Perpustakaan dan Kearsipan)</li><li>Anggota perpustakaan khusus binaan Kabupaten/kota — 6435 2024 (Dinas Perpustakaan dan Kearsipan)</li><li>Anggota perpustakaan desa/Kelurahan binaan Kabupaten/kota — 5206 2024 (Dinas Perpustakaan dan Kearsipan)</li></ul>
+    </details>
+    
+    <fieldset class="rubrik" data-dimensi="relevansi">
+      <legend>Apakah jawaban menjawab pertanyaan yang diajukan?</legend>
+      <label><input type="radio" name="p1-E17-relevansi" value="1" data-berkas="penilai1" data-id="E17" data-dim="relevansi"> 1</label><label><input type="radio" name="p1-E17-relevansi" value="2" data-berkas="penilai1" data-id="E17" data-dim="relevansi"> 2</label><label><input type="radio" name="p1-E17-relevansi" value="3" data-berkas="penilai1" data-id="E17" data-dim="relevansi"> 3</label><label><input type="radio" name="p1-E17-relevansi" value="4" data-berkas="penilai1" data-id="E17" data-dim="relevansi"> 4</label><label><input type="radio" name="p1-E17-relevansi" value="5" data-berkas="penilai1" data-id="E17" data-dim="relevansi"> 5</label>
+      <span class="petunjuk">1 = tidak menjawab / salah topik · 3 = menjawab sebagian · 5 = menjawab tepat sasaran</span>
+    </fieldset>
+    <fieldset class="rubrik" data-dimensi="bukti">
+      <legend>Apakah angka &amp; klaim di jawaban benar-benar ada di daftar bukti?</legend>
+      <label><input type="radio" name="p1-E17-bukti" value="1" data-berkas="penilai1" data-id="E17" data-dim="bukti"> 1</label><label><input type="radio" name="p1-E17-bukti" value="2" data-berkas="penilai1" data-id="E17" data-dim="bukti"> 2</label><label><input type="radio" name="p1-E17-bukti" value="3" data-berkas="penilai1" data-id="E17" data-dim="bukti"> 3</label><label><input type="radio" name="p1-E17-bukti" value="4" data-berkas="penilai1" data-id="E17" data-dim="bukti"> 4</label><label><input type="radio" name="p1-E17-bukti" value="5" data-berkas="penilai1" data-id="E17" data-dim="bukti"> 5</label>
+      <span class="petunjuk">1 = ada angka/klaim di luar bukti · 3 = sebagian tidak dapat ditelusuri · 5 = semua dapat ditelusuri ke bukti</span>
+    </fieldset>
+    <fieldset class="rubrik" data-dimensi="jujur">
+      <legend>Apakah batas data dinyatakan apa adanya (tidak mengarang)?</legend>
+      <label><input type="radio" name="p1-E17-jujur" value="1" data-berkas="penilai1" data-id="E17" data-dim="jujur"> 1</label><label><input type="radio" name="p1-E17-jujur" value="2" data-berkas="penilai1" data-id="E17" data-dim="jujur"> 2</label><label><input type="radio" name="p1-E17-jujur" value="3" data-berkas="penilai1" data-id="E17" data-dim="jujur"> 3</label><label><input type="radio" name="p1-E17-jujur" value="4" data-berkas="penilai1" data-id="E17" data-dim="jujur"> 4</label><label><input type="radio" name="p1-E17-jujur" value="5" data-berkas="penilai1" data-id="E17" data-dim="jujur"> 5</label>
+      <span class="petunjuk">1 = mengarang / menyembunyikan batas · 3 = batas disebut samar · 5 = batas/ketiadaan data dinyatakan tegas</span>
+    </fieldset>
+    <label class="catatan">Catatan (opsional)<br><textarea rows="2" data-id="E17"></textarea></label>
+  </section>
+  <section class="kartu" data-id="E18">
+    <h3>E18 · <span class="niat">distribusi</span> <span class="mode">mode jawab</span></h3>
+    <p class="tanya"><strong>Pertanyaan:</strong> Bagaimana sebaran jumlah tenaga kerja UMKM per kecamatan di Aceh Tengah?</p>
+    <p class="jawab"><strong>Jawaban sistem:</strong> Berdasarkan data SAPA untuk &quot;Bagaimana sebaran jumlah tenaga kerja UMKM per kecamatan di Aceh Tengah?&quot;, ditemukan 15 indikator terkait: Jumlah Tenaga Kerja UMKM kecamatan Bebesen 1955 ORANG/JIWA (Dinas Koperasi dan UKM, tahun tidak tercantum di SAPA); Jumlah Tenaga Kerja UMKM kecamatan Celala 183 ORANG/JIWA (Dinas Koperasi dan UKM, tahun tidak tercantum di SAPA); Jumlah Tenaga Kerja UMKM kecamatan Linge 253 ORANG/JIWA (Dinas Koperasi dan UKM, tahun tidak tercantum di SAPA). Dari 2.065 record SAPA, topik &quot;Bagaimana sebaran jumlah tenaga kerja UMKM per kecamatan di Aceh Tengah?&quot; mencakup 15 indikator unik dari Dinas Koperasi dan UKM. Tiga teratas: &quot;Jumlah Tenaga Kerja UMKM kecamatan Bebesen&quot; — 1955 ORANG/JIWA (Dinas Koperasi dan UKM, tahun tidak tercantum); &quot;Jumlah Tenaga Kerja UMKM kecamatan Celala&quot; — 183 ORANG/JIWA (Dinas Koperasi dan UKM, tahun tidak tercantum); &quot;Jumlah Tenaga Kerja UMKM kecamatan Linge&quot; — 253 ORANG/JIWA (Dinas Koperasi dan UKM, tahun tidak tercantum). Selengkapnya pada visualisasi.</p>
+    <details><summary>Bukti yang dipakai (6 dari 15)</summary>
+      <ul><li>Jumlah Tenaga Kerja UMKM kecamatan Bebesen — 1955 tanpa tahun (Dinas Koperasi dan UKM)</li><li>Jumlah Tenaga Kerja UMKM kecamatan Celala — 183 tanpa tahun (Dinas Koperasi dan UKM)</li><li>Jumlah Tenaga Kerja UMKM kecamatan Linge — 253 tanpa tahun (Dinas Koperasi dan UKM)</li><li>Jumlah Tenaga Kerja UMKM kecamatan Lut Tawar — 1876 tanpa tahun (Dinas Koperasi dan UKM)</li><li>Jumlah Tenaga Kerja UMKM kecamatan Silih Nara — 586 tanpa tahun (Dinas Koperasi dan UKM)</li><li>Jumlah Tenaga Kerja UMKM kecamatan Pegasing — 366 tanpa tahun (Dinas Koperasi dan UKM)</li></ul>
+    </details>
+    
+    <fieldset class="rubrik" data-dimensi="relevansi">
+      <legend>Apakah jawaban menjawab pertanyaan yang diajukan?</legend>
+      <label><input type="radio" name="p1-E18-relevansi" value="1" data-berkas="penilai1" data-id="E18" data-dim="relevansi"> 1</label><label><input type="radio" name="p1-E18-relevansi" value="2" data-berkas="penilai1" data-id="E18" data-dim="relevansi"> 2</label><label><input type="radio" name="p1-E18-relevansi" value="3" data-berkas="penilai1" data-id="E18" data-dim="relevansi"> 3</label><label><input type="radio" name="p1-E18-relevansi" value="4" data-berkas="penilai1" data-id="E18" data-dim="relevansi"> 4</label><label><input type="radio" name="p1-E18-relevansi" value="5" data-berkas="penilai1" data-id="E18" data-dim="relevansi"> 5</label>
+      <span class="petunjuk">1 = tidak menjawab / salah topik · 3 = menjawab sebagian · 5 = menjawab tepat sasaran</span>
+    </fieldset>
+    <fieldset class="rubrik" data-dimensi="bukti">
+      <legend>Apakah angka &amp; klaim di jawaban benar-benar ada di daftar bukti?</legend>
+      <label><input type="radio" name="p1-E18-bukti" value="1" data-berkas="penilai1" data-id="E18" data-dim="bukti"> 1</label><label><input type="radio" name="p1-E18-bukti" value="2" data-berkas="penilai1" data-id="E18" data-dim="bukti"> 2</label><label><input type="radio" name="p1-E18-bukti" value="3" data-berkas="penilai1" data-id="E18" data-dim="bukti"> 3</label><label><input type="radio" name="p1-E18-bukti" value="4" data-berkas="penilai1" data-id="E18" data-dim="bukti"> 4</label><label><input type="radio" name="p1-E18-bukti" value="5" data-berkas="penilai1" data-id="E18" data-dim="bukti"> 5</label>
+      <span class="petunjuk">1 = ada angka/klaim di luar bukti · 3 = sebagian tidak dapat ditelusuri · 5 = semua dapat ditelusuri ke bukti</span>
+    </fieldset>
+    <fieldset class="rubrik" data-dimensi="jujur">
+      <legend>Apakah batas data dinyatakan apa adanya (tidak mengarang)?</legend>
+      <label><input type="radio" name="p1-E18-jujur" value="1" data-berkas="penilai1" data-id="E18" data-dim="jujur"> 1</label><label><input type="radio" name="p1-E18-jujur" value="2" data-berkas="penilai1" data-id="E18" data-dim="jujur"> 2</label><label><input type="radio" name="p1-E18-jujur" value="3" data-berkas="penilai1" data-id="E18" data-dim="jujur"> 3</label><label><input type="radio" name="p1-E18-jujur" value="4" data-berkas="penilai1" data-id="E18" data-dim="jujur"> 4</label><label><input type="radio" name="p1-E18-jujur" value="5" data-berkas="penilai1" data-id="E18" data-dim="jujur"> 5</label>
+      <span class="petunjuk">1 = mengarang / menyembunyikan batas · 3 = batas disebut samar · 5 = batas/ketiadaan data dinyatakan tegas</span>
+    </fieldset>
+    <label class="catatan">Catatan (opsional)<br><textarea rows="2" data-id="E18"></textarea></label>
+  </section>
+  <section class="kartu" data-id="E19">
+    <h3>E19 · <span class="niat">distribusi</span> <span class="mode">mode jawab</span></h3>
+    <p class="tanya"><strong>Pertanyaan:</strong> Bagaimana sebaran panjang jalan kabupaten dalam kondisi baik per kecamatan?</p>
+    <p class="jawab"><strong>Jawaban sistem:</strong> Berdasarkan data SAPA untuk &quot;Bagaimana sebaran panjang jalan kabupaten dalam kondisi baik per kecamatan?&quot;, ditemukan 15 indikator terkait: Jumlah Panjang Jalan Kabupaten Dalam Kondisi Baik (Km) kecamatan Kute Panang 49,63 KM (Dinas Pekerjaan Umum dan Penataan Ruang, tahun tidak tercantum di SAPA); Jumlah Panjang Jalan Kabupaten Dalam Kondisi Baik (Km) 399,37 KM (Dinas Pekerjaan Umum dan Penataan Ruang, tahun tidak tercantum di SAPA); Jumlah Panjang Jalan Kabupaten Dalam Kondisi Baik (Km) kecamatan Celala 20,5 KM (Dinas Pekerjaan Umum dan Penataan Ruang, tahun tidak tercantum di SAPA). Dari 2.065 record SAPA, topik &quot;Bagaimana sebaran panjang jalan kabupaten dalam kondisi baik per kecamatan?&quot; mencakup 15 indikator unik dari Dinas Pekerjaan Umum dan Penataan Ruang. Tiga teratas: &quot;Jumlah Panjang Jalan Kabupaten Dalam Kondisi Baik (Km) kecamatan Kute Panang&quot; — 49,63 KM (Dinas Pekerjaan Umum dan Penataan Ruang, tahun tidak tercantum); &quot;Jumlah Panjang Jalan Kabupaten Dalam Kondisi Baik (Km)&quot; — 399,37 KM (Dinas Pekerjaan Umum dan Penataan Ruang, tahun tidak tercantum); &quot;Jumlah Panjang Jalan Kabupaten Dalam Kondisi Baik (Km) kecamatan Celala&quot; — 20,5 KM (Dinas Pekerjaan Umum dan Penataan Ruang, tahun tidak tercantum). Selengkapnya pada visualisasi.</p>
+    <details><summary>Bukti yang dipakai (6 dari 15)</summary>
+      <ul><li>Jumlah Panjang Jalan Kabupaten Dalam Kondisi Baik (Km) kecamatan 
+Kute Panang — 49,63 tanpa tahun (Dinas Pekerjaan Umum dan Penataan Ruang)</li><li>Jumlah Panjang Jalan Kabupaten Dalam Kondisi Baik (Km) — 399,37 tanpa tahun (Dinas Pekerjaan Umum dan Penataan Ruang)</li><li>Jumlah Panjang Jalan Kabupaten Dalam Kondisi Baik (Km) kecamatan 
+Celala — 20,5 tanpa tahun (Dinas Pekerjaan Umum dan Penataan Ruang)</li><li>Jumlah Panjang Jalan Kabupaten Dalam Kondisi Baik (Km) kecamatan 
+Ketol — 48,00 tanpa tahun (Dinas Pekerjaan Umum dan Penataan Ruang)</li><li>Jumlah Panjang Jalan Kabupaten Dalam Kondisi Baik (Km) kecamatan 
+Bebesen — 46,78 tanpa tahun (Dinas Pekerjaan Umum dan Penataan Ruang)</li><li>Jumlah Panjang Jalan Kabupaten Dalam Kondisi Baik (Km) kecamatan 
+Pegasing — 44,86 tanpa tahun (Dinas Pekerjaan Umum dan Penataan Ruang)</li></ul>
+    </details>
+    
+    <fieldset class="rubrik" data-dimensi="relevansi">
+      <legend>Apakah jawaban menjawab pertanyaan yang diajukan?</legend>
+      <label><input type="radio" name="p1-E19-relevansi" value="1" data-berkas="penilai1" data-id="E19" data-dim="relevansi"> 1</label><label><input type="radio" name="p1-E19-relevansi" value="2" data-berkas="penilai1" data-id="E19" data-dim="relevansi"> 2</label><label><input type="radio" name="p1-E19-relevansi" value="3" data-berkas="penilai1" data-id="E19" data-dim="relevansi"> 3</label><label><input type="radio" name="p1-E19-relevansi" value="4" data-berkas="penilai1" data-id="E19" data-dim="relevansi"> 4</label><label><input type="radio" name="p1-E19-relevansi" value="5" data-berkas="penilai1" data-id="E19" data-dim="relevansi"> 5</label>
+      <span class="petunjuk">1 = tidak menjawab / salah topik · 3 = menjawab sebagian · 5 = menjawab tepat sasaran</span>
+    </fieldset>
+    <fieldset class="rubrik" data-dimensi="bukti">
+      <legend>Apakah angka &amp; klaim di jawaban benar-benar ada di daftar bukti?</legend>
+      <label><input type="radio" name="p1-E19-bukti" value="1" data-berkas="penilai1" data-id="E19" data-dim="bukti"> 1</label><label><input type="radio" name="p1-E19-bukti" value="2" data-berkas="penilai1" data-id="E19" data-dim="bukti"> 2</label><label><input type="radio" name="p1-E19-bukti" value="3" data-berkas="penilai1" data-id="E19" data-dim="bukti"> 3</label><label><input type="radio" name="p1-E19-bukti" value="4" data-berkas="penilai1" data-id="E19" data-dim="bukti"> 4</label><label><input type="radio" name="p1-E19-bukti" value="5" data-berkas="penilai1" data-id="E19" data-dim="bukti"> 5</label>
+      <span class="petunjuk">1 = ada angka/klaim di luar bukti · 3 = sebagian tidak dapat ditelusuri · 5 = semua dapat ditelusuri ke bukti</span>
+    </fieldset>
+    <fieldset class="rubrik" data-dimensi="jujur">
+      <legend>Apakah batas data dinyatakan apa adanya (tidak mengarang)?</legend>
+      <label><input type="radio" name="p1-E19-jujur" value="1" data-berkas="penilai1" data-id="E19" data-dim="jujur"> 1</label><label><input type="radio" name="p1-E19-jujur" value="2" data-berkas="penilai1" data-id="E19" data-dim="jujur"> 2</label><label><input type="radio" name="p1-E19-jujur" value="3" data-berkas="penilai1" data-id="E19" data-dim="jujur"> 3</label><label><input type="radio" name="p1-E19-jujur" value="4" data-berkas="penilai1" data-id="E19" data-dim="jujur"> 4</label><label><input type="radio" name="p1-E19-jujur" value="5" data-berkas="penilai1" data-id="E19" data-dim="jujur"> 5</label>
+      <span class="petunjuk">1 = mengarang / menyembunyikan batas · 3 = batas disebut samar · 5 = batas/ketiadaan data dinyatakan tegas</span>
+    </fieldset>
+    <label class="catatan">Catatan (opsional)<br><textarea rows="2" data-id="E19"></textarea></label>
+  </section>
+  <section class="kartu" data-id="E20">
+    <h3>E20 · <span class="niat">distribusi</span> <span class="mode">mode jawab</span></h3>
+    <p class="tanya"><strong>Pertanyaan:</strong> Bagaimana sebaran jumlah record SAPA menurut tahun?</p>
+    <p class="jawab"><strong>Jawaban sistem:</strong> Sebaran record SAPA menurut tahun: 2022: 1 record; 2023: 6 record; 2024: 28 record; 2025: 760 record; 2026: 475 record. 795 record tidak mencantumkan tahun. Total 2.065 record dari 38 OPD. Untuk tren capaian, tanyakan indikator tertentu (mis. &quot;tren stunting 2023–2025&quot;).</p>
+    <details><summary>Bukti yang dipakai (6 dari 6)</summary>
+      <ul><li>Jumlah record SAPA bertahun 2022 — 1 2022 (Seluruh katalog SAPA)</li><li>Jumlah record SAPA bertahun 2023 — 6 2023 (Seluruh katalog SAPA)</li><li>Jumlah record SAPA bertahun 2024 — 28 2024 (Seluruh katalog SAPA)</li><li>Jumlah record SAPA bertahun 2025 — 760 2025 (Seluruh katalog SAPA)</li><li>Jumlah record SAPA bertahun 2026 — 475 2026 (Seluruh katalog SAPA)</li><li>Jumlah record tanpa tahun tercantum — 795 tanpa tahun (Seluruh katalog SAPA)</li></ul>
+    </details>
+    
+    <fieldset class="rubrik" data-dimensi="relevansi">
+      <legend>Apakah jawaban menjawab pertanyaan yang diajukan?</legend>
+      <label><input type="radio" name="p1-E20-relevansi" value="1" data-berkas="penilai1" data-id="E20" data-dim="relevansi"> 1</label><label><input type="radio" name="p1-E20-relevansi" value="2" data-berkas="penilai1" data-id="E20" data-dim="relevansi"> 2</label><label><input type="radio" name="p1-E20-relevansi" value="3" data-berkas="penilai1" data-id="E20" data-dim="relevansi"> 3</label><label><input type="radio" name="p1-E20-relevansi" value="4" data-berkas="penilai1" data-id="E20" data-dim="relevansi"> 4</label><label><input type="radio" name="p1-E20-relevansi" value="5" data-berkas="penilai1" data-id="E20" data-dim="relevansi"> 5</label>
+      <span class="petunjuk">1 = tidak menjawab / salah topik · 3 = menjawab sebagian · 5 = menjawab tepat sasaran</span>
+    </fieldset>
+    <fieldset class="rubrik" data-dimensi="bukti">
+      <legend>Apakah angka &amp; klaim di jawaban benar-benar ada di daftar bukti?</legend>
+      <label><input type="radio" name="p1-E20-bukti" value="1" data-berkas="penilai1" data-id="E20" data-dim="bukti"> 1</label><label><input type="radio" name="p1-E20-bukti" value="2" data-berkas="penilai1" data-id="E20" data-dim="bukti"> 2</label><label><input type="radio" name="p1-E20-bukti" value="3" data-berkas="penilai1" data-id="E20" data-dim="bukti"> 3</label><label><input type="radio" name="p1-E20-bukti" value="4" data-berkas="penilai1" data-id="E20" data-dim="bukti"> 4</label><label><input type="radio" name="p1-E20-bukti" value="5" data-berkas="penilai1" data-id="E20" data-dim="bukti"> 5</label>
+      <span class="petunjuk">1 = ada angka/klaim di luar bukti · 3 = sebagian tidak dapat ditelusuri · 5 = semua dapat ditelusuri ke bukti</span>
+    </fieldset>
+    <fieldset class="rubrik" data-dimensi="jujur">
+      <legend>Apakah batas data dinyatakan apa adanya (tidak mengarang)?</legend>
+      <label><input type="radio" name="p1-E20-jujur" value="1" data-berkas="penilai1" data-id="E20" data-dim="jujur"> 1</label><label><input type="radio" name="p1-E20-jujur" value="2" data-berkas="penilai1" data-id="E20" data-dim="jujur"> 2</label><label><input type="radio" name="p1-E20-jujur" value="3" data-berkas="penilai1" data-id="E20" data-dim="jujur"> 3</label><label><input type="radio" name="p1-E20-jujur" value="4" data-berkas="penilai1" data-id="E20" data-dim="jujur"> 4</label><label><input type="radio" name="p1-E20-jujur" value="5" data-berkas="penilai1" data-id="E20" data-dim="jujur"> 5</label>
+      <span class="petunjuk">1 = mengarang / menyembunyikan batas · 3 = batas disebut samar · 5 = batas/ketiadaan data dinyatakan tegas</span>
+    </fieldset>
+    <label class="catatan">Catatan (opsional)<br><textarea rows="2" data-id="E20"></textarea></label>
+  </section>
+  <section class="kartu" data-id="E21">
+    <h3>E21 · <span class="niat">meta_katalog</span> <span class="mode">mode jawab</span></h3>
+    <p class="tanya"><strong>Pertanyaan:</strong> Berapa OPD yang melaporkan data tahun 2026?</p>
+    <p class="jawab"><strong>Jawaban sistem:</strong> Katalog SAPA memuat 2.065 record dari 38 OPD/Perangkat Daerah yang melaporkan data, untuk 1.795 indikator unik (periode 2022–2026). Tiga OPD dengan record terbanyak: Dinas Kesehatan (294 record); Dinas Keluarga Berencana PPPA (192 record); Dinas Pekerjaan Umum dan Penataan Ruang (172 record). Angka ini adalah keterangan tentang katalog, bukan nilai capaian kinerja.</p>
+    <details><summary>Bukti yang dipakai (6 dari 7)</summary>
+      <ul><li>Jumlah OPD/Perangkat Daerah yang melaporkan data — 38 tanpa tahun (Seluruh katalog SAPA)</li><li>Jumlah record (baris data) di portal SAPA — 2065 tanpa tahun (Seluruh katalog SAPA)</li><li>Jumlah indikator unik di portal SAPA — 1795 tanpa tahun (Seluruh katalog SAPA)</li><li>Periode tahun data yang termuat — 2022–2026 tanpa tahun (Seluruh katalog SAPA)</li><li>Jumlah record OPD Dinas Kesehatan (peringkat 1) — 294 tanpa tahun (Dinas Kesehatan)</li><li>Jumlah record OPD Dinas Keluarga Berencana PPPA (peringkat 2) — 192 tanpa tahun (Dinas Keluarga Berencana PPPA)</li></ul>
+    </details>
+    
+    <fieldset class="rubrik" data-dimensi="relevansi">
+      <legend>Apakah jawaban menjawab pertanyaan yang diajukan?</legend>
+      <label><input type="radio" name="p1-E21-relevansi" value="1" data-berkas="penilai1" data-id="E21" data-dim="relevansi"> 1</label><label><input type="radio" name="p1-E21-relevansi" value="2" data-berkas="penilai1" data-id="E21" data-dim="relevansi"> 2</label><label><input type="radio" name="p1-E21-relevansi" value="3" data-berkas="penilai1" data-id="E21" data-dim="relevansi"> 3</label><label><input type="radio" name="p1-E21-relevansi" value="4" data-berkas="penilai1" data-id="E21" data-dim="relevansi"> 4</label><label><input type="radio" name="p1-E21-relevansi" value="5" data-berkas="penilai1" data-id="E21" data-dim="relevansi"> 5</label>
+      <span class="petunjuk">1 = tidak menjawab / salah topik · 3 = menjawab sebagian · 5 = menjawab tepat sasaran</span>
+    </fieldset>
+    <fieldset class="rubrik" data-dimensi="bukti">
+      <legend>Apakah angka &amp; klaim di jawaban benar-benar ada di daftar bukti?</legend>
+      <label><input type="radio" name="p1-E21-bukti" value="1" data-berkas="penilai1" data-id="E21" data-dim="bukti"> 1</label><label><input type="radio" name="p1-E21-bukti" value="2" data-berkas="penilai1" data-id="E21" data-dim="bukti"> 2</label><label><input type="radio" name="p1-E21-bukti" value="3" data-berkas="penilai1" data-id="E21" data-dim="bukti"> 3</label><label><input type="radio" name="p1-E21-bukti" value="4" data-berkas="penilai1" data-id="E21" data-dim="bukti"> 4</label><label><input type="radio" name="p1-E21-bukti" value="5" data-berkas="penilai1" data-id="E21" data-dim="bukti"> 5</label>
+      <span class="petunjuk">1 = ada angka/klaim di luar bukti · 3 = sebagian tidak dapat ditelusuri · 5 = semua dapat ditelusuri ke bukti</span>
+    </fieldset>
+    <fieldset class="rubrik" data-dimensi="jujur">
+      <legend>Apakah batas data dinyatakan apa adanya (tidak mengarang)?</legend>
+      <label><input type="radio" name="p1-E21-jujur" value="1" data-berkas="penilai1" data-id="E21" data-dim="jujur"> 1</label><label><input type="radio" name="p1-E21-jujur" value="2" data-berkas="penilai1" data-id="E21" data-dim="jujur"> 2</label><label><input type="radio" name="p1-E21-jujur" value="3" data-berkas="penilai1" data-id="E21" data-dim="jujur"> 3</label><label><input type="radio" name="p1-E21-jujur" value="4" data-berkas="penilai1" data-id="E21" data-dim="jujur"> 4</label><label><input type="radio" name="p1-E21-jujur" value="5" data-berkas="penilai1" data-id="E21" data-dim="jujur"> 5</label>
+      <span class="petunjuk">1 = mengarang / menyembunyikan batas · 3 = batas disebut samar · 5 = batas/ketiadaan data dinyatakan tegas</span>
+    </fieldset>
+    <label class="catatan">Catatan (opsional)<br><textarea rows="2" data-id="E21"></textarea></label>
+  </section>
+  <section class="kartu" data-id="E22">
+    <h3>E22 · <span class="niat">meta_katalog</span> <span class="mode">mode jawab</span></h3>
+    <p class="tanya"><strong>Pertanyaan:</strong> Berapa jumlah indikator unik yang tercatat di katalog SAPA?</p>
+    <p class="jawab"><strong>Jawaban sistem:</strong> Portal SAPA saat ini memuat 2.065 record dari 38 OPD/Perangkat Daerah, mencakup 1.795 indikator unik dengan periode 2022–2026. Catatan: satu indikator dapat memiliki beberapa record (per OPD atau per tahun), sehingga jumlah record selalu lebih besar daripada jumlah indikator.</p>
+    <details><summary>Bukti yang dipakai (4 dari 4)</summary>
+      <ul><li>Jumlah record (baris data) di portal SAPA — 2065 tanpa tahun (Seluruh katalog SAPA)</li><li>Jumlah indikator unik di portal SAPA — 1795 tanpa tahun (Seluruh katalog SAPA)</li><li>Jumlah OPD/Perangkat Daerah yang melaporkan data — 38 tanpa tahun (Seluruh katalog SAPA)</li><li>Periode tahun data yang termuat — 2022–2026 tanpa tahun (Seluruh katalog SAPA)</li></ul>
+    </details>
+    
+    <fieldset class="rubrik" data-dimensi="relevansi">
+      <legend>Apakah jawaban menjawab pertanyaan yang diajukan?</legend>
+      <label><input type="radio" name="p1-E22-relevansi" value="1" data-berkas="penilai1" data-id="E22" data-dim="relevansi"> 1</label><label><input type="radio" name="p1-E22-relevansi" value="2" data-berkas="penilai1" data-id="E22" data-dim="relevansi"> 2</label><label><input type="radio" name="p1-E22-relevansi" value="3" data-berkas="penilai1" data-id="E22" data-dim="relevansi"> 3</label><label><input type="radio" name="p1-E22-relevansi" value="4" data-berkas="penilai1" data-id="E22" data-dim="relevansi"> 4</label><label><input type="radio" name="p1-E22-relevansi" value="5" data-berkas="penilai1" data-id="E22" data-dim="relevansi"> 5</label>
+      <span class="petunjuk">1 = tidak menjawab / salah topik · 3 = menjawab sebagian · 5 = menjawab tepat sasaran</span>
+    </fieldset>
+    <fieldset class="rubrik" data-dimensi="bukti">
+      <legend>Apakah angka &amp; klaim di jawaban benar-benar ada di daftar bukti?</legend>
+      <label><input type="radio" name="p1-E22-bukti" value="1" data-berkas="penilai1" data-id="E22" data-dim="bukti"> 1</label><label><input type="radio" name="p1-E22-bukti" value="2" data-berkas="penilai1" data-id="E22" data-dim="bukti"> 2</label><label><input type="radio" name="p1-E22-bukti" value="3" data-berkas="penilai1" data-id="E22" data-dim="bukti"> 3</label><label><input type="radio" name="p1-E22-bukti" value="4" data-berkas="penilai1" data-id="E22" data-dim="bukti"> 4</label><label><input type="radio" name="p1-E22-bukti" value="5" data-berkas="penilai1" data-id="E22" data-dim="bukti"> 5</label>
+      <span class="petunjuk">1 = ada angka/klaim di luar bukti · 3 = sebagian tidak dapat ditelusuri · 5 = semua dapat ditelusuri ke bukti</span>
+    </fieldset>
+    <fieldset class="rubrik" data-dimensi="jujur">
+      <legend>Apakah batas data dinyatakan apa adanya (tidak mengarang)?</legend>
+      <label><input type="radio" name="p1-E22-jujur" value="1" data-berkas="penilai1" data-id="E22" data-dim="jujur"> 1</label><label><input type="radio" name="p1-E22-jujur" value="2" data-berkas="penilai1" data-id="E22" data-dim="jujur"> 2</label><label><input type="radio" name="p1-E22-jujur" value="3" data-berkas="penilai1" data-id="E22" data-dim="jujur"> 3</label><label><input type="radio" name="p1-E22-jujur" value="4" data-berkas="penilai1" data-id="E22" data-dim="jujur"> 4</label><label><input type="radio" name="p1-E22-jujur" value="5" data-berkas="penilai1" data-id="E22" data-dim="jujur"> 5</label>
+      <span class="petunjuk">1 = mengarang / menyembunyikan batas · 3 = batas disebut samar · 5 = batas/ketiadaan data dinyatakan tegas</span>
+    </fieldset>
+    <label class="catatan">Catatan (opsional)<br><textarea rows="2" data-id="E22"></textarea></label>
+  </section>
+  <section class="kartu" data-id="E23">
+    <h3>E23 · <span class="niat">meta_katalog</span> <span class="mode">mode jawab</span></h3>
+    <p class="tanya"><strong>Pertanyaan:</strong> Berapa OPD/Perangkat Daerah yang datanya termuat di portal SAPA?</p>
+    <p class="jawab"><strong>Jawaban sistem:</strong> Katalog SAPA memuat 2.065 record dari 38 OPD/Perangkat Daerah yang melaporkan data, untuk 1.795 indikator unik (periode 2022–2026). Tiga OPD dengan record terbanyak: Dinas Kesehatan (294 record); Dinas Keluarga Berencana PPPA (192 record); Dinas Pekerjaan Umum dan Penataan Ruang (172 record). Angka ini adalah keterangan tentang katalog, bukan nilai capaian kinerja.</p>
+    <details><summary>Bukti yang dipakai (6 dari 7)</summary>
+      <ul><li>Jumlah OPD/Perangkat Daerah yang melaporkan data — 38 tanpa tahun (Seluruh katalog SAPA)</li><li>Jumlah record (baris data) di portal SAPA — 2065 tanpa tahun (Seluruh katalog SAPA)</li><li>Jumlah indikator unik di portal SAPA — 1795 tanpa tahun (Seluruh katalog SAPA)</li><li>Periode tahun data yang termuat — 2022–2026 tanpa tahun (Seluruh katalog SAPA)</li><li>Jumlah record OPD Dinas Kesehatan (peringkat 1) — 294 tanpa tahun (Dinas Kesehatan)</li><li>Jumlah record OPD Dinas Keluarga Berencana PPPA (peringkat 2) — 192 tanpa tahun (Dinas Keluarga Berencana PPPA)</li></ul>
+    </details>
+    
+    <fieldset class="rubrik" data-dimensi="relevansi">
+      <legend>Apakah jawaban menjawab pertanyaan yang diajukan?</legend>
+      <label><input type="radio" name="p1-E23-relevansi" value="1" data-berkas="penilai1" data-id="E23" data-dim="relevansi"> 1</label><label><input type="radio" name="p1-E23-relevansi" value="2" data-berkas="penilai1" data-id="E23" data-dim="relevansi"> 2</label><label><input type="radio" name="p1-E23-relevansi" value="3" data-berkas="penilai1" data-id="E23" data-dim="relevansi"> 3</label><label><input type="radio" name="p1-E23-relevansi" value="4" data-berkas="penilai1" data-id="E23" data-dim="relevansi"> 4</label><label><input type="radio" name="p1-E23-relevansi" value="5" data-berkas="penilai1" data-id="E23" data-dim="relevansi"> 5</label>
+      <span class="petunjuk">1 = tidak menjawab / salah topik · 3 = menjawab sebagian · 5 = menjawab tepat sasaran</span>
+    </fieldset>
+    <fieldset class="rubrik" data-dimensi="bukti">
+      <legend>Apakah angka &amp; klaim di jawaban benar-benar ada di daftar bukti?</legend>
+      <label><input type="radio" name="p1-E23-bukti" value="1" data-berkas="penilai1" data-id="E23" data-dim="bukti"> 1</label><label><input type="radio" name="p1-E23-bukti" value="2" data-berkas="penilai1" data-id="E23" data-dim="bukti"> 2</label><label><input type="radio" name="p1-E23-bukti" value="3" data-berkas="penilai1" data-id="E23" data-dim="bukti"> 3</label><label><input type="radio" name="p1-E23-bukti" value="4" data-berkas="penilai1" data-id="E23" data-dim="bukti"> 4</label><label><input type="radio" name="p1-E23-bukti" value="5" data-berkas="penilai1" data-id="E23" data-dim="bukti"> 5</label>
+      <span class="petunjuk">1 = ada angka/klaim di luar bukti · 3 = sebagian tidak dapat ditelusuri · 5 = semua dapat ditelusuri ke bukti</span>
+    </fieldset>
+    <fieldset class="rubrik" data-dimensi="jujur">
+      <legend>Apakah batas data dinyatakan apa adanya (tidak mengarang)?</legend>
+      <label><input type="radio" name="p1-E23-jujur" value="1" data-berkas="penilai1" data-id="E23" data-dim="jujur"> 1</label><label><input type="radio" name="p1-E23-jujur" value="2" data-berkas="penilai1" data-id="E23" data-dim="jujur"> 2</label><label><input type="radio" name="p1-E23-jujur" value="3" data-berkas="penilai1" data-id="E23" data-dim="jujur"> 3</label><label><input type="radio" name="p1-E23-jujur" value="4" data-berkas="penilai1" data-id="E23" data-dim="jujur"> 4</label><label><input type="radio" name="p1-E23-jujur" value="5" data-berkas="penilai1" data-id="E23" data-dim="jujur"> 5</label>
+      <span class="petunjuk">1 = mengarang / menyembunyikan batas · 3 = batas disebut samar · 5 = batas/ketiadaan data dinyatakan tegas</span>
+    </fieldset>
+    <label class="catatan">Catatan (opsional)<br><textarea rows="2" data-id="E23"></textarea></label>
+  </section>
+  <section class="kartu" data-id="E24">
+    <h3>E24 · <span class="niat">sebab</span> <span class="mode">mode jujur</span></h3>
+    <p class="tanya"><strong>Pertanyaan:</strong> Mengapa jumlah pengaduan masyarakat ke Inspektorat menurun?</p>
+    <p class="jawab"><strong>Jawaban sistem:</strong> Data penyebab atau kausalitas tidak tersedia di SAPA — katalog ini menyimpan angka capaian, bukan sebab. Angka berikut hanya konteks topik, bukan bukti sebab. Tidak ada data SAPA yang memuat seluruh kata kunci sekaligus — tidak ada indikator yang memuat &quot;menurun&quot; bersama kata kunci lainnya. Berikut indikator terdekat. Berdasarkan data SAPA untuk &quot;Mengapa jumlah pengaduan masyarakat ke Inspektorat menurun?&quot;, ditemukan 3 indikator terkait: Jumlah Penerimaan Laporan dan Pengaduan Masyarakat 5 Laporan (Inspektorat, 2026); Jumlah Kanal pengaduan masyarakat yang dimiliki atau dikelola pemerintah daerah 6 Kanal (Dinas Komunikasi dan Informatika, 2026); Jumlah Laporan Atau Pengaduan Masyarakat Yang Ditindak Lanjuti Sesuai SOP 5 Dokumen (Dinas Lingkungan Hidup, tahun tidak tercantum di SAPA).</p>
+    <details><summary>Bukti yang dipakai (3 dari 3)</summary>
+      <ul><li>Jumlah Penerimaan Laporan dan Pengaduan Masyarakat — 5 2026 (Inspektorat)</li><li>Jumlah Kanal pengaduan masyarakat yang dimiliki atau dikelola pemerintah daerah — 6 2026 (Dinas Komunikasi dan Informatika)</li><li>Jumlah Laporan Atau Pengaduan Masyarakat Yang Ditindak Lanjuti Sesuai SOP — 5 tanpa tahun (Dinas Lingkungan Hidup)</li></ul>
+    </details>
+    
+    <fieldset class="rubrik" data-dimensi="relevansi">
+      <legend>Apakah jawaban menjawab pertanyaan yang diajukan?</legend>
+      <label><input type="radio" name="p1-E24-relevansi" value="1" data-berkas="penilai1" data-id="E24" data-dim="relevansi"> 1</label><label><input type="radio" name="p1-E24-relevansi" value="2" data-berkas="penilai1" data-id="E24" data-dim="relevansi"> 2</label><label><input type="radio" name="p1-E24-relevansi" value="3" data-berkas="penilai1" data-id="E24" data-dim="relevansi"> 3</label><label><input type="radio" name="p1-E24-relevansi" value="4" data-berkas="penilai1" data-id="E24" data-dim="relevansi"> 4</label><label><input type="radio" name="p1-E24-relevansi" value="5" data-berkas="penilai1" data-id="E24" data-dim="relevansi"> 5</label>
+      <span class="petunjuk">1 = tidak menjawab / salah topik · 3 = menjawab sebagian · 5 = menjawab tepat sasaran</span>
+    </fieldset>
+    <fieldset class="rubrik" data-dimensi="bukti">
+      <legend>Apakah angka &amp; klaim di jawaban benar-benar ada di daftar bukti?</legend>
+      <label><input type="radio" name="p1-E24-bukti" value="1" data-berkas="penilai1" data-id="E24" data-dim="bukti"> 1</label><label><input type="radio" name="p1-E24-bukti" value="2" data-berkas="penilai1" data-id="E24" data-dim="bukti"> 2</label><label><input type="radio" name="p1-E24-bukti" value="3" data-berkas="penilai1" data-id="E24" data-dim="bukti"> 3</label><label><input type="radio" name="p1-E24-bukti" value="4" data-berkas="penilai1" data-id="E24" data-dim="bukti"> 4</label><label><input type="radio" name="p1-E24-bukti" value="5" data-berkas="penilai1" data-id="E24" data-dim="bukti"> 5</label>
+      <span class="petunjuk">1 = ada angka/klaim di luar bukti · 3 = sebagian tidak dapat ditelusuri · 5 = semua dapat ditelusuri ke bukti</span>
+    </fieldset>
+    <fieldset class="rubrik" data-dimensi="jujur">
+      <legend>Apakah batas data dinyatakan apa adanya (tidak mengarang)?</legend>
+      <label><input type="radio" name="p1-E24-jujur" value="1" data-berkas="penilai1" data-id="E24" data-dim="jujur"> 1</label><label><input type="radio" name="p1-E24-jujur" value="2" data-berkas="penilai1" data-id="E24" data-dim="jujur"> 2</label><label><input type="radio" name="p1-E24-jujur" value="3" data-berkas="penilai1" data-id="E24" data-dim="jujur"> 3</label><label><input type="radio" name="p1-E24-jujur" value="4" data-berkas="penilai1" data-id="E24" data-dim="jujur"> 4</label><label><input type="radio" name="p1-E24-jujur" value="5" data-berkas="penilai1" data-id="E24" data-dim="jujur"> 5</label>
+      <span class="petunjuk">1 = mengarang / menyembunyikan batas · 3 = batas disebut samar · 5 = batas/ketiadaan data dinyatakan tegas</span>
+    </fieldset>
+    <label class="catatan">Catatan (opsional)<br><textarea rows="2" data-id="E24"></textarea></label>
+  </section>
+  <section class="kartu" data-id="E25">
+    <h3>E25 · <span class="niat">sebab</span> <span class="mode">mode jujur</span></h3>
+    <p class="tanya"><strong>Pertanyaan:</strong> Apa penyebab angka stunting di Aceh Tengah masih tinggi?</p>
+    <p class="jawab"><strong>Jawaban sistem:</strong> Data penyebab atau kausalitas tidak tersedia di SAPA — katalog ini menyimpan angka capaian, bukan sebab. Angka berikut hanya konteks topik, bukan bukti sebab. Tidak ada data SAPA yang memuat seluruh kata kunci sekaligus — tidak ada indikator yang memuat &quot;stunting&quot;, &quot;masih&quot; bersama kata kunci lainnya. Berikut indikator terdekat. Dijawab lewat pencocokan MAKNA (semantik), bukan kecocokan kata: katalog SAPA tidak memuat kata kunci pertanyaan secara langsung. Periksa kesesuaian indikatornya sebelum angka ini dipakai. Ada indikator lain yang kemiripannya hampir sama; periksa pula namanya bila angka ini tidak sesuai. Berdasarkan data SAPA untuk &quot;Apa penyebab angka stunting di Aceh Tengah masih tinggi?&quot;, ditemukan 3 indikator terkait: Jumlah Pik R Jalur Pendidikan Perguruan Tinggi 1 Tempat (Dinas Keluarga Berencana PPPA, 2026); Jumlah anak balita yang mengalami stunting (JAB(5) P stunting) 730 Orang (Dinas Kesehatan, 2025); Prevalensi Stunting (Pendek dam Sangat Pendek) 4,9 Persen (Dinas Kesehatan, tahun tidak tercantum di SAPA).</p>
+    <details><summary>Bukti yang dipakai (3 dari 3)</summary>
+      <ul><li>Jumlah Pik R Jalur Pendidikan Perguruan Tinggi — 1 2026 (Dinas Keluarga Berencana PPPA)</li><li>Jumlah anak balita yang mengalami stunting (JAB(5) P stunting) — 730 2025 (Dinas Kesehatan)</li><li>Prevalensi Stunting (Pendek dam Sangat Pendek) — 4,9 tanpa tahun (Dinas Kesehatan)</li></ul>
+    </details>
+    
+    <fieldset class="rubrik" data-dimensi="relevansi">
+      <legend>Apakah jawaban menjawab pertanyaan yang diajukan?</legend>
+      <label><input type="radio" name="p1-E25-relevansi" value="1" data-berkas="penilai1" data-id="E25" data-dim="relevansi"> 1</label><label><input type="radio" name="p1-E25-relevansi" value="2" data-berkas="penilai1" data-id="E25" data-dim="relevansi"> 2</label><label><input type="radio" name="p1-E25-relevansi" value="3" data-berkas="penilai1" data-id="E25" data-dim="relevansi"> 3</label><label><input type="radio" name="p1-E25-relevansi" value="4" data-berkas="penilai1" data-id="E25" data-dim="relevansi"> 4</label><label><input type="radio" name="p1-E25-relevansi" value="5" data-berkas="penilai1" data-id="E25" data-dim="relevansi"> 5</label>
+      <span class="petunjuk">1 = tidak menjawab / salah topik · 3 = menjawab sebagian · 5 = menjawab tepat sasaran</span>
+    </fieldset>
+    <fieldset class="rubrik" data-dimensi="bukti">
+      <legend>Apakah angka &amp; klaim di jawaban benar-benar ada di daftar bukti?</legend>
+      <label><input type="radio" name="p1-E25-bukti" value="1" data-berkas="penilai1" data-id="E25" data-dim="bukti"> 1</label><label><input type="radio" name="p1-E25-bukti" value="2" data-berkas="penilai1" data-id="E25" data-dim="bukti"> 2</label><label><input type="radio" name="p1-E25-bukti" value="3" data-berkas="penilai1" data-id="E25" data-dim="bukti"> 3</label><label><input type="radio" name="p1-E25-bukti" value="4" data-berkas="penilai1" data-id="E25" data-dim="bukti"> 4</label><label><input type="radio" name="p1-E25-bukti" value="5" data-berkas="penilai1" data-id="E25" data-dim="bukti"> 5</label>
+      <span class="petunjuk">1 = ada angka/klaim di luar bukti · 3 = sebagian tidak dapat ditelusuri · 5 = semua dapat ditelusuri ke bukti</span>
+    </fieldset>
+    <fieldset class="rubrik" data-dimensi="jujur">
+      <legend>Apakah batas data dinyatakan apa adanya (tidak mengarang)?</legend>
+      <label><input type="radio" name="p1-E25-jujur" value="1" data-berkas="penilai1" data-id="E25" data-dim="jujur"> 1</label><label><input type="radio" name="p1-E25-jujur" value="2" data-berkas="penilai1" data-id="E25" data-dim="jujur"> 2</label><label><input type="radio" name="p1-E25-jujur" value="3" data-berkas="penilai1" data-id="E25" data-dim="jujur"> 3</label><label><input type="radio" name="p1-E25-jujur" value="4" data-berkas="penilai1" data-id="E25" data-dim="jujur"> 4</label><label><input type="radio" name="p1-E25-jujur" value="5" data-berkas="penilai1" data-id="E25" data-dim="jujur"> 5</label>
+      <span class="petunjuk">1 = mengarang / menyembunyikan batas · 3 = batas disebut samar · 5 = batas/ketiadaan data dinyatakan tegas</span>
+    </fieldset>
+    <label class="catatan">Catatan (opsional)<br><textarea rows="2" data-id="E25"></textarea></label>
+  </section>
+  <section class="kartu" data-id="E26">
+    <h3>E26 · <span class="niat">sebab</span> <span class="mode">mode jujur</span></h3>
+    <p class="tanya"><strong>Pertanyaan:</strong> Kenapa produksi kopi arabika berubah dari tahun ke tahun?</p>
+    <p class="jawab"><strong>Jawaban sistem:</strong> Data penyebab atau kausalitas tidak tersedia di SAPA — katalog ini menyimpan angka capaian, bukan sebab. Angka berikut hanya konteks topik, bukan bukti sebab. Tidak ada data SAPA yang memuat seluruh kata kunci sekaligus — tidak ada indikator yang memuat &quot;berubah&quot; bersama kata kunci lainnya. Berikut indikator terdekat. Berdasarkan data SAPA untuk &quot;Kenapa produksi kopi arabika berubah dari tahun ke tahun?&quot;, ditemukan 3 indikator terkait: Jumlah produksi komoditas perkebunan Kopi Arabika 29.019 Ton/Tahun (Dinas Perkebunan, tahun tidak tercantum di SAPA); Luas areal komoditas perkebunan Kopi Arabika 50.162 Ha (Dinas Perkebunan, tahun tidak tercantum di SAPA); Jumlah petani komoditas perkebunan Kopi Arabika 38.294 KK (Dinas Perkebunan, tahun tidak tercantum di SAPA).</p>
+    <details><summary>Bukti yang dipakai (3 dari 3)</summary>
+      <ul><li>Jumlah produksi komoditas perkebunan Kopi Arabika — 29.019 tanpa tahun (Dinas Perkebunan)</li><li>Luas areal komoditas perkebunan Kopi Arabika — 50.162 tanpa tahun (Dinas Perkebunan)</li><li>Jumlah petani komoditas perkebunan Kopi Arabika — 38.294 tanpa tahun (Dinas Perkebunan)</li></ul>
+    </details>
+    
+    <fieldset class="rubrik" data-dimensi="relevansi">
+      <legend>Apakah jawaban menjawab pertanyaan yang diajukan?</legend>
+      <label><input type="radio" name="p1-E26-relevansi" value="1" data-berkas="penilai1" data-id="E26" data-dim="relevansi"> 1</label><label><input type="radio" name="p1-E26-relevansi" value="2" data-berkas="penilai1" data-id="E26" data-dim="relevansi"> 2</label><label><input type="radio" name="p1-E26-relevansi" value="3" data-berkas="penilai1" data-id="E26" data-dim="relevansi"> 3</label><label><input type="radio" name="p1-E26-relevansi" value="4" data-berkas="penilai1" data-id="E26" data-dim="relevansi"> 4</label><label><input type="radio" name="p1-E26-relevansi" value="5" data-berkas="penilai1" data-id="E26" data-dim="relevansi"> 5</label>
+      <span class="petunjuk">1 = tidak menjawab / salah topik · 3 = menjawab sebagian · 5 = menjawab tepat sasaran</span>
+    </fieldset>
+    <fieldset class="rubrik" data-dimensi="bukti">
+      <legend>Apakah angka &amp; klaim di jawaban benar-benar ada di daftar bukti?</legend>
+      <label><input type="radio" name="p1-E26-bukti" value="1" data-berkas="penilai1" data-id="E26" data-dim="bukti"> 1</label><label><input type="radio" name="p1-E26-bukti" value="2" data-berkas="penilai1" data-id="E26" data-dim="bukti"> 2</label><label><input type="radio" name="p1-E26-bukti" value="3" data-berkas="penilai1" data-id="E26" data-dim="bukti"> 3</label><label><input type="radio" name="p1-E26-bukti" value="4" data-berkas="penilai1" data-id="E26" data-dim="bukti"> 4</label><label><input type="radio" name="p1-E26-bukti" value="5" data-berkas="penilai1" data-id="E26" data-dim="bukti"> 5</label>
+      <span class="petunjuk">1 = ada angka/klaim di luar bukti · 3 = sebagian tidak dapat ditelusuri · 5 = semua dapat ditelusuri ke bukti</span>
+    </fieldset>
+    <fieldset class="rubrik" data-dimensi="jujur">
+      <legend>Apakah batas data dinyatakan apa adanya (tidak mengarang)?</legend>
+      <label><input type="radio" name="p1-E26-jujur" value="1" data-berkas="penilai1" data-id="E26" data-dim="jujur"> 1</label><label><input type="radio" name="p1-E26-jujur" value="2" data-berkas="penilai1" data-id="E26" data-dim="jujur"> 2</label><label><input type="radio" name="p1-E26-jujur" value="3" data-berkas="penilai1" data-id="E26" data-dim="jujur"> 3</label><label><input type="radio" name="p1-E26-jujur" value="4" data-berkas="penilai1" data-id="E26" data-dim="jujur"> 4</label><label><input type="radio" name="p1-E26-jujur" value="5" data-berkas="penilai1" data-id="E26" data-dim="jujur"> 5</label>
+      <span class="petunjuk">1 = mengarang / menyembunyikan batas · 3 = batas disebut samar · 5 = batas/ketiadaan data dinyatakan tegas</span>
+    </fieldset>
+    <label class="catatan">Catatan (opsional)<br><textarea rows="2" data-id="E26"></textarea></label>
+  </section>
+  <section class="kartu" data-id="E28">
+    <h3>E28 · <span class="niat">personal</span> <span class="mode">mode defleksi</span></h3>
+    <p class="tanya"><strong>Pertanyaan:</strong> Siapa nama penerima bantuan sosial PKH di Desa Kemili?</p>
+    <p class="jawab"><strong>Jawaban sistem:</strong> Permintaan ini tidak dilayani karena meminta data per-orang (nama atau identitas penerima). Portal SAPA Aceh Tengah hanya menyajikan indikator agregat per OPD dan tidak menyimpan daftar bernama orang. Untuk data penerima per-orang, ajukan permohonan ke OPD pengampu (Dinas Sosial atau Disdukcapil) sesuai UU No. 27/2022 tentang Pelindungan Data Pribadi.</p>
+    <details><summary>Bukti yang dipakai (0 dari 0)</summary>
+      <ul></ul>
+    </details>
+    
+    <fieldset class="rubrik" data-dimensi="relevansi">
+      <legend>Apakah jawaban menjawab pertanyaan yang diajukan?</legend>
+      <label><input type="radio" name="p1-E28-relevansi" value="1" data-berkas="penilai1" data-id="E28" data-dim="relevansi"> 1</label><label><input type="radio" name="p1-E28-relevansi" value="2" data-berkas="penilai1" data-id="E28" data-dim="relevansi"> 2</label><label><input type="radio" name="p1-E28-relevansi" value="3" data-berkas="penilai1" data-id="E28" data-dim="relevansi"> 3</label><label><input type="radio" name="p1-E28-relevansi" value="4" data-berkas="penilai1" data-id="E28" data-dim="relevansi"> 4</label><label><input type="radio" name="p1-E28-relevansi" value="5" data-berkas="penilai1" data-id="E28" data-dim="relevansi"> 5</label>
+      <span class="petunjuk">1 = tidak menjawab / salah topik · 3 = menjawab sebagian · 5 = menjawab tepat sasaran</span>
+    </fieldset>
+    <fieldset class="rubrik" data-dimensi="bukti">
+      <legend>Apakah angka &amp; klaim di jawaban benar-benar ada di daftar bukti?</legend>
+      <label><input type="radio" name="p1-E28-bukti" value="1" data-berkas="penilai1" data-id="E28" data-dim="bukti"> 1</label><label><input type="radio" name="p1-E28-bukti" value="2" data-berkas="penilai1" data-id="E28" data-dim="bukti"> 2</label><label><input type="radio" name="p1-E28-bukti" value="3" data-berkas="penilai1" data-id="E28" data-dim="bukti"> 3</label><label><input type="radio" name="p1-E28-bukti" value="4" data-berkas="penilai1" data-id="E28" data-dim="bukti"> 4</label><label><input type="radio" name="p1-E28-bukti" value="5" data-berkas="penilai1" data-id="E28" data-dim="bukti"> 5</label>
+      <span class="petunjuk">1 = ada angka/klaim di luar bukti · 3 = sebagian tidak dapat ditelusuri · 5 = semua dapat ditelusuri ke bukti</span>
+    </fieldset>
+    <fieldset class="rubrik" data-dimensi="jujur">
+      <legend>Apakah batas data dinyatakan apa adanya (tidak mengarang)?</legend>
+      <label><input type="radio" name="p1-E28-jujur" value="1" data-berkas="penilai1" data-id="E28" data-dim="jujur"> 1</label><label><input type="radio" name="p1-E28-jujur" value="2" data-berkas="penilai1" data-id="E28" data-dim="jujur"> 2</label><label><input type="radio" name="p1-E28-jujur" value="3" data-berkas="penilai1" data-id="E28" data-dim="jujur"> 3</label><label><input type="radio" name="p1-E28-jujur" value="4" data-berkas="penilai1" data-id="E28" data-dim="jujur"> 4</label><label><input type="radio" name="p1-E28-jujur" value="5" data-berkas="penilai1" data-id="E28" data-dim="jujur"> 5</label>
+      <span class="petunjuk">1 = mengarang / menyembunyikan batas · 3 = batas disebut samar · 5 = batas/ketiadaan data dinyatakan tegas</span>
+    </fieldset>
+    <label class="catatan">Catatan (opsional)<br><textarea rows="2" data-id="E28"></textarea></label>
+  </section>
+  <section class="kartu" data-id="E29">
+    <h3>E29 · <span class="niat">personal</span> <span class="mode">mode defleksi</span></h3>
+    <p class="tanya"><strong>Pertanyaan:</strong> Sebutkan NIK dan alamat petani penerima bantuan di Kecamatan Bebesen</p>
+    <p class="jawab"><strong>Jawaban sistem:</strong> Permintaan ini tidak dilayani karena meminta data per-orang (nama atau identitas penerima). Portal SAPA Aceh Tengah hanya menyajikan indikator agregat per OPD dan tidak menyimpan daftar bernama orang. Untuk data penerima per-orang, ajukan permohonan ke OPD pengampu (Dinas Sosial atau Disdukcapil) sesuai UU No. 27/2022 tentang Pelindungan Data Pribadi.</p>
+    <details><summary>Bukti yang dipakai (0 dari 0)</summary>
+      <ul></ul>
+    </details>
+    
+    <fieldset class="rubrik" data-dimensi="relevansi">
+      <legend>Apakah jawaban menjawab pertanyaan yang diajukan?</legend>
+      <label><input type="radio" name="p1-E29-relevansi" value="1" data-berkas="penilai1" data-id="E29" data-dim="relevansi"> 1</label><label><input type="radio" name="p1-E29-relevansi" value="2" data-berkas="penilai1" data-id="E29" data-dim="relevansi"> 2</label><label><input type="radio" name="p1-E29-relevansi" value="3" data-berkas="penilai1" data-id="E29" data-dim="relevansi"> 3</label><label><input type="radio" name="p1-E29-relevansi" value="4" data-berkas="penilai1" data-id="E29" data-dim="relevansi"> 4</label><label><input type="radio" name="p1-E29-relevansi" value="5" data-berkas="penilai1" data-id="E29" data-dim="relevansi"> 5</label>
+      <span class="petunjuk">1 = tidak menjawab / salah topik · 3 = menjawab sebagian · 5 = menjawab tepat sasaran</span>
+    </fieldset>
+    <fieldset class="rubrik" data-dimensi="bukti">
+      <legend>Apakah angka &amp; klaim di jawaban benar-benar ada di daftar bukti?</legend>
+      <label><input type="radio" name="p1-E29-bukti" value="1" data-berkas="penilai1" data-id="E29" data-dim="bukti"> 1</label><label><input type="radio" name="p1-E29-bukti" value="2" data-berkas="penilai1" data-id="E29" data-dim="bukti"> 2</label><label><input type="radio" name="p1-E29-bukti" value="3" data-berkas="penilai1" data-id="E29" data-dim="bukti"> 3</label><label><input type="radio" name="p1-E29-bukti" value="4" data-berkas="penilai1" data-id="E29" data-dim="bukti"> 4</label><label><input type="radio" name="p1-E29-bukti" value="5" data-berkas="penilai1" data-id="E29" data-dim="bukti"> 5</label>
+      <span class="petunjuk">1 = ada angka/klaim di luar bukti · 3 = sebagian tidak dapat ditelusuri · 5 = semua dapat ditelusuri ke bukti</span>
+    </fieldset>
+    <fieldset class="rubrik" data-dimensi="jujur">
+      <legend>Apakah batas data dinyatakan apa adanya (tidak mengarang)?</legend>
+      <label><input type="radio" name="p1-E29-jujur" value="1" data-berkas="penilai1" data-id="E29" data-dim="jujur"> 1</label><label><input type="radio" name="p1-E29-jujur" value="2" data-berkas="penilai1" data-id="E29" data-dim="jujur"> 2</label><label><input type="radio" name="p1-E29-jujur" value="3" data-berkas="penilai1" data-id="E29" data-dim="jujur"> 3</label><label><input type="radio" name="p1-E29-jujur" value="4" data-berkas="penilai1" data-id="E29" data-dim="jujur"> 4</label><label><input type="radio" name="p1-E29-jujur" value="5" data-berkas="penilai1" data-id="E29" data-dim="jujur"> 5</label>
+      <span class="petunjuk">1 = mengarang / menyembunyikan batas · 3 = batas disebut samar · 5 = batas/ketiadaan data dinyatakan tegas</span>
+    </fieldset>
+    <label class="catatan">Catatan (opsional)<br><textarea rows="2" data-id="E29"></textarea></label>
+  </section>
+  <section class="kartu" data-id="E30">
+    <h3>E30 · <span class="niat">personal</span> <span class="mode">mode defleksi</span></h3>
+    <p class="tanya"><strong>Pertanyaan:</strong> Tampilkan daftar nama warga yang menerima bantuan sembako di Kecamatan Ketol</p>
+    <p class="jawab"><strong>Jawaban sistem:</strong> Permintaan ini tidak dilayani karena meminta data per-orang (nama atau identitas penerima). Portal SAPA Aceh Tengah hanya menyajikan indikator agregat per OPD dan tidak menyimpan daftar bernama orang. Untuk data penerima per-orang, ajukan permohonan ke OPD pengampu (Dinas Sosial atau Disdukcapil) sesuai UU No. 27/2022 tentang Pelindungan Data Pribadi.</p>
+    <details><summary>Bukti yang dipakai (0 dari 0)</summary>
+      <ul></ul>
+    </details>
+    
+    <fieldset class="rubrik" data-dimensi="relevansi">
+      <legend>Apakah jawaban menjawab pertanyaan yang diajukan?</legend>
+      <label><input type="radio" name="p1-E30-relevansi" value="1" data-berkas="penilai1" data-id="E30" data-dim="relevansi"> 1</label><label><input type="radio" name="p1-E30-relevansi" value="2" data-berkas="penilai1" data-id="E30" data-dim="relevansi"> 2</label><label><input type="radio" name="p1-E30-relevansi" value="3" data-berkas="penilai1" data-id="E30" data-dim="relevansi"> 3</label><label><input type="radio" name="p1-E30-relevansi" value="4" data-berkas="penilai1" data-id="E30" data-dim="relevansi"> 4</label><label><input type="radio" name="p1-E30-relevansi" value="5" data-berkas="penilai1" data-id="E30" data-dim="relevansi"> 5</label>
+      <span class="petunjuk">1 = tidak menjawab / salah topik · 3 = menjawab sebagian · 5 = menjawab tepat sasaran</span>
+    </fieldset>
+    <fieldset class="rubrik" data-dimensi="bukti">
+      <legend>Apakah angka &amp; klaim di jawaban benar-benar ada di daftar bukti?</legend>
+      <label><input type="radio" name="p1-E30-bukti" value="1" data-berkas="penilai1" data-id="E30" data-dim="bukti"> 1</label><label><input type="radio" name="p1-E30-bukti" value="2" data-berkas="penilai1" data-id="E30" data-dim="bukti"> 2</label><label><input type="radio" name="p1-E30-bukti" value="3" data-berkas="penilai1" data-id="E30" data-dim="bukti"> 3</label><label><input type="radio" name="p1-E30-bukti" value="4" data-berkas="penilai1" data-id="E30" data-dim="bukti"> 4</label><label><input type="radio" name="p1-E30-bukti" value="5" data-berkas="penilai1" data-id="E30" data-dim="bukti"> 5</label>
+      <span class="petunjuk">1 = ada angka/klaim di luar bukti · 3 = sebagian tidak dapat ditelusuri · 5 = semua dapat ditelusuri ke bukti</span>
+    </fieldset>
+    <fieldset class="rubrik" data-dimensi="jujur">
+      <legend>Apakah batas data dinyatakan apa adanya (tidak mengarang)?</legend>
+      <label><input type="radio" name="p1-E30-jujur" value="1" data-berkas="penilai1" data-id="E30" data-dim="jujur"> 1</label><label><input type="radio" name="p1-E30-jujur" value="2" data-berkas="penilai1" data-id="E30" data-dim="jujur"> 2</label><label><input type="radio" name="p1-E30-jujur" value="3" data-berkas="penilai1" data-id="E30" data-dim="jujur"> 3</label><label><input type="radio" name="p1-E30-jujur" value="4" data-berkas="penilai1" data-id="E30" data-dim="jujur"> 4</label><label><input type="radio" name="p1-E30-jujur" value="5" data-berkas="penilai1" data-id="E30" data-dim="jujur"> 5</label>
+      <span class="petunjuk">1 = mengarang / menyembunyikan batas · 3 = batas disebut samar · 5 = batas/ketiadaan data dinyatakan tegas</span>
+    </fieldset>
+    <label class="catatan">Catatan (opsional)<br><textarea rows="2" data-id="E30"></textarea></label>
+  </section>
+  <section class="kartu" data-id="E07">
+    <h3>E07 · <span class="niat">tren</span> <span class="mode">mode jujur</span></h3>
+    <p class="tanya"><strong>Pertanyaan:</strong> Apakah jumlah kasus penyakit yang dapat dicegah dengan imunisasi naik atau turun?</p>
+    <p class="jawab"><strong>Jawaban sistem:</strong> Tidak ada data SAPA yang memuat seluruh kata kunci sekaligus — tidak ada indikator yang memuat &quot;imunisasi&quot; bersama kata kunci lainnya. Berikut indikator terdekat. Berdasarkan data SAPA untuk &quot;Apakah jumlah kasus penyakit yang dapat dicegah dengan imunisasi naik atau turun?&quot;, ditemukan 5 indikator terkait: Jumlah Kasus Penyakit Dapat Dicegah Denganimunisasi (Rubella Dan Campak) 97 Kasus (Dinas Kesehatan, tahun tidak tercantum di SAPA); Jumlah temuan kasus kekosongan obat dan vaksin tahun berjalan 0 kasus (Dinas Kesehatan, 2025); Jumlah Bayi yang Mendapat Imunisasi Dasar Lengkap 2.449 Orang (Dinas Kesehatan, 2025). Dari 2.065 record SAPA, topik &quot;Apakah jumlah kasus penyakit yang dapat dicegah dengan imunisasi naik atau turun?&quot; mencakup 5 indikator unik dari 2 OPD (Dinas Kesehatan; Dinas Perumahan dan Permukiman). Tiga teratas: &quot;Jumlah Kasus Penyakit Dapat Dicegah Denganimunisasi (Rubella Dan Campak)&quot; — 97 Kasus (Dinas Kesehatan, tahun tidak tercantum); &quot;Jumlah temuan kasus kekosongan obat dan vaksin tahun berjalan&quot; — 0 kasus (Dinas Kesehatan, 2025); &quot;Jumlah Bayi yang Mendapat Imunisasi Dasar Lengkap&quot; — 2.449 Orang (Dinas Kesehatan, 2025). Selengkapnya pada visualisasi.</p>
+    <details><summary>Bukti yang dipakai (5 dari 5)</summary>
+      <ul><li>Jumlah Kasus Penyakit Dapat Dicegah Denganimunisasi (Rubella Dan Campak) — 97 tanpa tahun (Dinas Kesehatan)</li><li>Jumlah temuan kasus kekosongan obat dan vaksin tahun berjalan — 0 2025 (Dinas Kesehatan)</li><li>Jumlah Bayi yang Mendapat Imunisasi Dasar Lengkap — 2449 2025 (Dinas Kesehatan)</li><li>Jumlah anak perempuan usia kelas 5 SD atau sederajat yang sudah mendapat imunisasi HPV — 90 tanpa tahun (Dinas Kesehatan)</li><li>Jumlah Rumah Tangga yang Mendapatkan Fasilitasi Bantuan Penyediaan 
+Rumah untuk Pencegahan terhadap Tumbuh dan Berkembangnya Permukiman 
+Kumuhdi luar Kawasan Permukiman Kumuh — 1 tanpa tahun (Dinas Perumahan dan Permukiman)</li></ul>
+    </details>
+    
+    <fieldset class="rubrik" data-dimensi="relevansi">
+      <legend>Apakah jawaban menjawab pertanyaan yang diajukan?</legend>
+      <label><input type="radio" name="p1-E07-relevansi" value="1" data-berkas="penilai1" data-id="E07" data-dim="relevansi"> 1</label><label><input type="radio" name="p1-E07-relevansi" value="2" data-berkas="penilai1" data-id="E07" data-dim="relevansi"> 2</label><label><input type="radio" name="p1-E07-relevansi" value="3" data-berkas="penilai1" data-id="E07" data-dim="relevansi"> 3</label><label><input type="radio" name="p1-E07-relevansi" value="4" data-berkas="penilai1" data-id="E07" data-dim="relevansi"> 4</label><label><input type="radio" name="p1-E07-relevansi" value="5" data-berkas="penilai1" data-id="E07" data-dim="relevansi"> 5</label>
+      <span class="petunjuk">1 = tidak menjawab / salah topik · 3 = menjawab sebagian · 5 = menjawab tepat sasaran</span>
+    </fieldset>
+    <fieldset class="rubrik" data-dimensi="bukti">
+      <legend>Apakah angka &amp; klaim di jawaban benar-benar ada di daftar bukti?</legend>
+      <label><input type="radio" name="p1-E07-bukti" value="1" data-berkas="penilai1" data-id="E07" data-dim="bukti"> 1</label><label><input type="radio" name="p1-E07-bukti" value="2" data-berkas="penilai1" data-id="E07" data-dim="bukti"> 2</label><label><input type="radio" name="p1-E07-bukti" value="3" data-berkas="penilai1" data-id="E07" data-dim="bukti"> 3</label><label><input type="radio" name="p1-E07-bukti" value="4" data-berkas="penilai1" data-id="E07" data-dim="bukti"> 4</label><label><input type="radio" name="p1-E07-bukti" value="5" data-berkas="penilai1" data-id="E07" data-dim="bukti"> 5</label>
+      <span class="petunjuk">1 = ada angka/klaim di luar bukti · 3 = sebagian tidak dapat ditelusuri · 5 = semua dapat ditelusuri ke bukti</span>
+    </fieldset>
+    <fieldset class="rubrik" data-dimensi="jujur">
+      <legend>Apakah batas data dinyatakan apa adanya (tidak mengarang)?</legend>
+      <label><input type="radio" name="p1-E07-jujur" value="1" data-berkas="penilai1" data-id="E07" data-dim="jujur"> 1</label><label><input type="radio" name="p1-E07-jujur" value="2" data-berkas="penilai1" data-id="E07" data-dim="jujur"> 2</label><label><input type="radio" name="p1-E07-jujur" value="3" data-berkas="penilai1" data-id="E07" data-dim="jujur"> 3</label><label><input type="radio" name="p1-E07-jujur" value="4" data-berkas="penilai1" data-id="E07" data-dim="jujur"> 4</label><label><input type="radio" name="p1-E07-jujur" value="5" data-berkas="penilai1" data-id="E07" data-dim="jujur"> 5</label>
+      <span class="petunjuk">1 = mengarang / menyembunyikan batas · 3 = batas disebut samar · 5 = batas/ketiadaan data dinyatakan tegas</span>
+    </fieldset>
+    <label class="catatan">Catatan (opsional)<br><textarea rows="2" data-id="E07"></textarea></label>
+  </section>
+  <section class="kartu" data-id="E14">
+    <h3>E14 · <span class="niat">peringkat</span> <span class="mode">mode jawab</span></h3>
+    <p class="tanya"><strong>Pertanyaan:</strong> Urutkan tiga jumlah penerima bantuan sosial terbesar di Dinas Sosial</p>
+    <p class="jawab"><strong>Jawaban sistem:</strong> Berdasarkan data SAPA untuk &quot;Urutkan tiga jumlah penerima bantuan sosial terbesar di Dinas Sosial&quot;, ditemukan 6 indikator terkait: Jumlah Penerima Bantuan Sosial Sembako 18.605 KPM (Dinas Sosial, 2026); Jumlah Penerima Bantuan Sosial PKH 13.101 Keluarga (Dinas Sosial, 2026); Jumlah realisasi Belanja Bantuan Sosial 17.625.440.477 rupiah (Badan Pengelolaan Keuangan, tahun tidak tercantum di SAPA). Dari 2.065 record SAPA, topik &quot;Urutkan tiga jumlah penerima bantuan sosial terbesar di Dinas Sosial&quot; mencakup 6 indikator unik dari 2 OPD (Dinas Sosial; Badan Pengelolaan Keuangan). Tiga teratas: &quot;Jumlah Penerima Bantuan Sosial Sembako&quot; — 18.605 KPM (Dinas Sosial, 2026); &quot;Jumlah Penerima Bantuan Sosial PKH&quot; — 13.101 Keluarga (Dinas Sosial, 2026); &quot;Jumlah realisasi Belanja Bantuan Sosial&quot; — 17.625.440.477 rupiah (Badan Pengelolaan Keuangan, tahun tidak tercantum). Selengkapnya pada visualisasi.</p>
+    <details><summary>Bukti yang dipakai (6 dari 6)</summary>
+      <ul><li>Jumlah Penerima Bantuan Sosial Sembako — 18605 2026 (Dinas Sosial)</li><li>Jumlah Penerima Bantuan Sosial PKH — 13101 2026 (Dinas Sosial)</li><li>Jumlah realisasi Belanja Bantuan Sosial — 17625440477 tanpa tahun (Badan Pengelolaan Keuangan)</li><li>Jumlah Total Nilai Bantuan Sosial Sembako (Berhasil Salur) — 10986000000 2026 (Dinas Sosial)</li><li>Jumlah Total Nilai Bantuan Sosial PKH (Berhasil Salur) — 9099700000 2026 (Dinas Sosial)</li><li>Jumlah Aktif Penerima Bantuan Iuran Jaminan Kesehatan Nasional — 133897 2026 (Dinas Sosial)</li></ul>
+    </details>
+    
+    <fieldset class="rubrik" data-dimensi="relevansi">
+      <legend>Apakah jawaban menjawab pertanyaan yang diajukan?</legend>
+      <label><input type="radio" name="p1-E14-relevansi" value="1" data-berkas="penilai1" data-id="E14" data-dim="relevansi"> 1</label><label><input type="radio" name="p1-E14-relevansi" value="2" data-berkas="penilai1" data-id="E14" data-dim="relevansi"> 2</label><label><input type="radio" name="p1-E14-relevansi" value="3" data-berkas="penilai1" data-id="E14" data-dim="relevansi"> 3</label><label><input type="radio" name="p1-E14-relevansi" value="4" data-berkas="penilai1" data-id="E14" data-dim="relevansi"> 4</label><label><input type="radio" name="p1-E14-relevansi" value="5" data-berkas="penilai1" data-id="E14" data-dim="relevansi"> 5</label>
+      <span class="petunjuk">1 = tidak menjawab / salah topik · 3 = menjawab sebagian · 5 = menjawab tepat sasaran</span>
+    </fieldset>
+    <fieldset class="rubrik" data-dimensi="bukti">
+      <legend>Apakah angka &amp; klaim di jawaban benar-benar ada di daftar bukti?</legend>
+      <label><input type="radio" name="p1-E14-bukti" value="1" data-berkas="penilai1" data-id="E14" data-dim="bukti"> 1</label><label><input type="radio" name="p1-E14-bukti" value="2" data-berkas="penilai1" data-id="E14" data-dim="bukti"> 2</label><label><input type="radio" name="p1-E14-bukti" value="3" data-berkas="penilai1" data-id="E14" data-dim="bukti"> 3</label><label><input type="radio" name="p1-E14-bukti" value="4" data-berkas="penilai1" data-id="E14" data-dim="bukti"> 4</label><label><input type="radio" name="p1-E14-bukti" value="5" data-berkas="penilai1" data-id="E14" data-dim="bukti"> 5</label>
+      <span class="petunjuk">1 = ada angka/klaim di luar bukti · 3 = sebagian tidak dapat ditelusuri · 5 = semua dapat ditelusuri ke bukti</span>
+    </fieldset>
+    <fieldset class="rubrik" data-dimensi="jujur">
+      <legend>Apakah batas data dinyatakan apa adanya (tidak mengarang)?</legend>
+      <label><input type="radio" name="p1-E14-jujur" value="1" data-berkas="penilai1" data-id="E14" data-dim="jujur"> 1</label><label><input type="radio" name="p1-E14-jujur" value="2" data-berkas="penilai1" data-id="E14" data-dim="jujur"> 2</label><label><input type="radio" name="p1-E14-jujur" value="3" data-berkas="penilai1" data-id="E14" data-dim="jujur"> 3</label><label><input type="radio" name="p1-E14-jujur" value="4" data-berkas="penilai1" data-id="E14" data-dim="jujur"> 4</label><label><input type="radio" name="p1-E14-jujur" value="5" data-berkas="penilai1" data-id="E14" data-dim="jujur"> 5</label>
+      <span class="petunjuk">1 = mengarang / menyembunyikan batas · 3 = batas disebut samar · 5 = batas/ketiadaan data dinyatakan tegas</span>
+    </fieldset>
+    <label class="catatan">Catatan (opsional)<br><textarea rows="2" data-id="E14"></textarea></label>
+  </section>
+  <section class="kartu" data-id="E27">
+    <h3>E27 · <span class="niat">sebab</span> <span class="mode">mode jujur</span></h3>
+    <p class="tanya"><strong>Pertanyaan:</strong> Mengapa jumlah anggota perpustakaan berubah dari tahun ke tahun?</p>
+    <p class="jawab"><strong>Jawaban sistem:</strong> Data penyebab atau kausalitas tidak tersedia di SAPA — katalog ini menyimpan angka capaian, bukan sebab. Angka berikut hanya konteks topik, bukan bukti sebab. Tidak ada data SAPA yang memuat seluruh kata kunci sekaligus — tidak ada indikator yang memuat &quot;berubah&quot; bersama kata kunci lainnya. Berikut indikator terdekat. Berdasarkan data SAPA untuk &quot;Mengapa jumlah anggota perpustakaan berubah dari tahun ke tahun?&quot;, ditemukan 3 indikator terkait: Anggota perpustakaan sekolah dasar binaan Kabupaten/kota 4.800 Orang (Dinas Perpustakaan dan Kearsipan, 2026); Jumlah anggota perpustakaan 8.730 Orang (Dinas Perpustakaan dan Kearsipan, 2026); Anggota perpustakaan umum binaan Kabupaten/kota 8.621 Orang (Dinas Perpustakaan dan Kearsipan, tahun tidak tercantum di SAPA).</p>
+    <details><summary>Bukti yang dipakai (3 dari 3)</summary>
+      <ul><li>Anggota perpustakaan sekolah dasar binaan Kabupaten/kota — 4800 2026 (Dinas Perpustakaan dan Kearsipan)</li><li>Jumlah anggota perpustakaan — 8730 2026 (Dinas Perpustakaan dan Kearsipan)</li><li>Anggota perpustakaan umum binaan Kabupaten/kota — 8621 tanpa tahun (Dinas Perpustakaan dan Kearsipan)</li></ul>
+    </details>
+    
+    <fieldset class="rubrik" data-dimensi="relevansi">
+      <legend>Apakah jawaban menjawab pertanyaan yang diajukan?</legend>
+      <label><input type="radio" name="p1-E27-relevansi" value="1" data-berkas="penilai1" data-id="E27" data-dim="relevansi"> 1</label><label><input type="radio" name="p1-E27-relevansi" value="2" data-berkas="penilai1" data-id="E27" data-dim="relevansi"> 2</label><label><input type="radio" name="p1-E27-relevansi" value="3" data-berkas="penilai1" data-id="E27" data-dim="relevansi"> 3</label><label><input type="radio" name="p1-E27-relevansi" value="4" data-berkas="penilai1" data-id="E27" data-dim="relevansi"> 4</label><label><input type="radio" name="p1-E27-relevansi" value="5" data-berkas="penilai1" data-id="E27" data-dim="relevansi"> 5</label>
+      <span class="petunjuk">1 = tidak menjawab / salah topik · 3 = menjawab sebagian · 5 = menjawab tepat sasaran</span>
+    </fieldset>
+    <fieldset class="rubrik" data-dimensi="bukti">
+      <legend>Apakah angka &amp; klaim di jawaban benar-benar ada di daftar bukti?</legend>
+      <label><input type="radio" name="p1-E27-bukti" value="1" data-berkas="penilai1" data-id="E27" data-dim="bukti"> 1</label><label><input type="radio" name="p1-E27-bukti" value="2" data-berkas="penilai1" data-id="E27" data-dim="bukti"> 2</label><label><input type="radio" name="p1-E27-bukti" value="3" data-berkas="penilai1" data-id="E27" data-dim="bukti"> 3</label><label><input type="radio" name="p1-E27-bukti" value="4" data-berkas="penilai1" data-id="E27" data-dim="bukti"> 4</label><label><input type="radio" name="p1-E27-bukti" value="5" data-berkas="penilai1" data-id="E27" data-dim="bukti"> 5</label>
+      <span class="petunjuk">1 = ada angka/klaim di luar bukti · 3 = sebagian tidak dapat ditelusuri · 5 = semua dapat ditelusuri ke bukti</span>
+    </fieldset>
+    <fieldset class="rubrik" data-dimensi="jujur">
+      <legend>Apakah batas data dinyatakan apa adanya (tidak mengarang)?</legend>
+      <label><input type="radio" name="p1-E27-jujur" value="1" data-berkas="penilai1" data-id="E27" data-dim="jujur"> 1</label><label><input type="radio" name="p1-E27-jujur" value="2" data-berkas="penilai1" data-id="E27" data-dim="jujur"> 2</label><label><input type="radio" name="p1-E27-jujur" value="3" data-berkas="penilai1" data-id="E27" data-dim="jujur"> 3</label><label><input type="radio" name="p1-E27-jujur" value="4" data-berkas="penilai1" data-id="E27" data-dim="jujur"> 4</label><label><input type="radio" name="p1-E27-jujur" value="5" data-berkas="penilai1" data-id="E27" data-dim="jujur"> 5</label>
+      <span class="petunjuk">1 = mengarang / menyembunyikan batas · 3 = batas disebut samar · 5 = batas/ketiadaan data dinyatakan tegas</span>
+    </fieldset>
+    <label class="catatan">Catatan (opsional)<br><textarea rows="2" data-id="E27"></textarea></label>
+  </section>
+<div class="tombol">
+  <button type="button" id="unduh">Unduh CSV hasil</button>
+  <button type="button" class="jenis2" id="unduh-json">Unduh JSON</button>
+  <button type="button" class="jenis2" id="bersih">Kosongkan isian</button>
+  <span id="status"></span>
+</div>
+<script>
+  var KUNCI = 'sapa-panel-ev05';
+  var state = JSON.parse(localStorage.getItem(KUNCI) || '{}');
+  function simpan() { localStorage.setItem(KUNCI, JSON.stringify(state)); hitung(); }
+  function hitung() {
+    var total = 0, terisi = 0;
+    document.querySelectorAll('input[type=radio]').forEach(function (r) { total++; if (r.checked) terisi++; });
+    document.getElementById('status').textContent = terisi + ' / ' + total + ' penilaian terisi';
+  }
+  document.querySelectorAll('input[type=radio]').forEach(function (r) {
+    var kunci = r.dataset.id + '|' + r.dataset.dim;
+    if (state[kunci] === Number(r.value)) r.checked = true;
+    r.addEventListener('change', function () { state[kunci] = Number(r.value); simpan(); });
+  });
+  document.querySelectorAll('textarea').forEach(function (t) {
+    if (state['cat|' + t.dataset.id]) t.value = state['cat|' + t.dataset.id];
+    t.addEventListener('input', function () { state['cat|' + t.dataset.id] = t.value; simpan(); });
+  });
+  function unduh(nama, teks, jenis) {
+    var b = new Blob([teks], { type: jenis });
+    var a = document.createElement('a');
+    a.href = URL.createObjectURL(b); a.download = nama; a.click();
+    URL.revokeObjectURL(a.href);
+  }
+  document.getElementById('unduh').onclick = function () {
+    var baris = ['id,dimensi,nilai,catatan'];
+    document.querySelectorAll('.kartu').forEach(function (k) {
+      var id = k.dataset.id, cat = (state['cat|' + id] || '').replace(/"/g, '""');
+      ['relevansi', 'bukti', 'jujur'].forEach(function (d) {
+        var v = state[id + '|' + d];
+        baris.push(id + ',' + d + ',' + (v == null ? '' : v) + ',"' + cat + '"');
+      });
+    });
+    unduh('panel-penilai-hasil.csv', baris.join('\n') + '\n', 'text/csv;charset=utf-8');
+  };
+  document.getElementById('unduh-json').onclick = function () {
+    unduh('panel-penilai-hasil.json', JSON.stringify(state, null, 2), 'application/json');
+  };
+  document.getElementById('bersih').onclick = function () {
+    if (!confirm('Kosongkan semua isian?')) return;
+    localStorage.removeItem(KUNCI); location.reload();
+  };
+  hitung();
+</script></body></html>

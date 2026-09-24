@@ -318,6 +318,11 @@ async function composeAnswerInti(opts: ComposeOptions): Promise<ComposeResult> {
   const pagarPerOrang = cekPermintaanPerOrang(opts.query);
   const pagarData = pagarNik ?? pagarPerOrang;
   if (pagarData) {
+    // EV-05: penolakan pun wajib melaporkan niat yang terbaca. Sebelum ini
+    // `ai.intent` kosong pada jalur pagar, sehingga panel menampilkan bentuk
+    // bawaan ("Nilai saat ini") untuk jawaban yang justru menolak permintaan
+    // per-orang — dan akurasi niat router tidak dapat diukur pada kasus itu.
+    const { niat: niatPagar } = deteksiNiat(opts.query);
     const narasiTolak = pagarNik ? NARASI_TOLAK_NIK : NARASI_TOLAK_PER_ORANG;
     const saranTolak = pagarNik ? SARAN_TOLAK_NIK : SARAN_TOLAK_PER_ORANG;
     await recordMetrics('deterministic');
@@ -333,6 +338,7 @@ async function composeAnswerInti(opts: ComposeOptions): Promise<ComposeResult> {
       ai: {
         used: false, shadow: false, model: null, provider: null, latencyMs: 0,
         grounded: 'skipped', reason: pagarData, cached: false, limitedBy: 'guard',
+        intent: niatPagar,
       },
       matched: 0,
       aggregated: [],

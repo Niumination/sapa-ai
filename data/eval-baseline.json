@@ -1,10 +1,10 @@
 {
-  "dibuat": "2026-09-21",
-  "target": "http://127.0.0.1:3116",
-  "modeAi": "active",
-  "setVersi": 2,
-  "lulus": 90,
-  "total": 90,
+  "dibuat": "2026-09-24",
+  "target": "http://127.0.0.1:3181",
+  "modeAi": "inactive",
+  "setVersi": 3,
+  "lulus": 120,
+  "total": 120,
   "item": {
     "Q01": {
       "lulus": true,
@@ -116,7 +116,7 @@
     },
     "T6": {
       "lulus": true,
-      "cara": "jujur-kosong",
+      "cara": "menjawab relevan",
       "inv": [],
       "top1Ok": true
     },
@@ -146,7 +146,7 @@
     },
     "C1": {
       "lulus": true,
-      "cara": "jujur-kosong",
+      "cara": "menjawab relevan",
       "inv": [],
       "top1Ok": true
     },
@@ -290,7 +290,7 @@
     },
     "D5": {
       "lulus": true,
-      "cara": "jujur-kosong",
+      "cara": "menjawab relevan",
       "inv": [],
       "top1Ok": true
     },
@@ -314,7 +314,7 @@
     },
     "R3": {
       "lulus": true,
-      "cara": "jujur-kosong",
+      "cara": "menjawab relevan",
       "inv": [],
       "top1Ok": true
     },
@@ -338,7 +338,7 @@
     },
     "K1": {
       "lulus": true,
-      "cara": "jujur-kosong",
+      "cara": "menjawab relevan",
       "inv": [],
       "top1Ok": true
     },
@@ -374,13 +374,13 @@
     },
     "A3": {
       "lulus": true,
-      "cara": "jujur-kosong",
+      "cara": "menjawab (kapabilitas Fase 3 — hanya diuji anti-halu)",
       "inv": [],
       "top1Ok": true
     },
     "A4": {
       "lulus": true,
-      "cara": "jujur-kosong",
+      "cara": "menjawab (kapabilitas Fase 3 — hanya diuji anti-halu)",
       "inv": [],
       "top1Ok": true
     },
@@ -404,13 +404,13 @@
     },
     "M4": {
       "lulus": true,
-      "cara": "jujur-kosong",
+      "cara": "menjawab (kapabilitas Fase 3 — hanya diuji anti-halu)",
       "inv": [],
       "top1Ok": true
     },
     "M5": {
       "lulus": true,
-      "cara": "jujur-kosong",
+      "cara": "menjawab (kapabilitas Fase 3 — hanya diuji anti-halu)",
       "inv": [],
       "top1Ok": true
     },
@@ -440,7 +440,7 @@
     },
     "U4": {
       "lulus": true,
-      "cara": "jujur-kosong",
+      "cara": "menjawab relevan",
       "inv": [],
       "top1Ok": true
     },
@@ -518,7 +518,7 @@
     },
     "N4": {
       "lulus": true,
-      "cara": "jujur-kosong",
+      "cara": "menjawab relevan",
       "inv": [],
       "top1Ok": true
     },
@@ -541,6 +541,186 @@
       "top1Ok": true
     },
     "S3": {
+      "lulus": true,
+      "cara": "jujur-kosong",
+      "inv": [],
+      "top1Ok": true
+    },
+    "E01": {
+      "lulus": true,
+      "cara": "menjawab relevan",
+      "inv": [],
+      "top1Ok": true
+    },
+    "E02": {
+      "lulus": true,
+      "cara": "menjawab relevan",
+      "inv": [],
+      "top1Ok": true
+    },
+    "E03": {
+      "lulus": true,
+      "cara": "menjawab relevan",
+      "inv": [],
+      "top1Ok": true
+    },
+    "E04": {
+      "lulus": true,
+      "cara": "menjawab relevan",
+      "inv": [],
+      "top1Ok": true
+    },
+    "E05": {
+      "lulus": true,
+      "cara": "menjawab relevan",
+      "inv": [],
+      "top1Ok": true
+    },
+    "E06": {
+      "lulus": true,
+      "cara": "menjawab relevan",
+      "inv": [],
+      "top1Ok": true
+    },
+    "E07": {
+      "lulus": true,
+      "cara": "menjawab relevan",
+      "inv": [],
+      "top1Ok": true
+    },
+    "E08": {
+      "lulus": true,
+      "cara": "menjawab relevan",
+      "inv": [],
+      "top1Ok": true
+    },
+    "E09": {
+      "lulus": true,
+      "cara": "menjawab relevan",
+      "inv": [],
+      "top1Ok": true
+    },
+    "E10": {
+      "lulus": true,
+      "cara": "menjawab relevan",
+      "inv": [],
+      "top1Ok": true
+    },
+    "E11": {
+      "lulus": true,
+      "cara": "menjawab relevan",
+      "inv": [],
+      "top1Ok": true
+    },
+    "E12": {
+      "lulus": true,
+      "cara": "menjawab relevan",
+      "inv": [],
+      "top1Ok": true
+    },
+    "E13": {
+      "lulus": true,
+      "cara": "menjawab relevan",
+      "inv": [],
+      "top1Ok": true
+    },
+    "E14": {
+      "lulus": true,
+      "cara": "menjawab relevan",
+      "inv": [],
+      "top1Ok": true
+    },
+    "E15": {
+      "lulus": true,
+      "cara": "menjawab relevan",
+      "inv": [],
+      "top1Ok": true
+    },
+    "E16": {
+      "lulus": true,
+      "cara": "menjawab relevan",
+      "inv": [],
+      "top1Ok": true
+    },
+    "E17": {
+      "lulus": true,
+      "cara": "menjawab relevan",
+      "inv": [],
+      "top1Ok": true
+    },
+    "E18": {
+      "lulus": true,
+      "cara": "menjawab relevan",
+      "inv": [],
+      "top1Ok": true
+    },
+    "E19": {
+      "lulus": true,
+      "cara": "menjawab relevan",
+      "inv": [],
+      "top1Ok": true
+    },
+    "E20": {
+      "lulus": true,
+      "cara": "menjawab relevan",
+      "inv": [],
+      "top1Ok": true
+    },
+    "E21": {
+      "lulus": true,
+      "cara": "menjawab relevan",
+      "inv": [],
+      "top1Ok": true
+    },
+    "E22": {
+      "lulus": true,
+      "cara": "menjawab relevan",
+      "inv": [],
+      "top1Ok": true
+    },
+    "E23": {
+      "lulus": true,
+      "cara": "menjawab relevan",
+      "inv": [],
+      "top1Ok": true
+    },
+    "E24": {
+      "lulus": true,
+      "cara": "menjawab relevan",
+      "inv": [],
+      "top1Ok": true
+    },
+    "E25": {
+      "lulus": true,
+      "cara": "menjawab relevan",
+      "inv": [],
+      "top1Ok": true
+    },
+    "E26": {
+      "lulus": true,
+      "cara": "menjawab relevan",
+      "inv": [],
+      "top1Ok": true
+    },
+    "E27": {
+      "lulus": true,
+      "cara": "menjawab relevan",
+      "inv": [],
+      "top1Ok": true
+    },
+    "E28": {
+      "lulus": true,
+      "cara": "jujur-kosong",
+      "inv": [],
+      "top1Ok": true
+    },
+    "E29": {
+      "lulus": true,
+      "cara": "jujur-kosong",
+      "inv": [],
+      "top1Ok": true
+    },
+    "E30": {
       "lulus": true,
       "cara": "jujur-kosong",
       "inv": [],

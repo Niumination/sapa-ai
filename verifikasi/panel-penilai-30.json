@@ -1,0 +1,1662 @@
+{
+  "dibuat": "2026-09-24T05:42:46.948Z",
+  "target": "http://127.0.0.1:3181",
+  "jumlah": 30,
+  "rubrik": [
+    {
+      "1": "tidak menjawab / salah topik",
+      "3": "menjawab sebagian",
+      "5": "menjawab tepat sasaran",
+      "kunci": "relevansi",
+      "tanya": "Apakah jawaban menjawab pertanyaan yang diajukan?"
+    },
+    {
+      "1": "ada angka/klaim di luar bukti",
+      "3": "sebagian tidak dapat ditelusuri",
+      "5": "semua dapat ditelusuri ke bukti",
+      "kunci": "bukti",
+      "tanya": "Apakah angka & klaim di jawaban benar-benar ada di daftar bukti?"
+    },
+    {
+      "1": "mengarang / menyembunyikan batas",
+      "3": "batas disebut samar",
+      "5": "batas/ketiadaan data dinyatakan tegas",
+      "kunci": "jujur",
+      "tanya": "Apakah batas data dinyatakan apa adanya (tidak mengarang)?"
+    }
+  ],
+  "sampel": [
+    {
+      "id": "E01",
+      "niat": "nilai_saat_ini",
+      "mode": "jawab",
+      "pertanyaan": "Berapa nilai Indeks Pembangunan Manusia Aceh Tengah pada data terbaru?",
+      "niatServer": "nilai_saat_ini",
+      "bentuk": "Nilai saat ini",
+      "jalur": null,
+      "narasi": "Berdasarkan data SAPA untuk \"Berapa nilai Indeks Pembangunan Manusia Aceh Tengah pada data terbaru?\", ditemukan 1 indikator terkait: Indeks Pembangunan Manusia 78,09 Indeks (Badan Perencanaan Pembangunan Daerah., 2025).",
+      "bukti": [
+        {
+          "id": 2404,
+          "indikator": "Indeks Pembangunan Manusia",
+          "tahun": "2025",
+          "opd": "Badan Perencanaan Pembangunan Daerah.",
+          "nilai": "78,09"
+        }
+      ],
+      "jumlahBukti": 1,
+      "buktiAngka": [
+        "78,09",
+        "2025"
+      ]
+    },
+    {
+      "id": "E02",
+      "niat": "nilai_saat_ini",
+      "mode": "jawab",
+      "pertanyaan": "Berapa persen tingkat kemiskinan Kabupaten Aceh Tengah tahun 2025?",
+      "niatServer": "nilai_saat_ini",
+      "bentuk": "Nilai saat ini",
+      "jalur": null,
+      "narasi": "Berdasarkan data SAPA untuk \"Berapa persen tingkat kemiskinan Kabupaten Aceh Tengah tahun 2025?\", ditemukan 11 indikator terkait: jumlah data Insidentil Mustahik Miskin 1.000 Orang (Sekretariat Baitul Mal, 2026); tingkat Kemiskinan 12,29 Persen (Badan Perencanaan Pembangunan Daerah., 2025); jumlah Hari Meugang Mustahik Miskin 637 Orang (Sekretariat Baitul Mal, 2026). Dari 2.065 record SAPA, topik \"Berapa persen tingkat kemiskinan Kabupaten Aceh Tengah tahun 2025?\" mencakup 11 indikator unik dari 3 OPD (Sekretariat Baitul Mal; Badan Perencanaan Pembangunan Daerah.; Dinas Sosial). Tiga teratas: \"jumlah data Insidentil Mustahik Miskin\" — 1.000 Orang (Sekretariat Baitul Mal, 2026); \"tingkat Kemiskinan\" — 12,29 Persen (Badan Perencanaan Pembangunan Daerah., 2025); \"jumlah Hari Meugang Mustahik Miskin\" — 637 Orang (Sekretariat Baitul Mal, 2026). Selengkapnya pada visualisasi.",
+      "bukti": [
+        {
+          "id": 2587,
+          "indikator": "jumlah data Insidentil Mustahik Miskin",
+          "tahun": "2026",
+          "opd": "Sekretariat Baitul Mal",
+          "nilai": "1000"
+        },
+        {
+          "id": 2406,
+          "indikator": "tingkat Kemiskinan",
+          "tahun": "2025",
+          "opd": "Badan Perencanaan Pembangunan Daerah.",
+          "nilai": "12,29"
+        },
+        {
+          "id": 2586,
+          "indikator": "jumlah  Hari Meugang Mustahik  Miskin",
+          "tahun": "2026",
+          "opd": "Sekretariat Baitul Mal",
+          "nilai": "637"
+        },
+        {
+          "id": 2577,
+          "indikator": "Jumlah  Santunan Bulanan Lansia Miskin",
+          "tahun": "2026",
+          "opd": "Sekretariat Baitul Mal",
+          "nilai": "450"
+        },
+        {
+          "id": 577,
+          "indikator": "Jumlah Miskin",
+          "tahun": "2025",
+          "opd": "Sekretariat Baitul Mal",
+          "nilai": "189"
+        },
+        {
+          "id": 2578,
+          "indikator": "Jumlah  Santunan bagi Mustahik Miskin penderita Penyakit Kronis",
+          "tahun": "2026",
+          "opd": "Sekretariat Baitul Mal",
+          "nilai": "100"
+        }
+      ],
+      "jumlahBukti": 11,
+      "buktiAngka": [
+        "1000",
+        "2026",
+        "12,29",
+        "2025",
+        "637",
+        "450",
+        "189",
+        "100",
+        "80",
+        "50",
+        "35",
+        "3"
+      ]
+    },
+    {
+      "id": "E03",
+      "niat": "nilai_saat_ini",
+      "mode": "jawab",
+      "pertanyaan": "Berapa jumlah Puskesmas di Kabupaten Aceh Tengah?",
+      "niatServer": "nilai_saat_ini",
+      "bentuk": "Nilai saat ini",
+      "jalur": null,
+      "narasi": "Berdasarkan data SAPA untuk \"Berapa jumlah Puskesmas di Kabupaten Aceh Tengah?\", ditemukan 15 indikator terkait: Cakupan Kunjungan Rawat Jalan Puskesmas 224.814 Orang (Dinas Kesehatan, 2025); Jumlah Puskesmas 17 Unit (Dinas Kesehatan, 2025); Jumlah Puskesmas Rawat inap 7 Unit (Dinas Kesehatan, 2025). Dari 2.065 record SAPA, topik \"Berapa jumlah Puskesmas di Kabupaten Aceh Tengah?\" mencakup 15 indikator unik dari Dinas Kesehatan. Tiga teratas: \"Cakupan Kunjungan Rawat Jalan Puskesmas\" — 224.814 Orang (Dinas Kesehatan, 2025); \"Jumlah Puskesmas\" — 17 Unit (Dinas Kesehatan, 2025); \"Jumlah Puskesmas Rawat inap\" — 7 Unit (Dinas Kesehatan, 2025). Selengkapnya pada visualisasi.",
+      "bukti": [
+        {
+          "id": 2099,
+          "indikator": "Cakupan Kunjungan Rawat Jalan Puskesmas",
+          "tahun": "2025",
+          "opd": "Dinas Kesehatan",
+          "nilai": "224.814"
+        },
+        {
+          "id": 91,
+          "indikator": "Jumlah Puskesmas",
+          "tahun": "2025",
+          "opd": "Dinas Kesehatan",
+          "nilai": "17"
+        },
+        {
+          "id": 2094,
+          "indikator": "Jumlah Puskesmas Rawat inap",
+          "tahun": "2025",
+          "opd": "Dinas Kesehatan",
+          "nilai": "7"
+        },
+        {
+          "id": 73,
+          "indikator": "Peserta Jaminan Kesehatan  Yang Berobat Di Puskesmas",
+          "tahun": null,
+          "opd": "Dinas Kesehatan",
+          "nilai": "189759"
+        },
+        {
+          "id": 2100,
+          "indikator": "Cakupan Kunjungan Rawat Inap Puskesmas",
+          "tahun": "2025",
+          "opd": "Dinas Kesehatan",
+          "nilai": "2816"
+        },
+        {
+          "id": 2171,
+          "indikator": "Jumlah Bidan di Puskesmas",
+          "tahun": "2025",
+          "opd": "Dinas Kesehatan",
+          "nilai": "968"
+        }
+      ],
+      "jumlahBukti": 15,
+      "buktiAngka": [
+        "224.814",
+        "2025",
+        "17",
+        "7",
+        "189759",
+        "2816",
+        "968",
+        "397",
+        "163",
+        "100",
+        "94",
+        "85",
+        "72",
+        "56"
+      ]
+    },
+    {
+      "id": "E04",
+      "niat": "tren",
+      "mode": "jujur",
+      "pertanyaan": "Bagaimana tren jumlah penerimaan laporan dan pengaduan masyarakat di Inspektorat?",
+      "niatServer": "tren",
+      "bentuk": "Tren antarperiode",
+      "jalur": null,
+      "narasi": "Berdasarkan data SAPA untuk \"Bagaimana tren jumlah penerimaan laporan dan pengaduan masyarakat di Inspektorat?\", ditemukan 5 indikator terkait: Jumlah Penerimaan Laporan dan Pengaduan Masyarakat 5 Laporan (Inspektorat, 2026); Jumlah Laporan Atau Pengaduan Masyarakat Yang Ditindak Lanjuti Sesuai SOP 5 Dokumen (Dinas Lingkungan Hidup, tahun tidak tercantum di SAPA); Jumlah Kanal pengaduan masyarakat yang dimiliki atau dikelola pemerintah daerah 6 Kanal (Dinas Komunikasi dan Informatika, 2026). Dari 2.065 record SAPA, topik \"Bagaimana tren jumlah penerimaan laporan dan pengaduan masyarakat di Inspektorat?\" mencakup 5 indikator unik dari 4 OPD (Inspektorat; Dinas Lingkungan Hidup; Dinas Komunikasi dan Informatika …). Tiga teratas: \"Jumlah Penerimaan Laporan dan Pengaduan Masyarakat\" — 5 Laporan (Inspektorat, 2026); \"Jumlah Laporan Atau Pengaduan Masyarakat Yang Ditindak Lanjuti Sesuai SOP\" — 5 Dokumen (Dinas Lingkungan Hidup, tahun tidak tercantum); \"Jumlah Kanal pengaduan masyarakat yang dimiliki atau dikelola pemerintah daerah\" — 6 Kanal (Dinas Komunikasi dan Informatika, 2026). Selengkapnya pada visualisasi.",
+      "bukti": [
+        {
+          "id": 1919,
+          "indikator": "Jumlah Penerimaan Laporan dan Pengaduan Masyarakat",
+          "tahun": "2026",
+          "opd": "Inspektorat",
+          "nilai": "5"
+        },
+        {
+          "id": 698,
+          "indikator": "Jumlah Laporan Atau Pengaduan Masyarakat Yang Ditindak Lanjuti Sesuai SOP",
+          "tahun": null,
+          "opd": "Dinas Lingkungan Hidup",
+          "nilai": "5"
+        },
+        {
+          "id": 2618,
+          "indikator": "Jumlah Kanal pengaduan masyarakat yang dimiliki atau dikelola pemerintah daerah",
+          "tahun": "2026",
+          "opd": "Dinas Komunikasi dan Informatika",
+          "nilai": "6"
+        },
+        {
+          "id": 2617,
+          "indikator": "Aduan Masyarakat yang masuk ke kanal selain SP4N LAPOR",
+          "tahun": "2026",
+          "opd": "Dinas Komunikasi dan Informatika",
+          "nilai": "3"
+        },
+        {
+          "id": 1233,
+          "indikator": "Jumlah Dokumen Data Bakal Calon Penerima Rumah bagi Masyarakat yang Terkena \nRelokasi ProgramKabupaten/Kota yang Terverifikasi",
+          "tahun": "2026",
+          "opd": "Dinas Perumahan dan Permukiman",
+          "nilai": "1"
+        }
+      ],
+      "jumlahBukti": 5,
+      "buktiAngka": [
+        "5",
+        "2026",
+        "6",
+        "3",
+        "1"
+      ]
+    },
+    {
+      "id": "E05",
+      "niat": "tren",
+      "mode": "jawab",
+      "pertanyaan": "Bagaimana perkembangan jumlah pemuda yang mendapat pelatihan kepeloporan pemuda?",
+      "niatServer": "tren",
+      "bentuk": "Tren antarperiode",
+      "jalur": null,
+      "narasi": "Berdasarkan data SAPA untuk \"Bagaimana perkembangan jumlah pemuda yang mendapat pelatihan kepeloporan pemuda?\", ditemukan 6 indikator terkait: jumlah pemuda yang mendapatkan pelatihan kepeloporan pemuda 30 orang (Dinas Pemuda dan Olahraga, 2025); Jumlah pemuda yang mendapatkan pelatihan kewirausahaan 40 orang (Dinas Pemuda dan Olahraga, 2025); Persentase Sumber daya manusia kesehatan (SDMK) yang mendapatkan pelatihan bidang kesehatan 80 persen (Dinas Kesehatan, tahun tidak tercantum di SAPA). Dari 2.065 record SAPA, topik \"Bagaimana perkembangan jumlah pemuda yang mendapat pelatihan kepeloporan pemuda?\" mencakup 6 indikator unik dari 3 OPD (Dinas Pemuda dan Olahraga; Dinas Kesehatan; Dinas Keluarga Berencana PPPA). Tiga teratas: \"jumlah pemuda yang mendapatkan pelatihan kepeloporan pemuda\" — 30 orang (Dinas Pemuda dan Olahraga, 2025); \"Jumlah pemuda yang mendapatkan pelatihan kewirausahaan\" — 40 orang (Dinas Pemuda dan Olahraga, 2025); \"Persentase Sumber daya manusia kesehatan (SDMK) yang mendapatkan pelatihan bidang kesehatan\" — 80 persen (Dinas Kesehatan, tahun tidak tercantum). Selengkapnya pada visualisasi.",
+      "bukti": [
+        {
+          "id": 2705,
+          "indikator": "jumlah pemuda yang  mendapatkan pelatihan kepeloporan pemuda",
+          "tahun": "2025",
+          "opd": "Dinas Pemuda dan Olahraga",
+          "nilai": "30"
+        },
+        {
+          "id": 2704,
+          "indikator": "Jumlah pemuda yang mendapatkan pelatihan kewirausahaan",
+          "tahun": "2025",
+          "opd": "Dinas Pemuda dan Olahraga",
+          "nilai": "40"
+        },
+        {
+          "id": 2074,
+          "indikator": "Persentase Sumber daya manusia kesehatan (SDMK) yang mendapatkan pelatihan bidang kesehatan",
+          "tahun": null,
+          "opd": "Dinas Kesehatan",
+          "nilai": "80"
+        },
+        {
+          "id": 1583,
+          "indikator": "Jumlah Bumil Terlegister Berdasarkan 4T Terlalu Muda (<20 Tahun)",
+          "tahun": "2026",
+          "opd": "Dinas Keluarga Berencana PPPA",
+          "nilai": "59"
+        },
+        {
+          "id": 653,
+          "indikator": "Organisasi Kepemudaan",
+          "tahun": null,
+          "opd": "Dinas Pemuda dan Olahraga",
+          "nilai": "47"
+        },
+        {
+          "id": 657,
+          "indikator": "atlet/olahragawan talenta muda",
+          "tahun": null,
+          "opd": "Dinas Pemuda dan Olahraga",
+          "nilai": "18"
+        }
+      ],
+      "jumlahBukti": 6,
+      "buktiAngka": [
+        "30",
+        "2025",
+        "40",
+        "80",
+        "59",
+        "2026",
+        "47",
+        "18"
+      ]
+    },
+    {
+      "id": "E06",
+      "niat": "tren",
+      "mode": "jujur",
+      "pertanyaan": "Bagaimana tren jumlah anggota perpustakaan dari tahun ke tahun?",
+      "niatServer": "tren",
+      "bentuk": "Tren antarperiode",
+      "jalur": null,
+      "narasi": "Berdasarkan data SAPA untuk \"Bagaimana tren jumlah anggota perpustakaan dari tahun ke tahun?\", ditemukan 9 indikator terkait: Anggota perpustakaan sekolah dasar binaan Kabupaten/kota 4.800 Orang (Dinas Perpustakaan dan Kearsipan, 2026); Anggota perpustakaan kecamatan binaan Kabupaten/kota 420 Orang (Dinas Perpustakaan dan Kearsipan, 2026); Jumlah anggota perpustakaan 8.730 Orang (Dinas Perpustakaan dan Kearsipan, 2026). Dari 2.065 record SAPA, topik \"Bagaimana tren jumlah anggota perpustakaan dari tahun ke tahun?\" mencakup 9 indikator unik dari 2 OPD (Dinas Perpustakaan dan Kearsipan; Dinas Keluarga Berencana PPPA). Tiga teratas: \"Anggota perpustakaan sekolah dasar binaan Kabupaten/kota\" — 4.800 Orang (Dinas Perpustakaan dan Kearsipan, 2026); \"Anggota perpustakaan kecamatan binaan Kabupaten/kota\" — 420 Orang (Dinas Perpustakaan dan Kearsipan, 2026); \"Jumlah anggota perpustakaan\" — 8.730 Orang (Dinas Perpustakaan dan Kearsipan, 2026). Selengkapnya pada visualisasi.",
+      "bukti": [
+        {
+          "id": 1292,
+          "indikator": "Anggota perpustakaan sekolah dasar binaan Kabupaten/kota",
+          "tahun": "2026",
+          "opd": "Dinas Perpustakaan dan Kearsipan",
+          "nilai": "4800"
+        },
+        {
+          "id": 1294,
+          "indikator": "Anggota perpustakaan kecamatan binaan Kabupaten/kota",
+          "tahun": "2026",
+          "opd": "Dinas Perpustakaan dan Kearsipan",
+          "nilai": "420"
+        },
+        {
+          "id": 1306,
+          "indikator": "Jumlah anggota perpustakaan",
+          "tahun": "2026",
+          "opd": "Dinas Perpustakaan dan Kearsipan",
+          "nilai": "8730"
+        },
+        {
+          "id": 1290,
+          "indikator": "Anggota perpustakaan umum binaan Kabupaten/kota",
+          "tahun": null,
+          "opd": "Dinas Perpustakaan dan Kearsipan",
+          "nilai": "8621"
+        },
+        {
+          "id": 1291,
+          "indikator": "Anggota perpustakaan khusus binaan Kabupaten/kota",
+          "tahun": "2024",
+          "opd": "Dinas Perpustakaan dan Kearsipan",
+          "nilai": "6435"
+        },
+        {
+          "id": 1295,
+          "indikator": "Anggota perpustakaan desa/Kelurahan binaan Kabupaten/kota",
+          "tahun": "2024",
+          "opd": "Dinas Perpustakaan dan Kearsipan",
+          "nilai": "5206"
+        }
+      ],
+      "jumlahBukti": 9,
+      "buktiAngka": [
+        "4800",
+        "2026",
+        "420",
+        "8730",
+        "8621",
+        "6435",
+        "2024",
+        "5206",
+        "14",
+        "2025",
+        "6083",
+        "6068"
+      ]
+    },
+    {
+      "id": "E08",
+      "niat": "perbandingan",
+      "mode": "jawab",
+      "pertanyaan": "Bandingkan jumlah Puskesmas dan Puskesmas Pembantu",
+      "niatServer": "perbandingan",
+      "bentuk": "Perbandingan berdampingan",
+      "jalur": null,
+      "narasi": "Berdasarkan data SAPA untuk \"Bandingkan jumlah Puskesmas dan Puskesmas Pembantu\", ditemukan 15 indikator terkait: Jumlah Puskesmas Pembantu 56 Unit (Dinas Kesehatan, 2025); Cakupan Kunjungan Rawat Jalan Puskesmas 224.814 Orang (Dinas Kesehatan, 2025); Peserta Jaminan Kesehatan Yang Berobat Di Puskesmas 189.759 Orang (Dinas Kesehatan, tahun tidak tercantum di SAPA). Dari 2.065 record SAPA, topik \"Bandingkan jumlah Puskesmas dan Puskesmas Pembantu\" mencakup 15 indikator unik dari Dinas Kesehatan. Tiga teratas: \"Jumlah Puskesmas Pembantu\" — 56 Unit (Dinas Kesehatan, 2025); \"Cakupan Kunjungan Rawat Jalan Puskesmas\" — 224.814 Orang (Dinas Kesehatan, 2025); \"Peserta Jaminan Kesehatan Yang Berobat Di Puskesmas\" — 189.759 Orang (Dinas Kesehatan, tahun tidak tercantum). Selengkapnya pada visualisasi.",
+      "bukti": [
+        {
+          "id": 2095,
+          "indikator": "Jumlah Puskesmas Pembantu",
+          "tahun": "2025",
+          "opd": "Dinas Kesehatan",
+          "nilai": "56"
+        },
+        {
+          "id": 2099,
+          "indikator": "Cakupan Kunjungan Rawat Jalan Puskesmas",
+          "tahun": "2025",
+          "opd": "Dinas Kesehatan",
+          "nilai": "224.814"
+        },
+        {
+          "id": 73,
+          "indikator": "Peserta Jaminan Kesehatan  Yang Berobat Di Puskesmas",
+          "tahun": null,
+          "opd": "Dinas Kesehatan",
+          "nilai": "189759"
+        },
+        {
+          "id": 2100,
+          "indikator": "Cakupan Kunjungan Rawat Inap Puskesmas",
+          "tahun": "2025",
+          "opd": "Dinas Kesehatan",
+          "nilai": "2816"
+        },
+        {
+          "id": 2171,
+          "indikator": "Jumlah Bidan di Puskesmas",
+          "tahun": "2025",
+          "opd": "Dinas Kesehatan",
+          "nilai": "968"
+        },
+        {
+          "id": 2172,
+          "indikator": "Jumlah Perawat di Puskesmas",
+          "tahun": "2025",
+          "opd": "Dinas Kesehatan",
+          "nilai": "397"
+        }
+      ],
+      "jumlahBukti": 15,
+      "buktiAngka": [
+        "56",
+        "2025",
+        "224.814",
+        "189759",
+        "2816",
+        "968",
+        "397",
+        "163",
+        "100",
+        "94",
+        "85",
+        "72",
+        "52",
+        "49"
+      ]
+    },
+    {
+      "id": "E09",
+      "niat": "perbandingan",
+      "mode": "jawab",
+      "pertanyaan": "Bandingkan jumlah penerima bantuan sosial PKH dan sembako",
+      "niatServer": "perbandingan",
+      "bentuk": "Perbandingan berdampingan",
+      "jalur": null,
+      "narasi": "Tidak ada data SAPA yang memuat seluruh kata kunci sekaligus — tidak ada indikator yang memuat \"sembako\" bersama kata kunci lainnya. Berikut indikator terdekat. Berdasarkan data SAPA untuk \"Bandingkan jumlah penerima bantuan sosial PKH dan sembako\", ditemukan 5 indikator terkait: Jumlah Penerima Bantuan Sosial PKH 13.101 Keluarga (Dinas Sosial, 2026); Jumlah Penerima Bantuan Sosial Sembako 18.605 KPM (Dinas Sosial, 2026); Jumlah Total Nilai Bantuan Sosial PKH (Berhasil Salur) 9.099.700.000 Rupiah (Dinas Sosial, 2026). Dari 2.065 record SAPA, topik \"Bandingkan jumlah penerima bantuan sosial PKH dan sembako\" mencakup 5 indikator unik dari Dinas Sosial. Tiga teratas: \"Jumlah Penerima Bantuan Sosial PKH\" — 13.101 Keluarga (Dinas Sosial, 2026); \"Jumlah Penerima Bantuan Sosial Sembako\" — 18.605 KPM (Dinas Sosial, 2026); \"Jumlah Total Nilai Bantuan Sosial PKH (Berhasil Salur)\" — 9.099.700.000 Rupiah (Dinas Sosial, 2026). Selengkapnya pada visualisasi.",
+      "bukti": [
+        {
+          "id": 1325,
+          "indikator": "Jumlah Penerima Bantuan Sosial PKH",
+          "tahun": "2026",
+          "opd": "Dinas Sosial",
+          "nilai": "13101"
+        },
+        {
+          "id": 1327,
+          "indikator": "Jumlah Penerima Bantuan Sosial Sembako",
+          "tahun": "2026",
+          "opd": "Dinas Sosial",
+          "nilai": "18605"
+        },
+        {
+          "id": 1326,
+          "indikator": "Jumlah Total Nilai Bantuan Sosial PKH (Berhasil Salur)",
+          "tahun": "2026",
+          "opd": "Dinas Sosial",
+          "nilai": "9099700000"
+        },
+        {
+          "id": 1328,
+          "indikator": "Jumlah Total Nilai Bantuan Sosial Sembako (Berhasil Salur)",
+          "tahun": "2026",
+          "opd": "Dinas Sosial",
+          "nilai": "10986000000"
+        },
+        {
+          "id": 1329,
+          "indikator": "Jumlah Aktif Penerima Bantuan Iuran Jaminan Kesehatan Nasional",
+          "tahun": "2026",
+          "opd": "Dinas Sosial",
+          "nilai": "133897"
+        }
+      ],
+      "jumlahBukti": 5,
+      "buktiAngka": [
+        "13101",
+        "2026",
+        "18605",
+        "9099700000",
+        "10986000000",
+        "133897"
+      ]
+    },
+    {
+      "id": "E10",
+      "niat": "perbandingan",
+      "mode": "jujur",
+      "pertanyaan": "Bandingkan tingkat kemiskinan dan prevalensi stunting Aceh Tengah",
+      "niatServer": "perbandingan",
+      "bentuk": "Perbandingan berdampingan",
+      "jalur": null,
+      "narasi": "Tidak ada data SAPA yang memuat seluruh kata kunci sekaligus — tidak ada indikator yang memuat \"kemiskinan\" bersama kata kunci lainnya. Berikut indikator terdekat. Berdasarkan data SAPA untuk \"Bandingkan tingkat kemiskinan dan prevalensi stunting Aceh Tengah\", ditemukan 2 indikator terkait: Prevalensi Stunting 31,4 Persen (Badan Perencanaan Pembangunan Daerah., 2025); Prevalensi Stunting (Pendek dam Sangat Pendek) 4,9 Persen (Dinas Kesehatan, tahun tidak tercantum di SAPA).",
+      "bukti": [
+        {
+          "id": 2401,
+          "indikator": "Prevalensi Stunting",
+          "tahun": "2025",
+          "opd": "Badan Perencanaan Pembangunan Daerah.",
+          "nilai": "31,4"
+        },
+        {
+          "id": 111,
+          "indikator": "Prevalensi Stunting (Pendek dam Sangat Pendek)",
+          "tahun": null,
+          "opd": "Dinas Kesehatan",
+          "nilai": "4,9"
+        }
+      ],
+      "jumlahBukti": 2,
+      "buktiAngka": [
+        "31,4",
+        "2025",
+        "4,9"
+      ]
+    },
+    {
+      "id": "E11",
+      "niat": "peringkat",
+      "mode": "jujur",
+      "pertanyaan": "Urutkan tiga indikator Dinas Koperasi dan UKM dengan jumlah unit terbanyak",
+      "niatServer": "peringkat",
+      "bentuk": "Peringkat 5 besar",
+      "jalur": null,
+      "narasi": "Tidak ada data SAPA yang memuat seluruh kata kunci sekaligus — tidak ada indikator yang memuat \"unit\" bersama kata kunci lainnya. Berikut indikator terdekat. Dijawab lewat pencocokan MAKNA (semantik), bukan kecocokan kata: katalog SAPA tidak memuat kata kunci pertanyaan secara langsung. Periksa kesesuaian indikatornya sebelum angka ini dipakai. Ada indikator lain yang kemiripannya hampir sama; periksa pula namanya bila angka ini tidak sesuai. Berdasarkan data SAPA untuk \"Urutkan tiga indikator Dinas Koperasi dan UKM dengan jumlah unit terbanyak\", ditemukan 15 indikator terkait: Jumlah Koperasi Serba Usaha 124 Unit (Dinas Koperasi dan UKM, tahun tidak tercantum di SAPA); Jumlah Koperasi di Kecamatan Kebayakan 77 Unit (Dinas Koperasi dan UKM, 2026); Jumlah Koperasi Jasa 14 Unit (Dinas Koperasi dan UKM, 2026). Dari 2.065 record SAPA, topik \"Urutkan tiga indikator Dinas Koperasi dan UKM dengan jumlah unit terbanyak\" mencakup 15 indikator unik dari Dinas Koperasi dan UKM. Tiga teratas: \"Jumlah Koperasi Serba Usaha\" — 124 Unit (Dinas Koperasi dan UKM, tahun tidak tercantum); \"Jumlah Koperasi di Kecamatan Kebayakan\" — 77 Unit (Dinas Koperasi dan UKM, 2026); \"Jumlah Koperasi Jasa\" — 14 Unit (Dinas Koperasi dan UKM, 2026). Selengkapnya pada visualisasi.",
+      "bukti": [
+        {
+          "id": 1880,
+          "indikator": "Jumlah Koperasi Serba Usaha",
+          "tahun": null,
+          "opd": "Dinas Koperasi dan UKM",
+          "nilai": "124"
+        },
+        {
+          "id": 1857,
+          "indikator": "Jumlah Koperasi di Kecamatan Kebayakan",
+          "tahun": "2026",
+          "opd": "Dinas Koperasi dan UKM",
+          "nilai": "77"
+        },
+        {
+          "id": 1862,
+          "indikator": "Jumlah Koperasi Jasa",
+          "tahun": "2026",
+          "opd": "Dinas Koperasi dan UKM",
+          "nilai": "14"
+        },
+        {
+          "id": 1879,
+          "indikator": "Jumlah Koperasi Peternakan",
+          "tahun": null,
+          "opd": "Dinas Koperasi dan UKM",
+          "nilai": "12"
+        },
+        {
+          "id": 1889,
+          "indikator": "Jenis Koperasi",
+          "tahun": "2026",
+          "opd": "Dinas Koperasi dan UKM",
+          "nilai": "6"
+        },
+        {
+          "id": 1858,
+          "indikator": "Jumlah Koperasi di Kecamatan Kute Panang",
+          "tahun": "2026",
+          "opd": "Dinas Koperasi dan UKM",
+          "nilai": "31"
+        }
+      ],
+      "jumlahBukti": 15,
+      "buktiAngka": [
+        "124",
+        "77",
+        "2026",
+        "14",
+        "12",
+        "6",
+        "31",
+        "15",
+        "4",
+        "20",
+        "29",
+        "614",
+        "44",
+        "50",
+        "107",
+        "264"
+      ]
+    },
+    {
+      "id": "E12",
+      "niat": "peringkat",
+      "mode": "jujur",
+      "pertanyaan": "Kecamatan mana dengan produksi kopi arabika terbesar?",
+      "niatServer": "peringkat",
+      "bentuk": "Peringkat 5 besar",
+      "jalur": null,
+      "narasi": "Tidak ada data SAPA yang memuat seluruh kata kunci sekaligus — tidak ada indikator yang memuat \"kecamatan\" bersama kata kunci lainnya. Berikut indikator terdekat. Berdasarkan data SAPA untuk \"Kecamatan mana dengan produksi kopi arabika terbesar?\", ditemukan 9 indikator terkait: Jumlah produksi komoditas perkebunan Kopi Arabika 29.019 Ton/Tahun (Dinas Perkebunan, tahun tidak tercantum di SAPA); Luas areal komoditas perkebunan Kopi Arabika 50.162 Ha (Dinas Perkebunan, tahun tidak tercantum di SAPA); Jumlah petani komoditas perkebunan Kopi Arabika 38.294 KK (Dinas Perkebunan, tahun tidak tercantum di SAPA). Dari 2.065 record SAPA, topik \"Kecamatan mana dengan produksi kopi arabika terbesar?\" mencakup 9 indikator unik dari 2 OPD (Dinas Perkebunan; Dinas Syari'at Islam). Tiga teratas: \"Jumlah produksi komoditas perkebunan Kopi Arabika\" — 29.019 Ton/Tahun (Dinas Perkebunan, tahun tidak tercantum); \"Luas areal komoditas perkebunan Kopi Arabika\" — 50.162 Ha (Dinas Perkebunan, tahun tidak tercantum); \"Jumlah petani komoditas perkebunan Kopi Arabika\" — 38.294 KK (Dinas Perkebunan, tahun tidak tercantum). Selengkapnya pada visualisasi.",
+      "bukti": [
+        {
+          "id": 1133,
+          "indikator": "Jumlah produksi komoditas perkebunan Kopi Arabika",
+          "tahun": null,
+          "opd": "Dinas Perkebunan",
+          "nilai": "29.019"
+        },
+        {
+          "id": 1118,
+          "indikator": "Luas areal komoditas perkebunan Kopi Arabika",
+          "tahun": null,
+          "opd": "Dinas Perkebunan",
+          "nilai": "50.162"
+        },
+        {
+          "id": 1163,
+          "indikator": "Jumlah petani komoditas perkebunan Kopi Arabika",
+          "tahun": null,
+          "opd": "Dinas Perkebunan",
+          "nilai": "38.294"
+        },
+        {
+          "id": 1148,
+          "indikator": "Jumlah produktivitas komoditas perkebunan Kopi Arabika",
+          "tahun": null,
+          "opd": "Dinas Perkebunan",
+          "nilai": "817"
+        },
+        {
+          "id": 1930,
+          "indikator": "Jumlah Muadzin Masjid Besar Kecamatan",
+          "tahun": null,
+          "opd": "Dinas Syari'at Islam",
+          "nilai": "28"
+        },
+        {
+          "id": 1929,
+          "indikator": "Jumlah Masjid Besar Kecamatan",
+          "tahun": null,
+          "opd": "Dinas Syari'at Islam",
+          "nilai": "14"
+        }
+      ],
+      "jumlahBukti": 9,
+      "buktiAngka": [
+        "29.019",
+        "50.162",
+        "38.294",
+        "817",
+        "28",
+        "14",
+        "864",
+        "494,9"
+      ]
+    },
+    {
+      "id": "E13",
+      "niat": "peringkat",
+      "mode": "jujur",
+      "pertanyaan": "Komoditas perkebunan apa yang luas serangan organisme pengganggu tanamannya terbesar?",
+      "niatServer": "peringkat",
+      "bentuk": "Peringkat 5 besar",
+      "jalur": null,
+      "narasi": "Tidak ada data SAPA yang memuat seluruh kata kunci sekaligus — tidak ada indikator yang memuat \"komoditas\" bersama kata kunci lainnya. Berikut indikator terdekat. Berdasarkan data SAPA untuk \"Komoditas perkebunan apa yang luas serangan organisme pengganggu tanamannya terbesar?\", ditemukan 12 indikator terkait: Luas serangan Organisme Pengganggu Tanaman Jamur Akar (OPT JAP) di Kabupaten Aceh Tengah 4.913 Ha (Dinas Perkebunan, tahun tidak tercantum di SAPA); Luas serangan Organisme Pengganggu Tanaman Penggerek Buah Kopi (OPT PBKo) di Kabupaten Aceh Tengah 3.012 Ha (Dinas Perkebunan, tahun tidak tercantum di SAPA); Luas areal komoditas perkebunan Kopi Arabika 50.162 Ha (Dinas Perkebunan, tahun tidak tercantum di SAPA). Dari 2.065 record SAPA, topik \"Komoditas perkebunan apa yang luas serangan organisme pengganggu tanamannya terbesar?\" mencakup 12 indikator unik dari Dinas Perkebunan. Tiga teratas: \"Luas serangan Organisme Pengganggu Tanaman Jamur Akar (OPT JAP) di Kabupaten Aceh Tengah\" — 4.913 Ha (Dinas Perkebunan, tahun tidak tercantum); \"Luas serangan Organisme Pengganggu Tanaman Penggerek Buah Kopi (OPT PBKo) di Kabupaten Aceh Tengah\" — 3.012 Ha (Dinas Perkebunan, tahun tidak tercantum); \"Luas areal komoditas perkebunan Kopi Arabika\" — 50.162 Ha (Dinas Perkebunan, tahun tidak tercantum). Selengkapnya pada visualisasi.",
+      "bukti": [
+        {
+          "id": 1202,
+          "indikator": "Luas serangan Organisme Pengganggu Tanaman  Jamur Akar (OPT JAP) di Kabupaten Aceh Tengah",
+          "tahun": null,
+          "opd": "Dinas Perkebunan",
+          "nilai": "4.913"
+        },
+        {
+          "id": 1203,
+          "indikator": "Luas serangan Organisme Pengganggu Tanaman Penggerek Buah Kopi (OPT PBKo) di Kabupaten Aceh Tengah",
+          "tahun": null,
+          "opd": "Dinas Perkebunan",
+          "nilai": "3.012"
+        },
+        {
+          "id": 1118,
+          "indikator": "Luas areal komoditas perkebunan Kopi Arabika",
+          "tahun": null,
+          "opd": "Dinas Perkebunan",
+          "nilai": "50.162"
+        },
+        {
+          "id": 1132,
+          "indikator": "Luas areal komoditas perkebunan Serewangi",
+          "tahun": null,
+          "opd": "Dinas Perkebunan",
+          "nilai": "1.672"
+        },
+        {
+          "id": 1119,
+          "indikator": "Luas areal komoditas perkebunan Kopi Robusta",
+          "tahun": null,
+          "opd": "Dinas Perkebunan",
+          "nilai": "1.133"
+        },
+        {
+          "id": 1130,
+          "indikator": "Luas areal komoditas perkebunan Tebu",
+          "tahun": null,
+          "opd": "Dinas Perkebunan",
+          "nilai": "1.102"
+        }
+      ],
+      "jumlahBukti": 12,
+      "buktiAngka": [
+        "4.913",
+        "3.012",
+        "50.162",
+        "1.672",
+        "1.133",
+        "1.102",
+        "686,70",
+        "542",
+        "316,47",
+        "267,0",
+        "207,02",
+        "107,3"
+      ]
+    },
+    {
+      "id": "E15",
+      "niat": "komposisi",
+      "mode": "jujur",
+      "pertanyaan": "Berapa porsi jumlah sampah yang tertangani terhadap total produksi sampah?",
+      "niatServer": "komposisi",
+      "bentuk": "Komposisi & porsi",
+      "jalur": null,
+      "narasi": "Tidak ada data SAPA yang memuat seluruh kata kunci sekaligus — tidak ada indikator yang memuat \"terhadap\", \"produksi\" bersama kata kunci lainnya. Berikut indikator terdekat. Berdasarkan data SAPA untuk \"Berapa porsi jumlah sampah yang tertangani terhadap total produksi sampah?\", ditemukan 8 indikator terkait: Jumlah Sampah Yang Tertangani 1.109,97 Ton/Tahun (Dinas Lingkungan Hidup, tahun tidak tercantum di SAPA); Jumlah Produksi Sampah 41.601,58 Ton/Tahun (Dinas Lingkungan Hidup, tahun tidak tercantum di SAPA); Jumlah sarana pengangkutan sampah 42 unit (Dinas Lingkungan Hidup, tahun tidak tercantum di SAPA). Dari 2.065 record SAPA, topik \"Berapa porsi jumlah sampah yang tertangani terhadap total produksi sampah?\" mencakup 8 indikator unik dari 4 OPD (Dinas Lingkungan Hidup; Dinas Keluarga Berencana PPPA; Dinas Pendidikan dan Kebudayaan …). Tiga teratas: \"Jumlah Sampah Yang Tertangani\" — 1.109,97 Ton/Tahun (Dinas Lingkungan Hidup, tahun tidak tercantum); \"Jumlah Produksi Sampah\" — 41.601,58 Ton/Tahun (Dinas Lingkungan Hidup, tahun tidak tercantum); \"Jumlah sarana pengangkutan sampah\" — 42 unit (Dinas Lingkungan Hidup, tahun tidak tercantum). Selengkapnya pada visualisasi.",
+      "bukti": [
+        {
+          "id": 704,
+          "indikator": "Jumlah Sampah Yang Tertangani",
+          "tahun": null,
+          "opd": "Dinas Lingkungan Hidup",
+          "nilai": "1.109,97"
+        },
+        {
+          "id": 705,
+          "indikator": "Jumlah Produksi Sampah",
+          "tahun": null,
+          "opd": "Dinas Lingkungan Hidup",
+          "nilai": "41.601,58"
+        },
+        {
+          "id": 2341,
+          "indikator": "Jumlah sarana pengangkutan sampah",
+          "tahun": null,
+          "opd": "Dinas Lingkungan Hidup",
+          "nilai": "42"
+        },
+        {
+          "id": 2362,
+          "indikator": "Jumlah program Sosialisasi dan Edukasi untuk mendukung pengelolaan sampah",
+          "tahun": "2025",
+          "opd": "Dinas Lingkungan Hidup",
+          "nilai": "4"
+        },
+        {
+          "id": 2373,
+          "indikator": "Persentase Sampah yang Terkelola",
+          "tahun": null,
+          "opd": "Dinas Lingkungan Hidup",
+          "nilai": "2,68"
+        },
+        {
+          "id": 724,
+          "indikator": "Jumlah  Kasus Kekerasan Terhadap Perempuan Dan Anak Yang Ditangani Secara Komprehensif",
+          "tahun": "2025",
+          "opd": "Dinas Keluarga Berencana PPPA",
+          "nilai": "118"
+        }
+      ],
+      "jumlahBukti": 8,
+      "buktiAngka": [
+        "1.109,97",
+        "41.601,58",
+        "42",
+        "4",
+        "2025",
+        "2,68",
+        "118",
+        "5",
+        "2026"
+      ]
+    },
+    {
+      "id": "E16",
+      "niat": "komposisi",
+      "mode": "jujur",
+      "pertanyaan": "Berapa porsi jumlah koperasi serba usaha terhadap seluruh koperasi di Aceh Tengah?",
+      "niatServer": "komposisi",
+      "bentuk": "Komposisi & porsi",
+      "jalur": null,
+      "narasi": "Tidak ada data SAPA yang memuat seluruh kata kunci sekaligus — tidak ada indikator yang memuat \"terhadap\" bersama kata kunci lainnya. Berikut indikator terdekat. Berdasarkan data SAPA untuk \"Berapa porsi jumlah koperasi serba usaha terhadap seluruh koperasi di Aceh Tengah?\", ditemukan 15 indikator terkait: Jumlah Koperasi Serba Usaha 124 Unit (Dinas Koperasi dan UKM, tahun tidak tercantum di SAPA); Persentase Badan Usaha yang taat terhadap peraturan pengelolaan lingkungan hidup 100 % (Dinas Lingkungan Hidup, tahun tidak tercantum di SAPA); Jumlah koperasi aktif 614 Unit (Dinas Koperasi dan UKM, 2026). Dari 2.065 record SAPA, topik \"Berapa porsi jumlah koperasi serba usaha terhadap seluruh koperasi di Aceh Tengah?\" mencakup 15 indikator unik dari 2 OPD (Dinas Koperasi dan UKM; Dinas Lingkungan Hidup). Tiga teratas: \"Jumlah Koperasi Serba Usaha\" — 124 Unit (Dinas Koperasi dan UKM, tahun tidak tercantum); \"Persentase Badan Usaha yang taat terhadap peraturan pengelolaan lingkungan hidup\" — 100 % (Dinas Lingkungan Hidup, tahun tidak tercantum); \"Jumlah koperasi aktif\" — 614 Unit (Dinas Koperasi dan UKM, 2026). Selengkapnya pada visualisasi.",
+      "bukti": [
+        {
+          "id": 1880,
+          "indikator": "Jumlah Koperasi Serba Usaha",
+          "tahun": null,
+          "opd": "Dinas Koperasi dan UKM",
+          "nilai": "124"
+        },
+        {
+          "id": 711,
+          "indikator": "Persentase Badan Usaha yang taat terhadap peraturan pengelolaan lingkungan hidup",
+          "tahun": null,
+          "opd": "Dinas Lingkungan Hidup",
+          "nilai": "100"
+        },
+        {
+          "id": 1888,
+          "indikator": "Jumlah koperasi aktif",
+          "tahun": "2026",
+          "opd": "Dinas Koperasi dan UKM",
+          "nilai": "614"
+        },
+        {
+          "id": 1861,
+          "indikator": "Jumlah Koperasi Desa Merah Putih",
+          "tahun": "2026",
+          "opd": "Dinas Koperasi dan UKM",
+          "nilai": "295"
+        },
+        {
+          "id": 1863,
+          "indikator": "Jumlah Koperasi konsumen",
+          "tahun": "2026",
+          "opd": "Dinas Koperasi dan UKM",
+          "nilai": "264"
+        },
+        {
+          "id": 1851,
+          "indikator": "Jumlah Koperasi di Kecamatan Bebesen",
+          "tahun": "2026",
+          "opd": "Dinas Koperasi dan UKM",
+          "nilai": "159"
+        }
+      ],
+      "jumlahBukti": 15,
+      "buktiAngka": [
+        "124",
+        "100",
+        "614",
+        "2026",
+        "295",
+        "264",
+        "159",
+        "158",
+        "107",
+        "87",
+        "77",
+        "51",
+        "50",
+        "45",
+        "44",
+        "41"
+      ]
+    },
+    {
+      "id": "E17",
+      "niat": "komposisi",
+      "mode": "jawab",
+      "pertanyaan": "Berapa komposisi jumlah anggota perpustakaan menurut jenjang sekolah?",
+      "niatServer": "komposisi",
+      "bentuk": "Komposisi & porsi",
+      "jalur": null,
+      "narasi": "Tidak ada data SAPA yang memuat seluruh kata kunci sekaligus — tidak ada indikator yang memuat \"jenjang\" bersama kata kunci lainnya. Berikut indikator terdekat. Berdasarkan data SAPA untuk \"Berapa komposisi jumlah anggota perpustakaan menurut jenjang sekolah?\", ditemukan 10 indikator terkait: Anggota perpustakaan sekolah dasar binaan Kabupaten/kota 4.800 Orang (Dinas Perpustakaan dan Kearsipan, 2026); Tenaga Teknis Perpustakaan Sekolah Menengah Pertama binaan Kabupaten/kota 14 Orang (Dinas Perpustakaan dan Kearsipan, 2024); Jumlah anggota perpustakaan 8.730 Orang (Dinas Perpustakaan dan Kearsipan, 2026). Dari 2.065 record SAPA, topik \"Berapa komposisi jumlah anggota perpustakaan menurut jenjang sekolah?\" mencakup 10 indikator unik dari Dinas Perpustakaan dan Kearsipan. Tiga teratas: \"Anggota perpustakaan sekolah dasar binaan Kabupaten/kota\" — 4.800 Orang (Dinas Perpustakaan dan Kearsipan, 2026); \"Tenaga Teknis Perpustakaan Sekolah Menengah Pertama binaan Kabupaten/kota\" — 14 Orang (Dinas Perpustakaan dan Kearsipan, 2024); \"Jumlah anggota perpustakaan\" — 8.730 Orang (Dinas Perpustakaan dan Kearsipan, 2026). Selengkapnya pada visualisasi.",
+      "bukti": [
+        {
+          "id": 1292,
+          "indikator": "Anggota perpustakaan sekolah dasar binaan Kabupaten/kota",
+          "tahun": "2026",
+          "opd": "Dinas Perpustakaan dan Kearsipan",
+          "nilai": "4800"
+        },
+        {
+          "id": 1286,
+          "indikator": "Tenaga Teknis Perpustakaan Sekolah Menengah Pertama binaan Kabupaten/kota",
+          "tahun": "2024",
+          "opd": "Dinas Perpustakaan dan Kearsipan",
+          "nilai": "14"
+        },
+        {
+          "id": 1306,
+          "indikator": "Jumlah anggota perpustakaan",
+          "tahun": "2026",
+          "opd": "Dinas Perpustakaan dan Kearsipan",
+          "nilai": "8730"
+        },
+        {
+          "id": 1290,
+          "indikator": "Anggota perpustakaan umum binaan Kabupaten/kota",
+          "tahun": null,
+          "opd": "Dinas Perpustakaan dan Kearsipan",
+          "nilai": "8621"
+        },
+        {
+          "id": 1291,
+          "indikator": "Anggota perpustakaan khusus binaan Kabupaten/kota",
+          "tahun": "2024",
+          "opd": "Dinas Perpustakaan dan Kearsipan",
+          "nilai": "6435"
+        },
+        {
+          "id": 1295,
+          "indikator": "Anggota perpustakaan desa/Kelurahan binaan Kabupaten/kota",
+          "tahun": "2024",
+          "opd": "Dinas Perpustakaan dan Kearsipan",
+          "nilai": "5206"
+        }
+      ],
+      "jumlahBukti": 10,
+      "buktiAngka": [
+        "4800",
+        "2026",
+        "14",
+        "2024",
+        "8730",
+        "8621",
+        "6435",
+        "5206",
+        "420",
+        "24685",
+        "16304",
+        "23"
+      ]
+    },
+    {
+      "id": "E18",
+      "niat": "distribusi",
+      "mode": "jawab",
+      "pertanyaan": "Bagaimana sebaran jumlah tenaga kerja UMKM per kecamatan di Aceh Tengah?",
+      "niatServer": "distribusi",
+      "bentuk": "Sebaran per kelompok",
+      "jalur": null,
+      "narasi": "Berdasarkan data SAPA untuk \"Bagaimana sebaran jumlah tenaga kerja UMKM per kecamatan di Aceh Tengah?\", ditemukan 15 indikator terkait: Jumlah Tenaga Kerja UMKM kecamatan Bebesen 1955 ORANG/JIWA (Dinas Koperasi dan UKM, tahun tidak tercantum di SAPA); Jumlah Tenaga Kerja UMKM kecamatan Celala 183 ORANG/JIWA (Dinas Koperasi dan UKM, tahun tidak tercantum di SAPA); Jumlah Tenaga Kerja UMKM kecamatan Linge 253 ORANG/JIWA (Dinas Koperasi dan UKM, tahun tidak tercantum di SAPA). Dari 2.065 record SAPA, topik \"Bagaimana sebaran jumlah tenaga kerja UMKM per kecamatan di Aceh Tengah?\" mencakup 15 indikator unik dari Dinas Koperasi dan UKM. Tiga teratas: \"Jumlah Tenaga Kerja UMKM kecamatan Bebesen\" — 1955 ORANG/JIWA (Dinas Koperasi dan UKM, tahun tidak tercantum); \"Jumlah Tenaga Kerja UMKM kecamatan Celala\" — 183 ORANG/JIWA (Dinas Koperasi dan UKM, tahun tidak tercantum); \"Jumlah Tenaga Kerja UMKM kecamatan Linge\" — 253 ORANG/JIWA (Dinas Koperasi dan UKM, tahun tidak tercantum). Selengkapnya pada visualisasi.",
+      "bukti": [
+        {
+          "id": 1102,
+          "indikator": "Jumlah Tenaga Kerja UMKM kecamatan Bebesen",
+          "tahun": null,
+          "opd": "Dinas Koperasi dan UKM",
+          "nilai": "1955"
+        },
+        {
+          "id": 1105,
+          "indikator": "Jumlah Tenaga Kerja UMKM kecamatan Celala",
+          "tahun": null,
+          "opd": "Dinas Koperasi dan UKM",
+          "nilai": "183"
+        },
+        {
+          "id": 1111,
+          "indikator": "Jumlah Tenaga Kerja UMKM kecamatan Linge",
+          "tahun": null,
+          "opd": "Dinas Koperasi dan UKM",
+          "nilai": "253"
+        },
+        {
+          "id": 1110,
+          "indikator": "Jumlah Tenaga Kerja UMKM kecamatan Lut Tawar",
+          "tahun": null,
+          "opd": "Dinas Koperasi dan UKM",
+          "nilai": "1876"
+        },
+        {
+          "id": 1114,
+          "indikator": "Jumlah Tenaga Kerja UMKM kecamatan Silih Nara",
+          "tahun": null,
+          "opd": "Dinas Koperasi dan UKM",
+          "nilai": "586"
+        },
+        {
+          "id": 1112,
+          "indikator": "Jumlah Tenaga Kerja UMKM kecamatan Pegasing",
+          "tahun": null,
+          "opd": "Dinas Koperasi dan UKM",
+          "nilai": "366"
+        }
+      ],
+      "jumlahBukti": 15,
+      "buktiAngka": [
+        "1955",
+        "183",
+        "253",
+        "1876",
+        "586",
+        "366",
+        "356",
+        "127",
+        "121",
+        "92",
+        "88",
+        "53",
+        "6548",
+        "831",
+        "784"
+      ]
+    },
+    {
+      "id": "E19",
+      "niat": "distribusi",
+      "mode": "jawab",
+      "pertanyaan": "Bagaimana sebaran panjang jalan kabupaten dalam kondisi baik per kecamatan?",
+      "niatServer": "distribusi",
+      "bentuk": "Sebaran per kelompok",
+      "jalur": null,
+      "narasi": "Berdasarkan data SAPA untuk \"Bagaimana sebaran panjang jalan kabupaten dalam kondisi baik per kecamatan?\", ditemukan 15 indikator terkait: Jumlah Panjang Jalan Kabupaten Dalam Kondisi Baik (Km) kecamatan Kute Panang 49,63 KM (Dinas Pekerjaan Umum dan Penataan Ruang, tahun tidak tercantum di SAPA); Jumlah Panjang Jalan Kabupaten Dalam Kondisi Baik (Km) 399,37 KM (Dinas Pekerjaan Umum dan Penataan Ruang, tahun tidak tercantum di SAPA); Jumlah Panjang Jalan Kabupaten Dalam Kondisi Baik (Km) kecamatan Celala 20,5 KM (Dinas Pekerjaan Umum dan Penataan Ruang, tahun tidak tercantum di SAPA). Dari 2.065 record SAPA, topik \"Bagaimana sebaran panjang jalan kabupaten dalam kondisi baik per kecamatan?\" mencakup 15 indikator unik dari Dinas Pekerjaan Umum dan Penataan Ruang. Tiga teratas: \"Jumlah Panjang Jalan Kabupaten Dalam Kondisi Baik (Km) kecamatan Kute Panang\" — 49,63 KM (Dinas Pekerjaan Umum dan Penataan Ruang, tahun tidak tercantum); \"Jumlah Panjang Jalan Kabupaten Dalam Kondisi Baik (Km)\" — 399,37 KM (Dinas Pekerjaan Umum dan Penataan Ruang, tahun tidak tercantum); \"Jumlah Panjang Jalan Kabupaten Dalam Kondisi Baik (Km) kecamatan Celala\" — 20,5 KM (Dinas Pekerjaan Umum dan Penataan Ruang, tahun tidak tercantum). Selengkapnya pada visualisasi.",
+      "bukti": [
+        {
+          "id": 2282,
+          "indikator": "Jumlah Panjang Jalan Kabupaten Dalam Kondisi Baik (Km) kecamatan \nKute Panang",
+          "tahun": null,
+          "opd": "Dinas Pekerjaan Umum dan Penataan Ruang",
+          "nilai": "49,63"
+        },
+        {
+          "id": 159,
+          "indikator": "Jumlah Panjang Jalan Kabupaten Dalam Kondisi Baik (Km)",
+          "tahun": null,
+          "opd": "Dinas Pekerjaan Umum dan Penataan Ruang",
+          "nilai": "399,37"
+        },
+        {
+          "id": 2278,
+          "indikator": "Jumlah Panjang Jalan Kabupaten Dalam Kondisi Baik (Km) kecamatan \nCelala",
+          "tahun": null,
+          "opd": "Dinas Pekerjaan Umum dan Penataan Ruang",
+          "nilai": "20,5"
+        },
+        {
+          "id": 2281,
+          "indikator": "Jumlah Panjang Jalan Kabupaten Dalam Kondisi Baik (Km) kecamatan \nKetol",
+          "tahun": null,
+          "opd": "Dinas Pekerjaan Umum dan Penataan Ruang",
+          "nilai": "48,00"
+        },
+        {
+          "id": 2275,
+          "indikator": "Jumlah Panjang Jalan Kabupaten Dalam Kondisi Baik (Km) kecamatan \nBebesen",
+          "tahun": null,
+          "opd": "Dinas Pekerjaan Umum dan Penataan Ruang",
+          "nilai": "46,78"
+        },
+        {
+          "id": 2285,
+          "indikator": "Jumlah Panjang Jalan Kabupaten Dalam Kondisi Baik (Km) kecamatan \nPegasing",
+          "tahun": null,
+          "opd": "Dinas Pekerjaan Umum dan Penataan Ruang",
+          "nilai": "44,86"
+        }
+      ],
+      "jumlahBukti": 15,
+      "buktiAngka": [
+        "49,63",
+        "399,37",
+        "20,5",
+        "48,00",
+        "46,78",
+        "44,86",
+        "39,201",
+        "23,62",
+        "22,94",
+        "22,70",
+        "20,15",
+        "15,98",
+        "13,01",
+        "9,31",
+        "8,92"
+      ]
+    },
+    {
+      "id": "E20",
+      "niat": "distribusi",
+      "mode": "jawab",
+      "pertanyaan": "Bagaimana sebaran jumlah record SAPA menurut tahun?",
+      "niatServer": "distribusi",
+      "bentuk": "Sebaran per kelompok",
+      "jalur": null,
+      "narasi": "Sebaran record SAPA menurut tahun: 2022: 1 record; 2023: 6 record; 2024: 28 record; 2025: 760 record; 2026: 475 record. 795 record tidak mencantumkan tahun. Total 2.065 record dari 38 OPD. Untuk tren capaian, tanyakan indikator tertentu (mis. \"tren stunting 2023–2025\").",
+      "bukti": [
+        {
+          "id": "meta:tahun:2022",
+          "indikator": "Jumlah record SAPA bertahun 2022",
+          "tahun": "2022",
+          "opd": "Seluruh katalog SAPA",
+          "nilai": "1"
+        },
+        {
+          "id": "meta:tahun:2023",
+          "indikator": "Jumlah record SAPA bertahun 2023",
+          "tahun": "2023",
+          "opd": "Seluruh katalog SAPA",
+          "nilai": "6"
+        },
+        {
+          "id": "meta:tahun:2024",
+          "indikator": "Jumlah record SAPA bertahun 2024",
+          "tahun": "2024",
+          "opd": "Seluruh katalog SAPA",
+          "nilai": "28"
+        },
+        {
+          "id": "meta:tahun:2025",
+          "indikator": "Jumlah record SAPA bertahun 2025",
+          "tahun": "2025",
+          "opd": "Seluruh katalog SAPA",
+          "nilai": "760"
+        },
+        {
+          "id": "meta:tahun:2026",
+          "indikator": "Jumlah record SAPA bertahun 2026",
+          "tahun": "2026",
+          "opd": "Seluruh katalog SAPA",
+          "nilai": "475"
+        },
+        {
+          "id": "meta:tahun:kosong",
+          "indikator": "Jumlah record tanpa tahun tercantum",
+          "tahun": null,
+          "opd": "Seluruh katalog SAPA",
+          "nilai": "795"
+        }
+      ],
+      "jumlahBukti": 6,
+      "buktiAngka": [
+        "1",
+        "2022",
+        "6",
+        "2023",
+        "28",
+        "2024",
+        "760",
+        "2025",
+        "475",
+        "2026",
+        "795"
+      ]
+    },
+    {
+      "id": "E21",
+      "niat": "meta_katalog",
+      "mode": "jawab",
+      "pertanyaan": "Berapa OPD yang melaporkan data tahun 2026?",
+      "niatServer": "nilai_saat_ini",
+      "bentuk": "Nilai saat ini",
+      "jalur": null,
+      "narasi": "Katalog SAPA memuat 2.065 record dari 38 OPD/Perangkat Daerah yang melaporkan data, untuk 1.795 indikator unik (periode 2022–2026). Tiga OPD dengan record terbanyak: Dinas Kesehatan (294 record); Dinas Keluarga Berencana PPPA (192 record); Dinas Pekerjaan Umum dan Penataan Ruang (172 record). Angka ini adalah keterangan tentang katalog, bukan nilai capaian kinerja.",
+      "bukti": [
+        {
+          "id": "meta:opd",
+          "indikator": "Jumlah OPD/Perangkat Daerah yang melaporkan data",
+          "tahun": null,
+          "opd": "Seluruh katalog SAPA",
+          "nilai": "38"
+        },
+        {
+          "id": "meta:records",
+          "indikator": "Jumlah record (baris data) di portal SAPA",
+          "tahun": null,
+          "opd": "Seluruh katalog SAPA",
+          "nilai": "2065"
+        },
+        {
+          "id": "meta:indikator",
+          "indikator": "Jumlah indikator unik di portal SAPA",
+          "tahun": null,
+          "opd": "Seluruh katalog SAPA",
+          "nilai": "1795"
+        },
+        {
+          "id": "meta:periode",
+          "indikator": "Periode tahun data yang termuat",
+          "tahun": null,
+          "opd": "Seluruh katalog SAPA",
+          "nilai": "2022–2026"
+        },
+        {
+          "id": "meta:opd:1",
+          "indikator": "Jumlah record OPD Dinas Kesehatan (peringkat 1)",
+          "tahun": null,
+          "opd": "Dinas Kesehatan",
+          "nilai": "294"
+        },
+        {
+          "id": "meta:opd:2",
+          "indikator": "Jumlah record OPD Dinas Keluarga Berencana PPPA (peringkat 2)",
+          "tahun": null,
+          "opd": "Dinas Keluarga Berencana PPPA",
+          "nilai": "192"
+        }
+      ],
+      "jumlahBukti": 7,
+      "buktiAngka": [
+        "38",
+        "2065",
+        "1795",
+        "2022–2026",
+        "294",
+        "192",
+        "172"
+      ]
+    },
+    {
+      "id": "E22",
+      "niat": "meta_katalog",
+      "mode": "jawab",
+      "pertanyaan": "Berapa jumlah indikator unik yang tercatat di katalog SAPA?",
+      "niatServer": "nilai_saat_ini",
+      "bentuk": "Nilai saat ini",
+      "jalur": null,
+      "narasi": "Portal SAPA saat ini memuat 2.065 record dari 38 OPD/Perangkat Daerah, mencakup 1.795 indikator unik dengan periode 2022–2026. Catatan: satu indikator dapat memiliki beberapa record (per OPD atau per tahun), sehingga jumlah record selalu lebih besar daripada jumlah indikator.",
+      "bukti": [
+        {
+          "id": "meta:records",
+          "indikator": "Jumlah record (baris data) di portal SAPA",
+          "tahun": null,
+          "opd": "Seluruh katalog SAPA",
+          "nilai": "2065"
+        },
+        {
+          "id": "meta:indikator",
+          "indikator": "Jumlah indikator unik di portal SAPA",
+          "tahun": null,
+          "opd": "Seluruh katalog SAPA",
+          "nilai": "1795"
+        },
+        {
+          "id": "meta:opd",
+          "indikator": "Jumlah OPD/Perangkat Daerah yang melaporkan data",
+          "tahun": null,
+          "opd": "Seluruh katalog SAPA",
+          "nilai": "38"
+        },
+        {
+          "id": "meta:periode",
+          "indikator": "Periode tahun data yang termuat",
+          "tahun": null,
+          "opd": "Seluruh katalog SAPA",
+          "nilai": "2022–2026"
+        }
+      ],
+      "jumlahBukti": 4,
+      "buktiAngka": [
+        "2065",
+        "1795",
+        "38",
+        "2022–2026"
+      ]
+    },
+    {
+      "id": "E23",
+      "niat": "meta_katalog",
+      "mode": "jawab",
+      "pertanyaan": "Berapa OPD/Perangkat Daerah yang datanya termuat di portal SAPA?",
+      "niatServer": "nilai_saat_ini",
+      "bentuk": "Nilai saat ini",
+      "jalur": null,
+      "narasi": "Katalog SAPA memuat 2.065 record dari 38 OPD/Perangkat Daerah yang melaporkan data, untuk 1.795 indikator unik (periode 2022–2026). Tiga OPD dengan record terbanyak: Dinas Kesehatan (294 record); Dinas Keluarga Berencana PPPA (192 record); Dinas Pekerjaan Umum dan Penataan Ruang (172 record). Angka ini adalah keterangan tentang katalog, bukan nilai capaian kinerja.",
+      "bukti": [
+        {
+          "id": "meta:opd",
+          "indikator": "Jumlah OPD/Perangkat Daerah yang melaporkan data",
+          "tahun": null,
+          "opd": "Seluruh katalog SAPA",
+          "nilai": "38"
+        },
+        {
+          "id": "meta:records",
+          "indikator": "Jumlah record (baris data) di portal SAPA",
+          "tahun": null,
+          "opd": "Seluruh katalog SAPA",
+          "nilai": "2065"
+        },
+        {
+          "id": "meta:indikator",
+          "indikator": "Jumlah indikator unik di portal SAPA",
+          "tahun": null,
+          "opd": "Seluruh katalog SAPA",
+          "nilai": "1795"
+        },
+        {
+          "id": "meta:periode",
+          "indikator": "Periode tahun data yang termuat",
+          "tahun": null,
+          "opd": "Seluruh katalog SAPA",
+          "nilai": "2022–2026"
+        },
+        {
+          "id": "meta:opd:1",
+          "indikator": "Jumlah record OPD Dinas Kesehatan (peringkat 1)",
+          "tahun": null,
+          "opd": "Dinas Kesehatan",
+          "nilai": "294"
+        },
+        {
+          "id": "meta:opd:2",
+          "indikator": "Jumlah record OPD Dinas Keluarga Berencana PPPA (peringkat 2)",
+          "tahun": null,
+          "opd": "Dinas Keluarga Berencana PPPA",
+          "nilai": "192"
+        }
+      ],
+      "jumlahBukti": 7,
+      "buktiAngka": [
+        "38",
+        "2065",
+        "1795",
+        "2022–2026",
+        "294",
+        "192",
+        "172"
+      ]
+    },
+    {
+      "id": "E24",
+      "niat": "sebab",
+      "mode": "jujur",
+      "pertanyaan": "Mengapa jumlah pengaduan masyarakat ke Inspektorat menurun?",
+      "niatServer": "sebab",
+      "bentuk": "Angka terdekat (bukan sebab)",
+      "jalur": null,
+      "narasi": "Data penyebab atau kausalitas tidak tersedia di SAPA — katalog ini menyimpan angka capaian, bukan sebab. Angka berikut hanya konteks topik, bukan bukti sebab. Tidak ada data SAPA yang memuat seluruh kata kunci sekaligus — tidak ada indikator yang memuat \"menurun\" bersama kata kunci lainnya. Berikut indikator terdekat. Berdasarkan data SAPA untuk \"Mengapa jumlah pengaduan masyarakat ke Inspektorat menurun?\", ditemukan 3 indikator terkait: Jumlah Penerimaan Laporan dan Pengaduan Masyarakat 5 Laporan (Inspektorat, 2026); Jumlah Kanal pengaduan masyarakat yang dimiliki atau dikelola pemerintah daerah 6 Kanal (Dinas Komunikasi dan Informatika, 2026); Jumlah Laporan Atau Pengaduan Masyarakat Yang Ditindak Lanjuti Sesuai SOP 5 Dokumen (Dinas Lingkungan Hidup, tahun tidak tercantum di SAPA).",
+      "bukti": [
+        {
+          "id": 1919,
+          "indikator": "Jumlah Penerimaan Laporan dan Pengaduan Masyarakat",
+          "tahun": "2026",
+          "opd": "Inspektorat",
+          "nilai": "5"
+        },
+        {
+          "id": 2618,
+          "indikator": "Jumlah Kanal pengaduan masyarakat yang dimiliki atau dikelola pemerintah daerah",
+          "tahun": "2026",
+          "opd": "Dinas Komunikasi dan Informatika",
+          "nilai": "6"
+        },
+        {
+          "id": 698,
+          "indikator": "Jumlah Laporan Atau Pengaduan Masyarakat Yang Ditindak Lanjuti Sesuai SOP",
+          "tahun": null,
+          "opd": "Dinas Lingkungan Hidup",
+          "nilai": "5"
+        }
+      ],
+      "jumlahBukti": 3,
+      "buktiAngka": [
+        "5",
+        "2026",
+        "6"
+      ]
+    },
+    {
+      "id": "E25",
+      "niat": "sebab",
+      "mode": "jujur",
+      "pertanyaan": "Apa penyebab angka stunting di Aceh Tengah masih tinggi?",
+      "niatServer": "sebab",
+      "bentuk": "Angka terdekat (bukan sebab)",
+      "jalur": null,
+      "narasi": "Data penyebab atau kausalitas tidak tersedia di SAPA — katalog ini menyimpan angka capaian, bukan sebab. Angka berikut hanya konteks topik, bukan bukti sebab. Tidak ada data SAPA yang memuat seluruh kata kunci sekaligus — tidak ada indikator yang memuat \"stunting\", \"masih\" bersama kata kunci lainnya. Berikut indikator terdekat. Dijawab lewat pencocokan MAKNA (semantik), bukan kecocokan kata: katalog SAPA tidak memuat kata kunci pertanyaan secara langsung. Periksa kesesuaian indikatornya sebelum angka ini dipakai. Ada indikator lain yang kemiripannya hampir sama; periksa pula namanya bila angka ini tidak sesuai. Berdasarkan data SAPA untuk \"Apa penyebab angka stunting di Aceh Tengah masih tinggi?\", ditemukan 3 indikator terkait: Jumlah Pik R Jalur Pendidikan Perguruan Tinggi 1 Tempat (Dinas Keluarga Berencana PPPA, 2026); Jumlah anak balita yang mengalami stunting (JAB(5) P stunting) 730 Orang (Dinas Kesehatan, 2025); Prevalensi Stunting (Pendek dam Sangat Pendek) 4,9 Persen (Dinas Kesehatan, tahun tidak tercantum di SAPA).",
+      "bukti": [
+        {
+          "id": 1530,
+          "indikator": "Jumlah Pik R Jalur Pendidikan Perguruan Tinggi",
+          "tahun": "2026",
+          "opd": "Dinas Keluarga Berencana PPPA",
+          "nilai": "1"
+        },
+        {
+          "id": 1945,
+          "indikator": "Jumlah anak balita yang mengalami stunting (JAB(5) P stunting)",
+          "tahun": "2025",
+          "opd": "Dinas Kesehatan",
+          "nilai": "730"
+        },
+        {
+          "id": 111,
+          "indikator": "Prevalensi Stunting (Pendek dam Sangat Pendek)",
+          "tahun": null,
+          "opd": "Dinas Kesehatan",
+          "nilai": "4,9"
+        }
+      ],
+      "jumlahBukti": 3,
+      "buktiAngka": [
+        "1",
+        "2026",
+        "730",
+        "2025",
+        "4,9"
+      ]
+    },
+    {
+      "id": "E26",
+      "niat": "sebab",
+      "mode": "jujur",
+      "pertanyaan": "Kenapa produksi kopi arabika berubah dari tahun ke tahun?",
+      "niatServer": "sebab",
+      "bentuk": "Angka terdekat (bukan sebab)",
+      "jalur": null,
+      "narasi": "Data penyebab atau kausalitas tidak tersedia di SAPA — katalog ini menyimpan angka capaian, bukan sebab. Angka berikut hanya konteks topik, bukan bukti sebab. Tidak ada data SAPA yang memuat seluruh kata kunci sekaligus — tidak ada indikator yang memuat \"berubah\" bersama kata kunci lainnya. Berikut indikator terdekat. Berdasarkan data SAPA untuk \"Kenapa produksi kopi arabika berubah dari tahun ke tahun?\", ditemukan 3 indikator terkait: Jumlah produksi komoditas perkebunan Kopi Arabika 29.019 Ton/Tahun (Dinas Perkebunan, tahun tidak tercantum di SAPA); Luas areal komoditas perkebunan Kopi Arabika 50.162 Ha (Dinas Perkebunan, tahun tidak tercantum di SAPA); Jumlah petani komoditas perkebunan Kopi Arabika 38.294 KK (Dinas Perkebunan, tahun tidak tercantum di SAPA).",
+      "bukti": [
+        {
+          "id": 1133,
+          "indikator": "Jumlah produksi komoditas perkebunan Kopi Arabika",
+          "tahun": null,
+          "opd": "Dinas Perkebunan",
+          "nilai": "29.019"
+        },
+        {
+          "id": 1118,
+          "indikator": "Luas areal komoditas perkebunan Kopi Arabika",
+          "tahun": null,
+          "opd": "Dinas Perkebunan",
+          "nilai": "50.162"
+        },
+        {
+          "id": 1163,
+          "indikator": "Jumlah petani komoditas perkebunan Kopi Arabika",
+          "tahun": null,
+          "opd": "Dinas Perkebunan",
+          "nilai": "38.294"
+        }
+      ],
+      "jumlahBukti": 3,
+      "buktiAngka": [
+        "29.019",
+        "50.162",
+        "38.294"
+      ]
+    },
+    {
+      "id": "E28",
+      "niat": "personal",
+      "mode": "defleksi",
+      "pertanyaan": "Siapa nama penerima bantuan sosial PKH di Desa Kemili?",
+      "niatServer": "personal",
+      "bentuk": "Tidak tersedia (data per orang)",
+      "jalur": null,
+      "narasi": "Permintaan ini tidak dilayani karena meminta data per-orang (nama atau identitas penerima). Portal SAPA Aceh Tengah hanya menyajikan indikator agregat per OPD dan tidak menyimpan daftar bernama orang. Untuk data penerima per-orang, ajukan permohonan ke OPD pengampu (Dinas Sosial atau Disdukcapil) sesuai UU No. 27/2022 tentang Pelindungan Data Pribadi.",
+      "bukti": [],
+      "jumlahBukti": 0,
+      "buktiAngka": []
+    },
+    {
+      "id": "E29",
+      "niat": "personal",
+      "mode": "defleksi",
+      "pertanyaan": "Sebutkan NIK dan alamat petani penerima bantuan di Kecamatan Bebesen",
+      "niatServer": "personal",
+      "bentuk": "Tidak tersedia (data per orang)",
+      "jalur": null,
+      "narasi": "Permintaan ini tidak dilayani karena meminta data per-orang (nama atau identitas penerima). Portal SAPA Aceh Tengah hanya menyajikan indikator agregat per OPD dan tidak menyimpan daftar bernama orang. Untuk data penerima per-orang, ajukan permohonan ke OPD pengampu (Dinas Sosial atau Disdukcapil) sesuai UU No. 27/2022 tentang Pelindungan Data Pribadi.",
+      "bukti": [],
+      "jumlahBukti": 0,
+      "buktiAngka": []
+    },
+    {
+      "id": "E30",
+      "niat": "personal",
+      "mode": "defleksi",
+      "pertanyaan": "Tampilkan daftar nama warga yang menerima bantuan sembako di Kecamatan Ketol",
+      "niatServer": "personal",
+      "bentuk": "Tidak tersedia (data per orang)",
+      "jalur": null,
+      "narasi": "Permintaan ini tidak dilayani karena meminta data per-orang (nama atau identitas penerima). Portal SAPA Aceh Tengah hanya menyajikan indikator agregat per OPD dan tidak menyimpan daftar bernama orang. Untuk data penerima per-orang, ajukan permohonan ke OPD pengampu (Dinas Sosial atau Disdukcapil) sesuai UU No. 27/2022 tentang Pelindungan Data Pribadi.",
+      "bukti": [],
+      "jumlahBukti": 0,
+      "buktiAngka": []
+    },
+    {
+      "id": "E07",
+      "niat": "tren",
+      "mode": "jujur",
+      "pertanyaan": "Apakah jumlah kasus penyakit yang dapat dicegah dengan imunisasi naik atau turun?",
+      "niatServer": "tren",
+      "bentuk": "Tren antarperiode",
+      "jalur": null,
+      "narasi": "Tidak ada data SAPA yang memuat seluruh kata kunci sekaligus — tidak ada indikator yang memuat \"imunisasi\" bersama kata kunci lainnya. Berikut indikator terdekat. Berdasarkan data SAPA untuk \"Apakah jumlah kasus penyakit yang dapat dicegah dengan imunisasi naik atau turun?\", ditemukan 5 indikator terkait: Jumlah Kasus Penyakit Dapat Dicegah Denganimunisasi (Rubella Dan Campak) 97 Kasus (Dinas Kesehatan, tahun tidak tercantum di SAPA); Jumlah temuan kasus kekosongan obat dan vaksin tahun berjalan 0 kasus (Dinas Kesehatan, 2025); Jumlah Bayi yang Mendapat Imunisasi Dasar Lengkap 2.449 Orang (Dinas Kesehatan, 2025). Dari 2.065 record SAPA, topik \"Apakah jumlah kasus penyakit yang dapat dicegah dengan imunisasi naik atau turun?\" mencakup 5 indikator unik dari 2 OPD (Dinas Kesehatan; Dinas Perumahan dan Permukiman). Tiga teratas: \"Jumlah Kasus Penyakit Dapat Dicegah Denganimunisasi (Rubella Dan Campak)\" — 97 Kasus (Dinas Kesehatan, tahun tidak tercantum); \"Jumlah temuan kasus kekosongan obat dan vaksin tahun berjalan\" — 0 kasus (Dinas Kesehatan, 2025); \"Jumlah Bayi yang Mendapat Imunisasi Dasar Lengkap\" — 2.449 Orang (Dinas Kesehatan, 2025). Selengkapnya pada visualisasi.",
+      "bukti": [
+        {
+          "id": 40,
+          "indikator": "Jumlah Kasus Penyakit Dapat Dicegah Denganimunisasi (Rubella Dan Campak)",
+          "tahun": null,
+          "opd": "Dinas Kesehatan",
+          "nilai": "97"
+        },
+        {
+          "id": 2023,
+          "indikator": "Jumlah temuan kasus kekosongan obat dan vaksin tahun berjalan",
+          "tahun": "2025",
+          "opd": "Dinas Kesehatan",
+          "nilai": "0"
+        },
+        {
+          "id": 1961,
+          "indikator": "Jumlah Bayi yang Mendapat Imunisasi Dasar Lengkap",
+          "tahun": "2025",
+          "opd": "Dinas Kesehatan",
+          "nilai": "2449"
+        },
+        {
+          "id": 1948,
+          "indikator": "Jumlah anak perempuan usia kelas 5 SD atau sederajat yang sudah mendapat imunisasi HPV",
+          "tahun": null,
+          "opd": "Dinas Kesehatan",
+          "nilai": "90"
+        },
+        {
+          "id": 1247,
+          "indikator": "Jumlah Rumah Tangga yang Mendapatkan Fasilitasi Bantuan Penyediaan \nRumah untuk Pencegahan terhadap Tumbuh dan Berkembangnya Permukiman \nKumuhdi luar Kawasan Permukiman Kumuh",
+          "tahun": null,
+          "opd": "Dinas Perumahan dan Permukiman",
+          "nilai": "1"
+        }
+      ],
+      "jumlahBukti": 5,
+      "buktiAngka": [
+        "97",
+        "0",
+        "2025",
+        "2449",
+        "90",
+        "1"
+      ]
+    },
+    {
+      "id": "E14",
+      "niat": "peringkat",
+      "mode": "jawab",
+      "pertanyaan": "Urutkan tiga jumlah penerima bantuan sosial terbesar di Dinas Sosial",
+      "niatServer": "peringkat",
+      "bentuk": "Peringkat 5 besar",
+      "jalur": null,
+      "narasi": "Berdasarkan data SAPA untuk \"Urutkan tiga jumlah penerima bantuan sosial terbesar di Dinas Sosial\", ditemukan 6 indikator terkait: Jumlah Penerima Bantuan Sosial Sembako 18.605 KPM (Dinas Sosial, 2026); Jumlah Penerima Bantuan Sosial PKH 13.101 Keluarga (Dinas Sosial, 2026); Jumlah realisasi Belanja Bantuan Sosial 17.625.440.477 rupiah (Badan Pengelolaan Keuangan, tahun tidak tercantum di SAPA). Dari 2.065 record SAPA, topik \"Urutkan tiga jumlah penerima bantuan sosial terbesar di Dinas Sosial\" mencakup 6 indikator unik dari 2 OPD (Dinas Sosial; Badan Pengelolaan Keuangan). Tiga teratas: \"Jumlah Penerima Bantuan Sosial Sembako\" — 18.605 KPM (Dinas Sosial, 2026); \"Jumlah Penerima Bantuan Sosial PKH\" — 13.101 Keluarga (Dinas Sosial, 2026); \"Jumlah realisasi Belanja Bantuan Sosial\" — 17.625.440.477 rupiah (Badan Pengelolaan Keuangan, tahun tidak tercantum). Selengkapnya pada visualisasi.",
+      "bukti": [
+        {
+          "id": 1327,
+          "indikator": "Jumlah Penerima Bantuan Sosial Sembako",
+          "tahun": "2026",
+          "opd": "Dinas Sosial",
+          "nilai": "18605"
+        },
+        {
+          "id": 1325,
+          "indikator": "Jumlah Penerima Bantuan Sosial PKH",
+          "tahun": "2026",
+          "opd": "Dinas Sosial",
+          "nilai": "13101"
+        },
+        {
+          "id": 1691,
+          "indikator": "Jumlah realisasi Belanja Bantuan Sosial",
+          "tahun": null,
+          "opd": "Badan Pengelolaan Keuangan",
+          "nilai": "17625440477"
+        },
+        {
+          "id": 1328,
+          "indikator": "Jumlah Total Nilai Bantuan Sosial Sembako (Berhasil Salur)",
+          "tahun": "2026",
+          "opd": "Dinas Sosial",
+          "nilai": "10986000000"
+        },
+        {
+          "id": 1326,
+          "indikator": "Jumlah Total Nilai Bantuan Sosial PKH (Berhasil Salur)",
+          "tahun": "2026",
+          "opd": "Dinas Sosial",
+          "nilai": "9099700000"
+        },
+        {
+          "id": 1329,
+          "indikator": "Jumlah Aktif Penerima Bantuan Iuran Jaminan Kesehatan Nasional",
+          "tahun": "2026",
+          "opd": "Dinas Sosial",
+          "nilai": "133897"
+        }
+      ],
+      "jumlahBukti": 6,
+      "buktiAngka": [
+        "18605",
+        "2026",
+        "13101",
+        "17625440477",
+        "10986000000",
+        "9099700000",
+        "133897"
+      ]
+    },
+    {
+      "id": "E27",
+      "niat": "sebab",
+      "mode": "jujur",
+      "pertanyaan": "Mengapa jumlah anggota perpustakaan berubah dari tahun ke tahun?",
+      "niatServer": "sebab",
+      "bentuk": "Angka terdekat (bukan sebab)",
+      "jalur": null,
+      "narasi": "Data penyebab atau kausalitas tidak tersedia di SAPA — katalog ini menyimpan angka capaian, bukan sebab. Angka berikut hanya konteks topik, bukan bukti sebab. Tidak ada data SAPA yang memuat seluruh kata kunci sekaligus — tidak ada indikator yang memuat \"berubah\" bersama kata kunci lainnya. Berikut indikator terdekat. Berdasarkan data SAPA untuk \"Mengapa jumlah anggota perpustakaan berubah dari tahun ke tahun?\", ditemukan 3 indikator terkait: Anggota perpustakaan sekolah dasar binaan Kabupaten/kota 4.800 Orang (Dinas Perpustakaan dan Kearsipan, 2026); Jumlah anggota perpustakaan 8.730 Orang (Dinas Perpustakaan dan Kearsipan, 2026); Anggota perpustakaan umum binaan Kabupaten/kota 8.621 Orang (Dinas Perpustakaan dan Kearsipan, tahun tidak tercantum di SAPA).",
+      "bukti": [
+        {
+          "id": 1292,
+          "indikator": "Anggota perpustakaan sekolah dasar binaan Kabupaten/kota",
+          "tahun": "2026",
+          "opd": "Dinas Perpustakaan dan Kearsipan",
+          "nilai": "4800"
+        },
+        {
+          "id": 1306,
+          "indikator": "Jumlah anggota perpustakaan",
+          "tahun": "2026",
+          "opd": "Dinas Perpustakaan dan Kearsipan",
+          "nilai": "8730"
+        },
+        {
+          "id": 1290,
+          "indikator": "Anggota perpustakaan umum binaan Kabupaten/kota",
+          "tahun": null,
+          "opd": "Dinas Perpustakaan dan Kearsipan",
+          "nilai": "8621"
+        }
+      ],
+      "jumlahBukti": 3,
+      "buktiAngka": [
+        "4800",
+        "2026",
+        "8730",
+        "8621"
+      ]
+    }
+  ]
+}

@@ -194,7 +194,7 @@ Format: **Kode · Kebutuhan · Alasan/bukti · Kriteria terima (terukur) · Usah
 | **EV-02** | **Baseline terkunci** (`data/eval-baseline.json`, setVersi 2) — setiap perubahan dibandingkan per item | 0 regresi diterima; regresi = build ditolak | ✅ |
 | **EV-03** | **Uji A/B AI vs deterministik** (10 pertanyaan multi-niat) untuk memastikan AI benar-benar menambah | sitasi AI > sitasi deterministik | ✅ (4,50 vs 3,00) |
 | **EV-04** | **Gerbang mutu AI**: grounded pass ≥ 90%, fallback ≤ 10%, grounded fail = 0 | tercapai 100% / 0% / 0 | ✅ |
-| **EV-05** | Perluasan ke **120 item** dengan 12 item baru per niat + panel penilai manusia 30 sampel | ≥ 3 item baru per niat lulus; skor relevansi penilai ≥ 4/5 | ⬜ |
+| **EV-05** | Perluasan ke **120 item** (30 item baru E01–E30) + panel penilai manusia 30 sampel | ≥ 3 item baru per niat lulus; skor relevansi penilai ≥ 4/5 | 🟡 (24 Sep 2026 — **120 item** · 9/9 niat ≥ 3 item baru **lulus** dengan bukti kuat · akurasi niat router **30/30** · harness `uji-eval-120.mjs` 32 pemeriksaan + kontrol negatif gagal seperti seharusnya · **3 temuan nyata diperbaiki** (gerbang meta “menurut tahun”, pagar “NIK dan alamat”, niat pada jalur pagar) · panel: instrumen + praskor mesin **4,93/5** siap, **skor manusia menunggu 30 penilaian** — laporan [30](30-LAPORAN-EV-05.md)) |
 | **EV-06** | **Uji dengan model sungguhan** (bukan penyedia tiruan), hasil dibandingkan dengan baseline | set 90 lulus dengan `AI_BASE_URL` produksi | ⬜ |
 
 ---

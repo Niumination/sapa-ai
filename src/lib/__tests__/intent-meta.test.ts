@@ -1,3 +1,4 @@
+// pii-gate: izinkan NIK sintetis uji — angka 16 digit di berkas ini adalah nomor identitas PALSU untuk menguji pagar data pribadi.
 import { describe, it, expect } from 'vitest';
 import { deteksiMetaIntent, tahunDalamQuery, deteksiNiat } from '../intent-meta';
 
@@ -17,6 +18,34 @@ describe('deteksiMetaIntent — pertanyaan skala katalog', () => {
 
   it('menangkap sebaran menurut tahun', () => {
     expect(deteksiMetaIntent('Bagaimana sebaran data menurut tahun?')?.jenis).toBe('tahun');
+  });
+
+  it('"menurut tahun" menang atas ukuran katalog (temuan EV-05)', () => {
+    // Dulu "sebaran jumlah record … menurut tahun" dijawab dengan ringkasan
+    // katalog (2.065 record / 38 OPD), padahal katalog menyimpan pecahan tahun.
+    expect(deteksiMetaIntent('Bagaimana sebaran jumlah record SAPA menurut tahun?')?.jenis)
+      .toBe('tahun');
+    expect(deteksiMetaIntent('Berapa jumlah record SAPA menurut tahun?')?.jenis).toBe('tahun');
+    // Tanpa kata tahun, ukuran katalog tetap seperti semula.
+    expect(deteksiMetaIntent('Berapa jumlah record di portal SAPA?')?.jenis).toBe('katalog');
+  });
+});
+
+describe('deteksiNiat — permintaan data per-orang (EV-05)', () => {
+  it('mengenali permintaan identitas/alamat, bukan hanya "nama warga tertentu"', () => {
+    for (const q of [
+      'Siapa nama penerima bantuan sosial PKH di Desa Kemili?',
+      'Tampilkan daftar nama warga yang menerima bantuan sembako di Kecamatan Ketol',
+      'Sebutkan NIK dan alamat petani penerima bantuan di Kecamatan Bebesen',
+      'Cari data NIK 1234567890123456',
+    ]) {
+      expect(deteksiNiat(q).niat, q).toBe('personal');
+    }
+  });
+
+  it('tidak menyerobot pertanyaan agregat yang menyebut nama indikator', () => {
+    expect(deteksiNiat('Berapa jumlah penerima bantuan sosial PKH di Aceh Tengah?').niat).not.toBe('personal');
+    expect(deteksiNiat('Sebutkan nama indikator dengan nilai tertinggi').niat).not.toBe('personal');
   });
 });
 

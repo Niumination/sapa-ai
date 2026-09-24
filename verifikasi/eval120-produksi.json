@@ -1,0 +1,3522 @@
+{
+  "dibuat": "2026-09-24T05:38:12.232Z",
+  "target": "http://127.0.0.1:3181",
+  "modeAi": "inactive",
+  "setVersi": 3,
+  "total": 120,
+  "lulus": 120,
+  "item": [
+    {
+      "id": "Q01",
+      "grup": "warisan-wp6",
+      "harus": "jawab",
+      "lulus": true,
+      "cara": "menjawab relevan",
+      "inv": [],
+      "nEvidence": 15,
+      "top1Ok": true,
+      "niatHarapan": null,
+      "niatServer": "nilai_saat_ini",
+      "niatSumber": null,
+      "jalur": null,
+      "evIndikator": [
+        "Jumlah Data Penduduk",
+        "Jumlah Penduduk Usia 13-15 Tahun",
+        "Jumlah penduduk kelas menengah",
+        "Jumlah  Penduduk Usia 18+  Yang Dilakukan Pemeriksaan Iindeks Massa Tubuh",
+        "Jumlah Penduduk Usia 7-12 Tahun"
+      ],
+      "evOpd": [
+        "Dinas Kependudukan dan Pencatatan Sipil",
+        "Dinas Pendidikan dan Kebudayaan",
+        "Badan Perencanaan Pembangunan Daerah."
+      ],
+      "diagnosa": "selesai:leksikal+sisipan",
+      "pemeriksaan": {
+        "keras": 0,
+        "lunak": 0,
+        "nilai": 3
+      }
+    },
+    {
+      "id": "Q04",
+      "grup": "warisan-wp6",
+      "harus": "jawab",
+      "lulus": true,
+      "cara": "menjawab relevan",
+      "inv": [],
+      "nEvidence": 15,
+      "top1Ok": true,
+      "niatHarapan": null,
+      "niatServer": "nilai_saat_ini",
+      "niatSumber": null,
+      "jalur": null,
+      "evIndikator": [
+        "jumlah data Insidentil Mustahik Miskin",
+        "Jumlah Data Penduduk",
+        "jumlah  Hari Meugang Mustahik  Miskin",
+        "Jumlah  Santunan Bulanan Lansia Miskin",
+        "Jumlah Miskin"
+      ],
+      "evOpd": [
+        "Sekretariat Baitul Mal",
+        "Dinas Kependudukan dan Pencatatan Sipil",
+        "Dinas Sosial"
+      ],
+      "diagnosa": "selesai:leksikal+sisipan",
+      "pemeriksaan": {
+        "keras": 0,
+        "lunak": 0,
+        "nilai": 3
+      }
+    },
+    {
+      "id": "Q06",
+      "grup": "warisan-wp6",
+      "harus": "kosong",
+      "lulus": true,
+      "cara": "jujur-kosong",
+      "inv": [],
+      "nEvidence": 15,
+      "top1Ok": true,
+      "niatHarapan": null,
+      "niatServer": "nilai_saat_ini",
+      "niatSumber": null,
+      "jalur": null,
+      "evIndikator": [
+        "Jumlah realisasi Belanja Tidak terduga",
+        "Jumlah Anak Tidak Sekolah yang Mendapatkan Layanan Pendidikan Formal dan Non Formal",
+        "Jumlah Kekayaan desa berupa harta bergerak dan tidak bergerak",
+        "Jumlah Desa Tidak Memiliki Kasus Indegenous Malaria",
+        "Jumlah Kekayaan  desa tidak bergerak"
+      ],
+      "evOpd": [
+        "Badan Pengelolaan Keuangan",
+        "Dinas Pendidikan dan Kebudayaan",
+        "Dinas Pemberdayaan Masyarakat dan Kampung"
+      ],
+      "diagnosa": "selesai:leksikal",
+      "pemeriksaan": {
+        "keras": 0,
+        "lunak": 0,
+        "nilai": 3
+      }
+    },
+    {
+      "id": "L1",
+      "grup": "level",
+      "harus": "jawab",
+      "lulus": true,
+      "cara": "menjawab relevan",
+      "inv": [],
+      "nEvidence": 15,
+      "top1Ok": true,
+      "niatHarapan": null,
+      "niatServer": "nilai_saat_ini",
+      "niatSumber": null,
+      "jalur": null,
+      "evIndikator": [
+        "Jumlah Data Penduduk",
+        "Jumlah penduduk kelas menengah",
+        "Jumlah  Penduduk Usia 18+  Yang Dilakukan Pemeriksaan Iindeks Massa Tubuh",
+        "Jumlah Penduduk Usia 7-12 Tahun",
+        "Jumlah Penduduk Usia 13-15 Tahun"
+      ],
+      "evOpd": [
+        "Dinas Kependudukan dan Pencatatan Sipil",
+        "Badan Perencanaan Pembangunan Daerah.",
+        "Dinas Kesehatan"
+      ],
+      "diagnosa": "selesai:leksikal",
+      "pemeriksaan": {
+        "keras": 0,
+        "lunak": 0,
+        "nilai": 3
+      }
+    },
+    {
+      "id": "L2",
+      "grup": "level",
+      "harus": "jawab",
+      "lulus": true,
+      "cara": "menjawab relevan",
+      "inv": [],
+      "nEvidence": 8,
+      "top1Ok": true,
+      "niatHarapan": null,
+      "niatServer": "nilai_saat_ini",
+      "niatSumber": null,
+      "jalur": null,
+      "evIndikator": [
+        "Prevalensi Stunting",
+        "Prevalensi Wasting pada Balita",
+        "Prevalensi Stunting (Pendek dam Sangat Pendek)",
+        "Jumlah anak balita yang mengalami stunting (JAB(5) P stunting)",
+        "Angka Prevalensi Kontraseptif Modern pada Kelompok Perempuan Usia Reproduksi"
+      ],
+      "evOpd": [
+        "Badan Perencanaan Pembangunan Daerah.",
+        "Dinas Kesehatan",
+        "Dinas Keluarga Berencana PPPA"
+      ],
+      "diagnosa": "selesai:leksikal+sisipan",
+      "pemeriksaan": {
+        "keras": 0,
+        "lunak": 0,
+        "nilai": 3
+      }
+    },
+    {
+      "id": "L3",
+      "grup": "level",
+      "harus": "jawab",
+      "lulus": true,
+      "cara": "menjawab relevan",
+      "inv": [],
+      "nEvidence": 15,
+      "top1Ok": true,
+      "niatHarapan": null,
+      "niatServer": "nilai_saat_ini",
+      "niatSumber": null,
+      "jalur": null,
+      "evIndikator": [
+        "Jumlah Panjang Jalan Kabupaten Dalam Kondisi Baik (Km)",
+        "Jumlah Panjang Jalan Kabupaten Dalam Kondisi Baik (Km) kecamatan \nLinge",
+        "Jumlah Panjang Jalan Kabupaten Dalam Kondisi Baik (Km) kecamatan \nCelala",
+        "Jumlah Panjang Jalan Kabupaten Dalam Kondisi Baik (Km) kecamatan \nKute Panang",
+        "Jumlah Panjang Jalan Kabupaten Dalam Kondisi Baik (Km) kecamatan \nKetol"
+      ],
+      "evOpd": [
+        "Dinas Pekerjaan Umum dan Penataan Ruang"
+      ],
+      "diagnosa": "selesai:leksikal+sisipan",
+      "pemeriksaan": {
+        "keras": 0,
+        "lunak": 0,
+        "nilai": 3
+      }
+    },
+    {
+      "id": "L4",
+      "grup": "level",
+      "harus": "jawab",
+      "lulus": true,
+      "cara": "menjawab relevan",
+      "inv": [],
+      "nEvidence": 6,
+      "top1Ok": true,
+      "niatHarapan": null,
+      "niatServer": "nilai_saat_ini",
+      "niatSumber": null,
+      "jalur": null,
+      "evIndikator": [
+        "Jumlah produksi komoditas perkebunan Kopi Arabika",
+        "Jumlah produksi komoditas perkebunan Kopi Robusta",
+        "Luas areal komoditas perkebunan Kopi Arabika",
+        "Jumlah petani komoditas perkebunan Kopi Arabika",
+        "Jumlah produktivitas komoditas perkebunan Kopi Arabika"
+      ],
+      "evOpd": [
+        "Dinas Perkebunan"
+      ],
+      "diagnosa": "selesai:leksikal+sisipan",
+      "pemeriksaan": {
+        "keras": 0,
+        "lunak": 0,
+        "nilai": 3
+      }
+    },
+    {
+      "id": "L5",
+      "grup": "level",
+      "harus": "jawab",
+      "lulus": true,
+      "cara": "menjawab relevan",
+      "inv": [],
+      "nEvidence": 9,
+      "top1Ok": false,
+      "niatHarapan": null,
+      "niatServer": "nilai_saat_ini",
+      "niatSumber": null,
+      "jalur": null,
+      "evIndikator": [
+        "PDRB Tahun Berjalan atas dasar Harga Konsisten",
+        "Total PDRB Penyediaan Akomodasi Makan dan Minum",
+        "Kontribusi Sektor Perdagangan terhadap PDRB",
+        "Proporsi Kontribusi PDRB Kabupaten Aceh Tengah terhadap PDRB Provinsi Aceh",
+        "Kontribusi sektor Industri terhadap PDRB"
+      ],
+      "evOpd": [
+        "Dinas Transmigrasi dan Tenaga Kerja",
+        "Dinas Pariwisata",
+        "Dinas Perdagangan"
+      ],
+      "diagnosa": "selesai:leksikal",
+      "pemeriksaan": {
+        "keras": 0,
+        "lunak": 0,
+        "nilai": 3
+      }
+    },
+    {
+      "id": "L6",
+      "grup": "level",
+      "harus": "jawab",
+      "lulus": true,
+      "cara": "menjawab relevan",
+      "inv": [],
+      "nEvidence": 15,
+      "top1Ok": true,
+      "niatHarapan": null,
+      "niatServer": "nilai_saat_ini",
+      "niatSumber": null,
+      "jalur": null,
+      "evIndikator": [
+        "Jumlah ASN",
+        "Jumlah ASN yang dibina",
+        "ASN  yang Mendapatkan layanan sertifikasi jabatan ASN",
+        "Jumah PNS dan PPPK berdasarkan Golongan , berdasarkan Jenis Kelamin dan jenjang pendidikan",
+        "Jumlah PNS yang ada"
+      ],
+      "evOpd": [
+        "Badan Kepegawaian dan Pengembangan SDM",
+        "Dinas Pendidikan dan Kebudayaan"
+      ],
+      "diagnosa": "selesai:leksikal+sisipan",
+      "pemeriksaan": {
+        "keras": 0,
+        "lunak": 0,
+        "nilai": 3
+      }
+    },
+    {
+      "id": "L7",
+      "grup": "level",
+      "harus": "kosong",
+      "lulus": true,
+      "cara": "jujur-kosong",
+      "inv": [],
+      "nEvidence": 4,
+      "top1Ok": true,
+      "niatHarapan": null,
+      "niatServer": "nilai_saat_ini",
+      "niatSumber": null,
+      "jalur": null,
+      "evIndikator": [
+        "Jumlah Tenaga Kerja UMKM kecamatan Bebesen",
+        "Jumlah UMKM Di Kecamatan Bebesen",
+        "Jumlah Koperasi di Kecamatan Bebesen",
+        "Jumlah Panjang Jalan Kabupaten Dalam Kondisi Baik (Km) kecamatan \nBebesen"
+      ],
+      "evOpd": [
+        "Dinas Koperasi dan UKM",
+        "Dinas Pekerjaan Umum dan Penataan Ruang"
+      ],
+      "diagnosa": "selesai:leksikal",
+      "pemeriksaan": {
+        "keras": 0,
+        "lunak": 0,
+        "nilai": 3
+      }
+    },
+    {
+      "id": "L8",
+      "grup": "level",
+      "harus": "kosong",
+      "lulus": true,
+      "cara": "jujur-kosong",
+      "inv": [],
+      "nEvidence": 3,
+      "top1Ok": true,
+      "niatHarapan": null,
+      "niatServer": "nilai_saat_ini",
+      "niatSumber": null,
+      "jalur": null,
+      "evIndikator": [
+        "Data Penyaluran Beras Cadangan Pangan Pemerintah Daerah (CPPD)",
+        "PDRB Tahun Berjalan atas dasar Harga Konsisten",
+        "Produk Domestik Regional Bruto Kab Aceh Tengah Atas Dasar Harga Berlaku Menurut\nLapangan Usaha"
+      ],
+      "evOpd": [
+        "Dinas Pangan",
+        "Dinas Transmigrasi dan Tenaga Kerja",
+        "Badan Perencanaan Pembangunan Daerah."
+      ],
+      "diagnosa": "selesai:leksikal",
+      "pemeriksaan": {
+        "keras": 0,
+        "lunak": 0,
+        "nilai": 3
+      }
+    },
+    {
+      "id": "L9",
+      "grup": "level",
+      "harus": "jawab",
+      "lulus": true,
+      "cara": "menjawab relevan",
+      "inv": [],
+      "nEvidence": 5,
+      "top1Ok": true,
+      "niatHarapan": null,
+      "niatServer": "nilai_saat_ini",
+      "niatSumber": null,
+      "jalur": null,
+      "evIndikator": [
+        "jumlah Anak Putus Sekolah Tingkat SD/MI, SMP/MTs dan SMA Sederajat",
+        "Jumlah Angka Putus Sekolah Siswa Sekolah Dasar",
+        "Jumlah penerima paket pemeriksaan kesehatan gratis kelompok usia balita dan anak usia pra sekolah",
+        "Jumlah Anak Tidak Sekolah yang Mendapatkan Layanan Pendidikan Formal dan Non Formal",
+        "Persentase penduduk penerima pemeriksaan kesehatan gratis kelompok usia balita dan anak usia pra sekolah"
+      ],
+      "evOpd": [
+        "Sekretariat Baitul Mal",
+        "Dinas Pendidikan dan Kebudayaan",
+        "Dinas Kesehatan"
+      ],
+      "diagnosa": "selesai:leksikal",
+      "pemeriksaan": {
+        "keras": 0,
+        "lunak": 0,
+        "nilai": 3
+      }
+    },
+    {
+      "id": "L10",
+      "grup": "level",
+      "harus": "jawab",
+      "lulus": true,
+      "cara": "menjawab relevan",
+      "inv": [],
+      "nEvidence": 8,
+      "top1Ok": true,
+      "niatHarapan": null,
+      "niatServer": "nilai_saat_ini",
+      "niatSumber": null,
+      "jalur": null,
+      "evIndikator": [
+        "Jumlah Penerima Bantuan Sosial PKH",
+        "Jumlah Total Nilai Bantuan Sosial PKH (Berhasil Salur)",
+        "Jumlah Target Penerimaan Daerah",
+        "Jumlah Realisasi Penerimaan Daerah",
+        "Jumlah Target Penerimaan Pajak"
+      ],
+      "evOpd": [
+        "Dinas Sosial",
+        "Badan Pengelolaan Keuangan"
+      ],
+      "diagnosa": "selesai:leksikal",
+      "pemeriksaan": {
+        "keras": 0,
+        "lunak": 0,
+        "nilai": 3
+      }
+    },
+    {
+      "id": "T1",
+      "grup": "trend",
+      "harus": "jujur",
+      "lulus": true,
+      "cara": "menjawab relevan",
+      "inv": [],
+      "nEvidence": 2,
+      "top1Ok": true,
+      "niatHarapan": null,
+      "niatServer": "tren",
+      "niatSumber": null,
+      "jalur": null,
+      "evIndikator": [
+        "Prevalensi Stunting",
+        "Prevalensi Stunting (Pendek dam Sangat Pendek)"
+      ],
+      "evOpd": [
+        "Badan Perencanaan Pembangunan Daerah.",
+        "Dinas Kesehatan"
+      ],
+      "diagnosa": "selesai:leksikal",
+      "pemeriksaan": {
+        "keras": 0,
+        "lunak": 0,
+        "nilai": 2
+      }
+    },
+    {
+      "id": "T2",
+      "grup": "trend",
+      "harus": "jujur",
+      "lulus": true,
+      "cara": "menjawab relevan",
+      "inv": [],
+      "nEvidence": 11,
+      "top1Ok": true,
+      "niatHarapan": null,
+      "niatServer": "tren",
+      "niatSumber": null,
+      "jalur": null,
+      "evIndikator": [
+        "Jumlah Siswa Layak PIP (Program Indonesia Pintar) yang Bersekolah di Swasta",
+        "Jumlah Siswa Bimbel Sekolah Belangi",
+        "Cakupan Penjaringan Kesehatan siswa kelas 7 SMP/MTs",
+        "Cakupan Penjaringan Kesehatan siswa kelas 1 SD/MI",
+        "Jumlah Angka Putus Sekolah Siswa Sekolah Dasar"
+      ],
+      "evOpd": [
+        "Dinas Pendidikan dan Kebudayaan",
+        "Sekretariat Majelis Pendidikan Daerah",
+        "Dinas Kesehatan"
+      ],
+      "diagnosa": "selesai:leksikal",
+      "pemeriksaan": {
+        "keras": 0,
+        "lunak": 0,
+        "nilai": 3
+      }
+    },
+    {
+      "id": "T3",
+      "grup": "trend",
+      "harus": "jujur",
+      "lulus": true,
+      "cara": "menjawab relevan",
+      "inv": [],
+      "nEvidence": 1,
+      "top1Ok": true,
+      "niatHarapan": null,
+      "niatServer": "tren",
+      "niatSumber": null,
+      "jalur": null,
+      "evIndikator": [
+        "Indeks Pembangunan Manusia"
+      ],
+      "evOpd": [
+        "Badan Perencanaan Pembangunan Daerah."
+      ],
+      "diagnosa": "selesai:leksikal",
+      "pemeriksaan": {
+        "keras": 0,
+        "lunak": 0,
+        "nilai": 1
+      }
+    },
+    {
+      "id": "T4",
+      "grup": "trend",
+      "harus": "jujur",
+      "lulus": true,
+      "cara": "menjawab relevan",
+      "inv": [],
+      "nEvidence": 6,
+      "top1Ok": true,
+      "niatHarapan": null,
+      "niatServer": "tren",
+      "niatSumber": null,
+      "jalur": null,
+      "evIndikator": [
+        "Jumlah produksi komoditas perkebunan Kopi Arabika",
+        "Luas areal komoditas perkebunan Kopi Arabika",
+        "Jumlah petani komoditas perkebunan Kopi Arabika",
+        "Jumlah produktivitas komoditas perkebunan Kopi Arabika",
+        "Peningkatan Produksi Komoditas Perkebunan (Kopi,  Tembakau)"
+      ],
+      "evOpd": [
+        "Dinas Perkebunan"
+      ],
+      "diagnosa": "selesai:leksikal",
+      "pemeriksaan": {
+        "keras": 0,
+        "lunak": 0,
+        "nilai": 3
+      }
+    },
+    {
+      "id": "T5",
+      "grup": "trend",
+      "harus": "jujur",
+      "lulus": true,
+      "cara": "menjawab relevan",
+      "inv": [],
+      "nEvidence": 11,
+      "top1Ok": true,
+      "niatHarapan": null,
+      "niatServer": "tren",
+      "niatSumber": null,
+      "jalur": null,
+      "evIndikator": [
+        "jumlah data Insidentil Mustahik Miskin",
+        "tingkat Kemiskinan",
+        "jumlah  Hari Meugang Mustahik  Miskin",
+        "Jumlah  Santunan Bulanan Lansia Miskin",
+        "Jumlah Miskin"
+      ],
+      "evOpd": [
+        "Sekretariat Baitul Mal",
+        "Badan Perencanaan Pembangunan Daerah.",
+        "Dinas Sosial"
+      ],
+      "diagnosa": "selesai:leksikal+sisipan",
+      "pemeriksaan": {
+        "keras": 0,
+        "lunak": 0,
+        "nilai": 3
+      }
+    },
+    {
+      "id": "T6",
+      "grup": "trend",
+      "harus": "jujur",
+      "lulus": true,
+      "cara": "menjawab relevan",
+      "inv": [],
+      "nEvidence": 15,
+      "top1Ok": true,
+      "niatHarapan": null,
+      "niatServer": "tren",
+      "niatSumber": null,
+      "jalur": null,
+      "evIndikator": [
+        "Jumlah Puskesmas di wilayah kerja KB MKJP",
+        "Jumlah Bidan di Puskesmas",
+        "Jumlah Puskesmas Rawat inap",
+        "Jumlah Perawat di Puskesmas",
+        "Jumlah Tenaga Gizi Di Puskesmas"
+      ],
+      "evOpd": [
+        "Dinas Kesehatan"
+      ],
+      "diagnosa": "selesai:semantik",
+      "pemeriksaan": {
+        "keras": 0,
+        "lunak": 0,
+        "nilai": 3
+      }
+    },
+    {
+      "id": "T7",
+      "grup": "trend",
+      "harus": "jujur",
+      "lulus": true,
+      "cara": "menjawab relevan",
+      "inv": [],
+      "nEvidence": 15,
+      "top1Ok": true,
+      "niatHarapan": null,
+      "niatServer": "tren",
+      "niatSumber": null,
+      "jalur": null,
+      "evIndikator": [
+        "Jumlah Panjang Jalan",
+        "Jumlah Panjang Jalan Lingkungan",
+        "Jumlah Panjang Jalan Kabupaten (Km)",
+        "Jumlah Panjang Jalan Kabupaten Dalam Kondisi Baik (Km)",
+        "Jumlah Panjang Jalan Kabupaten Dalam Kondisi Baik (Km) kecamatan \nKute Panang"
+      ],
+      "evOpd": [
+        "Dinas Perumahan dan Permukiman",
+        "Dinas Pekerjaan Umum dan Penataan Ruang"
+      ],
+      "diagnosa": "selesai:leksikal",
+      "pemeriksaan": {
+        "keras": 0,
+        "lunak": 0,
+        "nilai": 3
+      }
+    },
+    {
+      "id": "T8",
+      "grup": "trend",
+      "harus": "jujur",
+      "lulus": true,
+      "cara": "menjawab relevan",
+      "inv": [],
+      "nEvidence": 15,
+      "top1Ok": true,
+      "niatHarapan": null,
+      "niatServer": "tren",
+      "niatSumber": null,
+      "jalur": null,
+      "evIndikator": [
+        "Jumlah anak balita yang mengalami stunting (JAB(5) P stunting)",
+        "Prevalensi Stunting",
+        "Prevalensi Stunting (Pendek dam Sangat Pendek)",
+        "Jumlah penerima paket pemeriksaan kesehatan gratis kelompok usia balita dan anak usia pra sekolah",
+        "Jumlah balita 12-59 bulan yang dipantau"
+      ],
+      "evOpd": [
+        "Dinas Kesehatan",
+        "Badan Perencanaan Pembangunan Daerah.",
+        "Dinas Keluarga Berencana PPPA"
+      ],
+      "diagnosa": "selesai:leksikal",
+      "pemeriksaan": {
+        "keras": 0,
+        "lunak": 0,
+        "nilai": 3
+      }
+    },
+    {
+      "id": "T9",
+      "grup": "trend",
+      "harus": "jujur",
+      "lulus": true,
+      "cara": "menjawab relevan",
+      "inv": [],
+      "nEvidence": 6,
+      "top1Ok": true,
+      "niatHarapan": null,
+      "niatServer": "nilai_saat_ini",
+      "niatSumber": null,
+      "jalur": null,
+      "evIndikator": [
+        "Jumlah Penerima Bantuan Sosial Sembako",
+        "Jumlah Total Nilai Bantuan Sosial Sembako (Berhasil Salur)",
+        "Jumlah Penerima Bantuan Sosial PKH",
+        "Jumlah Aktif Penerima Bantuan Iuran Jaminan Kesehatan Nasional",
+        "Jumlah realisasi Belanja Bantuan Sosial"
+      ],
+      "evOpd": [
+        "Dinas Sosial",
+        "Badan Pengelolaan Keuangan"
+      ],
+      "diagnosa": "selesai:leksikal",
+      "pemeriksaan": {
+        "keras": 0,
+        "lunak": 0,
+        "nilai": 3
+      }
+    },
+    {
+      "id": "T10",
+      "grup": "trend",
+      "harus": "kosong",
+      "lulus": true,
+      "cara": "jujur-kosong",
+      "inv": [],
+      "nEvidence": 15,
+      "top1Ok": true,
+      "niatHarapan": null,
+      "niatServer": "tren",
+      "niatSumber": null,
+      "jalur": null,
+      "evIndikator": [
+        "Jumlah Ustazdah (Guru Ngaji)  TPA/TPQ kabupaten Aceh Tengah",
+        "Jumlah Guru SD PNS",
+        "Jumlah Guru Sertifikasi SD PPPK",
+        "Jumlah Guru Sertifikasi SD PNS",
+        "Jumlah Guru SD PPPK PW"
+      ],
+      "evOpd": [
+        "Dinas Syari'at Islam",
+        "Dinas Pendidikan dan Kebudayaan"
+      ],
+      "diagnosa": "selesai:leksikal",
+      "pemeriksaan": {
+        "keras": 0,
+        "lunak": 0,
+        "nilai": 3
+      }
+    },
+    {
+      "id": "C1",
+      "grup": "comparison",
+      "harus": "jujur",
+      "lulus": true,
+      "cara": "menjawab relevan",
+      "inv": [],
+      "nEvidence": 2,
+      "top1Ok": true,
+      "niatHarapan": null,
+      "niatServer": "perbandingan",
+      "niatSumber": null,
+      "jalur": null,
+      "evIndikator": [
+        "tingkat Kemiskinan",
+        "Jumlah Laporan Penanggulangan Kemiskinan Daerah"
+      ],
+      "evOpd": [
+        "Badan Perencanaan Pembangunan Daerah."
+      ],
+      "diagnosa": "selesai:semantik",
+      "pemeriksaan": {
+        "keras": 0,
+        "lunak": 0,
+        "nilai": 2
+      }
+    },
+    {
+      "id": "C2",
+      "grup": "comparison",
+      "harus": "jujur",
+      "lulus": true,
+      "cara": "menjawab relevan",
+      "inv": [],
+      "nEvidence": 15,
+      "top1Ok": true,
+      "niatHarapan": null,
+      "niatServer": "perbandingan",
+      "niatSumber": null,
+      "jalur": null,
+      "evIndikator": [
+        "Luas areal komoditas perkebunan Kopi Arabika",
+        "Jumlah petani komoditas perkebunan Kopi Arabika",
+        "Jumlah produksi komoditas perkebunan Kopi Arabika",
+        "Jumlah produktivitas komoditas perkebunan Tebu",
+        "Jumlah produksi komoditas perkebunan Tebu"
+      ],
+      "evOpd": [
+        "Dinas Perkebunan"
+      ],
+      "diagnosa": "selesai:leksikal",
+      "pemeriksaan": {
+        "keras": 0,
+        "lunak": 0,
+        "nilai": 3
+      }
+    },
+    {
+      "id": "C3",
+      "grup": "comparison",
+      "harus": "jujur",
+      "lulus": true,
+      "cara": "menjawab relevan",
+      "inv": [],
+      "nEvidence": 13,
+      "top1Ok": true,
+      "niatHarapan": null,
+      "niatServer": "perbandingan",
+      "niatSumber": null,
+      "jalur": null,
+      "evIndikator": [
+        "Jumlah penerima paket pemeriksaan kesehatan gratis per kelompok usia sekolah dan remaja usia 7 sampai <18 tahun di satuan pendidikan",
+        "Cakupan Pelayanan Kesehatan pada Usia Pendidikan Dasar",
+        "Pengeluaran untuk Pendidikan",
+        "Jumah PNS dan PPPK berdasarkan Golongan , berdasarkan Jenis Kelamin dan jenjang pendidikan",
+        "Jumlah Anak Tidak Sekolah yang Mendapatkan Layanan Pendidikan Formal dan Non Formal"
+      ],
+      "evOpd": [
+        "Dinas Kesehatan",
+        "Badan Pengelolaan Keuangan",
+        "Badan Kepegawaian dan Pengembangan SDM"
+      ],
+      "diagnosa": "selesai:leksikal",
+      "pemeriksaan": {
+        "keras": 0,
+        "lunak": 0,
+        "nilai": 3
+      }
+    },
+    {
+      "id": "C4",
+      "grup": "comparison",
+      "harus": "kosong",
+      "lulus": true,
+      "cara": "jujur-kosong",
+      "inv": [],
+      "nEvidence": 8,
+      "top1Ok": true,
+      "niatHarapan": null,
+      "niatServer": "perbandingan",
+      "niatSumber": null,
+      "jalur": null,
+      "evIndikator": [
+        "Jumlah Tenaga Kerja UMKM kecamatan Bebesen",
+        "Jumlah UMKM Di Kecamatan Bebesen",
+        "Jumlah Koperasi di Kecamatan Bebesen",
+        "Jumlah Panjang Jalan Kabupaten Dalam Kondisi Baik (Km) kecamatan \nBebesen",
+        "Jumlah UMKM Di Kecamatan Ketol"
+      ],
+      "evOpd": [
+        "Dinas Koperasi dan UKM",
+        "Dinas Pekerjaan Umum dan Penataan Ruang"
+      ],
+      "diagnosa": "selesai:leksikal",
+      "pemeriksaan": {
+        "keras": 0,
+        "lunak": 0,
+        "nilai": 3
+      }
+    },
+    {
+      "id": "C5",
+      "grup": "comparison",
+      "harus": "jawab",
+      "lulus": true,
+      "cara": "menjawab relevan",
+      "inv": [],
+      "nEvidence": 9,
+      "top1Ok": true,
+      "niatHarapan": null,
+      "niatServer": "perbandingan",
+      "niatSumber": null,
+      "jalur": null,
+      "evIndikator": [
+        "Jumlah produksi komoditas perkebunan Kopi Arabika",
+        "Jumlah produksi komoditas perkebunan Kopi Robusta",
+        "Luas areal komoditas perkebunan Kopi Arabika",
+        "Jumlah petani komoditas perkebunan Kopi Arabika",
+        "Jumlah petani komoditas perkebunan Kopi Robusta"
+      ],
+      "evOpd": [
+        "Dinas Perkebunan"
+      ],
+      "diagnosa": "selesai:leksikal",
+      "pemeriksaan": {
+        "keras": 0,
+        "lunak": 0,
+        "nilai": 3
+      }
+    },
+    {
+      "id": "C6",
+      "grup": "comparison",
+      "harus": "jujur",
+      "lulus": true,
+      "cara": "menjawab relevan",
+      "inv": [],
+      "nEvidence": 15,
+      "top1Ok": true,
+      "niatHarapan": null,
+      "niatServer": "perbandingan",
+      "niatSumber": null,
+      "jalur": null,
+      "evIndikator": [
+        "Jumlah Panjang Jalan Kabupaten Dalam Kondisi Baik (Km)",
+        "Jumlah Panjang Jalan Kabupaten Dalam Kondisi Baik (Km) kecamatan \nRusip Antara",
+        "Jumlah Panjang Jalan Kabupaten Dalam Kondisi Baik (Km) kecamatan \nKebayakan",
+        "Jumlah Panjang Jalan Kabupaten Dalam Kondisi Baik (Km) kecamatan \nKute Panang",
+        "Jumlah Panjang Jalan Kabupaten Dalam Kondisi Baik (Km) kecamatan \nKetol"
+      ],
+      "evOpd": [
+        "Dinas Pekerjaan Umum dan Penataan Ruang"
+      ],
+      "diagnosa": "selesai:leksikal+sisipan",
+      "pemeriksaan": {
+        "keras": 0,
+        "lunak": 0,
+        "nilai": 3
+      }
+    },
+    {
+      "id": "C7",
+      "grup": "comparison",
+      "harus": "jawab",
+      "lulus": true,
+      "cara": "menjawab relevan",
+      "inv": [],
+      "nEvidence": 7,
+      "top1Ok": true,
+      "niatHarapan": null,
+      "niatServer": "perbandingan",
+      "niatSumber": null,
+      "jalur": null,
+      "evIndikator": [
+        "jumlah data Pendidikan Bagi Santri diLuar Daerah",
+        "Jumlah Wisuda santri TPA/TKA SE Kab. Aceh Tengah",
+        "jumlah data Pendidikan Bagi Santri di dalam daerah",
+        "Jumlah Naskah Dinas masuk/ keluar  pada aplikasi Srikandi dilingkungan Pemkab Aceh Tengah",
+        "Jumlah data Penyusunan Tugas Akhir bagi Mahasiswa S1 di Luar Daerah"
+      ],
+      "evOpd": [
+        "Sekretariat Baitul Mal",
+        "Dinas Syari'at Islam",
+        "Dinas Perpustakaan dan Kearsipan"
+      ],
+      "diagnosa": "selesai:leksikal",
+      "pemeriksaan": {
+        "keras": 0,
+        "lunak": 0,
+        "nilai": 3
+      }
+    },
+    {
+      "id": "C8",
+      "grup": "comparison",
+      "harus": "jujur",
+      "lulus": true,
+      "cara": "jujur-kosong",
+      "inv": [],
+      "nEvidence": 0,
+      "top1Ok": true,
+      "niatHarapan": null,
+      "niatServer": "perbandingan",
+      "niatSumber": null,
+      "jalur": null,
+      "evIndikator": [],
+      "evOpd": [],
+      "diagnosa": "retrieval:konsep-asing",
+      "pemeriksaan": {
+        "keras": 0,
+        "lunak": 0,
+        "nilai": 0
+      }
+    },
+    {
+      "id": "C9",
+      "grup": "comparison",
+      "harus": "jujur",
+      "lulus": true,
+      "cara": "menjawab relevan",
+      "inv": [],
+      "nEvidence": 2,
+      "top1Ok": true,
+      "niatHarapan": null,
+      "niatServer": "perbandingan",
+      "niatSumber": null,
+      "jalur": null,
+      "evIndikator": [
+        "Indeks Pembangunan Manusia",
+        "Persentase puskesmas yang mencapai target INM (Indikator Nasional Mutu)"
+      ],
+      "evOpd": [
+        "Badan Perencanaan Pembangunan Daerah.",
+        "Dinas Kesehatan"
+      ],
+      "diagnosa": "selesai:leksikal",
+      "pemeriksaan": {
+        "keras": 0,
+        "lunak": 0,
+        "nilai": 2
+      }
+    },
+    {
+      "id": "C10",
+      "grup": "comparison",
+      "harus": "jujur",
+      "lulus": true,
+      "cara": "menjawab relevan",
+      "inv": [],
+      "nEvidence": 3,
+      "top1Ok": true,
+      "niatHarapan": null,
+      "niatServer": "perbandingan",
+      "niatSumber": null,
+      "jalur": null,
+      "evIndikator": [
+        "Jumlah anak balita yang mengalami stunting (JAB(5) P stunting)",
+        "Prevalensi Stunting",
+        "Prevalensi Stunting (Pendek dam Sangat Pendek)"
+      ],
+      "evOpd": [
+        "Dinas Kesehatan",
+        "Badan Perencanaan Pembangunan Daerah."
+      ],
+      "diagnosa": "selesai:leksikal",
+      "pemeriksaan": {
+        "keras": 0,
+        "lunak": 0,
+        "nilai": 3
+      }
+    },
+    {
+      "id": "P1",
+      "grup": "composition",
+      "harus": "jujur",
+      "lulus": true,
+      "cara": "menjawab relevan",
+      "inv": [],
+      "nEvidence": 15,
+      "top1Ok": true,
+      "niatHarapan": null,
+      "niatServer": "nilai_saat_ini",
+      "niatSumber": null,
+      "jalur": null,
+      "evIndikator": [
+        "Jumlah produksi komoditas perkebunan Kopi Arabika",
+        "Peningkatan Produksi Komoditas Perkebunan (Kopi,  Tembakau)",
+        "Jumlah produksi komoditas perkebunan Kopi Robusta",
+        "Luas areal komoditas perkebunan Kopi Arabika",
+        "Jumlah petani komoditas perkebunan Kopi Arabika"
+      ],
+      "evOpd": [
+        "Dinas Perkebunan",
+        "Dinas Perdagangan",
+        "Dinas Perikanan"
+      ],
+      "diagnosa": "selesai:leksikal",
+      "pemeriksaan": {
+        "keras": 0,
+        "lunak": 0,
+        "nilai": 3
+      }
+    },
+    {
+      "id": "P2",
+      "grup": "composition",
+      "harus": "jujur",
+      "lulus": true,
+      "cara": "menjawab relevan",
+      "inv": [],
+      "nEvidence": 3,
+      "top1Ok": true,
+      "niatHarapan": null,
+      "niatServer": "distribusi",
+      "niatSumber": null,
+      "jalur": null,
+      "evIndikator": [
+        "Jumlah anak balita yang mengalami stunting (JAB(5) P stunting)",
+        "Persentase Penderita Diare Pada Balita Dilayani",
+        "Persentase Balita yang dipantau pertumbuhan dan perkembangannya"
+      ],
+      "evOpd": [
+        "Dinas Kesehatan"
+      ],
+      "diagnosa": "selesai:leksikal+sisipan",
+      "pemeriksaan": {
+        "keras": 0,
+        "lunak": 0,
+        "nilai": 3
+      }
+    },
+    {
+      "id": "P3",
+      "grup": "composition",
+      "harus": "jawab",
+      "lulus": true,
+      "cara": "menjawab relevan",
+      "inv": [],
+      "nEvidence": 15,
+      "top1Ok": true,
+      "niatHarapan": null,
+      "niatServer": "distribusi",
+      "niatSumber": null,
+      "jalur": null,
+      "evIndikator": [
+        "Jumlah Panjang Jalan Kabupaten Dalam Kondisi Baik (Km) kecamatan \nKute Panang",
+        "Jumlah Panjang Jalan",
+        "Jumlah Panjang Jalan Kabupaten Dalam Kondisi Baik (Km) kecamatan \nKetol",
+        "Jumlah Panjang Jalan Kabupaten Dalam Kondisi Baik (Km) kecamatan \nBebesen",
+        "Jumlah Panjang Jalan Kabupaten Dalam Kondisi Baik (Km) kecamatan \nPegasing"
+      ],
+      "evOpd": [
+        "Dinas Pekerjaan Umum dan Penataan Ruang",
+        "Dinas Perumahan dan Permukiman"
+      ],
+      "diagnosa": "selesai:leksikal+sisipan",
+      "pemeriksaan": {
+        "keras": 0,
+        "lunak": 0,
+        "nilai": 3
+      }
+    },
+    {
+      "id": "P4",
+      "grup": "composition",
+      "harus": "jujur",
+      "lulus": true,
+      "cara": "menjawab relevan",
+      "inv": [],
+      "nEvidence": 15,
+      "top1Ok": true,
+      "niatHarapan": null,
+      "niatServer": "nilai_saat_ini",
+      "niatSumber": null,
+      "jalur": null,
+      "evIndikator": [
+        "Jumlah anak balita yang mengalami stunting (JAB(5) P stunting)",
+        "Jumlah Kasus Kekerasan Terhadap Perempuan Dan Anak",
+        "Jumlah  Kasus Kekerasan Terhadap Perempuan Dan Anak Yang Ditangani Secara Komprehensif",
+        "Persentase Puskesmas yang mampu melaksanakan tatalaksana kekerasan terhadap perempuan dan anak",
+        "Jumlah Puskesmas yang telah mampu melaksanakan tatalaksana kekerasan terhadap perempuan dan anak sesuai standar"
+      ],
+      "evOpd": [
+        "Dinas Kesehatan",
+        "Dinas Keluarga Berencana PPPA"
+      ],
+      "diagnosa": "selesai:leksikal",
+      "pemeriksaan": {
+        "keras": 0,
+        "lunak": 0,
+        "nilai": 3
+      }
+    },
+    {
+      "id": "P5",
+      "grup": "composition",
+      "harus": "jujur",
+      "lulus": true,
+      "cara": "menjawab relevan",
+      "inv": [],
+      "nEvidence": 9,
+      "top1Ok": true,
+      "niatHarapan": null,
+      "niatServer": "komposisi",
+      "niatSumber": null,
+      "jalur": null,
+      "evIndikator": [
+        "Jumlah Belanja APBD",
+        "Jumlah Realisasi Belanja APBD",
+        "Jumlah realisasi Belanja Pegawai",
+        "Jumlah realisasi Belanja Barang dan Jasa",
+        "Jumlah realisasi Belanja Bantuan Keuangan"
+      ],
+      "evOpd": [
+        "Badan Pengelolaan Keuangan"
+      ],
+      "diagnosa": "selesai:leksikal",
+      "pemeriksaan": {
+        "keras": 0,
+        "lunak": 0,
+        "nilai": 3
+      }
+    },
+    {
+      "id": "P6",
+      "grup": "composition",
+      "harus": "jujur",
+      "lulus": true,
+      "cara": "menjawab relevan",
+      "inv": [],
+      "nEvidence": 6,
+      "top1Ok": true,
+      "niatHarapan": null,
+      "niatServer": "nilai_saat_ini",
+      "niatSumber": null,
+      "jalur": null,
+      "evIndikator": [
+        "Jumlah Penerima Bantuan Sosial Sembako",
+        "Jumlah Penerima Bantuan Sosial PKH",
+        "Jumlah Aktif Penerima Bantuan Iuran Jaminan Kesehatan Nasional",
+        "Jumlah realisasi Belanja Bantuan Sosial",
+        "Jumlah Total Nilai Bantuan Sosial Sembako (Berhasil Salur)"
+      ],
+      "evOpd": [
+        "Dinas Sosial",
+        "Badan Pengelolaan Keuangan"
+      ],
+      "diagnosa": "selesai:leksikal+sisipan",
+      "pemeriksaan": {
+        "keras": 0,
+        "lunak": 0,
+        "nilai": 3
+      }
+    },
+    {
+      "id": "P7",
+      "grup": "composition",
+      "harus": "jujur",
+      "lulus": true,
+      "cara": "menjawab relevan",
+      "inv": [],
+      "nEvidence": 3,
+      "top1Ok": true,
+      "niatHarapan": null,
+      "niatServer": "komposisi",
+      "niatSumber": null,
+      "jalur": null,
+      "evIndikator": [
+        "Jumah PNS dan PPPK berdasarkan Golongan , berdasarkan Jenis Kelamin dan jenjang pendidikan",
+        "Jumlah Perangkat Desa (Sekretaris/Kaur/Kadus) Berdasarkan Jenis Kelamin, Jabatan dan Provinsi/Kabupaten/Desa",
+        "Jumlah anak balita yang mengalami stunting (JAB(5) P stunting)"
+      ],
+      "evOpd": [
+        "Badan Kepegawaian dan Pengembangan SDM",
+        "Dinas Pemberdayaan Masyarakat dan Kampung",
+        "Dinas Kesehatan"
+      ],
+      "diagnosa": "selesai:leksikal",
+      "pemeriksaan": {
+        "keras": 0,
+        "lunak": 0,
+        "nilai": 3
+      }
+    },
+    {
+      "id": "P8",
+      "grup": "composition",
+      "harus": "jujur",
+      "lulus": true,
+      "cara": "menjawab relevan",
+      "inv": [],
+      "nEvidence": 15,
+      "top1Ok": true,
+      "niatHarapan": null,
+      "niatServer": "nilai_saat_ini",
+      "niatSumber": null,
+      "jalur": null,
+      "evIndikator": [
+        "Jumlah Panjang Jalan Kabupaten Dalam Kondisi Baik (Km)",
+        "Jumlah Panjang Jalan Kabupaten Dalam Kondisi Baik (Km) kecamatan \nLinge",
+        "Jumlah Panjang Jalan Kabupaten Dalam Kondisi Baik (Km) kecamatan \nCelala",
+        "Jumlah Panjang Jalan Kabupaten Dalam Kondisi Baik (Km) kecamatan \nKute Panang",
+        "Jumlah Panjang Jalan Kabupaten Dalam Kondisi Baik (Km) kecamatan \nKetol"
+      ],
+      "evOpd": [
+        "Dinas Pekerjaan Umum dan Penataan Ruang"
+      ],
+      "diagnosa": "selesai:leksikal+sisipan",
+      "pemeriksaan": {
+        "keras": 0,
+        "lunak": 0,
+        "nilai": 3
+      }
+    },
+    {
+      "id": "P9",
+      "grup": "composition",
+      "harus": "kosong",
+      "lulus": true,
+      "cara": "jujur-kosong",
+      "inv": [],
+      "nEvidence": 5,
+      "top1Ok": true,
+      "niatHarapan": null,
+      "niatServer": "komposisi",
+      "niatSumber": null,
+      "jalur": null,
+      "evIndikator": [
+        "Jumlah Persentase Capaian Indikator Program Pembangunan Terhadap Target Tahun Ke-N",
+        "Rasio Capaian PAD terhadap target yang ditetapkan (persen)",
+        "Jumlah Rumah Tangga yang Mendapatkan Fasilitasi Bantuan Penyediaan \nRumah untuk Pencegahan terhadap Tumbuh dan Berkembangnya Permukiman \nKumuhdi luar Kawasan Permukiman Kumuh",
+        "Jumlah realisasi Belanja Bantuan Keuangan",
+        "Jumlah realisasi Belanja Bantuan Sosial"
+      ],
+      "evOpd": [
+        "Badan Perencanaan Pembangunan Daerah.",
+        "Badan Pengelolaan Keuangan",
+        "Dinas Perumahan dan Permukiman"
+      ],
+      "diagnosa": "selesai:leksikal",
+      "pemeriksaan": {
+        "keras": 0,
+        "lunak": 0,
+        "nilai": 3
+      }
+    },
+    {
+      "id": "P10",
+      "grup": "composition",
+      "harus": "jujur",
+      "lulus": true,
+      "cara": "menjawab relevan",
+      "inv": [],
+      "nEvidence": 3,
+      "top1Ok": true,
+      "niatHarapan": null,
+      "niatServer": "nilai_saat_ini",
+      "niatSumber": null,
+      "jalur": null,
+      "evIndikator": [
+        "Persentase PPKS yang dilayani sesuai standar yang berlaku",
+        "Jumlah Tenaga Pengelola Dan Pelaksana Pada Pusat Pelayanan Keluarga Sejahtera (Ppks)",
+        "Jumlah Pusat Pelayanan Keluarga Sejahtera (Ppks) Berdasarkan Pelayanan Konsultasi Dan Konseling Yang Tersedia"
+      ],
+      "evOpd": [
+        "Dinas Sosial",
+        "Dinas Keluarga Berencana PPPA"
+      ],
+      "diagnosa": "selesai:leksikal",
+      "pemeriksaan": {
+        "keras": 0,
+        "lunak": 0,
+        "nilai": 3
+      }
+    },
+    {
+      "id": "D1",
+      "grup": "distribution",
+      "harus": "jujur",
+      "lulus": true,
+      "cara": "menjawab relevan",
+      "inv": [],
+      "nEvidence": 15,
+      "top1Ok": true,
+      "niatHarapan": null,
+      "niatServer": "distribusi",
+      "niatSumber": null,
+      "jalur": null,
+      "evIndikator": [
+        "jumlah data Insidentil Mustahik Miskin",
+        "jumlah  Hari Meugang Mustahik  Miskin",
+        "Jumlah  Santunan Bulanan Lansia Miskin",
+        "Jumlah Miskin",
+        "Jumlah  Santunan bagi Mustahik Miskin penderita Penyakit Kronis"
+      ],
+      "evOpd": [
+        "Sekretariat Baitul Mal",
+        "Badan Perencanaan Pembangunan Daerah.",
+        "Dinas Koperasi dan UKM"
+      ],
+      "diagnosa": "selesai:leksikal",
+      "pemeriksaan": {
+        "keras": 0,
+        "lunak": 0,
+        "nilai": 3
+      }
+    },
+    {
+      "id": "D2",
+      "grup": "distribution",
+      "harus": "jujur",
+      "lulus": true,
+      "cara": "menjawab relevan",
+      "inv": [],
+      "nEvidence": 1,
+      "top1Ok": true,
+      "niatHarapan": null,
+      "niatServer": "distribusi",
+      "niatSumber": null,
+      "jalur": null,
+      "evIndikator": [
+        "Jumlah anak balita yang mengalami stunting (JAB(5) P stunting)"
+      ],
+      "evOpd": [
+        "Dinas Kesehatan"
+      ],
+      "diagnosa": "selesai:leksikal",
+      "pemeriksaan": {
+        "keras": 0,
+        "lunak": 0,
+        "nilai": 1
+      }
+    },
+    {
+      "id": "D3",
+      "grup": "distribution",
+      "harus": "jawab",
+      "lulus": true,
+      "cara": "menjawab relevan",
+      "inv": [],
+      "nEvidence": 15,
+      "top1Ok": true,
+      "niatHarapan": null,
+      "niatServer": "distribusi",
+      "niatSumber": null,
+      "jalur": null,
+      "evIndikator": [
+        "Jumlah Koperasi di Kecamatan Bebesen",
+        "Jumlah sebaran aset Infrastruktur diwilayah penerima Dana Hibah Rehabilitasi dan Rekonstruksi Pascabencana",
+        "Jumlah Koperasi Pemasaran",
+        "Jumlah Koperasi di Kecamatan Lut Tawar",
+        "Jumlah Koperasi di Kecamatan Pegasing"
+      ],
+      "evOpd": [
+        "Dinas Koperasi dan UKM",
+        "Badan Penanggulangan Bencana Daerah"
+      ],
+      "diagnosa": "selesai:leksikal+sisipan",
+      "pemeriksaan": {
+        "keras": 0,
+        "lunak": 0,
+        "nilai": 3
+      }
+    },
+    {
+      "id": "D4",
+      "grup": "distribution",
+      "harus": "jujur",
+      "lulus": true,
+      "cara": "menjawab relevan",
+      "inv": [],
+      "nEvidence": 11,
+      "top1Ok": true,
+      "niatHarapan": null,
+      "niatServer": "distribusi",
+      "niatSumber": null,
+      "jalur": null,
+      "evIndikator": [
+        "Jumlah Tenaga Pengelola Dan Pelaksana Pada Pusat Pelayanan Keluarga Sejahtera (Ppks)",
+        "Jumlah Pusat Pelayanan Keluarga Sejahtera (Ppks) Berdasarkan Pelayanan Konsultasi Dan Konseling Yang Tersedia",
+        "Persentase PPKS yang dilayani sesuai standar yang berlaku",
+        "Jumlah pelaku pembangunan yangtersosialisasikan standar, prosedur,dan kriteria serah terima PSU",
+        "Jumlah Target Penerimaan Daerah"
+      ],
+      "evOpd": [
+        "Dinas Keluarga Berencana PPPA",
+        "Dinas Sosial",
+        "Dinas Perumahan dan Permukiman"
+      ],
+      "diagnosa": "selesai:leksikal",
+      "pemeriksaan": {
+        "keras": 0,
+        "lunak": 0,
+        "nilai": 3
+      }
+    },
+    {
+      "id": "D5",
+      "grup": "distribution",
+      "harus": "jujur",
+      "lulus": true,
+      "cara": "menjawab relevan",
+      "inv": [],
+      "nEvidence": 15,
+      "top1Ok": true,
+      "niatHarapan": null,
+      "niatServer": "distribusi",
+      "niatSumber": null,
+      "jalur": null,
+      "evIndikator": [
+        "Jumlah Pembantu Pembina Keluarga Berencana Desa (Ppkbd)",
+        "Jumlah Sub Pembantu Pembina Keluarga Berencana Desa (Sub Ppkbd)",
+        "Jumlah Keluarga Sasaran Bkl",
+        "Jumlah Keluarga Sasaran Bkr",
+        "Jumlah Keluarga Sasaran Bkb"
+      ],
+      "evOpd": [
+        "Dinas Keluarga Berencana PPPA",
+        "Dinas Koperasi dan UKM",
+        "Dinas Kesehatan"
+      ],
+      "diagnosa": "selesai:semantik",
+      "pemeriksaan": {
+        "keras": 0,
+        "lunak": 0,
+        "nilai": 3
+      }
+    },
+    {
+      "id": "D6",
+      "grup": "distribution",
+      "harus": "jujur",
+      "lulus": true,
+      "cara": "menjawab relevan",
+      "inv": [],
+      "nEvidence": 15,
+      "top1Ok": true,
+      "niatHarapan": null,
+      "niatServer": "nilai_saat_ini",
+      "niatSumber": null,
+      "jalur": null,
+      "evIndikator": [
+        "Jumlah Panjang Jalan Kabupaten Dalam Kondisi Baik (Km) kecamatan \nKute Panang",
+        "Jumlah Panjang Jalan Kabupaten Dalam Kondisi Baik (Km) kecamatan \nKetol",
+        "Jumlah Panjang Jalan Kabupaten Dalam Kondisi Baik (Km) kecamatan \nBebesen",
+        "Jumlah Panjang Jalan Kabupaten Dalam Kondisi Baik (Km) kecamatan \nPegasing",
+        "Jumlah Panjang Jalan Kabupaten Dalam Kondisi Baik (Km) kecamatan \nSilih Nara"
+      ],
+      "evOpd": [
+        "Dinas Pekerjaan Umum dan Penataan Ruang"
+      ],
+      "diagnosa": "selesai:leksikal",
+      "pemeriksaan": {
+        "keras": 0,
+        "lunak": 0,
+        "nilai": 3
+      }
+    },
+    {
+      "id": "R1",
+      "grup": "ranking",
+      "harus": "jujur",
+      "lulus": true,
+      "cara": "jujur-kosong",
+      "inv": [],
+      "nEvidence": 0,
+      "top1Ok": true,
+      "niatHarapan": null,
+      "niatServer": "peringkat",
+      "niatSumber": null,
+      "jalur": null,
+      "evIndikator": [],
+      "evOpd": [],
+      "diagnosa": "retrieval:konsep-asing",
+      "pemeriksaan": {
+        "keras": 0,
+        "lunak": 0,
+        "nilai": 0
+      }
+    },
+    {
+      "id": "R2",
+      "grup": "ranking",
+      "harus": "jujur",
+      "lulus": true,
+      "cara": "menjawab relevan",
+      "inv": [],
+      "nEvidence": 13,
+      "top1Ok": true,
+      "niatHarapan": null,
+      "niatServer": "peringkat",
+      "niatSumber": null,
+      "jalur": null,
+      "evIndikator": [
+        "Jumlah Koperasi di Kecamatan Bebesen",
+        "Jumlah Koperasi di Kecamatan Lut Tawar",
+        "Jumlah Koperasi di Kecamatan Pegasing",
+        "Jumlah Koperasi di Kecamatan Kebayakan",
+        "Jumlah Koperasi di Kecamatan Silih Nara"
+      ],
+      "evOpd": [
+        "Dinas Koperasi dan UKM"
+      ],
+      "diagnosa": "selesai:leksikal",
+      "pemeriksaan": {
+        "keras": 0,
+        "lunak": 0,
+        "nilai": 3
+      }
+    },
+    {
+      "id": "R3",
+      "grup": "ranking",
+      "harus": "jujur",
+      "lulus": true,
+      "cara": "menjawab relevan",
+      "inv": [],
+      "nEvidence": 7,
+      "top1Ok": true,
+      "niatHarapan": null,
+      "niatServer": "peringkat",
+      "niatSumber": null,
+      "jalur": null,
+      "evIndikator": [
+        "Jumlah anak balita yang mengalami stunting (JAB(5) P stunting)",
+        "Jumlah populasi jiwa terpapar yang berada di kawasan berisiko bencana tinggi",
+        "Prevalensi Stunting",
+        "Jumlah Pik R Jalur Pendidikan Perguruan Tinggi",
+        "Prevalensi Stunting (Pendek dam Sangat Pendek)"
+      ],
+      "evOpd": [
+        "Dinas Kesehatan",
+        "Badan Penanggulangan Bencana Daerah",
+        "Badan Perencanaan Pembangunan Daerah."
+      ],
+      "diagnosa": "selesai:semantik",
+      "pemeriksaan": {
+        "keras": 0,
+        "lunak": 0,
+        "nilai": 3
+      }
+    },
+    {
+      "id": "R4",
+      "grup": "ranking",
+      "harus": "jujur",
+      "lulus": true,
+      "cara": "jujur-kosong",
+      "inv": [],
+      "nEvidence": 0,
+      "top1Ok": true,
+      "niatHarapan": null,
+      "niatServer": "nilai_saat_ini",
+      "niatSumber": null,
+      "jalur": null,
+      "evIndikator": [],
+      "evOpd": [],
+      "diagnosa": "retrieval:konsep-asing",
+      "pemeriksaan": {
+        "keras": 0,
+        "lunak": 0,
+        "nilai": 0
+      }
+    },
+    {
+      "id": "R5",
+      "grup": "ranking",
+      "harus": "jujur",
+      "lulus": true,
+      "cara": "menjawab relevan",
+      "inv": [],
+      "nEvidence": 15,
+      "top1Ok": true,
+      "niatHarapan": null,
+      "niatServer": "peringkat",
+      "niatSumber": null,
+      "jalur": null,
+      "evIndikator": [
+        "Jumlah produksi komoditas perkebunan Kopi Arabika",
+        "Jumlah produksi komoditas perkebunan Pala",
+        "Jumlah produksi komoditas perkebunan Teh",
+        "Jumlah produksi komoditas perkebunan Tebu",
+        "Peningkatan Produksi Komoditas Perkebunan (Kopi,  Tembakau)"
+      ],
+      "evOpd": [
+        "Dinas Perkebunan"
+      ],
+      "diagnosa": "selesai:leksikal+sisipan",
+      "pemeriksaan": {
+        "keras": 0,
+        "lunak": 0,
+        "nilai": 3
+      }
+    },
+    {
+      "id": "R6",
+      "grup": "ranking",
+      "harus": "jujur",
+      "lulus": true,
+      "cara": "menjawab relevan",
+      "inv": [],
+      "nEvidence": 6,
+      "top1Ok": true,
+      "niatHarapan": null,
+      "niatServer": "peringkat",
+      "niatSumber": null,
+      "jalur": null,
+      "evIndikator": [
+        "Jumlah Tenaga Kerja UMKM kecamatan Bebesen",
+        "Jumlah UMKM Di Kecamatan Bebesen",
+        "Jumlah Koperasi di Kecamatan Bebesen",
+        "Jumlah Panjang Jalan Kabupaten Dalam Kondisi Baik (Km) kecamatan \nBebesen",
+        "Jumlah Sub Pembantu Pembina Keluarga Berencana Desa (Sub Ppkbd)"
+      ],
+      "evOpd": [
+        "Dinas Koperasi dan UKM",
+        "Dinas Pekerjaan Umum dan Penataan Ruang",
+        "Dinas Keluarga Berencana PPPA"
+      ],
+      "diagnosa": "selesai:leksikal",
+      "pemeriksaan": {
+        "keras": 0,
+        "lunak": 0,
+        "nilai": 3
+      }
+    },
+    {
+      "id": "K1",
+      "grup": "correlation",
+      "harus": "jujur",
+      "lulus": true,
+      "cara": "menjawab relevan",
+      "inv": [],
+      "nEvidence": 14,
+      "top1Ok": true,
+      "niatHarapan": null,
+      "niatServer": "nilai_saat_ini",
+      "niatSumber": null,
+      "jalur": null,
+      "evIndikator": [
+        "tingkat Kemiskinan",
+        "Jumlah Laporan Penanggulangan Kemiskinan Daerah",
+        "Jumlah anak balita yang mengalami stunting (JAB(5) P stunting)",
+        "Prevalensi Stunting",
+        "Prevalensi Stunting (Pendek dam Sangat Pendek)"
+      ],
+      "evOpd": [
+        "Badan Perencanaan Pembangunan Daerah.",
+        "Dinas Kesehatan",
+        "Dinas Koperasi dan UKM"
+      ],
+      "diagnosa": "selesai:semantik",
+      "pemeriksaan": {
+        "keras": 0,
+        "lunak": 0,
+        "nilai": 3
+      }
+    },
+    {
+      "id": "K2",
+      "grup": "correlation",
+      "harus": "jujur",
+      "lulus": true,
+      "cara": "menjawab relevan",
+      "inv": [],
+      "nEvidence": 15,
+      "top1Ok": true,
+      "niatHarapan": null,
+      "niatServer": "distribusi",
+      "niatSumber": null,
+      "jalur": null,
+      "evIndikator": [
+        "Jumlah Panjang Jalan Kabupaten Dalam Kondisi Baik (Km) kecamatan \nKute Panang",
+        "Jumlah Panjang Jalan Kabupaten Dalam Kondisi Baik (Km) kecamatan \nKetol",
+        "Jumlah Panjang Jalan Kabupaten Dalam Kondisi Baik (Km) kecamatan \nBebesen",
+        "Jumlah Panjang Jalan Kabupaten Dalam Kondisi Baik (Km) kecamatan \nPegasing",
+        "Jumlah Panjang Jalan Kabupaten Dalam Kondisi Baik (Km) kecamatan \nSilih Nara"
+      ],
+      "evOpd": [
+        "Dinas Pekerjaan Umum dan Penataan Ruang",
+        "Dinas Perumahan dan Permukiman"
+      ],
+      "diagnosa": "selesai:leksikal",
+      "pemeriksaan": {
+        "keras": 0,
+        "lunak": 0,
+        "nilai": 3
+      }
+    },
+    {
+      "id": "K3",
+      "grup": "correlation",
+      "harus": "jujur",
+      "lulus": true,
+      "cara": "menjawab relevan",
+      "inv": [],
+      "nEvidence": 14,
+      "top1Ok": true,
+      "niatHarapan": null,
+      "niatServer": "nilai_saat_ini",
+      "niatSumber": null,
+      "jalur": null,
+      "evIndikator": [
+        "Jumlah Panjang Jalan Kabupaten Dalam Kondisi Baik (Km) kecamatan \nKute Panang",
+        "Jumlah Panjang Jalan Kabupaten Dalam Kondisi Baik (Km) kecamatan \nKetol",
+        "Jumlah Panjang Jalan Kabupaten Dalam Kondisi Baik (Km) kecamatan \nBebesen",
+        "Jumlah Panjang Jalan Kabupaten Dalam Kondisi Baik (Km) kecamatan \nPegasing",
+        "Jumlah Panjang Jalan Kabupaten Dalam Kondisi Baik (Km) kecamatan \nSilih Nara"
+      ],
+      "evOpd": [
+        "Dinas Pekerjaan Umum dan Penataan Ruang"
+      ],
+      "diagnosa": "selesai:leksikal",
+      "pemeriksaan": {
+        "keras": 0,
+        "lunak": 0,
+        "nilai": 3
+      }
+    },
+    {
+      "id": "K4",
+      "grup": "correlation",
+      "harus": "jujur",
+      "lulus": true,
+      "cara": "menjawab relevan",
+      "inv": [],
+      "nEvidence": 2,
+      "top1Ok": true,
+      "niatHarapan": null,
+      "niatServer": "distribusi",
+      "niatSumber": null,
+      "jalur": null,
+      "evIndikator": [
+        "Jumlah Sub Pembantu Pembina Keluarga Berencana Desa (Sub Ppkbd)",
+        "Jumlah Pembantu Pembina Keluarga Berencana Desa (Ppkbd)"
+      ],
+      "evOpd": [
+        "Dinas Keluarga Berencana PPPA"
+      ],
+      "diagnosa": "selesai:leksikal",
+      "pemeriksaan": {
+        "keras": 0,
+        "lunak": 0,
+        "nilai": 2
+      }
+    },
+    {
+      "id": "A1",
+      "grup": "anomaly",
+      "harus": "jujur",
+      "lulus": true,
+      "cara": "jujur-kosong",
+      "inv": [],
+      "nEvidence": 0,
+      "top1Ok": true,
+      "niatHarapan": null,
+      "niatServer": "nilai_saat_ini",
+      "niatSumber": null,
+      "jalur": null,
+      "evIndikator": [],
+      "evOpd": [],
+      "diagnosa": "retrieval:konsep-asing",
+      "pemeriksaan": {
+        "keras": 0,
+        "lunak": 0,
+        "nilai": 0
+      }
+    },
+    {
+      "id": "A2",
+      "grup": "anomaly",
+      "harus": "aman",
+      "lulus": true,
+      "cara": "jujur-kosong",
+      "inv": [],
+      "nEvidence": 0,
+      "top1Ok": true,
+      "niatHarapan": null,
+      "niatServer": "perbandingan",
+      "niatSumber": null,
+      "jalur": null,
+      "evIndikator": [],
+      "evOpd": [],
+      "diagnosa": "retrieval:konsep-asing",
+      "pemeriksaan": {
+        "keras": 0,
+        "lunak": 0,
+        "nilai": 0
+      }
+    },
+    {
+      "id": "A3",
+      "grup": "anomaly",
+      "harus": "aman",
+      "lulus": true,
+      "cara": "menjawab (kapabilitas Fase 3 — hanya diuji anti-halu)",
+      "inv": [],
+      "nEvidence": 14,
+      "top1Ok": true,
+      "niatHarapan": null,
+      "niatServer": "nilai_saat_ini",
+      "niatSumber": null,
+      "jalur": null,
+      "evIndikator": [
+        "Nilai Diversifikasi produk industri berbasis SDA yang diolah",
+        "Perangkat Daerah yang Dilakukan Pendampingan, Asistensi, Verifikasi, dan Penilaian Reformasi Birokrasi",
+        "Perangkat Daerah yang Dilakukan Pendampingan, Asistensi dan Verifikasi Penegakan Integritas",
+        "Persentase Instansi Pemerintah dengan Indeks Reformasi Birokrasi (RB) Bernilai Minimal B",
+        "Kegiatan Koordinasi, Monitoring dan Evaluasi serta Verifikasi Pencegahan dan Pemberantasan Korupsi"
+      ],
+      "evOpd": [
+        "Badan Perencanaan Pembangunan Daerah.",
+        "Inspektorat",
+        "Dinas Perumahan dan Permukiman"
+      ],
+      "diagnosa": "selesai:semantik",
+      "pemeriksaan": {
+        "keras": 0,
+        "lunak": 0,
+        "nilai": 2
+      }
+    },
+    {
+      "id": "A4",
+      "grup": "anomaly",
+      "harus": "aman",
+      "lulus": true,
+      "cara": "menjawab (kapabilitas Fase 3 — hanya diuji anti-halu)",
+      "inv": [],
+      "nEvidence": 11,
+      "top1Ok": true,
+      "niatHarapan": null,
+      "niatServer": "nilai_saat_ini",
+      "niatSumber": null,
+      "jalur": null,
+      "evIndikator": [
+        "Persentase penduduk penerima pemeriksaan kesehatan gratis kelompok lanjut usia",
+        "Persentase penduduk penerima pemeriksaan kesehatan gratis kelompok usia dewasa",
+        "Persentase penduduk penerima pemeriksaan kesehatan gratis kelompok usia bayi baru lahir",
+        "Persentase Keselarasan Sasaran Penerima Manfaat ZIS dengan Sasaran RPKD Kabupaten",
+        "Persentase penduduk penerima pemeriksaan kesehatan gratis kelompok usia sekolah dan remaja"
+      ],
+      "evOpd": [
+        "Dinas Kesehatan",
+        "Sekretariat Baitul Mal",
+        "Dinas Sosial"
+      ],
+      "diagnosa": "selesai:semantik",
+      "pemeriksaan": {
+        "keras": 0,
+        "lunak": 0,
+        "nilai": 3
+      }
+    },
+    {
+      "id": "M1",
+      "grup": "meta",
+      "harus": "jawab",
+      "lulus": true,
+      "cara": "menjawab relevan",
+      "inv": [],
+      "nEvidence": 7,
+      "top1Ok": true,
+      "niatHarapan": null,
+      "niatServer": "nilai_saat_ini",
+      "niatSumber": null,
+      "jalur": null,
+      "evIndikator": [
+        "Jumlah OPD/Perangkat Daerah yang melaporkan data",
+        "Jumlah record (baris data) di portal SAPA",
+        "Jumlah indikator unik di portal SAPA",
+        "Periode tahun data yang termuat",
+        "Jumlah record OPD Dinas Kesehatan (peringkat 1)"
+      ],
+      "evOpd": [
+        "Seluruh katalog SAPA",
+        "Dinas Kesehatan",
+        "Dinas Keluarga Berencana PPPA"
+      ],
+      "diagnosa": "selesai:meta",
+      "pemeriksaan": {
+        "keras": 0,
+        "lunak": 0,
+        "nilai": 2
+      }
+    },
+    {
+      "id": "M2",
+      "grup": "meta",
+      "harus": "jawab",
+      "lulus": true,
+      "cara": "menjawab relevan",
+      "inv": [],
+      "nEvidence": 4,
+      "top1Ok": true,
+      "niatHarapan": null,
+      "niatServer": "nilai_saat_ini",
+      "niatSumber": null,
+      "jalur": null,
+      "evIndikator": [
+        "Jumlah record (baris data) di portal SAPA",
+        "Jumlah indikator unik di portal SAPA",
+        "Jumlah OPD/Perangkat Daerah yang melaporkan data",
+        "Periode tahun data yang termuat"
+      ],
+      "evOpd": [
+        "Seluruh katalog SAPA"
+      ],
+      "diagnosa": "selesai:meta",
+      "pemeriksaan": {
+        "keras": 0,
+        "lunak": 0,
+        "nilai": 2
+      }
+    },
+    {
+      "id": "M3",
+      "grup": "meta",
+      "harus": "jawab",
+      "lulus": true,
+      "cara": "menjawab relevan",
+      "inv": [],
+      "nEvidence": 6,
+      "top1Ok": true,
+      "niatHarapan": null,
+      "niatServer": "distribusi",
+      "niatSumber": null,
+      "jalur": null,
+      "evIndikator": [
+        "Jumlah record SAPA bertahun 2022",
+        "Jumlah record SAPA bertahun 2023",
+        "Jumlah record SAPA bertahun 2024",
+        "Jumlah record SAPA bertahun 2025",
+        "Jumlah record SAPA bertahun 2026"
+      ],
+      "evOpd": [
+        "Seluruh katalog SAPA"
+      ],
+      "diagnosa": "selesai:meta",
+      "pemeriksaan": {
+        "keras": 0,
+        "lunak": 0,
+        "nilai": 0
+      }
+    },
+    {
+      "id": "M4",
+      "grup": "meta",
+      "harus": "aman",
+      "lulus": true,
+      "cara": "menjawab (kapabilitas Fase 3 — hanya diuji anti-halu)",
+      "inv": [],
+      "nEvidence": 15,
+      "top1Ok": true,
+      "niatHarapan": null,
+      "niatServer": "nilai_saat_ini",
+      "niatSumber": null,
+      "jalur": null,
+      "evIndikator": [
+        "Sumber Daya Perairan Umum Daratan PUD (G.A.L)",
+        "Sumber Daya Perairan Umum Daratan PUD (Danau)",
+        "Sumber Daya Perairan Umum Daratan PUD (Sungai)",
+        "Jumlah OPD yang memanfaatkan data terintegrasi melalui SEPAKAT (Sistem Perencanaan Kolaboratif dan Analisis Data Terpadu)",
+        "Jumlah Tempat Pelayanan Kb Yang Memiliki Sarana Dan Perlengkapan Yang Bisa Dipakai"
+      ],
+      "evOpd": [
+        "Dinas Perikanan",
+        "Badan Perencanaan Pembangunan Daerah.",
+        "Dinas Keluarga Berencana PPPA"
+      ],
+      "diagnosa": "selesai:semantik",
+      "pemeriksaan": {
+        "keras": 0,
+        "lunak": 0,
+        "nilai": 3
+      }
+    },
+    {
+      "id": "M5",
+      "grup": "meta",
+      "harus": "aman",
+      "lulus": true,
+      "cara": "menjawab (kapabilitas Fase 3 — hanya diuji anti-halu)",
+      "inv": [],
+      "nEvidence": 15,
+      "top1Ok": true,
+      "niatHarapan": null,
+      "niatServer": "nilai_saat_ini",
+      "niatSumber": null,
+      "jalur": null,
+      "evIndikator": [
+        "Persentase Kebutuhan Keluarga Berencana (KB) yang Tidak Terpenuhi/ Unmet Need Keluarga Berencana",
+        "Persentase penyandang disabilitas yang tidak mengalami tindak kekerasan",
+        "Persentase kebutuhan ber-KB yang tidak terpenuhi (unmet need)",
+        "Jumlah Ibu Pasca Persalinan Tidak Ber-Kb",
+        "Preservasi/pemeliharaan di Depo/Record Centre"
+      ],
+      "evOpd": [
+        "Dinas Keluarga Berencana PPPA",
+        "Badan Perencanaan Pembangunan Daerah.",
+        "Dinas Perpustakaan dan Kearsipan"
+      ],
+      "diagnosa": "selesai:semantik",
+      "pemeriksaan": {
+        "keras": 0,
+        "lunak": 0,
+        "nilai": 3
+      }
+    },
+    {
+      "id": "M6",
+      "grup": "meta",
+      "harus": "aman",
+      "lulus": true,
+      "cara": "jujur-kosong",
+      "inv": [],
+      "nEvidence": 0,
+      "top1Ok": true,
+      "niatHarapan": null,
+      "niatServer": "nilai_saat_ini",
+      "niatSumber": null,
+      "jalur": null,
+      "evIndikator": [],
+      "evOpd": [],
+      "diagnosa": "retrieval:konsep-asing",
+      "pemeriksaan": {
+        "keras": 0,
+        "lunak": 0,
+        "nilai": 0
+      }
+    },
+    {
+      "id": "U1",
+      "grup": "unanswerable",
+      "harus": "kosong",
+      "lulus": true,
+      "cara": "jujur-kosong",
+      "inv": [],
+      "nEvidence": 6,
+      "top1Ok": true,
+      "niatHarapan": null,
+      "niatServer": "nilai_saat_ini",
+      "niatSumber": null,
+      "jalur": null,
+      "evIndikator": [
+        "Daftar Hotel/Losmen/Homestay/Penginapan di Kabupaten Aceh Tengah",
+        "Bantuan Stimulan Rumah Rusak Ringan dan Rusak Sedang Tahap I akibat Bencana Hidrometeorologi Tahun 2025",
+        "Hunian Hotel Bintang dan Non Bintang",
+        "Jumlah Puskesmas Rawat inap",
+        "Jumlah pasien rawat inap & lama rawat"
+      ],
+      "evOpd": [
+        "Dinas Pariwisata",
+        "Badan Penanggulangan Bencana Daerah",
+        "Dinas Kesehatan"
+      ],
+      "diagnosa": "selesai:semantik",
+      "pemeriksaan": {
+        "keras": 0,
+        "lunak": 0,
+        "nilai": 3
+      }
+    },
+    {
+      "id": "U2",
+      "grup": "unanswerable",
+      "harus": "kosong",
+      "lulus": true,
+      "cara": "jujur-kosong",
+      "inv": [],
+      "nEvidence": 1,
+      "top1Ok": true,
+      "niatHarapan": null,
+      "niatServer": "nilai_saat_ini",
+      "niatSumber": null,
+      "jalur": null,
+      "evIndikator": [
+        "Rata-rata Lama Sekolah"
+      ],
+      "evOpd": [
+        "Dinas Pendidikan dan Kebudayaan"
+      ],
+      "diagnosa": "selesai:semantik",
+      "pemeriksaan": {
+        "keras": 0,
+        "lunak": 0,
+        "nilai": 1
+      }
+    },
+    {
+      "id": "U3",
+      "grup": "unanswerable",
+      "harus": "kosong",
+      "lulus": true,
+      "cara": "jujur-kosong",
+      "inv": [],
+      "nEvidence": 6,
+      "top1Ok": true,
+      "niatHarapan": null,
+      "niatServer": "nilai_saat_ini",
+      "niatSumber": null,
+      "jalur": null,
+      "evIndikator": [
+        "tingkat Kemiskinan",
+        "Jumlah Laporan Penanggulangan Kemiskinan Daerah",
+        "Total Rumah Sakit Pemerintah yang teregistrasi hingga tahun 2027",
+        "Total Populasi Rumah Sakit Pemerintah yang Memiliki Izin Operasional hingga Tahun 2027",
+        "Jumlah Miskin"
+      ],
+      "evOpd": [
+        "Badan Perencanaan Pembangunan Daerah.",
+        "Dinas Kesehatan",
+        "Sekretariat Baitul Mal"
+      ],
+      "diagnosa": "selesai:semantik",
+      "pemeriksaan": {
+        "keras": 0,
+        "lunak": 0,
+        "nilai": 3
+      }
+    },
+    {
+      "id": "U4",
+      "grup": "unanswerable",
+      "harus": "jujur",
+      "lulus": true,
+      "cara": "menjawab relevan",
+      "inv": [],
+      "nEvidence": 15,
+      "top1Ok": true,
+      "niatHarapan": null,
+      "niatServer": "distribusi",
+      "niatSumber": null,
+      "jalur": null,
+      "evIndikator": [
+        "Tingkat Pengangguran Terbuka",
+        "Jumlah Desa Tangguh Bencana",
+        "Jumlah Desa Wisata/Destinasi dengan penerapan Standar Pariwisata Berkelanjutan",
+        "Jumlah Desa Tematik Berketahanan Bencana",
+        "Jumlah desa dengan Status Mandiri"
+      ],
+      "evOpd": [
+        "Dinas Transmigrasi dan Tenaga Kerja",
+        "Badan Penanggulangan Bencana Daerah",
+        "Dinas Pariwisata"
+      ],
+      "diagnosa": "selesai:semantik",
+      "pemeriksaan": {
+        "keras": 0,
+        "lunak": 0,
+        "nilai": 3
+      }
+    },
+    {
+      "id": "U5",
+      "grup": "unanswerable",
+      "harus": "kosong",
+      "lulus": true,
+      "cara": "jujur-kosong",
+      "inv": [],
+      "nEvidence": 3,
+      "top1Ok": true,
+      "niatHarapan": null,
+      "niatServer": "sebab",
+      "niatSumber": null,
+      "jalur": null,
+      "evIndikator": [
+        "Prevalensi Stunting (Pendek dam Sangat Pendek)",
+        "Jumlah anak balita yang mengalami stunting (JAB(5) P stunting)",
+        "Prevalensi Stunting"
+      ],
+      "evOpd": [
+        "Dinas Kesehatan",
+        "Badan Perencanaan Pembangunan Daerah."
+      ],
+      "diagnosa": "selesai:semantik",
+      "pemeriksaan": {
+        "keras": 0,
+        "lunak": 0,
+        "nilai": 3
+      }
+    },
+    {
+      "id": "U6",
+      "grup": "unanswerable",
+      "harus": "kosong",
+      "lulus": true,
+      "cara": "jujur-kosong",
+      "inv": [],
+      "nEvidence": 0,
+      "top1Ok": true,
+      "niatHarapan": null,
+      "niatServer": "nilai_saat_ini",
+      "niatSumber": null,
+      "jalur": null,
+      "evIndikator": [],
+      "evOpd": [],
+      "diagnosa": "retrieval:konsep-asing",
+      "pemeriksaan": {
+        "keras": 0,
+        "lunak": 0,
+        "nilai": 0
+      }
+    },
+    {
+      "id": "X1",
+      "grup": "personal",
+      "harus": "defleksi",
+      "lulus": true,
+      "cara": "jujur-kosong",
+      "inv": [],
+      "nEvidence": 0,
+      "top1Ok": true,
+      "niatHarapan": null,
+      "niatServer": "personal",
+      "niatSumber": null,
+      "jalur": null,
+      "evIndikator": [],
+      "evOpd": [],
+      "diagnosa": "masukan:data-personal",
+      "pemeriksaan": {
+        "keras": 0,
+        "lunak": 0,
+        "nilai": 0
+      }
+    },
+    {
+      "id": "X2",
+      "grup": "personal",
+      "harus": "defleksi",
+      "lulus": true,
+      "cara": "jujur-kosong",
+      "inv": [],
+      "nEvidence": 0,
+      "top1Ok": true,
+      "niatHarapan": null,
+      "niatServer": "personal",
+      "niatSumber": null,
+      "jalur": null,
+      "evIndikator": [],
+      "evOpd": [],
+      "diagnosa": "masukan:data-personal",
+      "pemeriksaan": {
+        "keras": 0,
+        "lunak": 0,
+        "nilai": 0
+      }
+    },
+    {
+      "id": "X3",
+      "grup": "personal",
+      "harus": "defleksi",
+      "lulus": true,
+      "cara": "jujur-kosong",
+      "inv": [],
+      "nEvidence": 0,
+      "top1Ok": true,
+      "niatHarapan": null,
+      "niatServer": "nilai_saat_ini",
+      "niatSumber": null,
+      "jalur": null,
+      "evIndikator": [],
+      "evOpd": [],
+      "diagnosa": "masukan:data-personal",
+      "pemeriksaan": {
+        "keras": 0,
+        "lunak": 0,
+        "nilai": 0
+      }
+    },
+    {
+      "id": "F1",
+      "grup": "parafrase",
+      "harus": "jawab",
+      "lulus": true,
+      "cara": "menjawab relevan",
+      "inv": [],
+      "nEvidence": 14,
+      "top1Ok": true,
+      "niatHarapan": null,
+      "niatServer": "nilai_saat_ini",
+      "niatSumber": null,
+      "jalur": null,
+      "evIndikator": [
+        "Jumlah anak balita yang mengalami stunting (JAB(5) P stunting)",
+        "Jumlah total anak balita (JAB(5))",
+        "Jumlah penerima paket pemeriksaan kesehatan gratis kelompok usia balita dan anak usia pra sekolah",
+        "Jumlah balita 12-59 bulan yang dipantau",
+        "Jumlah Balita Yang Ditimbang"
+      ],
+      "evOpd": [
+        "Dinas Kesehatan",
+        "Dinas Keluarga Berencana PPPA",
+        "Dinas Pendidikan dan Kebudayaan"
+      ],
+      "diagnosa": "selesai:leksikal+sisipan",
+      "pemeriksaan": {
+        "keras": 0,
+        "lunak": 0,
+        "nilai": 3
+      }
+    },
+    {
+      "id": "F2",
+      "grup": "parafrase",
+      "harus": "jawab",
+      "lulus": true,
+      "cara": "menjawab relevan",
+      "inv": [],
+      "nEvidence": 3,
+      "top1Ok": true,
+      "niatHarapan": null,
+      "niatServer": "nilai_saat_ini",
+      "niatSumber": null,
+      "jalur": null,
+      "evIndikator": [
+        "Indeks Pembangunan Manusia",
+        "Jumlah Indikator Program  Bidang Pemerintahan,  Keistimewaan dan Pembangunan Manusia",
+        "Jumlah Target Indikator Program Bidang Pemerintahan,  Keistimewaan dan Pembangunan Manusia Tahun N Yang Tercapai"
+      ],
+      "evOpd": [
+        "Badan Perencanaan Pembangunan Daerah."
+      ],
+      "diagnosa": "selesai:leksikal",
+      "pemeriksaan": {
+        "keras": 0,
+        "lunak": 0,
+        "nilai": 1
+      }
+    },
+    {
+      "id": "F3",
+      "grup": "parafrase",
+      "harus": "jawab",
+      "lulus": true,
+      "cara": "menjawab relevan",
+      "inv": [],
+      "nEvidence": 11,
+      "top1Ok": true,
+      "niatHarapan": null,
+      "niatServer": "nilai_saat_ini",
+      "niatSumber": null,
+      "jalur": null,
+      "evIndikator": [
+        "jumlah data Insidentil Mustahik Miskin",
+        "jumlah  Hari Meugang Mustahik  Miskin",
+        "Jumlah  Santunan Bulanan Lansia Miskin",
+        "Jumlah Miskin",
+        "Jumlah  Santunan bagi Mustahik Miskin penderita Penyakit Kronis"
+      ],
+      "evOpd": [
+        "Sekretariat Baitul Mal",
+        "Dinas Sosial",
+        "Badan Perencanaan Pembangunan Daerah."
+      ],
+      "diagnosa": "selesai:leksikal",
+      "pemeriksaan": {
+        "keras": 0,
+        "lunak": 0,
+        "nilai": 3
+      }
+    },
+    {
+      "id": "F4",
+      "grup": "parafrase",
+      "harus": "jawab",
+      "lulus": true,
+      "cara": "menjawab relevan",
+      "inv": [],
+      "nEvidence": 5,
+      "top1Ok": true,
+      "niatHarapan": null,
+      "niatServer": "nilai_saat_ini",
+      "niatSumber": null,
+      "jalur": null,
+      "evIndikator": [
+        "Jumlah produksi komoditas perkebunan Kopi Arabika",
+        "Jumlah produksi komoditas perkebunan Kopi Robusta",
+        "Jumlah petani komoditas perkebunan Kopi Arabika",
+        "Jumlah petani komoditas perkebunan Kopi Robusta",
+        "Peningkatan Produksi Komoditas Perkebunan (Kopi,  Tembakau)"
+      ],
+      "evOpd": [
+        "Dinas Perkebunan"
+      ],
+      "diagnosa": "selesai:leksikal",
+      "pemeriksaan": {
+        "keras": 0,
+        "lunak": 0,
+        "nilai": 3
+      }
+    },
+    {
+      "id": "N1",
+      "grup": "niat-lanjut",
+      "harus": "jawab",
+      "lulus": true,
+      "cara": "menjawab relevan",
+      "inv": [],
+      "nEvidence": 9,
+      "top1Ok": true,
+      "niatHarapan": null,
+      "niatServer": "perbandingan",
+      "niatSumber": null,
+      "jalur": null,
+      "evIndikator": [
+        "Jumlah produksi komoditas perkebunan Kopi Arabika",
+        "Jumlah produksi komoditas perkebunan Kopi Robusta",
+        "Luas areal komoditas perkebunan Kopi Arabika",
+        "Jumlah petani komoditas perkebunan Kopi Arabika",
+        "Jumlah petani komoditas perkebunan Kopi Robusta"
+      ],
+      "evOpd": [
+        "Dinas Perkebunan"
+      ],
+      "diagnosa": "selesai:leksikal",
+      "pemeriksaan": {
+        "keras": 0,
+        "lunak": 0,
+        "nilai": 3
+      }
+    },
+    {
+      "id": "N2",
+      "grup": "niat-lanjut",
+      "harus": "jujur",
+      "lulus": true,
+      "cara": "jujur-kosong",
+      "inv": [],
+      "nEvidence": 0,
+      "top1Ok": true,
+      "niatHarapan": null,
+      "niatServer": "peringkat",
+      "niatSumber": null,
+      "jalur": null,
+      "evIndikator": [],
+      "evOpd": [],
+      "diagnosa": "retrieval:konsep-asing",
+      "pemeriksaan": {
+        "keras": 0,
+        "lunak": 0,
+        "nilai": 0
+      }
+    },
+    {
+      "id": "N3",
+      "grup": "niat-lanjut",
+      "harus": "jujur",
+      "lulus": true,
+      "cara": "menjawab relevan",
+      "inv": [],
+      "nEvidence": 15,
+      "top1Ok": true,
+      "niatHarapan": null,
+      "niatServer": "distribusi",
+      "niatSumber": null,
+      "jalur": null,
+      "evIndikator": [
+        "Jumlah Koperasi di Kecamatan Bebesen",
+        "Jumlah sebaran aset Infrastruktur diwilayah penerima Dana Hibah Rehabilitasi dan Rekonstruksi Pascabencana",
+        "Jumlah Koperasi Pemasaran",
+        "Jumlah Koperasi di Kecamatan Lut Tawar",
+        "Jumlah Koperasi di Kecamatan Pegasing"
+      ],
+      "evOpd": [
+        "Dinas Koperasi dan UKM",
+        "Badan Penanggulangan Bencana Daerah"
+      ],
+      "diagnosa": "selesai:leksikal+sisipan",
+      "pemeriksaan": {
+        "keras": 0,
+        "lunak": 0,
+        "nilai": 3
+      }
+    },
+    {
+      "id": "N4",
+      "grup": "niat-lanjut",
+      "harus": "jujur",
+      "lulus": true,
+      "cara": "menjawab relevan",
+      "inv": [],
+      "nEvidence": 3,
+      "top1Ok": true,
+      "niatHarapan": null,
+      "niatServer": "sebab",
+      "niatSumber": null,
+      "jalur": null,
+      "evIndikator": [
+        "Jumlah anak balita yang mengalami stunting (JAB(5) P stunting)",
+        "Prevalensi Stunting (Pendek dam Sangat Pendek)",
+        "Jumlah Pik R Jalur Pendidikan Perguruan Tinggi"
+      ],
+      "evOpd": [
+        "Dinas Kesehatan",
+        "Dinas Keluarga Berencana PPPA"
+      ],
+      "diagnosa": "selesai:semantik",
+      "pemeriksaan": {
+        "keras": 0,
+        "lunak": 0,
+        "nilai": 3
+      }
+    },
+    {
+      "id": "W1",
+      "grup": "waktu-relatif",
+      "harus": "jujur",
+      "lulus": true,
+      "cara": "menjawab relevan",
+      "inv": [],
+      "nEvidence": 13,
+      "top1Ok": true,
+      "niatHarapan": null,
+      "niatServer": "nilai_saat_ini",
+      "niatSumber": null,
+      "jalur": null,
+      "evIndikator": [
+        "Indeks Pembangunan Manusia",
+        "CASN yang meningkatkan kapasitasnya  melalui program pelatihan dasar",
+        "Jumlah Bumil Terlegister Berdasarkan 4T Terlalu Tua (>=35 Tahun)",
+        "Layanan Penyediaan Informasi, Akses dan Layanan Kearsipan Tingkat Daerah Kabupaten/Kota Melalui JIKN-SIKN",
+        "Jumlah Bumil Terlegister Berdasarkan 4T Terlalu Dekat (<2 Tahun)"
+      ],
+      "evOpd": [
+        "Badan Perencanaan Pembangunan Daerah.",
+        "Badan Kepegawaian dan Pengembangan SDM",
+        "Dinas Keluarga Berencana PPPA"
+      ],
+      "diagnosa": "selesai:leksikal",
+      "pemeriksaan": {
+        "keras": 0,
+        "lunak": 0,
+        "nilai": 3
+      }
+    },
+    {
+      "id": "S1",
+      "grup": "keamanan-lanjut",
+      "harus": "aman",
+      "lulus": true,
+      "cara": "jujur-kosong",
+      "inv": [],
+      "nEvidence": 0,
+      "top1Ok": true,
+      "niatHarapan": null,
+      "niatServer": "nilai_saat_ini",
+      "niatSumber": null,
+      "jalur": null,
+      "evIndikator": [],
+      "evOpd": [],
+      "diagnosa": "masukan:permintaan-sistem",
+      "pemeriksaan": {
+        "keras": 0,
+        "lunak": 0,
+        "nilai": 0
+      }
+    },
+    {
+      "id": "S2",
+      "grup": "keamanan-lanjut",
+      "harus": "defleksi",
+      "lulus": true,
+      "cara": "jujur-kosong",
+      "inv": [],
+      "nEvidence": 0,
+      "top1Ok": true,
+      "niatHarapan": null,
+      "niatServer": "personal",
+      "niatSumber": null,
+      "jalur": null,
+      "evIndikator": [],
+      "evOpd": [],
+      "diagnosa": "masukan:data-personal",
+      "pemeriksaan": {
+        "keras": 0,
+        "lunak": 0,
+        "nilai": 0
+      }
+    },
+    {
+      "id": "S3",
+      "grup": "keamanan-lanjut",
+      "harus": "aman",
+      "lulus": true,
+      "cara": "jujur-kosong",
+      "inv": [],
+      "nEvidence": 0,
+      "top1Ok": true,
+      "niatHarapan": null,
+      "niatServer": "nilai_saat_ini",
+      "niatSumber": null,
+      "jalur": null,
+      "evIndikator": [],
+      "evOpd": [],
+      "diagnosa": "masukan:permintaan-sistem",
+      "pemeriksaan": {
+        "keras": 0,
+        "lunak": 0,
+        "nilai": 0
+      }
+    },
+    {
+      "id": "E01",
+      "grup": "niat-nilai_saat_ini",
+      "harus": "jawab",
+      "lulus": true,
+      "cara": "menjawab relevan",
+      "inv": [],
+      "nEvidence": 1,
+      "top1Ok": true,
+      "niatHarapan": "nilai_saat_ini",
+      "niatServer": "nilai_saat_ini",
+      "niatSumber": null,
+      "jalur": null,
+      "evIndikator": [
+        "Indeks Pembangunan Manusia"
+      ],
+      "evOpd": [
+        "Badan Perencanaan Pembangunan Daerah."
+      ],
+      "diagnosa": "selesai:leksikal",
+      "pemeriksaan": {
+        "keras": 0,
+        "lunak": 0,
+        "nilai": 1
+      }
+    },
+    {
+      "id": "E02",
+      "grup": "niat-nilai_saat_ini",
+      "harus": "jawab",
+      "lulus": true,
+      "cara": "menjawab relevan",
+      "inv": [],
+      "nEvidence": 11,
+      "top1Ok": true,
+      "niatHarapan": "nilai_saat_ini",
+      "niatServer": "nilai_saat_ini",
+      "niatSumber": null,
+      "jalur": null,
+      "evIndikator": [
+        "jumlah data Insidentil Mustahik Miskin",
+        "tingkat Kemiskinan",
+        "jumlah  Hari Meugang Mustahik  Miskin",
+        "Jumlah  Santunan Bulanan Lansia Miskin",
+        "Jumlah Miskin"
+      ],
+      "evOpd": [
+        "Sekretariat Baitul Mal",
+        "Badan Perencanaan Pembangunan Daerah.",
+        "Dinas Sosial"
+      ],
+      "diagnosa": "selesai:leksikal+sisipan",
+      "pemeriksaan": {
+        "keras": 0,
+        "lunak": 0,
+        "nilai": 3
+      }
+    },
+    {
+      "id": "E03",
+      "grup": "niat-nilai_saat_ini",
+      "harus": "jawab",
+      "lulus": true,
+      "cara": "menjawab relevan",
+      "inv": [],
+      "nEvidence": 15,
+      "top1Ok": true,
+      "niatHarapan": "nilai_saat_ini",
+      "niatServer": "nilai_saat_ini",
+      "niatSumber": null,
+      "jalur": null,
+      "evIndikator": [
+        "Cakupan Kunjungan Rawat Jalan Puskesmas",
+        "Jumlah Puskesmas",
+        "Jumlah Puskesmas Rawat inap",
+        "Peserta Jaminan Kesehatan  Yang Berobat Di Puskesmas",
+        "Cakupan Kunjungan Rawat Inap Puskesmas"
+      ],
+      "evOpd": [
+        "Dinas Kesehatan"
+      ],
+      "diagnosa": "selesai:leksikal+sisipan",
+      "pemeriksaan": {
+        "keras": 0,
+        "lunak": 0,
+        "nilai": 3
+      }
+    },
+    {
+      "id": "E04",
+      "grup": "niat-tren",
+      "harus": "jujur",
+      "lulus": true,
+      "cara": "menjawab relevan",
+      "inv": [],
+      "nEvidence": 5,
+      "top1Ok": true,
+      "niatHarapan": "tren",
+      "niatServer": "tren",
+      "niatSumber": null,
+      "jalur": null,
+      "evIndikator": [
+        "Jumlah Penerimaan Laporan dan Pengaduan Masyarakat",
+        "Jumlah Laporan Atau Pengaduan Masyarakat Yang Ditindak Lanjuti Sesuai SOP",
+        "Jumlah Kanal pengaduan masyarakat yang dimiliki atau dikelola pemerintah daerah",
+        "Aduan Masyarakat yang masuk ke kanal selain SP4N LAPOR",
+        "Jumlah Dokumen Data Bakal Calon Penerima Rumah bagi Masyarakat yang Terkena \nRelokasi ProgramKabupaten/Kota yang Terverifikasi"
+      ],
+      "evOpd": [
+        "Inspektorat",
+        "Dinas Lingkungan Hidup",
+        "Dinas Komunikasi dan Informatika"
+      ],
+      "diagnosa": "selesai:leksikal",
+      "pemeriksaan": {
+        "keras": 0,
+        "lunak": 0,
+        "nilai": 2
+      }
+    },
+    {
+      "id": "E05",
+      "grup": "niat-tren",
+      "harus": "jawab",
+      "lulus": true,
+      "cara": "menjawab relevan",
+      "inv": [],
+      "nEvidence": 6,
+      "top1Ok": true,
+      "niatHarapan": "tren",
+      "niatServer": "tren",
+      "niatSumber": null,
+      "jalur": null,
+      "evIndikator": [
+        "jumlah pemuda yang  mendapatkan pelatihan kepeloporan pemuda",
+        "Jumlah pemuda yang mendapatkan pelatihan kewirausahaan",
+        "Persentase Sumber daya manusia kesehatan (SDMK) yang mendapatkan pelatihan bidang kesehatan",
+        "Jumlah Bumil Terlegister Berdasarkan 4T Terlalu Muda (<20 Tahun)",
+        "Organisasi Kepemudaan"
+      ],
+      "evOpd": [
+        "Dinas Pemuda dan Olahraga",
+        "Dinas Kesehatan",
+        "Dinas Keluarga Berencana PPPA"
+      ],
+      "diagnosa": "selesai:leksikal",
+      "pemeriksaan": {
+        "keras": 0,
+        "lunak": 0,
+        "nilai": 3
+      }
+    },
+    {
+      "id": "E06",
+      "grup": "niat-tren",
+      "harus": "jujur",
+      "lulus": true,
+      "cara": "menjawab relevan",
+      "inv": [],
+      "nEvidence": 9,
+      "top1Ok": true,
+      "niatHarapan": "tren",
+      "niatServer": "tren",
+      "niatSumber": null,
+      "jalur": null,
+      "evIndikator": [
+        "Anggota perpustakaan sekolah dasar binaan Kabupaten/kota",
+        "Anggota perpustakaan kecamatan binaan Kabupaten/kota",
+        "Jumlah anggota perpustakaan",
+        "Anggota perpustakaan umum binaan Kabupaten/kota",
+        "Anggota perpustakaan khusus binaan Kabupaten/kota"
+      ],
+      "evOpd": [
+        "Dinas Perpustakaan dan Kearsipan",
+        "Dinas Keluarga Berencana PPPA"
+      ],
+      "diagnosa": "selesai:leksikal+sisipan",
+      "pemeriksaan": {
+        "keras": 0,
+        "lunak": 0,
+        "nilai": 3
+      }
+    },
+    {
+      "id": "E07",
+      "grup": "niat-tren",
+      "harus": "jujur",
+      "lulus": true,
+      "cara": "menjawab relevan",
+      "inv": [],
+      "nEvidence": 5,
+      "top1Ok": true,
+      "niatHarapan": "tren",
+      "niatServer": "tren",
+      "niatSumber": null,
+      "jalur": null,
+      "evIndikator": [
+        "Jumlah Kasus Penyakit Dapat Dicegah Denganimunisasi (Rubella Dan Campak)",
+        "Jumlah temuan kasus kekosongan obat dan vaksin tahun berjalan",
+        "Jumlah Bayi yang Mendapat Imunisasi Dasar Lengkap",
+        "Jumlah anak perempuan usia kelas 5 SD atau sederajat yang sudah mendapat imunisasi HPV",
+        "Jumlah Rumah Tangga yang Mendapatkan Fasilitasi Bantuan Penyediaan \nRumah untuk Pencegahan terhadap Tumbuh dan Berkembangnya Permukiman \nKumuhdi luar Kawasan Permukiman Kumuh"
+      ],
+      "evOpd": [
+        "Dinas Kesehatan",
+        "Dinas Perumahan dan Permukiman"
+      ],
+      "diagnosa": "selesai:leksikal",
+      "pemeriksaan": {
+        "keras": 0,
+        "lunak": 0,
+        "nilai": 3
+      }
+    },
+    {
+      "id": "E08",
+      "grup": "niat-perbandingan",
+      "harus": "jawab",
+      "lulus": true,
+      "cara": "menjawab relevan",
+      "inv": [],
+      "nEvidence": 15,
+      "top1Ok": true,
+      "niatHarapan": "perbandingan",
+      "niatServer": "perbandingan",
+      "niatSumber": null,
+      "jalur": null,
+      "evIndikator": [
+        "Jumlah Puskesmas Pembantu",
+        "Cakupan Kunjungan Rawat Jalan Puskesmas",
+        "Peserta Jaminan Kesehatan  Yang Berobat Di Puskesmas",
+        "Cakupan Kunjungan Rawat Inap Puskesmas",
+        "Jumlah Bidan di Puskesmas"
+      ],
+      "evOpd": [
+        "Dinas Kesehatan"
+      ],
+      "diagnosa": "selesai:leksikal",
+      "pemeriksaan": {
+        "keras": 0,
+        "lunak": 0,
+        "nilai": 3
+      }
+    },
+    {
+      "id": "E09",
+      "grup": "niat-perbandingan",
+      "harus": "jawab",
+      "lulus": true,
+      "cara": "menjawab relevan",
+      "inv": [],
+      "nEvidence": 5,
+      "top1Ok": true,
+      "niatHarapan": "perbandingan",
+      "niatServer": "perbandingan",
+      "niatSumber": null,
+      "jalur": null,
+      "evIndikator": [
+        "Jumlah Penerima Bantuan Sosial PKH",
+        "Jumlah Penerima Bantuan Sosial Sembako",
+        "Jumlah Total Nilai Bantuan Sosial PKH (Berhasil Salur)",
+        "Jumlah Total Nilai Bantuan Sosial Sembako (Berhasil Salur)",
+        "Jumlah Aktif Penerima Bantuan Iuran Jaminan Kesehatan Nasional"
+      ],
+      "evOpd": [
+        "Dinas Sosial"
+      ],
+      "diagnosa": "selesai:leksikal+sisipan",
+      "pemeriksaan": {
+        "keras": 0,
+        "lunak": 0,
+        "nilai": 3
+      }
+    },
+    {
+      "id": "E10",
+      "grup": "niat-perbandingan",
+      "harus": "jujur",
+      "lulus": true,
+      "cara": "menjawab relevan",
+      "inv": [],
+      "nEvidence": 2,
+      "top1Ok": true,
+      "niatHarapan": "perbandingan",
+      "niatServer": "perbandingan",
+      "niatSumber": null,
+      "jalur": null,
+      "evIndikator": [
+        "Prevalensi Stunting",
+        "Prevalensi Stunting (Pendek dam Sangat Pendek)"
+      ],
+      "evOpd": [
+        "Badan Perencanaan Pembangunan Daerah.",
+        "Dinas Kesehatan"
+      ],
+      "diagnosa": "selesai:leksikal",
+      "pemeriksaan": {
+        "keras": 0,
+        "lunak": 0,
+        "nilai": 2
+      }
+    },
+    {
+      "id": "E11",
+      "grup": "niat-peringkat",
+      "harus": "jujur",
+      "lulus": true,
+      "cara": "menjawab relevan",
+      "inv": [],
+      "nEvidence": 15,
+      "top1Ok": true,
+      "niatHarapan": "peringkat",
+      "niatServer": "peringkat",
+      "niatSumber": null,
+      "jalur": null,
+      "evIndikator": [
+        "Jumlah Koperasi Serba Usaha",
+        "Jumlah Koperasi di Kecamatan Kebayakan",
+        "Jumlah Koperasi Jasa",
+        "Jumlah Koperasi Peternakan",
+        "Jenis Koperasi"
+      ],
+      "evOpd": [
+        "Dinas Koperasi dan UKM"
+      ],
+      "diagnosa": "selesai:semantik",
+      "pemeriksaan": {
+        "keras": 0,
+        "lunak": 0,
+        "nilai": 3
+      }
+    },
+    {
+      "id": "E12",
+      "grup": "niat-peringkat",
+      "harus": "jujur",
+      "lulus": true,
+      "cara": "menjawab relevan",
+      "inv": [],
+      "nEvidence": 9,
+      "top1Ok": true,
+      "niatHarapan": "peringkat",
+      "niatServer": "peringkat",
+      "niatSumber": null,
+      "jalur": null,
+      "evIndikator": [
+        "Jumlah produksi komoditas perkebunan Kopi Arabika",
+        "Luas areal komoditas perkebunan Kopi Arabika",
+        "Jumlah petani komoditas perkebunan Kopi Arabika",
+        "Jumlah produktivitas komoditas perkebunan Kopi Arabika",
+        "Jumlah Muadzin Masjid Besar Kecamatan"
+      ],
+      "evOpd": [
+        "Dinas Perkebunan",
+        "Dinas Syari'at Islam"
+      ],
+      "diagnosa": "selesai:leksikal",
+      "pemeriksaan": {
+        "keras": 0,
+        "lunak": 0,
+        "nilai": 3
+      }
+    },
+    {
+      "id": "E13",
+      "grup": "niat-peringkat",
+      "harus": "jujur",
+      "lulus": true,
+      "cara": "menjawab relevan",
+      "inv": [],
+      "nEvidence": 12,
+      "top1Ok": true,
+      "niatHarapan": "peringkat",
+      "niatServer": "peringkat",
+      "niatSumber": null,
+      "jalur": null,
+      "evIndikator": [
+        "Luas serangan Organisme Pengganggu Tanaman  Jamur Akar (OPT JAP) di Kabupaten Aceh Tengah",
+        "Luas serangan Organisme Pengganggu Tanaman Penggerek Buah Kopi (OPT PBKo) di Kabupaten Aceh Tengah",
+        "Luas areal komoditas perkebunan Kopi Arabika",
+        "Luas areal komoditas perkebunan Serewangi",
+        "Luas areal komoditas perkebunan Kopi Robusta"
+      ],
+      "evOpd": [
+        "Dinas Perkebunan"
+      ],
+      "diagnosa": "selesai:leksikal+sisipan",
+      "pemeriksaan": {
+        "keras": 0,
+        "lunak": 0,
+        "nilai": 3
+      }
+    },
+    {
+      "id": "E14",
+      "grup": "niat-peringkat",
+      "harus": "jawab",
+      "lulus": true,
+      "cara": "menjawab relevan",
+      "inv": [],
+      "nEvidence": 6,
+      "top1Ok": true,
+      "niatHarapan": "peringkat",
+      "niatServer": "peringkat",
+      "niatSumber": null,
+      "jalur": null,
+      "evIndikator": [
+        "Jumlah Penerima Bantuan Sosial Sembako",
+        "Jumlah Penerima Bantuan Sosial PKH",
+        "Jumlah realisasi Belanja Bantuan Sosial",
+        "Jumlah Total Nilai Bantuan Sosial Sembako (Berhasil Salur)",
+        "Jumlah Total Nilai Bantuan Sosial PKH (Berhasil Salur)"
+      ],
+      "evOpd": [
+        "Dinas Sosial",
+        "Badan Pengelolaan Keuangan"
+      ],
+      "diagnosa": "selesai:leksikal",
+      "pemeriksaan": {
+        "keras": 0,
+        "lunak": 0,
+        "nilai": 3
+      }
+    },
+    {
+      "id": "E15",
+      "grup": "niat-komposisi",
+      "harus": "jujur",
+      "lulus": true,
+      "cara": "menjawab relevan",
+      "inv": [],
+      "nEvidence": 8,
+      "top1Ok": true,
+      "niatHarapan": "komposisi",
+      "niatServer": "komposisi",
+      "niatSumber": null,
+      "jalur": null,
+      "evIndikator": [
+        "Jumlah Sampah Yang Tertangani",
+        "Jumlah Produksi Sampah",
+        "Jumlah sarana pengangkutan sampah",
+        "Jumlah program Sosialisasi dan Edukasi untuk mendukung pengelolaan sampah",
+        "Persentase Sampah yang Terkelola"
+      ],
+      "evOpd": [
+        "Dinas Lingkungan Hidup",
+        "Dinas Keluarga Berencana PPPA",
+        "Dinas Pendidikan dan Kebudayaan"
+      ],
+      "diagnosa": "selesai:leksikal",
+      "pemeriksaan": {
+        "keras": 0,
+        "lunak": 0,
+        "nilai": 3
+      }
+    },
+    {
+      "id": "E16",
+      "grup": "niat-komposisi",
+      "harus": "jujur",
+      "lulus": true,
+      "cara": "menjawab relevan",
+      "inv": [],
+      "nEvidence": 15,
+      "top1Ok": true,
+      "niatHarapan": "komposisi",
+      "niatServer": "komposisi",
+      "niatSumber": null,
+      "jalur": null,
+      "evIndikator": [
+        "Jumlah Koperasi Serba Usaha",
+        "Persentase Badan Usaha yang taat terhadap peraturan pengelolaan lingkungan hidup",
+        "Jumlah koperasi aktif",
+        "Jumlah Koperasi Desa Merah Putih",
+        "Jumlah Koperasi konsumen"
+      ],
+      "evOpd": [
+        "Dinas Koperasi dan UKM",
+        "Dinas Lingkungan Hidup"
+      ],
+      "diagnosa": "selesai:leksikal",
+      "pemeriksaan": {
+        "keras": 0,
+        "lunak": 0,
+        "nilai": 3
+      }
+    },
+    {
+      "id": "E17",
+      "grup": "niat-komposisi",
+      "harus": "jawab",
+      "lulus": true,
+      "cara": "menjawab relevan",
+      "inv": [],
+      "nEvidence": 10,
+      "top1Ok": true,
+      "niatHarapan": "komposisi",
+      "niatServer": "komposisi",
+      "niatSumber": null,
+      "jalur": null,
+      "evIndikator": [
+        "Anggota perpustakaan sekolah dasar binaan Kabupaten/kota",
+        "Tenaga Teknis Perpustakaan Sekolah Menengah Pertama binaan Kabupaten/kota",
+        "Jumlah anggota perpustakaan",
+        "Anggota perpustakaan umum binaan Kabupaten/kota",
+        "Anggota perpustakaan khusus binaan Kabupaten/kota"
+      ],
+      "evOpd": [
+        "Dinas Perpustakaan dan Kearsipan"
+      ],
+      "diagnosa": "selesai:leksikal",
+      "pemeriksaan": {
+        "keras": 0,
+        "lunak": 0,
+        "nilai": 3
+      }
+    },
+    {
+      "id": "E18",
+      "grup": "niat-distribusi",
+      "harus": "jawab",
+      "lulus": true,
+      "cara": "menjawab relevan",
+      "inv": [],
+      "nEvidence": 15,
+      "top1Ok": true,
+      "niatHarapan": "distribusi",
+      "niatServer": "distribusi",
+      "niatSumber": null,
+      "jalur": null,
+      "evIndikator": [
+        "Jumlah Tenaga Kerja UMKM kecamatan Bebesen",
+        "Jumlah Tenaga Kerja UMKM kecamatan Celala",
+        "Jumlah Tenaga Kerja UMKM kecamatan Linge",
+        "Jumlah Tenaga Kerja UMKM kecamatan Lut Tawar",
+        "Jumlah Tenaga Kerja UMKM kecamatan Silih Nara"
+      ],
+      "evOpd": [
+        "Dinas Koperasi dan UKM"
+      ],
+      "diagnosa": "selesai:leksikal+sisipan",
+      "pemeriksaan": {
+        "keras": 0,
+        "lunak": 0,
+        "nilai": 3
+      }
+    },
+    {
+      "id": "E19",
+      "grup": "niat-distribusi",
+      "harus": "jawab",
+      "lulus": true,
+      "cara": "menjawab relevan",
+      "inv": [],
+      "nEvidence": 15,
+      "top1Ok": true,
+      "niatHarapan": "distribusi",
+      "niatServer": "distribusi",
+      "niatSumber": null,
+      "jalur": null,
+      "evIndikator": [
+        "Jumlah Panjang Jalan Kabupaten Dalam Kondisi Baik (Km) kecamatan \nKute Panang",
+        "Jumlah Panjang Jalan Kabupaten Dalam Kondisi Baik (Km)",
+        "Jumlah Panjang Jalan Kabupaten Dalam Kondisi Baik (Km) kecamatan \nCelala",
+        "Jumlah Panjang Jalan Kabupaten Dalam Kondisi Baik (Km) kecamatan \nKetol",
+        "Jumlah Panjang Jalan Kabupaten Dalam Kondisi Baik (Km) kecamatan \nBebesen"
+      ],
+      "evOpd": [
+        "Dinas Pekerjaan Umum dan Penataan Ruang"
+      ],
+      "diagnosa": "selesai:leksikal+sisipan",
+      "pemeriksaan": {
+        "keras": 0,
+        "lunak": 0,
+        "nilai": 3
+      }
+    },
+    {
+      "id": "E20",
+      "grup": "niat-distribusi",
+      "harus": "jawab",
+      "lulus": true,
+      "cara": "menjawab relevan",
+      "inv": [],
+      "nEvidence": 6,
+      "top1Ok": true,
+      "niatHarapan": "distribusi",
+      "niatServer": "distribusi",
+      "niatSumber": null,
+      "jalur": null,
+      "evIndikator": [
+        "Jumlah record SAPA bertahun 2022",
+        "Jumlah record SAPA bertahun 2023",
+        "Jumlah record SAPA bertahun 2024",
+        "Jumlah record SAPA bertahun 2025",
+        "Jumlah record SAPA bertahun 2026"
+      ],
+      "evOpd": [
+        "Seluruh katalog SAPA"
+      ],
+      "diagnosa": "selesai:meta",
+      "pemeriksaan": {
+        "keras": 0,
+        "lunak": 0,
+        "nilai": 0
+      }
+    },
+    {
+      "id": "E21",
+      "grup": "niat-meta_katalog",
+      "harus": "jawab",
+      "lulus": true,
+      "cara": "menjawab relevan",
+      "inv": [],
+      "nEvidence": 7,
+      "top1Ok": true,
+      "niatHarapan": "meta_katalog",
+      "niatServer": "nilai_saat_ini",
+      "niatSumber": "gerbang-meta",
+      "jalur": null,
+      "evIndikator": [
+        "Jumlah OPD/Perangkat Daerah yang melaporkan data",
+        "Jumlah record (baris data) di portal SAPA",
+        "Jumlah indikator unik di portal SAPA",
+        "Periode tahun data yang termuat",
+        "Jumlah record OPD Dinas Kesehatan (peringkat 1)"
+      ],
+      "evOpd": [
+        "Seluruh katalog SAPA",
+        "Dinas Kesehatan",
+        "Dinas Keluarga Berencana PPPA"
+      ],
+      "diagnosa": "selesai:meta",
+      "pemeriksaan": {
+        "keras": 0,
+        "lunak": 0,
+        "nilai": 2
+      }
+    },
+    {
+      "id": "E22",
+      "grup": "niat-meta_katalog",
+      "harus": "jawab",
+      "lulus": true,
+      "cara": "menjawab relevan",
+      "inv": [],
+      "nEvidence": 4,
+      "top1Ok": true,
+      "niatHarapan": "meta_katalog",
+      "niatServer": "nilai_saat_ini",
+      "niatSumber": "gerbang-meta",
+      "jalur": null,
+      "evIndikator": [
+        "Jumlah record (baris data) di portal SAPA",
+        "Jumlah indikator unik di portal SAPA",
+        "Jumlah OPD/Perangkat Daerah yang melaporkan data",
+        "Periode tahun data yang termuat"
+      ],
+      "evOpd": [
+        "Seluruh katalog SAPA"
+      ],
+      "diagnosa": "selesai:meta",
+      "pemeriksaan": {
+        "keras": 0,
+        "lunak": 0,
+        "nilai": 2
+      }
+    },
+    {
+      "id": "E23",
+      "grup": "niat-meta_katalog",
+      "harus": "jawab",
+      "lulus": true,
+      "cara": "menjawab relevan",
+      "inv": [],
+      "nEvidence": 7,
+      "top1Ok": true,
+      "niatHarapan": "meta_katalog",
+      "niatServer": "nilai_saat_ini",
+      "niatSumber": "gerbang-meta",
+      "jalur": null,
+      "evIndikator": [
+        "Jumlah OPD/Perangkat Daerah yang melaporkan data",
+        "Jumlah record (baris data) di portal SAPA",
+        "Jumlah indikator unik di portal SAPA",
+        "Periode tahun data yang termuat",
+        "Jumlah record OPD Dinas Kesehatan (peringkat 1)"
+      ],
+      "evOpd": [
+        "Seluruh katalog SAPA",
+        "Dinas Kesehatan",
+        "Dinas Keluarga Berencana PPPA"
+      ],
+      "diagnosa": "selesai:meta",
+      "pemeriksaan": {
+        "keras": 0,
+        "lunak": 0,
+        "nilai": 2
+      }
+    },
+    {
+      "id": "E24",
+      "grup": "niat-sebab",
+      "harus": "jujur",
+      "lulus": true,
+      "cara": "menjawab relevan",
+      "inv": [],
+      "nEvidence": 3,
+      "top1Ok": true,
+      "niatHarapan": "sebab",
+      "niatServer": "sebab",
+      "niatSumber": null,
+      "jalur": null,
+      "evIndikator": [
+        "Jumlah Penerimaan Laporan dan Pengaduan Masyarakat",
+        "Jumlah Kanal pengaduan masyarakat yang dimiliki atau dikelola pemerintah daerah",
+        "Jumlah Laporan Atau Pengaduan Masyarakat Yang Ditindak Lanjuti Sesuai SOP"
+      ],
+      "evOpd": [
+        "Inspektorat",
+        "Dinas Komunikasi dan Informatika",
+        "Dinas Lingkungan Hidup"
+      ],
+      "diagnosa": "selesai:leksikal",
+      "pemeriksaan": {
+        "keras": 0,
+        "lunak": 0,
+        "nilai": 2
+      }
+    },
+    {
+      "id": "E25",
+      "grup": "niat-sebab",
+      "harus": "jujur",
+      "lulus": true,
+      "cara": "menjawab relevan",
+      "inv": [],
+      "nEvidence": 3,
+      "top1Ok": true,
+      "niatHarapan": "sebab",
+      "niatServer": "sebab",
+      "niatSumber": null,
+      "jalur": null,
+      "evIndikator": [
+        "Jumlah Pik R Jalur Pendidikan Perguruan Tinggi",
+        "Jumlah anak balita yang mengalami stunting (JAB(5) P stunting)",
+        "Prevalensi Stunting (Pendek dam Sangat Pendek)"
+      ],
+      "evOpd": [
+        "Dinas Keluarga Berencana PPPA",
+        "Dinas Kesehatan"
+      ],
+      "diagnosa": "selesai:semantik",
+      "pemeriksaan": {
+        "keras": 0,
+        "lunak": 0,
+        "nilai": 3
+      }
+    },
+    {
+      "id": "E26",
+      "grup": "niat-sebab",
+      "harus": "jujur",
+      "lulus": true,
+      "cara": "menjawab relevan",
+      "inv": [],
+      "nEvidence": 3,
+      "top1Ok": true,
+      "niatHarapan": "sebab",
+      "niatServer": "sebab",
+      "niatSumber": null,
+      "jalur": null,
+      "evIndikator": [
+        "Jumlah produksi komoditas perkebunan Kopi Arabika",
+        "Luas areal komoditas perkebunan Kopi Arabika",
+        "Jumlah petani komoditas perkebunan Kopi Arabika"
+      ],
+      "evOpd": [
+        "Dinas Perkebunan"
+      ],
+      "diagnosa": "selesai:leksikal",
+      "pemeriksaan": {
+        "keras": 0,
+        "lunak": 0,
+        "nilai": 3
+      }
+    },
+    {
+      "id": "E27",
+      "grup": "niat-sebab",
+      "harus": "jujur",
+      "lulus": true,
+      "cara": "menjawab relevan",
+      "inv": [],
+      "nEvidence": 3,
+      "top1Ok": true,
+      "niatHarapan": "sebab",
+      "niatServer": "sebab",
+      "niatSumber": null,
+      "jalur": null,
+      "evIndikator": [
+        "Anggota perpustakaan sekolah dasar binaan Kabupaten/kota",
+        "Jumlah anggota perpustakaan",
+        "Anggota perpustakaan umum binaan Kabupaten/kota"
+      ],
+      "evOpd": [
+        "Dinas Perpustakaan dan Kearsipan"
+      ],
+      "diagnosa": "selesai:leksikal",
+      "pemeriksaan": {
+        "keras": 0,
+        "lunak": 0,
+        "nilai": 3
+      }
+    },
+    {
+      "id": "E28",
+      "grup": "niat-personal",
+      "harus": "defleksi",
+      "lulus": true,
+      "cara": "jujur-kosong",
+      "inv": [],
+      "nEvidence": 0,
+      "top1Ok": true,
+      "niatHarapan": "personal",
+      "niatServer": "personal",
+      "niatSumber": null,
+      "jalur": null,
+      "evIndikator": [],
+      "evOpd": [],
+      "diagnosa": "masukan:data-personal",
+      "pemeriksaan": {
+        "keras": 0,
+        "lunak": 0,
+        "nilai": 0
+      }
+    },
+    {
+      "id": "E29",
+      "grup": "niat-personal",
+      "harus": "defleksi",
+      "lulus": true,
+      "cara": "jujur-kosong",
+      "inv": [],
+      "nEvidence": 0,
+      "top1Ok": true,
+      "niatHarapan": "personal",
+      "niatServer": "personal",
+      "niatSumber": null,
+      "jalur": null,
+      "evIndikator": [],
+      "evOpd": [],
+      "diagnosa": "masukan:data-personal",
+      "pemeriksaan": {
+        "keras": 0,
+        "lunak": 0,
+        "nilai": 0
+      }
+    },
+    {
+      "id": "E30",
+      "grup": "niat-personal",
+      "harus": "defleksi",
+      "lulus": true,
+      "cara": "jujur-kosong",
+      "inv": [],
+      "nEvidence": 0,
+      "top1Ok": true,
+      "niatHarapan": "personal",
+      "niatServer": "personal",
+      "niatSumber": null,
+      "jalur": null,
+      "evIndikator": [],
+      "evOpd": [],
+      "diagnosa": "masukan:data-personal",
+      "pemeriksaan": {
+        "keras": 0,
+        "lunak": 0,
+        "nilai": 0
+      }
+    }
+  ]
+}

@@ -13,7 +13,10 @@
     "typecheck": "bash scripts/typecheck.sh",
     "eval": "node scripts/eval-run.mjs",
     "eval:baseline": "node scripts/eval-run.mjs --baseline",
-    "prepare": "git config core.hooksPath .githooks >/dev/null 2>&1 || true"
+    "prepare": "git config core.hooksPath .githooks >/dev/null 2>&1 || true",
+    "eval:120": "node scripts/uji-eval-120.mjs",
+    "panel:siapkan": "node scripts/siapkan-panel-penilai.mjs",
+    "panel:hitung": "node scripts/hitung-panel.mjs"
   },
   "dependencies": {
     "leaflet": "^1.9.4",

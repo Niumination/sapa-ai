@@ -34,6 +34,8 @@
  *   node scripts/eval-run.mjs --id=L3,P8            # filter id
  *   node scripts/eval-run.mjs --stream              # cek parity SSE vs JSON
  *   node scripts/eval-run.mjs --stability           # tiap query 2x, wajib identik
+ *   node scripts/eval-run.mjs --json=hasil.json     # dump hasil per item (mesin)
+ *                                                    # + akurasi niat router (EV-05)
  *   SAPA_EVAL_URL=http://127.0.0.1:3105 node scripts/eval-run.mjs
  *   SAPA_EVAL_LLM_GAP_MS=15000 ...   # jeda antar-item ber-evidence (gerbang
  *                                     # shadow model-sungguhan; 0 = cepat)
@@ -329,6 +331,33 @@ console.log(`Eval set v${set.versi} — ${items.length} item — target ${BASE} 
 console.log(`Konstanta katalog: ${KATALOG.records ?? '2055 (bawaan kode)'} record`);
 console.log(`Invarians: anti-halu · anti-token · anti-jargon · sumber wajib · anti-echo-NIK · pasangan-entitas${DO_STREAM ? ' · parity SSE' : ''}${DO_STABILITY ? ' · stabilitas' : ''}\n`);
 
+// EV-05: regenerasi baseline DARI dump mesin — tanpa memanggil ulang 120 item.
+// Dipakai setelah set evaluasi diperluas (90 → 120): dasar pembanding harus
+// mencakup item baru, dan menulisnya dari dump yang BARU SAJA dijalankan sama
+// sahnya dengan menjalankannya dua kali — asalkan dump itu disimpan sebagai bukti.
+// Karena itu blok ini keluar LEBIH DULU, sebelum satu pun permintaan dikirim.
+const BASELINE_DARI = val('baseline-dari', null);
+if (BASELINE_DARI) {
+  if (!existsSync(BASELINE_DARI)) {
+    console.error(`Tidak menemukan dump ${BASELINE_DARI}`);
+    process.exit(2);
+  }
+  const dump = JSON.parse(readFileSync(BASELINE_DARI, 'utf8'));
+  const snap = {
+    dibuat: String(dump.dibuat ?? '').slice(0, 10),
+    target: dump.target ?? BASE,
+    modeAi: dump.modeAi ?? null,
+    setVersi: dump.setVersi ?? set.versi,
+    lulus: dump.lulus,
+    total: dump.total,
+    item: Object.fromEntries(dump.item.map((h) => [h.id, { lulus: h.lulus, cara: h.cara, inv: h.inv, top1Ok: h.top1Ok }])),
+  };
+  writeFileSync(BASELINE_PATH, JSON.stringify(snap, null, 2) + '\n');
+  console.log(`\nBaseline diregenerasi DARI dump → data/eval-baseline.json (${snap.lulus}/${snap.total} item; sumber ${BASELINE_DARI}).`);
+  process.exit(snap.lulus === snap.total ? 0 : 1);
+}
+
+
 const hasil = [];
 let kirim = 0;
 const t0 = Date.now();
@@ -347,6 +376,15 @@ for (const [idx, item] of items.entries()) {
 
   const n = nilaiItem(item, r);
   const baris = { id: item.id, grup: item.grup, harus: item.harus, lulus: n.lulus, cara: n.cara, inv: n.inv, nEvidence: n.nEvidence, top1Ok: n.top1Ok };
+  // EV-05: niat yang BENAR-BENAR disajikan server (router `deteksiNiat`) dan
+  // niat yang diharapkan item. Untuk item meta, gerbang katalog dianggap sah
+  // (lihat `niatSumber: 'gerbang-meta'` di data/eval-set.json).
+  baris.niatHarapan = item.niat ?? null;
+  baris.niatSumber = item.niatSumber ?? null;
+  baris.niatServer = r?.niat ?? null;
+  baris.jalur = r?.diagnosa?.jalur ?? null;
+  baris.evIndikator = (r?.evidence ?? []).slice(0, 5).map((e) => e.indikator);
+  baris.evOpd = [...new Set((r?.evidence ?? []).map((e) => e.opd).filter(Boolean))].slice(0, 3);
   // FR-20: sebab dari server. Tidak direka ulang di sini — harness hanya membaca,
   // supaya jalur JSON, streaming, dan dasbor seluruhnya memakai klasifikasi yang sama.
   baris.diagnosa = r?.diagnosa?.sebab ?? null;
@@ -455,6 +493,29 @@ if (bercatatan.length) {
   console.log(`\n  catatan generasi pada jawaban yang lulus: ${bercatatan.map((h) => `${h.id}=${h.diagnosaCatatan}`).slice(0, 10).join(' ')}`);
 }
 console.log(`Peringkat-1 tepat: ${hasil.filter((h) => h.top1Ok).length}/${hasil.length}`);
+
+// ── EV-05: akurasi niat router & lulus-per-niat (item baru E01–E30) ──────────
+const berNiat = hasil.filter((h) => h.niatHarapan);
+if (berNiat.length) {
+  const BENAR = (h) =>
+    h.niatServer === h.niatHarapan ||
+    (h.niatHarapan === 'meta_katalog' && (h.jalur === 'meta' || (h.evOpd ?? []).includes('Seluruh katalog SAPA')));
+  const benar = berNiat.filter(BENAR);
+  console.log(`\n──────── Akurasi niat router (${berNiat.length} item ber-\`niat\`) ────────`);
+  console.log(`niat benar       : ${benar.length}/${berNiat.length} (${((benar.length / berNiat.length) * 100).toFixed(1)}%)`);
+  const perNiat = new Map();
+  for (const h of berNiat) {
+    const k = h.niatHarapan;
+    const cur = perNiat.get(k) ?? { n: 0, lulus: 0, niat: 0 };
+    cur.n += 1; cur.lulus += h.lulus ? 1 : 0; cur.niat += BENAR(h) ? 1 : 0;
+    perNiat.set(k, cur);
+  }
+  for (const [k, v] of [...perNiat].sort()) {
+    console.log(`  ${k.padEnd(16)} ${v.n} item · lulus ${v.lulus}/${v.n} · niat tepat ${v.niat}/${v.n}`);
+  }
+  const salah = berNiat.filter((h) => !BENAR(h));
+  if (salah.length) console.log(`  niat menyimpang  : ${salah.map((h) => `${h.id}(${h.niatHarapan}→${h.niatServer})`).join(', ')}`);
+}
 console.log(`Waktu            : ${((Date.now() - t0) / 1000).toFixed(0)}s, ${kirim} permintaan`);
 
 // ─── Metrik AI (gerbang promosi) ───
@@ -511,6 +572,25 @@ if (DO_BASELINE) {
   if (regresi.length) exit = 1;
 } else {
   console.log('\nBelum ada baseline. Jalankan dengan --baseline untuk menyimpan.');
+}
+
+// EV-05: dump hasil per item supaya pemeriksaan (harness) tidak membaca prosa.
+const JSON_OUT = val('json', null);
+if (JSON_OUT) {
+  const bersih = hasil.map((h) => ({
+    id: h.id, grup: h.grup, harus: h.harus, lulus: h.lulus, cara: h.cara, inv: h.inv,
+    nEvidence: h.nEvidence, top1Ok: h.top1Ok,
+    niatHarapan: h.niatHarapan, niatServer: h.niatServer, niatSumber: h.niatSumber, jalur: h.jalur,
+    evIndikator: h.evIndikator, evOpd: h.evOpd,
+    diagnosa: h.diagnosa, pemeriksaan: h.pemeriksaan,
+  }));
+  writeFileSync(JSON_OUT, JSON.stringify({
+    dibuat: new Date().toISOString(),
+    target: BASE, modeAi: aiState, setVersi: set.versi,
+    total: hasil.length, lulus,
+    item: bersih,
+  }, null, 2) + '\n');
+  console.log(`\nDump mesin ditulis → ${JSON_OUT} (${hasil.length} item).`);
 }
 
 // Invarians tidak pernah bisa di-xfail

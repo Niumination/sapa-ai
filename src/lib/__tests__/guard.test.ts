@@ -83,12 +83,19 @@ describe('cekPermintaanPerOrang', () => {
     'Tampilkan daftar warga miskin di Kecamatan Ketol',
     'Berikan identitas penerima bansos di Desa Bebesen',
     'Saya butuh nama penerima bantuan sosial tahun 2025',
+    // EV-05 (24 Sep 2026): permintaan identitas + alamat TANPA angka 16 digit
+    // dan tanpa kata "nama" — dulu lolos dan dijawab dengan indikator agregat.
+    'Sebutkan NIK dan alamat petani penerima bantuan di Kecamatan Bebesen',
+    'Tolong sebutkan alamat lengkap kepala desa di Bies',
   ];
   const dilayani = [
     'Berapa jumlah penerima PKH di Aceh Tengah?',
     'Daftar OPD yang melaporkan data',
     'Jumlah penerima bantuan sosial per kecamatan',
     'Berapa jumlah warga miskin di Aceh Tengah?',
+    // Pagar baru tidak boleh menabrak pertanyaan agregat yang menyebut NIK/alamat.
+    'Berapa jumlah penduduk yang memiliki NIK di Aceh Tengah?',
+    'Berapa jumlah penerima bantuan sosial per kecamatan?',
   ];
 
   it('menolak permintaan yang meminta nama/identitas orang', () => {

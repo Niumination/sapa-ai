@@ -1,0 +1,26 @@
+[info] menjalankan penilai eval-120 terhadap http://127.0.0.1:3181 …
+[info] penilai selesai; dump: verifikasi/eval120-produksi.json
+── A. Bentuk set evaluasi ──
+
+── B/C. Lulus per niat + kekuatan mode ──
+
+── D. Akurasi niat router ──
+
+── E/F. Invarians & jawaban menyesatkan ──
+
+──────────────────────────────────────────────
+  item diperiksa     : 120 (dump verifikasi/eval120-produksi.json)
+  nilai_saat_ini   lulus  3/3  · mode kuat 3/3
+  tren             lulus  4/4  · mode kuat 1/1
+  perbandingan     lulus  3/3  · mode kuat 2/2
+  peringkat        lulus  4/4  · mode kuat 1/1
+  komposisi        lulus  3/3  · mode kuat 1/1
+  distribusi       lulus  3/3  · mode kuat 3/3
+  meta_katalog     lulus  3/3  · mode kuat 3/3
+  sebab            lulus  4/4  · mode kuat 4/4
+  personal         lulus  3/3  · mode kuat 3/3
+  total lulus        : 120/120
+  niat tepat         : 30/30
+  pemeriksaan lulus  : 32
+
+  ✓ LULUS — 120 item tuntas, tiap niat punya ≥ 3 item baru lulus dengan bukti kuat, akurasi niat 100 %.

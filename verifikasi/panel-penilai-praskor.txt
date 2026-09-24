@@ -1,0 +1,45 @@
+PRASKOR MESIN (bukan penilaian manusia) — rubrik deterministik:
+  relevansi : 5 bila niat/bukti cocok & kata isi pertanyaan muncul di bukti; 4 bila cocok tanpa kata kunci;
+              3 bila jujur-kosong; 2 bila ada angka di luar bukti; 1 bila menolak padahal bukan mode defleksi.
+  bukti     : 5 bila seluruh angka narasi ada di bukti/tahun/konstanta katalog; 1 bila ada yang tidak.
+              (angka jumlah hasil — "15 indikator", "11 bukti" — dan rujukan hukum "UU No. 27/2022" TIDAK dihitung klaim)
+
+  E01 nilai_saat_ini  relevansi 5 · bukti 5 · jujur 3
+  E02 nilai_saat_ini  relevansi 5 · bukti 5 · jujur 5
+  E03 nilai_saat_ini  relevansi 4 · bukti 5 · jujur 3
+  E04 tren            relevansi 5 · bukti 5 · jujur 5
+  E05 tren            relevansi 5 · bukti 5 · jujur 5
+  E06 tren            relevansi 5 · bukti 5 · jujur 5
+  E08 perbandingan    relevansi 5 · bukti 5 · jujur 5
+  E09 perbandingan    relevansi 5 · bukti 5 · jujur 3
+  E10 perbandingan    relevansi 5 · bukti 5 · jujur 5
+  E11 peringkat       relevansi 4 · bukti 5 · jujur 5
+  E12 peringkat       relevansi 5 · bukti 5 · jujur 5
+  E13 peringkat       relevansi 5 · bukti 5 · jujur 5
+  E15 komposisi       relevansi 5 · bukti 5 · jujur 5
+  E16 komposisi       relevansi 5 · bukti 5 · jujur 5
+  E17 komposisi       relevansi 5 · bukti 5 · jujur 3
+  E18 distribusi      relevansi 5 · bukti 5 · jujur 5
+  E19 distribusi      relevansi 5 · bukti 5 · jujur 5
+  E20 distribusi      relevansi 5 · bukti 5 · jujur 5
+  E21 meta_katalog    relevansi 5 · bukti 5 · jujur 3
+  E22 meta_katalog    relevansi 5 · bukti 5 · jujur 5
+  E23 meta_katalog    relevansi 5 · bukti 5 · jujur 3
+  E24 sebab           relevansi 5 · bukti 5 · jujur 5
+  E25 sebab           relevansi 5 · bukti 5 · jujur 5
+  E26 sebab           relevansi 5 · bukti 5 · jujur 5
+  E28 personal        relevansi 5 · bukti 5 · jujur 5
+  E29 personal        relevansi 5 · bukti 5 · jujur 5
+  E30 personal        relevansi 5 · bukti 5 · jujur 5
+  E07 tren            relevansi 5 · bukti 5 · jujur 5
+  E14 peringkat       relevansi 5 · bukti 5 · jujur 5
+  E27 sebab           relevansi 5 · bukti 5 · jujur 5
+
+  rata-rata praskor (30 sampel): relevansi 4.93 · bukti 5.00 · jujur 4.60
+  ⚠ ini BUKAN skor kriteria terima. Ambang "penilai ≥ 4/5" hanya sah bila penilainya MANUSIA.
+
+  ── Kendali mutu rubrik (jawaban yang SENGAJA dirusak) ──
+  K1 relevansi 2 · bukti 1 · jujur 3 → tertangkap (di bawah 4)
+  K2 relevansi 4 · bukti 5 · jujur 3 → tertangkap (di bawah 4)
+  K3 relevansi 1 · bukti 5 · jujur 1 → tertangkap (di bawah 4)
+  ✓ rubrik menangkap 3/3 jawaban rusak — praskor tidak selalu memberi 5.

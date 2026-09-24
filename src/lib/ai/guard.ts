@@ -65,6 +65,16 @@ export function cekDataPribadi(raw: string): string | null {
  * seolah-olah sistem tahu siapa orangnya.
  */
 const PERMINTAN_PER_ORANG = [
+  // TEMUAN EV-05 (24 Sep 2026): "Sebutkan NIK dan alamat petani penerima
+  // bantuan di Kecamatan Bebesen" LOLOS dari semua pola lama — permintaan
+  // per-orang yang minta identitas + alamat, tetapi tanpa angka 16 digit dan
+  // tanpa kata "nama". Akibatnya sistem menjawabnya dengan 13 indikator
+  // agregat seolah-olah itu jawaban atas permintaan identitas. Dua pola
+  // berikut menutup celah itu; keduanya menuntut kata penanda orang, bukan
+  // sekadar kata "alamat"/"NIK" — supaya "berapa penduduk yang punya NIK"
+  // tetap dilayani sebagai pertanyaan agregat.
+  /\bnik\b[\s\S]{0,60}\b(alamat|nama|identitas)\b/i,
+  /\balamat\s+(?:lengkap\s+)?(petani|penerima|warga|penduduk|mustahik|kepala desa|siswa|murid|pegawai)\b/i,
   /\b(siapa\s+nama|nama\s+penerima|nama\s+(warga|orang|penduduk|mustahik))\b/i,
   /\bidentitas\s+(penerima|warga|penduduk|mustahik)\b/i,
   /\b(daftar|data)\s+(warga|nama|orang|individu)\b/i,

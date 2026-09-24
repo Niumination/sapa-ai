@@ -81,7 +81,7 @@ describe('data/eval-set.json', () => {
   });
 });
 
-// ─── Dampak perubahan leksikon FR-12 pada set evaluasi 90 item ───────────────
+// ─── Dampak perubahan leksikon FR-12 pada set evaluasi (90 → 120 item) ───────
 // Perubahan FR-12 menyentuh tokenisasi: 3 stopword baru ("seberapa", "mengalami",
 // "menderita"), sinonim dua arah `anak` ⇄ `balita`, dan leksikon frasa resmi
 // ("aparatur sipil negara" → asn, "indeks pembangunan manusia" → ipm).
@@ -89,13 +89,18 @@ describe('data/eval-set.json', () => {
 // Uji ini MENGUNCI luas dampaknya pada set evaluasi: hanya item yang benar-benar
 // memuat pemicunya yang boleh berubah perilaku. Bila kelak pemicu baru
 // ditambahkan, uji ini gagal lebih dulu — memaksa penulisnya menghitung dampak
-// pada gerbang eval 90 item, bukan menemukannya belakangan di produksi.
+// pada gerbang eval, bukan menemukannya belakangan di produksi.
+//
+// EV-05 (24 Sep 2026): saat set diperluas 90 → 120 item, uji ini memang gagal
+// lebih dulu — item baru E01 memuat frasa "Indeks Pembangunan Manusia" sehingga
+// terkena pemicu leksikon yang sama dengan T3. E01 didaftarkan di sini, bukan
+// pertanyaannya diubah, supaya dampak leksikon terlihat apa adanya.
 describe('eval-set — dampak leksikon FR-12 dibatasi & terdata', () => {
   const pemicu = [
     { nama: 'stopword baru', pola: /\b(seberapa|mengalami|menderita)\b/i, harap: [] as string[] },
     { nama: 'sinonim anak', pola: /\banak\b/i, harap: ['L9', 'F1'] },
     { nama: 'frasa aparatur sipil negara', pola: /aparatur/i, harap: [] as string[] },
-    { nama: 'frasa indeks pembangunan manusia', pola: /indeks pembangunan manusia/i, harap: ['T3'] },
+    { nama: 'frasa indeks pembangunan manusia', pola: /indeks pembangunan manusia/i, harap: ['E01', 'T3'] },
   ];
 
   it('setiap item yang tersentuh leksikon FR-12 terdaftar (tidak ada dampak tersembunyi)', () => {
@@ -106,7 +111,7 @@ describe('eval-set — dampak leksikon FR-12 dibatasi & terdata', () => {
   });
 
   it('item yang tersentuh tetap dapat dijawab (mode "jawab") atau tetap boleh jujur', () => {
-    for (const id of ['L9', 'F1', 'T3']) {
+    for (const id of ['E01', 'L9', 'F1', 'T3']) {
       const it = set.item.find((x) => x.id === id);
       expect(it, `item ${id} harus ada di set`).toBeDefined();
       expect(['jawab', 'jujur']).toContain(it?.harus);

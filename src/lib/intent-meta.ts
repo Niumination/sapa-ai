@@ -91,17 +91,13 @@ export function deteksiMetaIntent(query: string, namaOpd: string[] = []): MetaIn
     return { jenis: 'opd', pemicu: polaOpd.test(q) ? 'jumlah OPD' : 'OPD melapor' };
   }
 
-  // ── 2. Ukuran katalog: jumlah record / baris data / indikator ──
-  const polaRecord =
-    /\b(?:total|jumlah|banyak)\b[^a-z]{0,16}\b(?:data|record|baris)\b/;
-  const polaIndikator =
-    /\b(?:total|jumlah|banyak|berapa|brapa)\b[^a-z]{0,16}\bindikator\b/;
-  const polaPortal = /\b(?:di|pada)\s+(?:portal|aplikasi|sistem)\s+sapa\b/;
-  if ((polaRecord.test(q) || polaIndikator.test(q) || polaPortal.test(q)) && !sebutSubjek) {
-    return { jenis: 'katalog', pemicu: polaIndikator.test(q) ? 'jumlah indikator' : 'ukuran katalog' };
-  }
-
-  // ── 3. Sebaran menurut tahun ──
+  // ── 2. Sebaran menurut tahun (DIPERIKSA SEBELUM ukuran katalog) ──
+  // TEMUAN EV-05 (24 Sep 2026): pertanyaan "Bagaimana sebaran jumlah record SAPA
+  // menurut tahun?" memuat kata "jumlah record", sehingga dulu jatuh ke cabang
+  // UKURAN KATALOG dan dijawab dengan ringkasan ("2.065 record, 38 OPD") —
+  // padahal katalog menyimpan pecahan per tahun dan pengguna justru memintanya.
+  // Karena itu cabang `tahun` naik ke atas: bila pengguna menyebut tahun
+  // secara eksplisit, jawaban yang lebih rinci (dan benar) yang dipilih.
   // Catatan: pola sebelumnya memakai `[^a-z]{0,20}` yang menuntut tak ada huruf
   // di antara "sebaran" dan "tahun" — sehingga "sebaran DATA MENURUT tahun"
   // (justru bentuk paling lazim) tidak tertangkap. Sekarang celahnya dibatasi
@@ -110,6 +106,16 @@ export function deteksiMetaIntent(query: string, namaOpd: string[] = []): MetaIn
     /\b(?:sebaran|distribusi|persebaran)\b.{0,30}\btahun\b|\bmenurut\s+tahun\b/;
   if (polaTahun.test(q) && !sebutSubjek) {
     return { jenis: 'tahun', pemicu: 'sebaran menurut tahun' };
+  }
+
+  // ── 3. Ukuran katalog: jumlah record / baris data / indikator ──
+  const polaRecord =
+    /\b(?:total|jumlah|banyak)\b[^a-z]{0,16}\b(?:data|record|baris)\b/;
+  const polaIndikator =
+    /\b(?:total|jumlah|banyak|berapa|brapa)\b[^a-z]{0,16}\bindikator\b/;
+  const polaPortal = /\b(?:di|pada)\s+(?:portal|aplikasi|sistem)\s+sapa\b/;
+  if ((polaRecord.test(q) || polaIndikator.test(q) || polaPortal.test(q)) && !sebutSubjek) {
+    return { jenis: 'katalog', pemicu: polaIndikator.test(q) ? 'jumlah indikator' : 'ukuran katalog' };
   }
 
   return null;
@@ -154,7 +160,18 @@ export interface HasilNiat {
 
 const POLA_NIAT: { niat: NiatJawaban; pola: RegExp; nama: string }[] = [
   // Urutan penting: yang paling spesifik lebih dulu.
-  { niat: 'personal', pola: /\bnik\b|\bnik-?\d|\bdata (per|perorangan)\b|nama (warga|orang|pegawai) tertentu|alamat warga/i, nama: 'data per-orang' },
+  // EV-05 (24 Sep 2026): pola ini dulu hanya mengenali "nama warga/orang/pegawai
+  // tertentu" sehingga "Siapa nama penerima PKH…" dan "Sebutkan NIK dan alamat
+  // petani…" TIDAK terbaca sebagai permintaan per-orang — padahal pagar data
+  // pribadi menolaknya. Akibatnya jawaban penolakan disajikan dengan bentuk
+  // "Nilai saat ini" (bentuk untuk pertanyaan capaian), bukan bentuk
+  // "Tidak tersedia (data per orang)". Pola kini diselaraskan dengan kelas
+  // permintaan yang ditolak `cekPermintaanPerOrang()`.
+  {
+    niat: 'personal',
+    pola: /\bnik\b|\bnik-?\d|\bdata (per|perorangan)\b|\bsiapa\s+nama\b|\bdaftar\s+nama\b|\bnama\s+(penerima|warga|penduduk|orang|mustahik|pegawai)\b|\balamat\s+(lengkap\s+)?(petani|penerima|warga|penduduk|kepala desa|mustahik)\b|\bidentitas\s+(penerima|warga|penduduk|mustahik)\b|\balamat warga/i,
+    nama: 'data per-orang',
+  },
   { niat: 'sebab', pola: /\b(kenapa|mengapa|penyebab|disebabkan|faktor (penyebab|utama)|sebab)\b/i, nama: 'sebab-akibat' },
   { niat: 'tren', pola: /\b(tren|trend|perkembangan|menurun|menaik|naik|turun|fluktuasi|dari tahun ke tahun|antar ?tahun|time ?series|3 tahun|lima tahun|5 tahun)\b/i, nama: 'arah perubahan' },
   { niat: 'perbandingan', pola: /\b(bandingkan|dibandingkan|banding|versus|\bvs\b|selisih|lebih (tinggi|rendah|baik|besar|kecil)|perbedaan|dibanding)\b/i, nama: 'perbandingan' },

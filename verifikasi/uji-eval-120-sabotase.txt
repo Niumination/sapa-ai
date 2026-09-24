@@ -1,0 +1,32 @@
+[info] mode sabotase: TIDAK menjalankan penilai; dump lama dipakai lalu dirusak buatan.
+[sabotase] dump dirusak buatan: 3 item distribusi gagal, niat tren dialihkan, 1 pelanggaran invarians.
+
+── A. Bentuk set evaluasi ──
+
+── B/C. Lulus per niat + kekuatan mode ──
+
+── D. Akurasi niat router ──
+   menyimpang: E04(tren→nilai_saat_ini)
+
+── E/F. Invarians & jawaban menyesatkan ──
+
+──────────────────────────────────────────────
+  item diperiksa     : 120 (dump verifikasi/eval120-produksi.json)
+  nilai_saat_ini   lulus  3/3  · mode kuat 3/3
+  tren             lulus  4/4  · mode kuat 1/1
+  perbandingan     lulus  3/3  · mode kuat 2/2
+  peringkat        lulus  4/4  · mode kuat 1/1
+  komposisi        lulus  3/3  · mode kuat 1/1
+  distribusi       lulus  0/3  · mode kuat 0/3
+  meta_katalog     lulus  3/3  · mode kuat 3/3
+  sebab            lulus  4/4  · mode kuat 4/4
+  personal         lulus  3/3  · mode kuat 3/3
+  total lulus        : 117/120
+  niat tepat         : 29/30
+  pemeriksaan lulus  : 28
+
+  ✗ GAGAL — 4 pemeriksaan tidak terpenuhi:
+    · niat distribusi: hanya 0 item baru lulus (< 3) → E18, E19, E20
+    · niat distribusi: item mode jawab gagal → E18, E19, E20
+    · pelanggaran invarians: Q01[angka di luar evidence]
+    · jawaban menyesatkan: E18(menjawab TANPA evidence relevan), E19(menjawab TANPA evidence relevan), E20(menjawab TANPA evidence relevan)
