@@ -81,6 +81,10 @@ token angka murni dibuang dari kueri, serialisasi evidence markdown-KV.
 **skor panel penilai manusia untuk EV-05** (instrumennya siap, tinggal 30 penilaian orang), dan
 **pengujian dengan model sungguhan** (EV-06 — menunggu perpanjangan langganan penyedia model).
 
+Rincian tiap sisa — apa maksudnya, kenapa belum tertutup, modal yang sudah siap, cara menutupnya, dan
+risikonya — ada di **`32-SISA-TERBUKA-DAN-RENCANA-PENUTUP.md`**. Dokumen itu juga memuat daftar
+"yang sudah tertutup" agar daftar sisa ini tidak salah dibaca.
+
 > Daftar "belum ada" yang lebih tua sudah tertutup dan **tidak** dihapus agar riwayatnya terbaca:
 > lapis semantik Bahasa Indonesia ✔ (FR-12), pengunci cache semantik ✔ (DS-03/FR-12), jawaban
 > per-klaim bersitasi ✔ (FR-19), dasbor celah pengetahuan ✔ (FR-27/FR-25), umpan balik pengguna ✔

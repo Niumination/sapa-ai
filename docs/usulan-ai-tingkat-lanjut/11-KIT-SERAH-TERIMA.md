@@ -24,7 +24,7 @@ menyentuh `main` sampai Anda sendiri memutuskan.
 
 | Aset | Letak | Isi |
 |---|---|---|
-| **Cabang utuh** | `dev` @ ujung cabang ruang kerja ini (**49 komit** di atas `main` `ff00eb8`, fast-forward; komit audit ulang = `0048`). Basis publik `origin/dev` = `86af3b5` | patch lanjutan `0038`–`0048` duduk **di atas `origin/dev`**; seri patch memuat seluruh komit kode & dokumen, sedangkan folder `seri-patch/` sendiri sengaja tidak ikut dipatch (isinya memang wadah patch) |
+| **Cabang utuh** | `dev` @ ujung cabang ruang kerja ini (**50 komit** di atas `main` `ff00eb8`, fast-forward; komit audit ulang = `0048`, komit dokumen 32 = `0049`). Basis publik `origin/dev` = `86af3b5` | patch lanjutan `0038`–`0048` duduk **di atas `origin/dev`**; seri patch memuat seluruh komit kode & dokumen, sedangkan folder `seri-patch/` sendiri sengaja tidak ikut dipatch (isinya memang wadah patch) |
 | **Seri patch** | `06-USULAN-KODE/seri-patch/` | **seluruh** berkas `NNNN-*.patch` di folder itu, dijalankan **urut angka** (jangan melompat), ditambah **dua** paket tunggal: `00-semua.patch` (basis `main` — seluruh riwayat cabang) dan `00-lanjutan-dev.patch` (basis `origin/dev` `86af3b5` — komit `0038`–`0048`). Komit dokumen dikenali dari judulnya (`Dokumen: …`). Karena setiap ekspor mengecualikan folder ini, `git am` atas semua berkas `NNNN-*.patch` menghasilkan pohon yang **sama persis** dengan ujung cabang |
 | **Skrip uji terima** | `06-USULAN-KODE/uji-terima.sh` | memutuskan LULUS/GAGAL sesuai ambang dokumen `10` |
 | **Alat pengukuran** | `verifikasi/mock-llm.mjs`, `verifikasi/stub-splp.mjs`, `verifikasi/banding-ai-vs-det.py`, `verifikasi/banding-main-vs-branch.py`, `scripts/uji-sitasi.mjs`, `scripts/uji-parafrase.mjs`, `scripts/uji-sebab.mjs`, `scripts/uji-pasangan.mjs`, `scripts/buat-korpus-uji.mjs`, `scripts/uji-bersih-data.mjs`, `scripts/buat-korpus-beracun.mjs`, `scripts/uji-cache-korpus.mjs`, `scripts/uji-aksesibilitas.mjs`, `scripts/uji-bentuk-jawaban.mjs`, `scripts/uji-kamus-daerah.mjs`, `scripts/ukur-df-kamus.mjs`, `scripts/uji-keterbukaan.mjs`, `scripts/bandingkan-jawaban.mjs`, `scripts/uji-tata-kelola.mjs`, `scripts/uji-jejak-audit.mjs`, `scripts/ekspor-jejak-audit.mjs`, `scripts/uji-eval-120.mjs`, `scripts/siapkan-panel-penilai.mjs`, `scripts/hitung-panel.mjs` | penyedia model & SPLP tiruan + harness pembanding + uji 50 sampel sitasi (FR-19) + uji parafrase EV-05 (FR-12) + uji penanda sebab EV-20 (FR-20) + uji 50 sampel pasangan entitas EV-24 (FR-24) + uji pembersihan data katalog EV-23 (FR-23) + pembangkit korpus uji 1.210 record + pembangkit korpus uji beracun 6 bentuk serangan + uji bentuk jawaban per niat (FR-18) + uji kamus sinonim daerah (DS-05: statis + end-to-end + kontrol negatif) + alat tinjauan df kamus 3 bulan |
@@ -73,7 +73,7 @@ git am 06-USULAN-KODE/seri-patch/[0-9][0-9][0-9][0-9]-*.patch
 **Cara C — paket tunggal (paling cepat, riwayat menjadi satu komit):**
 
 ```bash
-# Dari `main` — memuat SELURUH riwayat cabang (40 komit):
+# Dari `main` — memuat SELURUH riwayat cabang (49 komit):
 git switch -c kerja/ai-tingkat-lanjut main
 git am 06-USULAN-KODE/seri-patch/00-semua.patch
 
@@ -98,6 +98,14 @@ selaras) lalu jalankan uji terima (§7).
 > **Diperbarui 24 Sep 2026:** verifikasi diulang dari basis **GitHub**: `origin/dev` + `0038` + `0039` → pohon identik dengan cabang kerja (`584` uji lulus), dan `00-lanjutan-dev.patch` (3 komit: `0038`+`0039`+`0040`) diverifikasi ulang pada klon bersih (`590` uji lulus). `00-semua.patch` sekarang 40 komit di atas `main`.
 
 > **Diperbarui lagi 24 Sep 2026 (FR-18):** `00-semua.patch` = **43 komit** di atas `main`; `00-lanjutan-dev.patch` = **5 komit** (`0038`–`0042`, basis `origin/dev` `86af3b5`); uji unit menjadi **636 lulus**. Bukti FR-18: `verifikasi/uji-bentuk-jawaban.txt` (122 pemeriksaan, 6/6 niat ≥ 3 item), kontrol negatif `verifikasi/uji-bentuk-jawaban-tanpa-bentuk.txt` (exit 1, 61 pelanggaran), dan uji regresi A/B `verifikasi/uji-regresi-fr18.txt` (12/12 balasan lama identik).
+
+> **Diperbarui lagi 24 Sep 2026 (audit ulang):** `00-semua.patch` = **50 komit** di atas `main`;
+> `00-lanjutan-dev.patch` = **12 komit** (`0038`–`0049`, basis `origin/dev` `86af3b5`); uji unit
+> **715 lulus / 44 berkas**; uji terima deterministik **exit 0** (`eval 120/120`, ambang diturunkan dari
+> set). Kedua bundel diverifikasi ulang pada **dua klon bersih** (`main`+bundel dan `86af3b5`+bundel) →
+> ketiga pohon **byte-identik** (pohon `78916b079739`), dan di klon `main`+bundel tersebut `npm ci`
+> lalu `npx vitest run` menghasilkan **715 uji lulus / 44 berkas**. Sisa yang masih terbuka + rencana penutupnya ada di
+> **`32-SISA-TERBUKA-DAN-RENCANA-PENUTUP.md`**.
 
 > **Catatan tentang bit eksekusi:** komit `0003`/`0004` hanya memulihkan bit eksekusi
 > `.githooks/pre-commit` & `scripts/pii-gate.sh` yang hilang saat pemindahan berkas. Bila Anda

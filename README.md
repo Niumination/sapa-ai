@@ -133,7 +133,9 @@ src/
   [`10-KEBUTUHAN-UPGRADE-TINGKAT-LANJUT.md`](docs/usulan-ai-tingkat-lanjut/10-KEBUTUHAN-UPGRADE-TINGKAT-LANJUT.md)
   (status per butir) dan
   [`11-KIT-SERAH-TERIMA.md`](docs/usulan-ai-tingkat-lanjut/11-KIT-SERAH-TERIMA.md)
-  (cara memasang & memverifikasi).
+  (cara memasang & memverifikasi), serta
+  [`32-SISA-TERBUKA-DAN-RENCANA-PENUTUP.md`](docs/usulan-ai-tingkat-lanjut/32-SISA-TERBUKA-DAN-RENCANA-PENUTUP.md)
+  (empat sisa terbuka + cara menutupnya).
 
 ## Lisensi
 

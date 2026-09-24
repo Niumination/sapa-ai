@@ -83,6 +83,9 @@ yaitu perilaku yang justru salah.
 
 ## 5. Sisa yang masih terbuka (dinyatakan jujur)
 
+> Rincian keempat butir di bawah — beserta modal yang sudah siap, langkah penutupan, dan risiko bila
+> dibiarkan — ada di **`32-SISA-TERBUKA-DAN-RENCANA-PENUTUP.md`**.
+
 - **Skor panel penilai manusia (EV-05) belum ada** — instrumennya siap (30 sampel, lembar HTML/CSV,
   alat hitung); hanya orang yang dapat mengisinya. Praskor mesin 4,93/5 adalah penyaring awal.
 - Harness aksesibilitas memeriksa **tiga halaman**: `/dashboard` dan dua halaman publik baru.
