@@ -1,0 +1,35 @@
+[1m
+  NFR-09 · aksesibilitas http://127.0.0.1:3131 (WCAG 2.2 AA)
+[0m
+  [1m/dashboard[0m — 30482 bita
+  [36m·[0m statistik: judul h1 1 · tingkat judul 3 · kontrol bernama 19 · kontrol ringkas 0 · gambar 1 · tabel 0
+  [32m✓[0m struktur: tidak ada pelanggaran
+
+  [1mGaya yang dikirim server[0m — 1 berkas · 56020 bita
+  [32m✓[0m janji di CSS ada: sasaran 24 px ya · cincin fokus ya · prefers-reduced-motion ya
+
+  [1mUji diri pemeriksa CSS[0m — 3 sabotase
+  [32m✓[0m CSS · jaminan 24 px dihapus
+  [32m✓[0m CSS · cincin fokus dihapus
+  [32m✓[0m CSS · prefers-reduced-motion dihapus
+
+  [1mUji diri pemeriksa[0m — 9 sabotase
+  [32m✓[0m lang dihapus → [sabotase] <html> tanpa atribut lang — pembaca layar tidak tahu bahasa halaman
+  [32m✓[0m h1 kedua ditanam → [sabotase] ada 2 <h1> — pembaca layar memakai h1 sebagai penanda halaman
+  [32m✓[0m tautan lompati dihapus → [sabotase] tidak ada tautan "Lompati ke konten" sebelum <main> — pengguna papan ketik terjebak d
+  [32m✓[0m wilayah live dihapus → [sabotase] tidak ada wilayah live (aria-live / role="status") — jawaban yang muncul setelah bert
+  [32m✓[0m tabindex positif ditanam → [sabotase] tabindex="3" positif pada <button> — urutan fokus tidak lagi mengikuti dokumen
+  [32m✓[0m alt gambar dihapus → [sabotase] <img> tanpa atribut alt (/logo-aceh-tengah.png)
+  [32m✓[0m label isian dicopot → [sabotase] <input type="text"> tanpa label (placeholder saja tidak cukup — SC 3.3.2); pakai aria
+  [32m✓[0m kontras rendah
+  [32m✓[0m kontras aman tidak dituduh
+
+  [1mKontras token yang dipakai[0m — 25 pasangan diperiksa
+  [32m✓[0m semua pasangan memenuhi ambang WCAG 2.2 AA (paling ketat: Batas kartu di latar halaman (--border di --background) 3.13:1)
+
+  ──────────────── Ringkasan ────────────────
+  halaman diperiksa   : /dashboard
+  sabotase tertangkap : 9/9 (HTML) · 3/3 (CSS)
+  pasangan kontras    : 25/25 lulus
+
+  [32m✓[0m LULUS — pemeriksa terbukti menangkap cacat yang ditanam, halaman utama bersih, kontras AA terpenuhi.

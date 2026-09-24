@@ -123,10 +123,13 @@ export default function QueryBar({ onQuery, isLoading, onReset, isDefaultMode }:
       <form onSubmit={handleSubmit} className="px-5 pb-5 pt-1 flex flex-col items-center gap-3">
         <input
           type="text"
+          // NFR-09: placeholder tidak cukup sebagai label (SC 3.3.2) — dan
+          // pembaca layar tidak membacanya sebagai nama isian.
+          aria-label="Tulis pertanyaan tentang data SAPA Aceh Tengah"
           value={input}
           onChange={(e) => setInput(e.target.value)}
           placeholder="Ketik pertanyaan tentang data Aceh Tengah..."
-          className="w-full max-w-2xl px-5 py-3 rounded-xl bg-[#F5F3EC] border border-[#C6C3B4] text-base text-[#1E2420] placeholder-[#767D6F] focus:outline-none focus:ring-2 focus:ring-[#1B4332]/30 focus:border-[#1B4332]/30 transition-all"
+          className="w-full max-w-2xl px-5 py-3 rounded-xl bg-[#F5F3EC] border border-[#C6C3B4] text-base text-[#1E2420] placeholder-[var(--text-muted)] focus:outline-none focus:ring-2 focus:ring-[#1B4332]/30 focus:border-[#1B4332]/30 transition-all"
           disabled={isLoading}
         />
         <button

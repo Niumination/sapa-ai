@@ -19,6 +19,15 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
 
   return (
     <div className="flex h-screen overflow-hidden bg-[#F5F3EC] text-[#1E2420]">
+      {/* NFR-09: tautan lompati — pengguna papan ketik dapat melewati seluruh menu.
+          Tersembunyi sampai difokus (first Tab), lalu muncul di kiri atas. */}
+      <a
+        href="#konten-utama"
+        className="sr-only focus:not-sr-only focus:absolute focus:left-4 focus:top-3 focus:z-50 focus:rounded-lg focus:bg-[var(--brand)] focus:px-4 focus:py-2 focus:text-sm focus:font-bold focus:text-[var(--on-brand)]"
+      >
+        Lompati ke konten
+      </a>
+
       {/* Sidebar */}
       <div className="hidden md:block h-full flex-shrink-0 print:hidden">
         <Sidebar collapsed={sidebarCollapsed} onToggle={() => setSidebarCollapsed((c) => !c)} />
@@ -36,14 +45,14 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
             />
             <div>
               <h1 className="text-sm font-bold tracking-wide text-white">SAPA Smart AI</h1>
-              <p className="text-[10px] uppercase tracking-widest text-[var(--text-muted)]">Aceh Tengah · Diskominfo</p>
+              <p className="text-[10px] uppercase tracking-widest text-[var(--text-on-dark-muted)]">Aceh Tengah · Diskominfo</p>
             </div>
           </div>
 
           <div className="flex items-center gap-3 text-sm">
             <div className="text-right">
               <p className="font-mono text-xs text-[#C6C3B4]">{mounted ? currentTime : '--:--:--'}</p>
-              <p className="text-[10px] text-[#767D6F]">{new Date().toLocaleDateString('id-ID', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' })}</p>
+              <p className="text-[10px] text-[var(--text-on-dark-muted)]">{new Date().toLocaleDateString('id-ID', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' })}</p>
             </div>
 
             <div className="flex items-center gap-2 px-3 py-1.5 rounded-full bg-[#2D6A4F]/30 border border-[#2D6A4F]/50">
@@ -60,7 +69,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
           </div>
         </header>
 
-        <main className="flex-1 overflow-y-auto p-6 bg-[#F5F3EC]">{children}</main>
+        <main id="konten-utama" className="flex-1 overflow-y-auto p-6 bg-[#F5F3EC]">{children}</main>
       </div>
     </div>
   );

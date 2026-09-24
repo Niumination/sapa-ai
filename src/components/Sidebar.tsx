@@ -64,8 +64,11 @@ export default function Sidebar({ collapsed = false, onToggle }: SidebarProps) {
             <div className="flex items-center gap-2 min-w-0">
               <LogoMark size={30} className="flex-shrink-0 rounded-lg" />
               <div className="min-w-0">
-                <h1 className="text-sm font-bold text-white tracking-tight truncate">Aceh Tengah</h1>
-                <p className="text-[10px] text-[var(--text-muted)] font-medium">SAPA Smart AI</p>
+                {/* NFR-09: sebelumnya <h1> — dua <h1> dalam satu halaman membingungkan
+                    pembaca layar (penanda halaman jadi ambigu). Judul halaman tunggal
+                    ada di kepala dashboard; ini label merek, bukan judul. */}
+                <p className="text-sm font-bold text-white tracking-tight truncate">Aceh Tengah</p>
+                <p className="text-[10px] text-[var(--text-on-dark-muted)] font-medium">SAPA Smart AI</p>
               </div>
             </div>
           )}
@@ -73,7 +76,7 @@ export default function Sidebar({ collapsed = false, onToggle }: SidebarProps) {
       </div>
 
       {/* Navigation */}
-      <nav className={`flex-1 py-4 space-y-1 ${collapsed ? 'px-2' : 'px-3'}`}>
+      <nav aria-label="Navigasi utama" className={`flex-1 py-4 space-y-1 ${collapsed ? 'px-2' : 'px-3'}`}>
         <p className={`text-[9px] font-bold text-[#767D6F] uppercase tracking-widest mb-2 ${collapsed ? 'text-center px-0' : 'px-3'}`}>
           {collapsed ? '•' : 'Navigasi'}
         </p>
@@ -84,6 +87,7 @@ export default function Sidebar({ collapsed = false, onToggle }: SidebarProps) {
               key={item.href}
               href={item.href}
               title={collapsed ? item.label : undefined}
+              aria-current={isActive ? 'page' : undefined}
               className={`flex items-center gap-3 rounded-xl text-sm transition-all duration-200 ${
                 collapsed ? 'px-2 py-2.5 justify-center' : 'px-3 py-2.5'
               } ${

@@ -12,7 +12,7 @@
   --primary: #1B4332;
   --primary-container: #2D6A4F;
   --on-primary: #FFFFFF;
-  --secondary: #8A6E1D;
+  --secondary: #6F5716;          /* NFR-09: 5,45:1 di tint peringatan (sebelumnya 3,84:1) */
   --secondary-container: #F1E4C2;
   --tertiary: #A15C38;
   --tertiary-container: #C97A4A;
@@ -43,7 +43,7 @@
   --text: #1E2420;
   --text-body: #4B5249;
   --text-muted: #5C6358;
-  --border: #9A9683;
+  --border: #8E8A76;             /* NFR-09: 3,47:1 di putih (sebelumnya 2,97:1) */
   --border-strong: #7E7A6A;
   --brand: #1B4332;
   --brand-soft: #2D6A4F;
@@ -51,6 +51,8 @@
   --brand-tint: #DCE8DE;
   --on-brand: #FFFFFF;
   --on-brand-muted: #E3E0D2;
+  --text-on-dark-muted: #B8CBBE; /* NFR-09: teks samar di permukaan gelap (8,99:1 di #0F2A1E) */
+  --focus-ring: #0F2A1E;         /* NFR-09: cincin fokus (15,3:1 di permukaan gelap, 9,9:1 di terang) */
   --danger-tint: #FBE3DE;
   --warning-tint: #F1E4C2;
   --accent-tint: #F3DCC9;
@@ -207,5 +209,44 @@ body {
     height: auto !important;
     max-height: none !important;
     background: #ffffff !important;
+  }
+}
+
+/* ─── NFR-09 · aksesibilitas (WCAG 2.2 AA) ─────────────────────────────────
+   Tiga aturan di bawah adalah janji yang diperiksa otomatis oleh
+   `scripts/uji-aksesibilitas.mjs` melalui CSS yang benar-benar dikirim server.
+   Kalau salah satu dihapus, harness GAGAL — jangan hapus tanpa menggantinya. */
+
+/* 1. Sasaran sentuh minimum 24×24 px (SC 2.5.8 "Target Size (Minimum)").
+      Tautan teks di dalam paragraf dikecualikan sesuai bunyi kriteria; yang
+      dijamin di sini adalah kontrol berbentuk tombol, termasuk tombol ringkas
+      ber-`text-[9px]` yang sebelumnya hanya ±18 px tingginya. */
+.target-min,
+button,
+[role='button'] {
+  min-height: 24px;
+  min-width: 24px;
+}
+
+/* 2. Cincin fokus dua lapis (SC 2.4.7 Fokus Terlihat & 2.4.11 Fokus Tidak
+      Tertutup). Lapisan gelap terlihat di permukaan terang, halo putih membuatnya
+      tetap terlihat di kepala/sidebar gelap. */
+:where(a, button, input, select, textarea, summary, [tabindex]):focus-visible {
+  outline: 3px solid var(--focus-ring);
+  outline-offset: 2px;
+  box-shadow: 0 0 0 5px #ffffff;
+  border-radius: 6px;
+}
+
+/* 3. Hormati permintaan "kurangi gerak" (SC 2.3.3, bermanfaat bagi pengguna
+      vestibular; animasi shimmer/ping/transisi dimatikan). */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+    scroll-behavior: auto !important;
   }
 }

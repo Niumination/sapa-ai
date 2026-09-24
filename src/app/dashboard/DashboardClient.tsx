@@ -190,6 +190,18 @@ export default function DashboardClient({ initialKpiData }: { initialKpiData?: {
 
   return (
     <div className="space-y-5">
+      {/* NFR-09: wilayah live (SC 4.1.3 Status Pesan). Jawaban muncul tanpa
+          berpindah halaman; tanpa pengumuman, pengguna pembaca layar tidak tahu
+          bahwa jawaban sudah siap. Teksnya hanya untuk pembaca layar. */}
+      <p role="status" aria-live="polite" className="sr-only">
+        {isLoading
+          ? statusText ?? 'Sedang menyusun jawaban.'
+          : error
+            ? `Gagal menyusun jawaban: ${error}`
+            : aiResponse
+              ? `Jawaban siap ditampilkan untuk pertanyaan "${pertanyaanTerakhir ?? ''}".`
+              : ''}
+      </p>
       <QueryBar onQuery={handleQuery} isLoading={isLoading} onReset={handleReset} isDefaultMode={mode === 'default'} />
       {mode === 'default' && (
         <>
