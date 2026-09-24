@@ -20,7 +20,8 @@ yang sudah lulus dibuktikan pada §6.
 | 4 | **Typo-katalog membuat jawaban sempit** (*top-up* semantik) | **Keputusan produk** — memperbaiki berarti menggeser patokan mutu | Pemilik produk memutuskan; pengembang mengeksekusi | 1 patch + re-baseline penuh (seluruh verifikasi ulang) | Rendah (jawaban tetap benar & dapat ditelusuri), hanya kurang lengkap pada satu pola kueri |
 
 Status kode: **`dev` = 50 komit di atas `main` `ff00eb8`** (12 komit di atas `origin/dev` `86af3b5`) —
-49 komit sebelum dokumen ini, **50** sesudah komit dokumen ini (`0049`); pohon kerja bersih. Gerbang: **715 uji lulus / 44 berkas** · `tsc` bersih ·
+49 komit sebelum dokumen ini, **50** sesudah komit dokumen ini (`0049`), **51** setelah komit `0050`
+(perbaikan temuan penerapan — lihat [laporan 33](33-LAPORAN-VERIFIKASI-PENERAPAN-2026-09-24.md)); pohon kerja bersih. Gerbang: **719 uji lulus / 44 berkas** · `tsc` bersih ·
 build lulus · PII-gate `LEAK_COUNT 0` · uji terima deterministik **exit 0** (`eval 120/120`).
 
 ---
@@ -299,7 +300,7 @@ bukti** pada cabang ini:
 | Kepatuhan & transparansi | notis transparansi + kanal koreksi warga (FR-26) · keterbukaan penggunaan AI (CMP-02) · tata kelola risiko 9 risiko (CMP-03) · jejak audit tanpa data pribadi (CMP-04) | 24 + 13 + 18 pemeriksaan · PII 0 · A/B 12/12 |
 | Mutu & evaluasi | set evaluasi 120 item · akurasi niat 30/30 · dasbor celah pengetahuan (FR-27) | `uji-eval-120.txt` 32 pemeriksaan · `--sabotase` exit 1 |
 | Aksesibilitas | 3 rute bersih, pemeriksa anti-vakum | 9/9 + 3/3 sabotase · 25/25 kontras |
-| Gerbang menyeluruh | 715 uji / 44 berkas · `tsc` 0 · build lulus · PII-gate 0 · uji terima `exit 0` | `verifikasi/uji-terima-det.txt` |
+| Gerbang menyeluruh | 719 uji / 44 berkas · `tsc` 0 · build lulus · PII-gate 0 · uji terima `exit 0` | `verifikasi/uji-terima-det.txt`, `verifikasi/uji-terima-hermes-verifikasi.txt` |
 
 Yang **tidak** ada pada daftar di atas adalah keempat butir §1–§4. Tidak ada yang lain.
 
@@ -329,7 +330,7 @@ Yang **tidak** ada pada daftar di atas adalah keempat butir §1–§4. Tidak ada
 
 - Semua pekerjaan ini berada di **patch**, bukan di remote: `06-USULAN-KODE/seri-patch/`
   (`0001`–`0049` + dua bundel). Tidak ada `push`/`fetch` dari sisi ini — remote milik agen lokal.
-- Urutan aman: `npm ci` → terapkan patch → `npx vitest run` (harap **715 lulus / 44 berkas**) →
+- Urutan aman: `npm ci` → terapkan patch → `npx vitest run` (harap **719 lulus / 44 berkas**) →
   `npm run typecheck` → `npm run build` → uji terima (§7 `11-KIT-SERAH-TERIMA.md`).
 - **Jangan** menyentuh `main` sampai pemilik produk memutuskan.
 - Bila mengerjakan butir §3 (aksesibilitas), ingat aturan tetap: permukaan publik baru **wajib**

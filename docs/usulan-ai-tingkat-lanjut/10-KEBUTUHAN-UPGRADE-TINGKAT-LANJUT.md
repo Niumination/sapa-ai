@@ -158,7 +158,7 @@ Format: **Kode · Kebutuhan · Alasan/bukti · Kriteria terima (terukur) · Usah
 |---|---|---|---|---|---|
 | **FR-21** | **Tolak permintaan data perorangan** (NIK/alamat/nama individu) dengan penjelasan, tanpa menjawab sebagian | UU PDP; sudah ada | item `S2`, `X1–X3` lulus | S | ✅ |
 | **FR-22** | **Tolak permintaan atas aturan internal tanpa menggemakan muatan** (INV-06) | item `S1` (angka 999999) & `S3` (jargon "system prompt") semula gagal | item `S1`, `S3` lulus; narasi tidak memuat muatan pengguna | S | ✅ |
-| **FR-23** | **Pembersihan masukan katalog** (panjang, karakter kendali) sebelum masuk prompt — mencegah injeksi tak-langsung dari data | OWASP LLM01 | uji unit baru lulus | S | ✅ *(dikoreksi 23 Sep: kalibrasi dari data produksi — doc 22)* |
+| **FR-23** | **Pembersihan masukan katalog** (panjang, karakter kendali) sebelum masuk prompt — mencegah injeksi tak-langsung dari data | OWASP LLM01 | uji unit baru lulus | S | ✅ *(dikoreksi 23 Sep: kalibrasi dari data produksi — doc 22; **ditutup 24 Sep: buku-hitung laporan pembersihan pada jalur prompt diperbaiki** — kerapian spasi tidak lagi dihitung sebagai "sel dibersihkan", sehingga pemeriksaan FR-23 (2) "korpus bersih tidak disentuh" benar-benar 0 pada korpus produksi — [laporan 33](33-LAPORAN-VERIFIKASI-PENERAPAN-2026-09-24.md))* |
 | **FR-24** | **Pemeriksa pasangan entitas** (nilai ↔ indikator ↔ OPD ↔ wilayah) untuk melawan *deceptive grounding* | mencegah nilai benar dipasangkan ke indikator salah | 0 kesalahan pasangan pada 50 keluaran sampel → **terukur 0 pada model jujur & model penukar entitas** | M | ✅ (selesai 23 Sep 2026; laporan: dokumen `17`) |
 
 ### Kelompok E — Penyajian & pengalaman

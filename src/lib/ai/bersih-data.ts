@@ -316,31 +316,44 @@ export function gabungRingkas(ringkas: RingkasBersih[]): RingkasBersih {
 }
 
 /**
+ * Ringkasan SATU sel yang sudah dibersihkan.
+ *
+ * Ini **satu-satunya tempat** aturan "kerapian bentuk bukan sinyal keamanan"
+ * ditulis. Sebelumnya aturan itu hidup di sini saja, sementara penyusun prompt
+ * (`prompt.ts`) menghitung ulang dengan caranya sendiri dan menghitung SETIAP
+ * perubahan sebagai `selDibersihkan`. Akibatnya, pada korpus produksi 2.065
+ * record (189 sel indikator + 2 satuan hanya berbeda spasi), laporan
+ * `ai.pembersihan` selalu memperlihatkan sel "dibersihkan" padahal tidak ada
+ * satu pun aturan keamanan yang bekerja — sinyal yang justru dipakai uji terima
+ * (FR-23) jadi derau. Ditemukan kembali 24 Sep 2026 lewat uji terima pada
+ * korpus produksi; kini semua jalur memakai fungsi ini.
+ */
+export function ringkasDariHasil(h: HasilBersih, jenis: JenisSel | string = 'indikator'): RingkasBersih {
+  const r: RingkasBersih = { ...RINGKAS_BERSIH_KOSONG, selDiperiksa: 1, jenisTersentuh: [] };
+  if (h.dinormalkan) {
+    // Berubah hanya karena bentuk (spasi ganda, spasi pinggir, NFC).
+    r.selDinormalkan = 1;
+  } else if (h.berubah) {
+    // Perubahan substantif: karakter dibuang, penanda/perintah dinetralkan, dipotong.
+    r.selDibersihkan = 1;
+    r.jenisTersentuh = [String(jenis)];
+  }
+  if (h.dipotong) r.selDipotong = 1;
+  r.karakterDibuang = h.karakterDibuang;
+  r.penandaDinetralkan = h.penandaDinetralkan;
+  r.perintahDinetralkan = h.perintahDinetralkan;
+  return r;
+}
+
+/**
  * Bersihkan sekumpulan sel sekaligus, sambil menghitung ringkasannya.
  * Dipakai oleh penyusun prompt: satu panggilan = satu laporan yang bisa diaudit.
  */
 export function bersihkanSel(
   sel: Array<{ nilai: unknown; jenis: JenisSel }>,
 ): { hasil: HasilBersih[]; ringkas: RingkasBersih } {
-  const hasil: HasilBersih[] = [];
-  const ringkas: RingkasBersih = { ...RINGKAS_BERSIH_KOSONG, jenisTersentuh: [] };
-  const jenis = new Set<string>();
-  for (const s of sel) {
-    const h = bersihkanSelData(s.nilai, s.jenis);
-    hasil.push(h);
-    ringkas.selDiperiksa += 1;
-    const substantif = h.karakterDibuang > 0 || h.penandaDinetralkan > 0 || h.perintahDinetralkan > 0 || h.dipotong;
-    if (substantif) {
-      ringkas.selDibersihkan += 1;
-      jenis.add(s.jenis);
-    }
-    if (h.dinormalkan) ringkas.selDinormalkan += 1;
-    if (h.dipotong) ringkas.selDipotong += 1;
-    ringkas.karakterDibuang += h.karakterDibuang;
-    ringkas.penandaDinetralkan += h.penandaDinetralkan;
-    ringkas.perintahDinetralkan += h.perintahDinetralkan;
-  }
-  ringkas.jenisTersentuh = [...jenis].sort();
+  const hasil = sel.map((s) => bersihkanSelData(s.nilai, s.jenis));
+  const ringkas = gabungRingkas(hasil.map((h, i) => ringkasDariHasil(h, sel[i].jenis)));
   return { hasil, ringkas };
 }
 

@@ -26,10 +26,9 @@
 import type { EvidenceItem } from '@/services/grounding';
 import {
   BATAS_SEL,
-  RINGKAS_BERSIH_KOSONG,
   bersihkanSelData,
   gabungRingkas,
-  type HasilBersih,
+  ringkasDariHasil,
   type JenisSel,
   type RingkasBersih,
 } from '@/lib/ai/bersih-data';
@@ -92,7 +91,7 @@ export function serializeEvidence(
       const h = bersihkanSelData(v, kolom[i]);
       return h;
     });
-    ringkas.push(ringkasDariSel(bersih, kolom));
+    ringkas.push(gabungRingkas(bersih.map((h, i) => ringkasDariHasil(h, kolom[i]))));
     return `| ${bersih.map((h) => selTabel(h.teks)).join(' | ')} |`;
   });
   return { teks: [header, garis, ...baris].join('\n'), ringkas: gabungRingkas(ringkas) };
@@ -102,24 +101,6 @@ export function serializeEvidence(
 function selTabel(teks: string): string {
   const t = String(teks ?? '').replace(/\|/g, '/').trim();
   return t === '' ? 'N/A' : t;
-}
-
-function ringkasDariSel(hasil: HasilBersih[], kolom: JenisSel[]): RingkasBersih {
-  const r: RingkasBersih = { ...RINGKAS_BERSIH_KOSONG, jenisTersentuh: [] };
-  const jenis = new Set<string>();
-  hasil.forEach((h, i) => {
-    r.selDiperiksa += 1;
-    if (h.berubah) {
-      r.selDibersihkan += 1;
-      jenis.add(kolom[i]);
-    }
-    if (h.dipotong) r.selDipotong += 1;
-    r.karakterDibuang += h.karakterDibuang;
-    r.penandaDinetralkan += h.penandaDinetralkan;
-    r.perintahDinetralkan += h.perintahDinetralkan;
-  });
-  r.jenisTersentuh = [...jenis].sort();
-  return r;
 }
 
 export function buildPrompt(ctx: PromptContext): { system: string; user: string } {
@@ -154,30 +135,11 @@ export function buildPromptTerperiksa(ctx: PromptContext): {
 
   const pembersihan = gabungRingkas([
     tabel.ringkas,
-    ...catatanBersih.map((h) =>
-      h.berubah
-        ? { ...RINGKAS_BERSIH_KOSONG, selDiperiksa: 1, selDibersihkan: 1, jenisTersentuh: ['catatan'],
-            karakterDibuang: h.karakterDibuang, penandaDinetralkan: h.penandaDinetralkan,
-            perintahDinetralkan: h.perintahDinetralkan, selDipotong: h.dipotong ? 1 : 0 }
-        : { ...RINGKAS_BERSIH_KOSONG, selDiperiksa: 1 },
-    ),
-    ...(drafBersih
-      ? [{
-          ...RINGKAS_BERSIH_KOSONG,
-          selDiperiksa: 1,
-          selDibersihkan: drafBersih.berubah ? 1 : 0,
-          selDipotong: drafBersih.dipotong ? 1 : 0,
-          karakterDibuang: drafBersih.karakterDibuang,
-          penandaDinetralkan: drafBersih.penandaDinetralkan,
-          perintahDinetralkan: drafBersih.perintahDinetralkan,
-          jenisTersentuh: drafBersih.berubah ? ['draf'] : [],
-        }]
-      : []),
-    queryBersih.berubah
-      ? { ...RINGKAS_BERSIH_KOSONG, selDiperiksa: 1, selDibersihkan: 1, jenisTersentuh: ['pertanyaan'],
-          karakterDibuang: queryBersih.karakterDibuang, penandaDinetralkan: queryBersih.penandaDinetralkan,
-          perintahDinetralkan: queryBersih.perintahDinetralkan }
-      : { ...RINGKAS_BERSIH_KOSONG, selDiperiksa: 1 },
+    // Catatan wajib & draf berasal dari aplikasi sendiri, pertanyaan dari pengguna:
+    // ketiganya memakai aturan ringkas yang sama (kerapian bentuk ≠ sinyal).
+    ...catatanBersih.map((h) => ringkasDariHasil(h, 'catatan')),
+    ...(drafBersih ? [ringkasDariHasil(drafBersih, 'draf')] : []),
+    ringkasDariHasil(queryBersih, 'pertanyaan'),
   ]);
 
   const bagianCatatan = catatanBersih.length

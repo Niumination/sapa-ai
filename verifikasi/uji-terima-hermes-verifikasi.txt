@@ -1,0 +1,86 @@
+[penunjuk] meneruskan ke docs/usulan-ai-tingkat-lanjut/uji-terima.sh (satu sumber kebenaran)
+
+[1m── 1. Statis (typecheck · uji unit · build) ──[0m
+  [32m✓[0m typecheck lolos
+  [32m✓[0m uji unit: 44 berkas / 719 uji lulus (ambang 700)
+  [32m✓[0m pagar grounding ada (INV-01)
+  [32m✓[0m penjaga permintaan sistem ada (SEC-02)
+
+[1m── 2. Pagar /api/revalidate (SEC-01) ──[0m
+  [32m✓[0m revalidate menolak permintaan tanpa rahasia (HTTP 503, fail-closed)
+
+[1m── 3. Kesegaran data & sidik korpus (FR-25) ──[0m
+  [32m✓[0m waktu tarik data dilaporkan (2026-09-24T17:08:14.473Z)
+  [32m✓[0m sidik korpus dilaporkan (5a90796f)
+  [32m✓[0m daftar tahun data disertakan (dataYears)
+  [32m✓[0m sidik konsisten antara jalur JSON & streaming
+  [32m✓[0m mode AI & deterministik melaporkan versi korpus yang sama (5a90796f)
+
+[1m── 4. Dasbor celah pengetahuan (FR-27) ──[0m
+  [32m✓[0m endpoint celah menolak tanpa token (HTTP 503, fail-closed)
+  · ADMIN_TOKEN tidak diberikan ke skrip — pemeriksaan daftar celah dilewati (kirim ADMIN_TOKEN=… bila ingin diperiksa)
+
+[1m── 5. Transparansi jawaban & kanal koreksi (FR-26) ──[0m
+  [32m✓[0m notis transparansi tampil di halaman dasbor
+  [32m✓[0m kanal koreksi "lapor angka" tersedia di dasbor
+  [32m✓[0m laporan sah diterima (HTTP 201)
+  [32m✓[0m jenis laporan tak dikenal ditolak (HTTP 400)
+  [32m✓[0m daftar laporan menolak tanpa token (HTTP 503, fail-closed)
+  · ADMIN_TOKEN tidak diberikan — pemeriksaan isi laporan dilewati
+
+[1m── 6. Sitasi per klaim (FR-19) ──[0m
+  [32m✓[0m 0 klaim tanpa rujukan (2/2 klaim bersitasi)
+  [32m✓[0m penanda [n] tertulis pada narasiBersitasi
+  [32m✓[0m rujukan punya sasaran (bukti-15 baris bukti)
+  [32m✓[0m uji 50 sampel: 87/87 klaim bersitasi
+
+[1m── 6b. Lapis semantik Bahasa Indonesia (FR-12 / EV-05) ──[0m
+  [32m✓[0m lapis semantik aktif (penyedia: hash)
+  [32m✓[0m salah tulis 'pendudk' tetap menemukan indikator penduduk (batang kata)
+  [32m✓[0m salah tulis di luar katalog ditangani lapis semantik (15)
+  [32m✓[0m kueri di luar katalog ditolak (0 bukti)
+  · uji parafrase penuh dilewati (set SAPA_PARAFRASE_PENUH=1 untuk menjalankannya)
+
+[1m── 6c. Klasifikasi sebab kegagalan (FR-20) ──[0m
+  [32m✓[0m kueri di luar katalog membawa sebab 'retrieval:konsep-asing'
+  [32m✓[0m kueri terjawab diberi sebab 'selesai:leksikal+sisipan'
+  [32m✓[0m prosa sebab bebas angka
+  [32m✓[0m jalur streaming memberi sebab yang sama dengan jalur JSON
+  · harness penanda sebab dilewati (set SAPA_SEBAB_PENUH=1 untuk menjalankannya)
+
+[1m── 6d. Pemeriksa pasangan entitas (FR-24) ──[0m
+  [32m✓[0m balasan memuat pemeriksaan pasangan entitas (3 nilai diperiksa)
+  [32m✓[0m jawaban yang disajikan bebas temuan pasangan keras
+  · server penukar entitas tidak disediakan (set SAPA_TUKAR_URL untuk membuktikan gerbang menyala)
+  · menjalankan uji 50 keluaran sampel (EV-24)…
+  [32m✓[0m uji pasangan: 0 kesalahan pasangan pada 50 keluaran sampel
+
+[1m── 6e. Pembersihan data katalog → prompt (FR-23) ──[0m
+  [32m✓[0m balasan mode AI memuat laporan pembersihan (92 sel diperiksa)
+  [32m✓[0m korpus bersih tidak disentuh (0 sel dibersihkan, 0 baris ditandai)
+  · korpus beracun (model biasa) dilewati (set SAPA_BERACUN_JURU_URL untuk menjalankannya)
+  [32m✓[0m model yang menuruti perintah di data TIDAK lagi bisa menuruti (0 penanda [PATUH:])
+  · notifikasi sirkuit dilewati (set SAPA_SIRKUIT_URL=http://127.0.0.1:3131 untuk menjalankannya)
+
+[1m── 6g. Telemetri per tahap (NFR-07) ──[0m
+  [32m✓[0m telemetri per tahap: 19 ✓ / 0 ✗
+  [32m✓[0m p95 per tahap muncul di log — model p95 = 17 ms
+
+[1m── 6h. Penyegaran cache terjadwal (OPS-03) ──[0m
+  [32m✓[0m penyegaran cache terjadwal: 45 ✓ / 0 ✗
+  [32m✓[0m cache benar-benar dihitung ulang (cap waktu data) — 2026-09-24T17:03:08.816Z → 2026-09-24T17:13:49.696Z
+
+[1m── 7. Evaluasi — mode AI ──[0m
+  [32m✓[0m eval 120/120 (ambang 120)
+  [32m✓[0m invarians bersih (anti-halu · anti-token · anti-jargon · sumber · anti-echo-NIK)
+  [32m✓[0m grounded pass 100.0% (ambang 90%)
+  [32m✓[0m fallback 0.0% (ambang maksimum 10%)
+
+[1m── 7. Evaluasi — mode Deterministik ──[0m
+  [32m✓[0m eval 120/120 (ambang 120)
+  [32m✓[0m invarians bersih (anti-halu · anti-token · anti-jargon · sumber · anti-echo-NIK)
+
+[1m── Ringkasan uji terima ──[0m
+  [32m✓ LULUS[0m — semua ambang terpenuhi.
+
+EXIT=0

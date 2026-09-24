@@ -40,7 +40,7 @@ menyentuh `main` sampai Anda sendiri memutuskan.
 |---|---|---|
 | Node.js | 20.20.2 (dipakai saat pengujian) | Node 20 EOL 30 Apr 2026 — jadwalkan naik versi |
 | Next.js | 16.2.10 | tidak ada perubahan dependensi di cabang ini |
-| Uji | 44 berkas / **715 uji** | `npm test` |
+| Uji | 44 berkas / **719 uji** | `npm test` |
 | Variabel lingkungan baru | `REVALIDATE_ALLOW_UNSIGNED` (opsional) | **`REVALIDATE_SECRET` kini wajib** agar penyegaran cache tidak tertolak (fail-closed) |
 | Variabel lingkungan baru (OPS-03, penjadwal) | `SAPA_BASE_URL`, `SAPA_SEGARKAN_TAG`, `SAPA_SEGARKAN_SUMBER`, `SAPA_SEGARKAN_ULANG` (opsional) | dipakai `scripts/segarkan-cache.mjs` dan `.github/workflows/segarkan-cache.yml` (harian 05:00 WIB). Tanpa `SAPA_URL`/`REVALIDATE_SECRET` di rahasia GitHub, workflow itu **dorman** (bukan gagal) |
 | Variabel lingkungan baru (FR-27 & FR-26) | `ADMIN_TOKEN` | menjaga **dua** dasbor admin: `/api/admin/celah` dan `/api/admin/umpan-balik`. Tanpa ini keduanya menjawab **503 fail-closed** |
@@ -104,7 +104,14 @@ selaras) lalu jalankan uji terima (§7).
 > **715 lulus / 44 berkas**; uji terima deterministik **exit 0** (`eval 120/120`, ambang diturunkan dari
 > set). Kedua bundel diverifikasi ulang pada **dua klon bersih** (`main`+bundel dan `86af3b5`+bundel) →
 > ketiga pohon **byte-identik** (pohon `78916b079739`), dan di klon `main`+bundel tersebut `npm ci`
-> lalu `npx vitest run` menghasilkan **715 uji lulus / 44 berkas**. Sisa yang masih terbuka + rencana penutupnya ada di
+> lalu `npx vitest run` menghasilkan **715 uji lulus / 44 berkas**.
+>
+> **Diperbarui lagi 24 Sep 2026 (setelah penerapan oleh hermes agent):** cabang `dev` di GitHub
+> terbukti **byte-identik** dengan ruang kerja ini (pohon `a86062e40930…`, `ahead_by 50`, `main` tetap
+> `ff00eb8`). Dua temuan dari uji terima penerapan diperiksa dan **keduanya nyata**: (a) laporan
+> `ai.pembersihan` menghitung kerapian spasi sebagai "sel dibersihkan" pada jalur prompt —
+> diperbaiki, kini **719 uji**; (b) `verifikasi/uji-terima.sh` adalah salinan basi yang menyimpang —
+> kini hanya **penunjuk** ke skrip kanonik. Rinciannya: **`33-LAPORAN-VERIFIKASI-PENERAPAN-2026-09-24.md`**. Sisa yang masih terbuka + rencana penutupnya ada di
 > **`32-SISA-TERBUKA-DAN-RENCANA-PENUTUP.md`**.
 
 > **Catatan tentang bit eksekusi:** komit `0003`/`0004` hanya memulihkan bit eksekusi
@@ -142,7 +149,7 @@ selaras) lalu jalankan uji terima (§7).
 ## 6. Daftar centang serah terima
 
 - [ ] `git status` bersih pada cabang kerja; `main` belum tersentuh.
-- [ ] `npm ci` selesai; `npm test` → **715 uji lulus** (≥ 700 menurut `uji-terima.sh`).
+- [ ] `npm ci` selesai; `npm test` → **719 uji lulus** (≥ 700 menurut `uji-terima.sh`).
 - [ ] `bash verifikasi/uji-terima.sh` → **LULUS** (statis + pagar). Bagian §6f (notifikasi sirkuit) butuh server uji khusus — lihat `19 §2`; tanpa itu ia dilaporkan **dilewati**, bukan gagal. Bagian §6g (telemetri) dan §6h (penyegaran cache) **menjalankan servernya sendiri** — cukup `node scripts/uji-telemetri.mjs` / `node scripts/uji-segarkan.mjs`; lewati dengan `SAPA_SKIP_TELEMETRI=1` / `SAPA_SKIP_SEGARKAN=1`. §6h sengaja menjalankan **dua** aplikasi (satu tanpa rahasia) karena hanya itu yang membuktikan fail-closed.
 - [ ] `SAPA_A11Y_URL=http://127.0.0.1:3131 node scripts/uji-aksesibilitas.mjs` → **LULUS** (butuh aplikasi hidup; memeriksa HTML + CSS nyata dan menanam 12 cacat untuk membuktikan dirinya tidak vakum).
 - [ ] `SAPA_EVAL_URL=http://127.0.0.1:<port> node scripts/uji-eval-120.mjs` → **LULUS** (120 item; 9/9 niat ≥ 3 item baru lulus; akurasi niat 30/30). Kontrol negatif: tambahkan `--sabotase` → wajib **exit 1**.
@@ -272,7 +279,7 @@ perlu disetel — **bukan** gerbangnya dilonggarkan.
 > Langkah:
 > 1. `git switch -c kerja/ai-tingkat-lanjut main`
 > 2. `git am 06-USULAN-KODE/seri-patch/[0-9][0-9][0-9][0-9]-*.patch`
-> 3. `npm ci && npm test` → wajib **715 uji lulus**; `npm run typecheck` → bersih.
+> 3. `npm ci && npm test` → wajib **719 uji lulus**; `npm run typecheck` → bersih.
 > 4. `bash verifikasi/uji-terima.sh` → wajib **LULUS**.
 > 5. Jalankan eval dua mode (lihat `11 §7`) → wajib **90/90** masing-masing, **0 regresi**.
 > 6. Bila ada konflik, jangan menimpa; laporkan berkas konflik beserta keputusan yang diambil.

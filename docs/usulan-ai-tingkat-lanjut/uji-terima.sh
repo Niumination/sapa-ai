@@ -5,11 +5,15 @@
 # agent, atau pemilik produk sebelum versi baru dinaikkan ke produksi.
 #
 # Pakai (dari dalam klon repo):
-#   bash verifikasi/uji-terima.sh                      # uji statis + eval mode AI (bila AI_URL hidup)
-#   AI_URL=http://127.0.0.1:3116 DET_URL=http://127.0.0.1:3117 bash verifikasi/uji-terima.sh
-#   SAPA_SKIP_EVAL=1 bash verifikasi/uji-terima.sh      # lompati eval (cepat)
-#   SAPA_MODE=det bash verifikasi/uji-terima.sh         # nilai hanya mode deterministik
-#   ADMIN_TOKEN=... bash verifikasi/uji-terima.sh        # sekaligus periksa dasbor celah (FR-27)
+#   bash docs/usulan-ai-tingkat-lanjut/uji-terima.sh     # uji statis + eval mode AI (bila AI_URL hidup)
+#   AI_URL=http://127.0.0.1:3116 DET_URL=http://127.0.0.1:3117 bash docs/usulan-ai-tingkat-lanjut/uji-terima.sh
+#   SAPA_SKIP_EVAL=1 bash docs/usulan-ai-tingkat-lanjut/uji-terima.sh   # lompati eval (cepat)
+#   SAPA_MODE=det bash docs/usulan-ai-tingkat-lanjut/uji-terima.sh      # nilai hanya mode deterministik
+#   ADMIN_TOKEN=... bash docs/usulan-ai-tingkat-lanjut/uji-terima.sh     # sekaligus periksa dasbor celah (FR-27)
+#
+# Catatan 24 Sep 2026: berkas INI satu-satunya salinan kanonik. `verifikasi/uji-terima.sh`
+# kini hanya PENUNJUK ke sini (dulu salinan terpisah → menyimpang dan menghasilkan
+# GAGAL palsu pada korpus produksi).
 #
 # Keluar dengan 0 = LULUS, 1 = GAGAL. Setiap ambang di bawah diambil dari
 # dokumen 10-KEBUTUHAN-UPGRADE-TINGKAT-LANJUT.md (NFR-01..NFR-06, EV-01..EV-04).
@@ -32,7 +36,7 @@ AMBANG_TOTAL=${SAPA_AMBANG_TOTAL:-${ITEM_SET:-0}}
 AMBANG_LULUS=${SAPA_AMBANG_LULUS:-$AMBANG_TOTAL}
 AMBANG_GROUNDED=90       # % grounded pass saat model dipanggil
 AMBANG_FALLBACK=10       # % fallback (maksimum)
-AMBANG_TES_MIN=${SAPA_AMBANG_TES_MIN:-700}   # jumlah uji unit minimum (kini 715)
+AMBANG_TES_MIN=${SAPA_AMBANG_TES_MIN:-700}   # jumlah uji unit minimum (kini 719)
 
 gagal=0
 catatan=()

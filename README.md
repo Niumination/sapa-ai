@@ -61,7 +61,7 @@ pesan jelas (HTTP 503), bukan angka kosong atau galat 500.
 - **Layanan data:** Next.js API Routes (Node.js) — tanpa ORM, tanpa basis data
 - **Sumber data:** API SPLP `https://api-splp.layanan.go.id/sapa/1.0/api`
 - **Cache:** LRU per-instance 10 menit + `unstable_cache` 600 detik terdistribusi
-- **Pengujian:** Vitest — **715 pengujian pada 44 berkas**; ditambah harness
+- **Pengujian:** Vitest — **719 pengujian pada 44 berkas**; ditambah harness
   ujung-ke-ujung di `scripts/` (evaluasi 120 item, bentuk jawaban per niat, keterbukaan,
   tata kelola risiko, jejak audit, aksesibilitas, kamus daerah, pembersihan data katalog)
 - **Penempatan:** Vercel, fungsi dijalankan di region `sin1` (Singapura)

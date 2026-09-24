@@ -100,6 +100,12 @@ yaitu perilaku yang justru salah.
   bila leksikal menghasilkan bukti lebih sedikit dari ambang kecil. **Sengaja belum dikerjakan**
   dalam audit ini karena mengubah urutan/bukti jawaban berarti membatalkan baseline 120/120 dan
   seluruh A/B yang baru diverifikasi — itu keputusan pemilik produk, bukan perbaikan senyap.
+- **Catatan lanjutan (setelah audit ini):** cabang ini diterapkan hermes agent ke repo klien dan
+  dipush ke GitHub; verifikasi penerapannya menemukan **satu cacat nyata yang belum tertangkap audit
+  ini** — laporan pembersihan data (`ai.pembersihan`) menghitung kerapian spasi sebagai "sel
+  dibersihkan" pada jalur prompt, sehingga pemeriksaan FR-23 salah-tuntut pada korpus produksi. Sudah
+  diperbaiki pada komit `0050` beserta 4 uji baru; rincian di
+  [laporan 33](33-LAPORAN-VERIFIKASI-PENERAPAN-2026-09-24.md).
 - Uji ulang ini memakai **korpus produksi tiruan** (2.065 record hasil tarikan) dan penyedia
   model **dimatikan** — konsisten dengan keadaan produksi (langganan model belum diperpanjang);
   jalur AI diverifikasi lewat penyedia tiruan pada harness yang memang membutuhkannya.
