@@ -32,6 +32,7 @@
 //      (telemetri hanya metadata — tidak ada isi pertanyaan);
 //   9. kontrol negatif: `SAPA_TELEMETRI=off` → nol baris, aplikasi tetap normal.
 
+import { envUji, catatanLingkungan } from './lingkungan-uji.mjs';
 import { spawn } from 'node:child_process';
 import { createWriteStream, readFileSync, writeFileSync } from 'node:fs';
 import { dirname, join, resolve } from 'node:path';
@@ -131,12 +132,8 @@ function jalankanApp(port, tambahanEnv, berkasLog) {
   const aliran = createWriteStream(berkasLog, { flags: 'w' });
   const anak = spawn('npx', ['next', 'start', '-p', String(port)], {
     cwd: AKAR,
-    env: {
-      ...process.env,
-      SAPA_SPLP_BASE_URL: SPLP,
-      ADMIN_TOKEN: TOKEN,
-      ...tambahanEnv,
-    },
+    // Lingkungan BERSIH: saklar telemetri & mode AI ditentukan harness, bukan shell.
+    env: envUji({ SAPA_SPLP_BASE_URL: SPLP, ADMIN_TOKEN: TOKEN, ...tambahanEnv }).env,
     stdio: ['ignore', 'pipe', 'pipe'],
     detached: true,
   });

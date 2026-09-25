@@ -17,6 +17,7 @@
 // Pakai: node scripts/uji-kamus-daerah.mjs
 // Keluar: 0 = lulus, 1 = ada pelanggaran, 2 = gagal menyiapkan.
 
+import { envUji, catatanLingkungan } from './lingkungan-uji.mjs';
 import { spawn } from 'node:child_process';
 import { createWriteStream, readFileSync } from 'node:fs';
 import { dirname, join, resolve } from 'node:path';
@@ -121,7 +122,7 @@ function jalankanApp(port, tambahanEnv, berkasLog) {
   const proc = spawn('npx', ['next', 'start', '-p', String(port)], {
     cwd: AKAR,
     detached: true,
-    env: { ...process.env, PORT: String(port), ...tambahanEnv },
+    env: envUji({ PORT: String(port), ...tambahanEnv }).env,
     stdio: ['ignore', 'pipe', 'pipe'],
   });
   proc.stdout.pipe(aliran);

@@ -18,6 +18,7 @@
 // Pakai: node scripts/uji-tata-kelola.mjs [--sabotase]
 // Keluar: 0 = lulus, 1 = ada pelanggaran, 2 = gagal menyiapkan.
 
+import { envUji } from './lingkungan-uji.mjs';
 import { spawn } from 'node:child_process';
 import { createWriteStream, existsSync } from 'node:fs';
 import { dirname, join, resolve } from 'node:path';
@@ -127,9 +128,10 @@ function periksaDaftar(item, { hariIni = new Date() } = {}) {
 }
 
 // ── Proses ────────────────────────────────────────────────────────────────
-function jalankan(perintah, argumen, env, berkasLog) {
+function jalankan(perintah, argumen, env, berkasLog, bersih = false) {
   const aliran = createWriteStream(berkasLog, { flags: 'w' });
-  const proc = spawn(perintah, argumen, { cwd: AKAR, detached: true, env: { ...process.env, ...env }, stdio: ['ignore', 'pipe', 'pipe'] });
+  // `bersih = true` untuk APLIKASI yang diuji (lihat scripts/lingkungan-uji.mjs).
+  const proc = spawn(perintah, argumen, { cwd: AKAR, detached: true, env: bersih ? envUji(env).env : { ...process.env, ...env }, stdio: ['ignore', 'pipe', 'pipe'] });
   proc.stdout.pipe(aliran);
   proc.stderr.pipe(aliran);
   return proc;
@@ -166,7 +168,7 @@ try {
     process.exit(2);
   }
 
-  app = jalankan('npx', ['next', 'start', '-p', String(PORT)], { SAPA_SPLP_BASE_URL: urlSplp, AI_ENABLED: 'false' }, '/tmp/tata-kelola-app.log');
+  app = jalankan('npx', ['next', 'start', '-p', String(PORT)], { SAPA_SPLP_BASE_URL: urlSplp, AI_ENABLED: 'false' }, '/tmp/tata-kelola-app.log', true);
   if (!(await tungguSiap(`http://127.0.0.1:${PORT}/api/status`, TIMEOUT_S * 1000))) {
     console.error(`  ${warna.no} aplikasi tidak siap — lihat /tmp/tata-kelola-app.log`);
     process.exit(2);

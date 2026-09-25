@@ -24,7 +24,7 @@ menyentuh `main` sampai Anda sendiri memutuskan.
 
 | Aset | Letak | Isi |
 |---|---|---|
-| **Cabang utuh** | `dev` @ ujung cabang ruang kerja ini (**50 komit** di atas `main` `ff00eb8`, fast-forward; komit audit ulang = `0048`, komit dokumen 32 = `0049`). Basis publik `origin/dev` = `86af3b5` | patch lanjutan `0038`–`0048` duduk **di atas `origin/dev`**; seri patch memuat seluruh komit kode & dokumen, sedangkan folder `seri-patch/` sendiri sengaja tidak ikut dipatch (isinya memang wadah patch) |
+| **Cabang utuh** | `dev` @ ujung cabang ruang kerja ini (**52 komit** di atas `main` `ff00eb8`, fast-forward; komit audit ulang = `0048`, komit dokumen 32 = `0049`). Basis publik `origin/dev` = `86af3b5` | patch lanjutan `0038`–`0048` duduk **di atas `origin/dev`**; seri patch memuat seluruh komit kode & dokumen, sedangkan folder `seri-patch/` sendiri sengaja tidak ikut dipatch (isinya memang wadah patch) |
 | **Seri patch** | `06-USULAN-KODE/seri-patch/` | **seluruh** berkas `NNNN-*.patch` di folder itu, dijalankan **urut angka** (jangan melompat), ditambah **dua** paket tunggal: `00-semua.patch` (basis `main` — seluruh riwayat cabang) dan `00-lanjutan-dev.patch` (basis `origin/dev` `86af3b5` — komit `0038`–`0048`). Komit dokumen dikenali dari judulnya (`Dokumen: …`). Karena setiap ekspor mengecualikan folder ini, `git am` atas semua berkas `NNNN-*.patch` menghasilkan pohon yang **sama persis** dengan ujung cabang |
 | **Skrip uji terima** | `06-USULAN-KODE/uji-terima.sh` | memutuskan LULUS/GAGAL sesuai ambang dokumen `10` |
 | **Alat pengukuran** | `verifikasi/mock-llm.mjs`, `verifikasi/stub-splp.mjs`, `verifikasi/banding-ai-vs-det.py`, `verifikasi/banding-main-vs-branch.py`, `scripts/uji-sitasi.mjs`, `scripts/uji-parafrase.mjs`, `scripts/uji-sebab.mjs`, `scripts/uji-pasangan.mjs`, `scripts/buat-korpus-uji.mjs`, `scripts/uji-bersih-data.mjs`, `scripts/buat-korpus-beracun.mjs`, `scripts/uji-cache-korpus.mjs`, `scripts/uji-aksesibilitas.mjs`, `scripts/uji-bentuk-jawaban.mjs`, `scripts/uji-kamus-daerah.mjs`, `scripts/ukur-df-kamus.mjs`, `scripts/uji-keterbukaan.mjs`, `scripts/bandingkan-jawaban.mjs`, `scripts/uji-tata-kelola.mjs`, `scripts/uji-jejak-audit.mjs`, `scripts/ekspor-jejak-audit.mjs`, `scripts/uji-eval-120.mjs`, `scripts/siapkan-panel-penilai.mjs`, `scripts/hitung-panel.mjs` | penyedia model & SPLP tiruan + harness pembanding + uji 50 sampel sitasi (FR-19) + uji parafrase EV-05 (FR-12) + uji penanda sebab EV-20 (FR-20) + uji 50 sampel pasangan entitas EV-24 (FR-24) + uji pembersihan data katalog EV-23 (FR-23) + pembangkit korpus uji 1.210 record + pembangkit korpus uji beracun 6 bentuk serangan + uji bentuk jawaban per niat (FR-18) + uji kamus sinonim daerah (DS-05: statis + end-to-end + kontrol negatif) + alat tinjauan df kamus 3 bulan |
@@ -99,8 +99,8 @@ selaras) lalu jalankan uji terima (§7).
 
 > **Diperbarui lagi 24 Sep 2026 (FR-18):** `00-semua.patch` = **43 komit** di atas `main`; `00-lanjutan-dev.patch` = **5 komit** (`0038`–`0042`, basis `origin/dev` `86af3b5`); uji unit menjadi **636 lulus**. Bukti FR-18: `verifikasi/uji-bentuk-jawaban.txt` (122 pemeriksaan, 6/6 niat ≥ 3 item), kontrol negatif `verifikasi/uji-bentuk-jawaban-tanpa-bentuk.txt` (exit 1, 61 pelanggaran), dan uji regresi A/B `verifikasi/uji-regresi-fr18.txt` (12/12 balasan lama identik).
 
-> **Diperbarui lagi 24 Sep 2026 (audit ulang):** `00-semua.patch` = **50 komit** di atas `main`;
-> `00-lanjutan-dev.patch` = **12 komit** (`0038`–`0049`, basis `origin/dev` `86af3b5`); uji unit
+> **Diperbarui lagi 24 Sep 2026 (audit ulang):** `00-semua.patch` = **52 komit** di atas `main`;
+> `00-lanjutan-dev.patch` = **14 komit** (`0038`–`0051`, basis `origin/dev` `86af3b5`); uji unit
 > **715 lulus / 44 berkas**; uji terima deterministik **exit 0** (`eval 120/120`, ambang diturunkan dari
 > set). Kedua bundel diverifikasi ulang pada **dua klon bersih** (`main`+bundel dan `86af3b5`+bundel) →
 > ketiga pohon **byte-identik** (pohon `78916b079739`), dan di klon `main`+bundel tersebut `npm ci`
@@ -111,7 +111,16 @@ selaras) lalu jalankan uji terima (§7).
 > `ff00eb8`). Dua temuan dari uji terima penerapan diperiksa dan **keduanya nyata**: (a) laporan
 > `ai.pembersihan` menghitung kerapian spasi sebagai "sel dibersihkan" pada jalur prompt —
 > diperbaiki, kini **719 uji**; (b) `verifikasi/uji-terima.sh` adalah salinan basi yang menyimpang —
-> kini hanya **penunjuk** ke skrip kanonik. Rinciannya: **`33-LAPORAN-VERIFIKASI-PENERAPAN-2026-09-24.md`**. Sisa yang masih terbuka + rencana penutupnya ada di
+> > kini hanya **penunjuk** ke skrip kanonik. Rinciannya:
+> **`33-LAPORAN-VERIFIKASI-PENERAPAN-2026-09-24.md`**.
+>
+> **Diperbarui lagi 24 Sep 2026 (lingkungan uji hermetik, komit `0051`):** temuan ketiga pada uji
+> terima penerapan — `REVALIDATE_SECRET` dari shell ikut ke aplikasi yang seharusnya tanpa rahasia,
+> sehingga pemeriksaan fail-closed §6h gagal palsu (5 butir) — diperiksa dan **penyebabnya nyata pada
+> harness**, bukan sekadar artefak setup. Kini aplikasi yang diuji hanya menerima variabel yang
+> disebut eksplisit oleh harness (`scripts/lingkungan-uji.mjs`); lingkungan luar dinetralkan dan
+> dilaporkan di keluaran. Terbukti: gerbang penuh dengan shell kotor → **exit 0**. Rincian:
+> **`34-LAPORAN-LINGKUNGAN-UJI-HERMETIK.md`**. Sisa yang masih terbuka + rencana penutupnya ada di
 > **`32-SISA-TERBUKA-DAN-RENCANA-PENUTUP.md`**.
 
 > **Catatan tentang bit eksekusi:** komit `0003`/`0004` hanya memulihkan bit eksekusi

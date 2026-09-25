@@ -23,6 +23,7 @@
 //
 // Kode keluar 0 hanya bila seluruh pemeriksaan lulus.
 
+import { envUji, catatanLingkungan } from './lingkungan-uji.mjs';
 import { spawn } from 'node:child_process';
 import { createWriteStream, readFileSync, writeFileSync, existsSync } from 'node:fs';
 import { dirname, join, resolve } from 'node:path';
@@ -46,6 +47,7 @@ const LOG = arg('log', '/tmp/uji-segarkan-a.log');
 const LOG_B = arg('log-b', '/tmp/uji-segarkan-b.log');
 const LOG_SPLP = arg('log-splp', '/tmp/uji-segarkan-splp.log');
 
+const dibuangShell = [];
 let LULUS = 0;
 const GAGAL = [];
 const CATATAN = [];
@@ -80,11 +82,10 @@ function jalankanPendamping(berkas, argumen, berkasLog) {
 
 function jalankanApp(port, tambahanEnv, berkasLog) {
   const aliran = createWriteStream(berkasLog, { flags: 'w' });
-  const env = {
-    ...process.env,
-    PORT: String(port),
-    ...tambahanEnv,
-  };
+  // Lingkungan BERSIH: aplikasi B memang harus TANPA REVALIDATE_SECRET, jadi
+  // rahasia yang ada di shell operator tidak boleh ikut (lihat lingkungan-uji.mjs).
+  const { env, dibuang } = envUji({ PORT: String(port), ...tambahanEnv });
+  if (dibuang.length) dibuangShell.push(...dibuang);
   const proc = spawn('npx', ['next', 'start', '-p', String(port)], {
     cwd: AKAR,
     detached: true,
@@ -160,7 +161,9 @@ async function jalankanPenjadwal(extra = [], envExtra = {}) {
   const aliran = createWriteStream(out, { flags: 'w' });
   const proc = spawn('node', [join(AKAR, 'scripts', 'segarkan-cache.mjs'), ...extra], {
     cwd: AKAR,
-    env: { ...process.env, ...envExtra },
+    // Lingkungan BERSIH: penjadwal juga benda yang dinilai (kode keluar & kategori),
+    // jadi konfigurasinya harus datang dari argumen harness — bukan dari shell.
+    env: envUji(envExtra).env,
     stdio: ['ignore', 'pipe', 'pipe'],
   });
   proc.stdout.pipe(aliran);
@@ -217,6 +220,7 @@ try {
   appB = jalankanApp(PORT_B, { SAPA_SPLP_BASE_URL: SPLP, ADMIN_TOKEN: TOKEN }, LOG_B);
 
   bagian('1. Kesiapan aplikasi');
+  if (dibuangShell.length) console.log(`  · ${catatanLingkungan([...new Set(dibuangShell)])}`);
   periksa('aplikasi A siap', await tungguSiap(`${dasarUrl(PORT)}/api/status`, TIMEOUT_S * 1000));
   periksa('aplikasi B siap (tanpa REVALIDATE_SECRET)', await tungguSiap(`${dasarUrl(PORT_B)}/api/status`, TIMEOUT_S * 1000));
 

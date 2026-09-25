@@ -15,6 +15,7 @@
 // Pakai: node scripts/uji-jejak-audit.mjs [--sabotase]
 // Keluar: 0 = lulus, 1 = ada pelanggaran, 2 = gagal menyiapkan.
 
+import { envUji } from './lingkungan-uji.mjs';
 import { spawn } from 'node:child_process';
 import { createWriteStream } from 'node:fs';
 import { dirname, join, resolve } from 'node:path';
@@ -61,9 +62,12 @@ const adaNik = (teks) => {
   return cocok.some((m) => !SEMUA_TAHUN(m));
 };
 
-function jalankan(perintah, argumen, env, berkasLog) {
+function jalankan(perintah, argumen, env, berkasLog, bersih = false) {
   const aliran = createWriteStream(berkasLog, { flags: 'w' });
-  const proc = spawn(perintah, argumen, { cwd: AKAR, detached: true, env: { ...process.env, ...env }, stdio: ['ignore', 'pipe', 'pipe'] });
+  // `bersih = true` untuk APLIKASI yang diuji: variabel shell (SAPA_/AI_/ADMIN_/
+  // REVALIDATE_/MOCK_/DET_) tidak boleh menentukan hasil uji. Proses pendamping
+  // (stub SPLP) tetap mewarisi — konfigurasinya memang datang dari luar.
+  const proc = spawn(perintah, argumen, { cwd: AKAR, detached: true, env: bersih ? envUji(env).env : { ...process.env, ...env }, stdio: ['ignore', 'pipe', 'pipe'] });
   proc.stdout.pipe(aliran);
   proc.stderr.pipe(aliran);
   return proc;

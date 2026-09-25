@@ -1,0 +1,33 @@
+KONTROL NEGATIF + BUKTI PERBAIKAN: kamus daerah pada shell dengan SAPA_KAMUS_DAERAH=off
+===========================================================================================
+
+── (A) SEBELUM PERBAIKAN (scripts/uji-kamus-daerah.mjs di komit 68835d1) ──
+   lingkungan anak diwarisi dari shell → aplikasi POSITIF ikut mematikan kamus →
+   uji melaporkan pelanggaran padahal kamusnya benar.
+
+  ✗ B "jumlah gampong" (gampong → desa) — 0 bukti
+  ✗ B "peukan" (peukan → pasar) — 0 bukti
+  ✗ B "pade" (pade → padi) — 0 bukti
+  ✗ B "jurong" (jurong → jalan) — 0 bukti
+  ✗ B "keude" (keude → pasar) — 0 bukti
+  ✗ B "jumlah ureung" (ureung → penduduk) — 0 bukti
+  ✗ B "lampoh" (lampoh → perkebunan) — 0 bukti
+  ✗ B "warung" (warung → umkm) — 0 bukti
+  ✗ C1 SEMUA kueri beristilah daerah berubah hasil saat kamus dimatikan — 0/8 kueri berubah
+  pemeriksaan lulus  : 4
+  ✗ GAGAL — 9 pemeriksaan tidak terpenuhi:
+
+── (B) SESUDAH PERBAIKAN (scripts/lingkungan-uji.mjs) — lingkungan sama ──
+
+  ✓ A5 tidak ada kata kamus yang sudah ada di katalog korpus uji — bersih
+  ✓ B "jumlah gampong" (gampong → desa) — 15 bukti
+  ✓ B "peukan" (peukan → pasar) — 15 bukti
+  ✓ B "pade" (pade → padi) — 15 bukti
+  ✓ B "jurong" (jurong → jalan) — 15 bukti
+  ✓ B "keude" (keude → pasar) — 15 bukti
+  ✓ B "jumlah ureung" (ureung → penduduk) — 15 bukti
+  ✓ B "lampoh" (lampoh → perkebunan) — 15 bukti
+  ✓ B "warung" (warung → umkm) — 15 bukti
+  ✓ C1 SEMUA kueri beristilah daerah berubah hasil saat kamus dimatikan — 8/8 kueri berubah
+  ✓ C2 jumlah kueri yang diuji sesuai rencana — 8 kueri
+  ✓ LULUS — kamus daerah aktif menemukan indikator katalog, dan mematikannya benar-benar mengubah hasil.
