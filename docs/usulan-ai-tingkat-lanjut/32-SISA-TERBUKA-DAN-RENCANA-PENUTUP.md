@@ -309,6 +309,10 @@ Yang **tidak** ada pada daftar di atas adalah keempat butir §1–§4. Tidak ada
 
 ## 7. Urutan penutupan yang disarankan
 
+> **Daftar kerja operasionalnya (siapa mengerjakan apa, kriteria terima, urutan, dan larangan) ada di
+> [dokumen 35](35-RENCANA-KERJA-BERIKUTNYA.md).** Bagian di bawah ini menjelaskan *mengapa* urutannya
+> begitu.
+
 | Urutan | Butir | Siapa | Kenapa urutan ini |
 |---|---|---|---|
 | 1 | Panel penilai manusia (§1) | 2 penilai manusia | Murah, bisa jalan **paralel** tanpa menyentuh kode, dan langsung menutup satu-satunya kriteria terima yang menuntut manusia |
