@@ -9,11 +9,11 @@ Keadaan saat dokumen ini ditulis:
 
 | Hal | Nilai |
 |---|---|
-| Cabang kerja | `dev` = **59 komit** di atas `main` `ff00eb8` (per 27 Sep 2026) |
-| Yang sudah dipush hermes | **seluruhnya** — termasuk `0051` (harness hermetik) & `0052` (dokumen ini) |
-| Yang **belum** dipush | `0053`–`0058` (dokumen 35/36, P1, P2, P3, P5) — lihat §0 |
-| Butir §F yang **sudah selesai** | **P1 · P2 · P3 · P5** (27 Sep 2026) — sisa: P4, P6-P11, P14; P12/P13/P15/P16 menunggu pihak luar |
-| Gerbang | **745 uji / 45 berkas** · `tsc` 0 · build 0 · PII-gate 0 · uji terima **exit 0** (dengan §1b kontrak + §6i kinerja) |
+| Cabang kerja | `dev` = **64 komit** di atas `main` `ff00eb8` (per 27 Sep 2026; termasuk komit bukti & dokumen) |
+| Yang sudah dipush hermes | sampai `289b02f` (pohon = komit kita `fed548b`, setara 53 komit) — lihat §0b |
+| Yang **belum** dipush | `0053`–`0063` (11 patch = 11 komit: dokumen 35/36, P1–P6, P9, bukti klon) — lihat §0 |
+| Butir §F yang **sudah selesai** | **P1 · P2 · P3 · P4 · P5 · P6 · P9** (27 Sep 2026) — sisa: P7, P8, P10, P11, P14; P12/P13/P15/P16 menunggu pihak luar |
+| Gerbang | **780 uji / 47 berkas** · `tsc` 0 · PII-gate 0 · uji terima **exit 0** (dengan §1b kontrak, §6i kinerja, §8 kunci jawaban) |
 | Sisa terbuka | 4 butir (panel penilai manusia · EV-06 model sungguhan · a11y 8 rute · *top-up* semantik) |
 
 ---
@@ -37,6 +37,38 @@ lagi oleh snapshot, dan **komit `0054` sempat ikut mencopotnya**. Seluruh seri d
 (ketiga komit, isi berkas diverifikasi identik byte-per-byte) sehingga tidak satu pun patch
 membawa pencopotan bit; tiga harness baru ditambahkan sebagai `100755`. Aturan **C5** di §C
 lahir dari kejadian ini.
+
+---
+
+## 0. Status verifikasi — 27 September 2026 (pembaruan ketiga)
+
+Pekerjaan lanjutan dari sisi ini (sandbox, **tanpa** operasi tulis ke remote):
+
+| Komit | Isi | Bukti |
+|---|---|---|
+| `0059` **P4** | pagar kuota & anggaran harian → blok `kuota` + `kuotaCatatan` di `/api/admin/telemetri` | `verifikasi/uji-kuota.txt`: 35 permintaan dari satu IP = 30×200 + 5×429 (pembatas 30/menit); `ai-harian` 0/2000; `teguran-laju` 5/200 = 2,5 % (di bawah 80 %, jadi **aman** — bukan "perhatian"); baca #1 = baca #2 (peek, tidak menambah hitungan); tanpa token → 401 · **14 uji unit** |
+| `0060` **P6** | `FR-03` lanjutan: "tahun lalu / tahun ini / tahun depan / N tahun terakhir / sejak–sampai XXXX" → tahun konkret | `verifikasi/uji-waktu-relatif.txt` (**A/B build lama vs baru**, 7 pertanyaan): "IPM tahun lalu" → bukti 2025×4 + kalimat pemetaan; "target stunting tahun depan" → **jujur**: "Tidak ada data untuk tahun 2027"; kontrol "IPM 2025" & "berapa jumlah ASN" **tidak berubah** · **21 uji unit** · eval 120/120 · dok 10 `FR-03` → ✅ |
+| `0061` **P9** | kunci anti-mundur jawaban 120 item + langkah **opsional** §8 pada `uji-terima.sh` | `verifikasi/uji-kunci-jawaban.txt`: (1) kunci ditulis (120 sidik); (2) uji ulang **IDENTIK** (keluar 0); (3) kontrol sintetis (2 sidik dirusak + item palsu) → terdeteksi, keluar 1; (4) **kontrol nyata**: instance kedua dengan `SAPA_BENTUK_NIAT=off` → **eval 120/120 keluar 0 (buta)**, kunci P9 melaporkan **120 berubah, keluar 1** · `verifikasi/gerbang-putaran-26.txt` = gerbang penuh dengan §8 aktif → **LULUS** |
+| `0062` | dokumen 35 & 10: `P4`/`P6`/`P9` ✅, angka gelombang, aturan C5 memakai daftar eksplisit 20 berkas `100755` | — |
+| `0063` | bukti klon bersih bundel (64/26 komit): pohon = `dev`, 20 berkas `100755`, 0 pencopotan bit, 780 uji lulus — **dengan catatan jujurnya** (`npm ci` penuh tidak selesai di sandbox) | `verifikasi/klon-bundel.txt` |
+
+**Temuan penting (kelas yang sama dengan temuan sebelumnya — jangan salah baca):** uji parafrase
+**penuh** (`SAPA_PARAFRASE_PENUH=1`, opt-in) menyala merah pada korpus produksi 2.065 record
+(18/20 = 90 %, set negatif 3/5), padahal bukti saat `FR-12` dikerjakan mencatat 20/20 & 5/5.
+Sebabnya **korpus**, bukan kode: bukti lama diukur pada stub **1.210 record** (sidik `0db47884`),
+hari ini **2.065** (sidik `9e372412`). Katalog produksi memang memuat indikator salah tulis
+"Jumlah Pendudk Usia 13-15 Tahun" (persis kasus angkatan `0051`), 3 record "Sepak Bola", dan
+frasa "harga cabai" yang cocok leksikal dengan "PDRB … atas dasar Harga Konsisten". Harness itu
+**tidak sah dipakai sebagai ambang pada korpus produksi** sebelum harapannya disesuaikan per
+korpus. Butir merah kedua (FR-23 "balasan mode AI") sama sifatnya: `AI_URL` diarahkan ke instance
+yang AI-mati, jadi tidak ada "mode AI" untuk diperiksa. Rincian: `verifikasi/gerbang-putaran-26.txt`
+bagian catatan.
+
+**Bit eksekusi (C5) — daftar bertambah:** sekarang **20 berkas** `100755` (18 sebelumnya +
+`scripts/uji-kunci-jawaban.mjs` + `docs/usulan-ai-tingkat-lanjut/uji-terima.sh`, yang sebelumnya
+644 — selalu dijalankan lewat `bash`, jadi tidak pernah ketahuan). Bukti klon bersih:
+`git ls-files -s | awk '$1=="100755"'` = 20 berkas, daftar identik dengan repo induk, dan
+0 `755 => 644` di seluruh 64 komit bundel.
 
 ---
 
@@ -146,7 +178,7 @@ baseline baru disahkan pemilik produk.
 | **C1** | Setelah patch `0051` dipush: perbarui `main` **hanya bila** pemilik produk memutuskan promosi. Sampai itu, `main` tetap `ff00eb8` |
 | **C2** | Perbarui skill DOX Anda (`arena-patch-adoption`) dengan **tiga pitfall baru**: (a) salinan skrip kedua → wajib penunjuk/satu sumber; (b) aturan yang dihitung di dua tempat → wajib satu fungsi; (c) lingkungan anak diwarisi `process.env` → wajib hermetik. Ketiganya sudah menggigit berturut-turut |
 | **C3** | Jalankan `sha256sum -c SHA256SUMS.txt` pada kit setiap kali menerima kiriman baru — bila ada berkas tidak cocok, minta kirim ulang sebelum `git am` |
-| **C5** | **Jaga bit eksekusi**: hook `.githooks/pre-commit` adalah pagar PII + typecheck; snapshot yang kehilangan mode 755 membuat git **melewatinya tanpa suara** (pernah terjadi dua kali, termasuk 26 Sep 2026). Setiap kali menarik kiriman baru: `git ls-files -s .githooks/pre-commit scripts/*.sh scripts/*.mjs | awk '$1!="100755"'` → bila ada, `chmod +x` lalu periksa ulang. |
+| **C5** | **Jaga bit eksekusi** — 19 berkas `100755` per 27 Sep 2026: `.githooks/pre-commit` (pagar PII + typecheck), 16 skrip `scripts/*.mjs`, `scripts/pii-gate.sh`, `verifikasi/uji-terima.sh`, dan `docs/usulan-ai-tingkat-lanjut/uji-terima.sh`. Snapshot yang kehilangan mode 755 membuat git **melewati hook tanpa suara** (terjadi 2×, termasuk 26 Sep 2026). Periksa dengan **daftar eksplisit ini**, BUKAN glob: 15 berkas `scripts/*.mjs` memang `100644` sehingga glob melaporkan "masalah" palsu. Bila ada yang bukan 100755: `chmod +x`, periksa ulang lewat `git diff-tree -r --summary <komit>` (harus 0 `755 => 644`), dan jangan `git checkout -- .`. |
 | **C4** | Bila RAM terbatas (< 2 GB): jalankan harness **bertahap** (satu per satu), jangan empat server sekaligus — pernah memicu swap berat dan mengubah waktu tunggu |
 
 ---
@@ -202,12 +234,8 @@ bukan daftar keinginan. Tiap butir punya pemicu, usaha, dan kriteria terima yang
 | ~~**P2**~~ ✅ | **Uji kontrak skema SPLP + deteksi pergeseran** | 745 uji memakai korpus tarikan, bukan SPLP hidup | selesai 27 Sep | ✅ `scripts/uji-kontrak-splp.mjs` + §1b gerbang; 3 sabotase tertangkap; snapshot `verifikasi/kontrak-splp.json`; bukti `verifikasi/uji-kontrak-splp.txt` |
 | ~~**P3**~~ ✅ | **Ambang kesegaran data + alarm** (`DS-03` lanjutan) | stempel tampil tetapi tidak ada yang berbunyi | selesai 27 Sep | ✅ DUA sebab (tarikan lama & tahun katalog tertinggal) di `/api/status` + setiap jawaban + lencana UI; `verifikasi/uji-kesegaran.txt` 13 ✓ / 0 ✗ |
 | ~~**P5**~~ ✅ | **Regresi kinerja (anggaran p95)** | p95 hanya angka di dokumen | selesai 27 Sep | ✅ `scripts/uji-kinerja.mjs` + §6i gerbang; p95 186-200 ms vs anggaran 1000 ms; kontrol negatif anggaran 1 ms **GAGAL** |
-| **P4** | **Catatan rilis + tag untuk gelombang 53 komit** (menutup `OPS-05` yang masih 🟡) | `git tag` = **0**; `CHANGELOG.md` masih berhenti di `0.1.0` (19 Sep) sementara `dev` sudah 53 komit | 1–2 jam | `CHANGELOG` punya entri gelombang ini (isi · bukti · **cara mundur**); tag `v0.2.0-dev` dibuat; `OPS-05` → ✅ |
-| **P2** | **Uji kontrak skema SPLP + deteksi pergeseran** | Bila SPLP mengganti/menghapus nama bidang, aplikasi bisa menjawab salah **tanpa** uji apa pun gagal — 719 uji memakai korpus tarikan, bukan SPLP hidup | ±1 hari | Skrip membandingkan **bidang wajib** korpus tarikan terakhir vs tarikan baru; pergeseran ⇒ GAGAL dengan daftar bidang; ikut dijalankan di `uji-terima.sh` |
-| **P3** | **Ambang kesegaran data + alarm** (`DS-03` lanjutan) | Stempel kesegaran **tampil**, tetapi tidak ada yang **berbunyi** bila korpus basi berhari-hari | ±4 jam | `dataFetchedAt` lebih tua dari N hari ⇒ banner + entri peringatan operator; uji unit + tampil di `/admin/status`; N dapat diatur |
-| **P4** | **Pagar kuota & anggaran harian** (`NFR-04` lanjutan) | Batas harian panggilan model sudah ada; kuota penyimpanan (mis. Upstash) & volume cache belum terpantau | ±4 jam | `/api/admin/telemetri` menampilkan pemakaian & sisa per hari (model + cache); alarm bila > 80 % |
-| **P5** | **Regresi kinerja (anggaran p95)** | p95 deterministik kini **107 ms** — bagus, tetapi tidak ada uji yang gagal bila ia mundur 10× | ±4 jam | Harness mencatat p95 dan **GAGAL** bila melewati anggaran (mis. 3× nilai rujukan) pada lingkungan yang sama |
-| **P6** | **`FR-03` lanjutan: "tahun lalu / sekarang" → tahun konkret** | Status dok 10: 🟡 — rentang tahun dasar ✅, tetapi "tahun lalu" belum dipetakan | ±4 jam | Kueri "tahun lalu", "sekarang", "dua tahun terakhir" memetakan ke tahun data nyata; item eval `W*` lulus; A/B bukti tidak berubah |
+| ~~**P4**~~ ✅ | **Pagar kuota & anggaran harian** (`NFR-04` lanjutan) | kuota penyimpanan & volume cache tak terpantau | selesai 27 Sep (`0059`) | ✅ `src/lib/kuota.ts` + blok `kuota`/`kuotaCatatan` di `/api/admin/telemetri`; dua kuota yang memang tak terukur (penyimpanan & biaya penyedia) **dinyatakan**, bukan dibiarkan kosong; teguran laju ikut dicatat; bukti `verifikasi/uji-kuota.txt`; 14 uji |
+| ~~**P6**~~ ✅ | **`FR-03` lanjutan: "tahun lalu / tahun ini" → tahun konkret** | Status dok 10: 🟡 | selesai 27 Sep (`0060`) | ✅ `src/lib/waktu-relatif.ts` (+21 uji); bukti A/B `verifikasi/uji-waktu-relatif.txt`; kontrol "IPM 2025" & "berapa jumlah ASN" tidak berubah; eval 120/120; dok 10 `FR-03` → ✅ |
 
 ### F2 — Menengah (±1 minggu; masih tanpa langganan berbayar)
 
@@ -215,7 +243,7 @@ bukan daftar keinginan. Tiap butir punya pemicu, usaha, dan kriteria terima yang
 |---|---|---|---|---|
 | **P7** | **Aksesibilitas 11 rute + uji fokus berperamban** | Pemeriksa bekerja **tanpa peramban** (dok 32 §5.3): urutan fokus & perangkap fokus belum terukur; cakupan 3/11 rute | ±2–4 hari | 11 rute lulus; Playwright memeriksa urutan fokus, perangkap fokus, dan `skip-link` pada 3 rute utama; artefak diperbarui |
 | **P8** | **Aktivasi penyedia semantik sungguhan → tutup `FR-13`/`FR-14`** | Penyedia `remote` kelas e5 **sudah siap dipakai**; `fusiRRF` k=60 sudah ada, tetapi penerimaan `FR-14` (recall@10 ≥ 90 % pada kueri sulit) belum diukur dengan embedding nyata; `FR-13` (indeksasi berkonteks) belum dimulai | ±1 minggu | Dengan **set tahan** lebih dahulu: recall@10 ≥ 90 % pada kueri sulit; presisi kueri panjang naik tanpa menurunkan presisi; A/B penuh; baseline disahkan pemilik |
-| **P9** | **Kunci anti-mundur (regression lock) 120 item** | Baseline membandingkan **skor**, bukan **isi jawaban** — perubahan teks yang tetap "lulus" bisa lolos tanpa disadari | ±1 hari | Sidik jawaban 120 item disimpan; patch yang mengubah jawaban tanpa alasan ⇒ peringatan eksplisit di `uji-terima.sh` |
+| ~~**P9**~~ ✅ | **Kunci anti-mundur (regression lock) 120 item** | baseline membandingkan **skor**, bukan **isi jawaban** | selesai 27 Sep (`0061`) | ✅ `scripts/uji-kunci-jawaban.mjs` + `verifikasi/kunci-jawaban.json` + langkah **§8 opsional** (`SAPA_UJI_KUNCI=1`) pada `uji-terima.sh`; kontrol nyata: eval **buta** (120/120, keluar 0) sementara kunci menangkap **120 perubahan** |
 | **P10** | **`FR-05` lanjutan: bentuk jawaban kausal bersitasi** | Status dok 10: 🟡 — pagu kejujuran ✅, bentuk bersitasi ⬜ | ±2 hari | Pertanyaan "kenapa" menjawab dengan bukti terdekat + **batas kesimpulan** tertulis; item `K*`/`N4` lulus dengan bentuk baru; 0 klaim tanpa rujukan |
 | **P11** | **Perluasan uji merah (OWASP LLM Top 10 2025)** | Korpus beracun menutup 6 bentuk serangan; belum ada: injeksi **tidak langsung** (via umpan balik/katalog), kebocoran *system prompt*, *denial-of-wallet*, eksfiltrasi PII lewat ringkasan | ±3 hari | Tiap vektor punya uji yang **wajib gagal-aman** (tanpa `[PATUH:]`, tanpa rahasia, tanpa kuota terbakar); kontrol negatif ikut gagal |
 
@@ -247,10 +275,13 @@ re-baseline + A/B; `main` tidak disentuh sampai pemilik produk memutuskan promos
 ### F5 — Urutan yang saya sarankan bila hanya ada satu minggu
 
 ```
-P1 (tag + changelog)      ← menutup satu-satunya sisa rumah tangga rilis, ±2 jam
-P3 + P5 (kesegaran, kinerja)   ← murah, menutup dua kelas kebutaan operasional
-P2 (kontrak SPLP)         ← risiko terbesar yang belum terjaga
-P7 (a11y 11 rute)         ← kewajiban yang sudah tertulis
-P6 + P10 (FR-03/FR-05)    ← menutup dua sisa teknis dok 10
-P8 (semantik + FR-13/14)  ← paling besar; butuh set tahan lebih dahulu
+✅ SELESAI 27 Sep 2026 (dari sandbox, patch 0053-0061):
+   P1 + P3 + P5 + P2 (murah lebih dahulu) → P4 (kuota) → P6 (FR-03) → P9 (kunci jawaban)
+
+SISA (urutan tetap disarankan):
+P10 (FR-05 kausal bersitasi)   ← sisa teknis dok 10 yang tersedia dari sandbox, ±2 hari
+P11 (uji merah OWASP LLM)      ← memperluas korpus beracun yang sudah ada, ±3 hari
+P7 (a11y 11 rute)              ← butuh peramban (Playwright) di lingkungan hermes
+P8 (semantik + FR-13/14)       ← paling besar; butuh set tahan + embeddings sungguhan
+P14 (latihan mundur ≤ 5 mnt)   ← butuh jendela pemeliharaan (pemilik produk)
 ```
