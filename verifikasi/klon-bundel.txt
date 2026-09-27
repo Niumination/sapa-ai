@@ -1,0 +1,61 @@
+# Bukti klon bersih — bundel akhir (27 Sep 2026)
+
+Uji ini menjawab satu pertanyaan: **kalau hermes menerapkan bundel yang kita serahkan,
+apakah yang ia dapat = cabang `dev` kita, byte per byte?** Bukan "mirip", bukan "lulus di
+komputer saya" — tetapi pohon yang sama persis, dengan bit eksekusi utuh, dan tanpa tag palsu.
+
+## Cara (persis seperti yang harus dilakukan hermes)
+
+```
+git clone --no-tags <repo> /tmp/klon
+cd /tmp/klon && git checkout -b uji ff00eb8      # main = titik tolak bundel 00-semua
+git am 00-semua.patch                            # 64 komit
+# atau, bila dev hermes sudah memuat 86af3b5:
+git checkout -b uji86 86af3b5 && git am 00-lanjutan-dev.patch   # 26 komit
+```
+
+## Hasil
+
+| Yang diperiksa | `00-semua.patch` (basis `main` `ff00eb8`) | `00-lanjutan-dev.patch` (basis `86af3b5`) |
+|---|---|---|
+| `git am` | keluar **0** (tanpa benturan) | keluar **0** |
+| jumlah komit | **64** | **26** |
+| pohon hasil | **= pohon `dev`** (dibandingkan langsung, lihat di bawah) | **= pohon `dev`** |
+| tag di klon | **0** | 0 |
+| berkas `100755` | **20** dengan daftar identik repo induk | 20 |
+| pencopotan bit `755 => 644` per komit | **0** (dari seluruh 64 komit) | 0 |
+| `tsc --noEmit` | **0** | — |
+| `vitest run` | **47 berkas / 780 uji lulus** | — |
+| versi paket | `0.2.0-dev` | `0.2.0-dev` |
+
+Perintah pembandingnya, supaya bisa diulang siapa pun:
+
+```
+# di klon hasil git am:
+git rev-parse HEAD^{tree}
+# di repo sumber:
+git -C <repo> rev-parse dev^{tree}
+# keduanya harus SAMA. Pemeriksaan bit, per komit:
+for c in $(git log --format=%h ff00eb8..HEAD); do git diff-tree -r --summary $c | grep -c "755 => 644"; done | awk '{s+=$1} END{print s+0}'   # → 0
+```
+
+> **Kenapa hash pohonnya tidak ditulis diberkas ini?** Karena berkas ini ikut berada di dalam
+> pohon itu sendiri: menuliskan hashnya di sini akan membuatnya salah begitu berkas ini
+> diubah (menulis hash lama di dalam pohon baru). Perintah di atas membandingkan **apa adanya**
+> dan selalu benar. Hash tercatat di `DAFTAR-ISI-KIT.md` (di luar repo) untuk rujukan cepat.
+
+## Catatan jujur (jangan dibaca sebagai lebih baik daripada kenyataan)
+
+- `npm ci` **penuh** di klon tidak selesai di sandbox ini: percobaan #1 mati (OOM), #2 melewati
+  batas waktu 25 menit karena lambatnya jaringan ke registry. Karena itu uji dijalankan dengan
+  **dependensi dipinjam dari repo induk** (tautan `node_modules`). Ini sah untuk menguji *kode
+  hasil bundel* sebab `package-lock.json` klon **byte-identik** dengan repo induk (dibuktikan
+  `cmp` → sama), tetapi ia **bukan** bukti instalasi dari nol. Bukti instalasi-dari-nol terakhir
+  yang kita punya: klon bundel 59 komit = `npm ci` + vitest **745 uji lulus**. Bagi hermes:
+  satu `npm ci && npx vitest run` di klon hasil `git am` menutup celah ini sepenuhnya.
+- Klon memakai `--no-tags` dengan sengaja: klon biasa membawa tag dari repo sumber, dan itu
+  **palsu** sebagai bukti ("tag ikut" ≠ patch membawa tag). Tag `v0.2.0-dev` harus dibuat
+  hermes di repo pemilik — perintahnya di `36-CATATAN-RILIS-0.2.0-dev.md` §4.
+- "64 komit" = komit di atas `main`, sementara seri patch bernomor `0001`–`0063` (satu komit
+  lama tidak punya nomor tersendiri saat seri dibangun ulang). Yang otoritatif selalu **bundel**:
+  ia memuat urutan komit utuh apa adanya.
