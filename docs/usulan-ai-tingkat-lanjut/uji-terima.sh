@@ -10,6 +10,7 @@
 #   SAPA_SKIP_EVAL=1 bash docs/usulan-ai-tingkat-lanjut/uji-terima.sh   # lompati eval (cepat)
 #   SAPA_MODE=det bash docs/usulan-ai-tingkat-lanjut/uji-terima.sh      # nilai hanya mode deterministik
 #   ADMIN_TOKEN=... bash docs/usulan-ai-tingkat-lanjut/uji-terima.sh     # sekaligus periksa dasbor celah (FR-27)
+#   SAPA_UJI_KUNCI=1 bash docs/usulan-ai-tingkat-lanjut/uji-terima.sh   # + kunci anti-mundur jawaban 120 item (P9)
 #
 # Catatan 24 Sep 2026: berkas INI satu-satunya salinan kanonik. `verifikasi/uji-terima.sh`
 # kini hanya PENUNJUK ke sini (dulu salinan terpisah → menyimpang dan menghasilkan
@@ -761,6 +762,36 @@ else
   [ "$MODE" = "ai" ]  && jalankan_eval "$AI_URL"  "AI"          /tmp/ut-eval-ai.txt
   [ "$MODE" = "det" ] && jalankan_eval "$DET_URL" "Deterministik" /tmp/ut-eval-det.txt
   [ "$MODE" = "both" ] && { jalankan_eval "$AI_URL" "AI" /tmp/ut-eval-ai.txt; jalankan_eval "$DET_URL" "Deterministik" /tmp/ut-eval-det.txt; }
+fi
+
+# ── 8. Kunci anti-mundur jawaban (P9 — opt-in) ──────────────────────────────
+# Semua gerbang di atas menilai SKOR. Item yang tetap "lulus" masih bisa berubah
+# ISI jawabannya (indikator lain, tahun lain, urutan bukti lain, bentuk lain)
+# tanpa satu pun gerbang berbunyi. Bagian ini membandingkan sidik ISI seluruh
+# item set terhadap kunci tersimpan (verifikasi/kunci-jawaban.json) dan
+# MELAPORKAN perubahan — bukan menghakiminya.
+#
+# Sengaja MATI secara bawaan: kunci mendeteksi perubahan, dan setiap perubahan
+# jawaban yang disengaja (perbaikan mutu) memang harus disertai pembaruan kunci.
+# Menyalakannya wajib saat perubahan perilaku menyentuh pipeline jawaban.
+if [ "${SAPA_UJI_KUNCI:-0}" = "1" ]; then
+  judul "8. Kunci anti-mundur jawaban (P9)"
+  if [ "$MODE" = "ai" ]; then URL_KUNCI="$AI_URL"; else URL_KUNCI="$DET_URL"; fi
+  if [ "$(hidup "$URL_KUNCI")" != "200" ]; then
+    info "server $URL_KUNCI tidak hidup — lompati kunci jawaban"
+  elif [ ! -f verifikasi/kunci-jawaban.json ]; then
+    no "kunci jawaban tidak ada (verifikasi/kunci-jawaban.json) — buat dengan --tulis-baseline"
+  else
+    SAPA_EVAL_URL="$URL_KUNCI" node scripts/uji-kunci-jawaban.mjs >/tmp/ut-kunci.txt 2>&1
+    kode=$?
+    if [ "$kode" -eq 0 ]; then
+      ok "kunci jawaban: $(grep -oE 'item dibandingkan: [0-9]+' /tmp/ut-kunci.txt | head -1) — identik"
+    elif [ "$kode" -eq 1 ]; then
+      no "kunci jawaban: $(grep -oE 'berubah: [0-9]+' /tmp/ut-kunci.txt | head -1) — periksa /tmp/ut-kunci.txt (perubahan DISENGAJA? perbarui kunci)"
+    else
+      no "kunci jawaban tidak dapat dijalankan (kode $kode) — lihat /tmp/ut-kunci.txt"
+    fi
+  fi
 fi
 
 # ── 4. Ringkasan ────────────────────────────────────────────────────────────

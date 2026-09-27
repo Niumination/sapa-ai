@@ -1,0 +1,50 @@
+# Uji kunci anti-mundur jawaban (P9) — bukti
+
+Skrip: scripts/uji-kunci-jawaban.mjs · kunci: verifikasi/kunci-jawaban.json (120 sidik item)
+
+Masalah yang dijawab butir ini: 120 item set membandingkan SKOR, bukan ISI.
+Item yang tetap "lulus" bisa bergeser isi jawabannya (indikator lain, tahun lain,
+urutan bukti lain, bentuk lain) tanpa satu gerbang pun berbunyi.
+
+## Jalankan 1 — kunci dibuat dari build saat ini (:3119)
+     server: http://127.0.0.1:3119 · item: 120 · baseline: verifikasi/kunci-jawaban.json (MODE TULIS)
+    · baseline ditulis: 120 sidik item
+    Keluar 0 — jalankan sekali lagi TANPA --tulis-baseline untuk membuktikan kuncinya stabil.
+
+## Jalankan 2 — kunci diuji ulang (harus IDENTIK)
+     server: http://127.0.0.1:3119 · item: 120 · baseline: verifikasi/kunci-jawaban.json
+    item dibandingkan: 120 · berubah: 0 · baru: 0 · hilang: 0
+    ✓ IDENTIK — tidak ada jawaban yang berubah dibanding baseline.
+
+## Jalankan 3 — kontrol negatif SINTETIS (2 sidik dirusak + item ZZZ palsu)
+  Harapan: perubahan terdeteksi, keluar 1.
+  server: http://127.0.0.1:3119 · item: 120 · kunci uji: sengaja dirusak (2 sidik + item ZZZ ditambah)
+  item dibandingkan: 120 · berubah: 2 · baru: 0 · hilang: 1
+  ! JAWABAN BERUBAH — ini BUKAN otomatis salah, tetapi tidak boleh lewat tanpa disadari:
+    · Q01 (warisan-wp6) bukti 15 → 15 · bentuk Nilai saat ini → Nilai saat ini — Berapa jumlah penduduk Aceh Tengah?
+    · Q04 (warisan-wp6) bukti 15 → 15 · bentuk Nilai saat ini → Nilai saat ini — Jumlah penduduk miskin?
+    · item hilang dari set: ZZZ
+
+## Jalankan 4 — kontrol negatif NYATA: gerbang skor buta, kunci menangkap
+  Perubahan isi jawaban dibuat dengan setelan resmi SAPA_BENTUK_NIAT=off
+  pada instance kedua (:3120, korpus sama :9911) — bentuk jawaban semua niat
+  menjadi netral. Kelas perubahan ini TIDAK terlihat oleh eval: item tetap
+  dijawab dengan bukti sama, tetapi apa yang DIBACA warga berubah.
+
+  a) eval 120 item terhadap :3120
+     Waktu            : 268s, 120 permintaan
+       Regresi : 0
+       Membaik : 0
+     keluar 0 — eval tidak berbunyi
+
+  b) kunci P9 terhadap :3120 (kunci disidik dari :3119)
+       item dibandingkan: 120 · berubah: 120 · baru: 0 · hilang: 0
+         · Q01 (warisan-wp6) bukti 15 → 15 · bentuk Nilai saat ini → Bentuk netral (dimatikan) — Berapa jumlah penduduk Aceh Tengah?
+     keluar 1 — perubahan dilaporkan dengan bukti yang bisa diperiksa
+
+## Batas yang dinyatakan
+  · kunci MENDETEKSI perubahan, tidak menghakimi baik/buruk — karena itu mati
+    secara bawaan di uji terima; nyalakan dengan SAPA_UJI_KUNCI=1.
+  · perubahan yang disengaja wajib disertai pembaruan kunci + catatan alasan.
+  · kunci terikat korpus: menjalankannya pada korpus lain (mis. stub beracun)
+    wajar melaporkan perubahan — itu bukan regresi.

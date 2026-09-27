@@ -1,0 +1,104 @@
+[penunjuk] meneruskan ke docs/usulan-ai-tingkat-lanjut/uji-terima.sh (satu sumber kebenaran)
+
+── 1. Statis (typecheck · uji unit · build) ──
+  ✓ typecheck lolos
+  ✓ uji unit: 47 berkas / 780 uji lulus (ambang 700)
+  ✓ pagar grounding ada (INV-01)
+  ✓ penjaga permintaan sistem ada (SEC-02)
+
+── 1b. Kontrak skema SPLP (P2) ──
+  ✓ katalog: 2065 record · 38 OPD · 1791 indikator unik
+
+── 2. Pagar /api/revalidate (SEC-01) ──
+  · server http://127.0.0.1:3116 tidak hidup — lompati
+  · server http://127.0.0.1:3116 tidak hidup — lompati FR-25
+  · server http://127.0.0.1:3116 tidak hidup — lompati FR-27
+  · server http://127.0.0.1:3116 tidak hidup — lompati FR-26
+  · server http://127.0.0.1:3116 tidak hidup — lompati FR-19
+
+── 6b. Lapis semantik Bahasa Indonesia (FR-12 / EV-05) ──
+  ✓ lapis semantik aktif (penyedia: hash)
+  ✓ salah tulis 'pendudk' tetap menemukan indikator penduduk (batang kata)
+  ✓ salah tulis di luar katalog ditangani lapis semantik (15)
+  ✓ kueri di luar katalog ditolak (0 bukti)
+  · uji parafrase penuh dilewati (set SAPA_PARAFRASE_PENUH=1 untuk menjalankannya)
+
+── 6c. Klasifikasi sebab kegagalan (FR-20) ──
+  ✓ kueri di luar katalog membawa sebab 'retrieval:konsep-asing'
+  ✓ kueri terjawab diberi sebab 'selesai:leksikal+sisipan'
+  ✓ prosa sebab bebas angka
+  ✓ jalur streaming memberi sebab yang sama dengan jalur JSON
+  · harness penanda sebab dilewati (set SAPA_SEBAB_PENUH=1 untuk menjalankannya)
+
+── 6d. Pemeriksa pasangan entitas (FR-24) ──
+  ✓ balasan memuat pemeriksaan pasangan entitas (3 nilai diperiksa)
+  ✓ jawaban yang disajikan bebas temuan pasangan keras
+  · server penukar entitas tidak disediakan (set SAPA_TUKAR_URL untuk membuktikan gerbang menyala)
+  · uji 50 sampel pasangan dilewati (set SAPA_PASANGAN_PENUH=1 untuk menjalankannya)
+  · server http://127.0.0.1:3116 tidak hidup — lompati FR-23
+  · notifikasi sirkuit dilewati (set SAPA_SIRKUIT_URL=http://127.0.0.1:3131 untuk menjalankannya)
+
+── 6g. Telemetri per tahap (NFR-07) ──
+  ✓ telemetri per tahap: 19 ✓ / 0 ✗
+  ✓ p95 per tahap muncul di log — model p95 = 25 ms
+
+── 6h. Penyegaran cache terjadwal (OPS-03) ──
+  ✓ penyegaran cache terjadwal: 45 ✓ / 0 ✗
+  ✓ cache benar-benar dihitung ulang (cap waktu data) — 2026-09-27T16:51:56.290Z → 2026-09-27T16:51:57.060Z
+
+── 6i. Anggaran kinerja p95 jalur deterministik (P5) — anggaran 1000 ms ──
+  ✓ p50 144 ms · p95 190 ms
+
+── 7. Evaluasi — mode Deterministik ──
+  ✓ eval 120/120 (ambang 120)
+  ✓ invarians bersih (anti-halu · anti-token · anti-jargon · sumber · anti-echo-NIK)
+
+── 8. Kunci anti-mundur jawaban (P9) ──
+  ✓ kunci jawaban: item dibandingkan: 120 — identik
+
+── Ringkasan uji terima ──
+  ✓ LULUS — semua ambang terpenuhi.
+
+# Catatan cara menjalankan (jangan diubah menjadi lebih longgar)
+
+Gerbang di atas dijalankan terhadap build hasil komit ini dengan mode
+deterministik:
+
+    SAPA_MODE=det DET_URL=http://127.0.0.1:3119 ADMIN_TOKEN=rahasia-admin-uji \
+    SAPA_UJI_KUNCI=1 bash verifikasi/uji-terima.sh        → keluar 0 (LULUS)
+
+Butir 8 (kunci anti-mundur jawaban, P9) baru; ia ikut lulus: 120 item identik.
+
+## Dua butir opt-in yang MENYALA MERAH saat dicoba lebih keras — bukan regresi
+
+Putaran ini mencoba menjalankan gerbang dengan seluruh harness opt-in dinyalakan
+(AI_URL=DET_URL=:3119, SAPA_PARAFRASE_PENUH=1 SAPA_SEBAB_PENUH=1
+SAPA_PASANGAN_PENUH=1). Hasilnya 2 butir merah. Keduanya diperiksa satu per satu
+dan TERBUKTI artefak harness/lingkungan, bukan akibat perubahan P4/P6:
+
+1) 6b uji parafrase penuh (SAPA_PARAFRASE_PENUH=1) — 18/20 = 90% + set negatif
+   3/5, padahal bukti yang dikomit saat FR-12 (verifikasi/eval-parafrase-hash.txt)
+   mencatat 20/20 dan 5/5. Sebabnya KORPUS, bukan kode: bukti lama diukur pada
+   stub 1.210 record (sidik indeks 0db47884); hari ini 2.065 record (sidik
+   9e372412). Pada korpus produksi:
+     · "jumlah pendudk aceh tengah" → katalog produksi memang memuat indikator
+       salah tulis "Jumlah Pendudk Usia 13-15 Tahun" (persoalan yang sama pernah
+       menjatuhkan hermes pada 24 Sep — lihat kepala verifikasi/uji-terima.sh);
+     · "harga cabai hari ini" → cocok leksikal dengan "PDRB … atas dasar Harga
+       Konsisten" (2 bukti) — frasa negatif itu dirancang untuk katalog kecil;
+     · "hasil pertandingan sepak bola kemarin" → katalog produksi memang memuat
+       3 record cabang olahraga Sepak Bola.
+   Harness ini karena itu TIDAK SAH dipakai sebagai ambang pada korpus produksi
+   tanpa menyesuaikan harapan per korpus. Perubahan P4/P6 tidak menyentuh jalur
+   retrieval: keduanya hanya menambah pagar kuota & pemetaan tahun pada
+   PENYAJIAN. Frasa "kemarin"/"hari ini" tak dipetakan oleh modul P6 (uji unit).
+
+2) 6e FR-23 "balasan mode AI TIDAK memuat laporan pembersihan data katalog" —
+   artefak arah URL: saya menunjuk AI_URL ke instance yang AI-mati
+   (AI_ENABLED=false), jadi tidak ada "mode AI" untuk diperiksa. Butir ini
+   sah dijalankan hanya dengan AI_URL menunjuk instance bermodel aktif
+   (porsi hermes/pemilik produk; langganan model sedang tidak aktif).
+
+Kesimpulan yang jujur: pada lingkungan yang benar, gerbang mengeluarkan LULUS
+tanpa butir merah; dua butir merah di atas berasal dari cara menjalankan yang
+tidak sesuai rancangan + harapan harness yang terikat korpus kecil.

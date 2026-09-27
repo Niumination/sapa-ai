@@ -1,0 +1,730 @@
+{
+ "dibuat": "2026-09-27T17:06:57.937Z",
+ "server": "http://127.0.0.1:3119",
+ "jumlahItem": 120,
+ "gagalTanya": 0,
+ "sidik": {
+  "Q01": "ffd857ae6f24f93f",
+  "Q04": "45e4bed1276e56c0",
+  "Q06": "aea3edf54fbbbd12",
+  "L1": "62c19f27be148792",
+  "L2": "33be8d60aecef679",
+  "L3": "85c16847431fb387",
+  "L4": "8f5b0a5badee8357",
+  "L5": "38fb10d78bdb9696",
+  "L6": "fa5a08b352d69129",
+  "L7": "63c910bf16d9384a",
+  "L8": "4ff1b92e3d14d70e",
+  "L9": "1c16d939020a4229",
+  "L10": "13fbd1d7b27832fe",
+  "T1": "92a52893030f8f65",
+  "T2": "834f86ec7d965882",
+  "T3": "e912d42d311cd54c",
+  "T4": "2edfcebb809d6591",
+  "T5": "9792056b47e13637",
+  "T6": "7b5915739b039afd",
+  "T7": "ad3d606301a034b6",
+  "T8": "5c9195f87f04269b",
+  "T9": "ed86d8f9c5beae9d",
+  "T10": "808008f984b245d5",
+  "C1": "8a070d4c54040322",
+  "C2": "f56b59e648e40183",
+  "C3": "3f94bc6d6c16fcb1",
+  "C4": "9a081e8345997198",
+  "C5": "526be7cd54652618",
+  "C6": "37a3a6fe1b09330b",
+  "C7": "f4e1a3fc11d2f005",
+  "C8": "cfd64ee1d1dc43ef",
+  "C9": "5cd4bf53ca5fcd78",
+  "C10": "70d52f32fefd49f4",
+  "P1": "ff87e0d8a221c3ab",
+  "P2": "b64616c401267fce",
+  "P3": "f0a9111f2e9003db",
+  "P4": "0a0e22f54451b965",
+  "P5": "d207672e70dc42ee",
+  "P6": "322800be7d1d008b",
+  "P7": "79cbfb29d4966910",
+  "P8": "26026b43e9c597ec",
+  "P9": "ae5b51c76bacccf5",
+  "P10": "5aa689f7010b654f",
+  "D1": "1c002a9932f2d602",
+  "D2": "9dbf1420f5a3fa26",
+  "D3": "6077715c23916403",
+  "D4": "4f855a9cf7eb3496",
+  "D5": "38da6dc57fe8d960",
+  "D6": "36576db9f7045a30",
+  "R1": "e02e350007ea74bf",
+  "R2": "5b33791d3bb3de71",
+  "R3": "c9e8a09683404fb3",
+  "R4": "3d5125c0979ca7d9",
+  "R5": "3ef051ce50874037",
+  "R6": "14d8090c90316db7",
+  "K1": "a755557feeb341b9",
+  "K2": "5d1df33ba37836a3",
+  "K3": "9b13065d578ec07f",
+  "K4": "5339e9a1fd8e19ea",
+  "A1": "883bde4dbeab8e9e",
+  "A2": "b30c7d33c37b4173",
+  "A3": "e7ae0b6499861204",
+  "A4": "8c0576a332ed8d3f",
+  "M1": "8b101fbf39e0e4b1",
+  "M2": "ed8c058a80ffbcc1",
+  "M3": "00c94a3b6cb9a441",
+  "M4": "27d915eadf99d953",
+  "M5": "60f3ad974a003f70",
+  "M6": "761941ea23dc9708",
+  "U1": "b22f69850fe35ef5",
+  "U2": "449639d255ccab66",
+  "U3": "032eb2f5be0f569d",
+  "U4": "fd5e806be6f2b078",
+  "U5": "cf77876a1c446f22",
+  "U6": "13b603ac8d4da125",
+  "X1": "74357a3fd5c58bbe",
+  "X2": "7646a618c31548bb",
+  "X3": "f1fa73329ef13820",
+  "F1": "745e265220e5c776",
+  "F2": "1ef82ae6ead1c6b9",
+  "F3": "0e37c44ee23f9e71",
+  "F4": "2d70b7eed35f81c9",
+  "N1": "baeec4158ddb08c8",
+  "N2": "d5fb2f62e6b3292b",
+  "N3": "bd705404a9c82837",
+  "N4": "eff0e32591d79c71",
+  "W1": "d25035834a756df0",
+  "S1": "ad97e08ce8a93479",
+  "S2": "7646a618c31548bb",
+  "S3": "ad97e08ce8a93479",
+  "E01": "1e3e54270a8026fd",
+  "E02": "2a04b5479bda1fa2",
+  "E03": "8152410de0211736",
+  "E04": "0c0357b7ca0958e2",
+  "E05": "0773b6707b3f3e55",
+  "E06": "6894e4870828a2ea",
+  "E07": "ed41e0a6c0d33687",
+  "E08": "82ca1300d64a3e16",
+  "E09": "0668c8390b23c9f9",
+  "E10": "06716a78cd170575",
+  "E11": "34816f181e1ef9a6",
+  "E12": "3c86494d9d9ff615",
+  "E13": "e3b626047fa8c53e",
+  "E14": "e21326ce17a76110",
+  "E15": "20ec4d3557ed252d",
+  "E16": "37c29417bde51ba6",
+  "E17": "e5564626aec1a899",
+  "E18": "2ae05b46ecb4aa95",
+  "E19": "aef0feb8c6e9d7d7",
+  "E20": "00c94a3b6cb9a441",
+  "E21": "8b101fbf39e0e4b1",
+  "E22": "ed8c058a80ffbcc1",
+  "E23": "8b101fbf39e0e4b1",
+  "E24": "74b78410e038e4df",
+  "E25": "36ad5841b45a3d2c",
+  "E26": "eedde24c9b042046",
+  "E27": "3e6a02d6809d59d3",
+  "E28": "7646a618c31548bb",
+  "E29": "7646a618c31548bb",
+  "E30": "7646a618c31548bb"
+ },
+ "ringkas": {
+  "Q01": {
+   "sidik": "ffd857ae6f24f93f",
+   "bukti": 15,
+   "bentuk": "Nilai saat ini"
+  },
+  "Q04": {
+   "sidik": "45e4bed1276e56c0",
+   "bukti": 15,
+   "bentuk": "Nilai saat ini"
+  },
+  "Q06": {
+   "sidik": "aea3edf54fbbbd12",
+   "bukti": 15,
+   "bentuk": "Nilai saat ini"
+  },
+  "L1": {
+   "sidik": "62c19f27be148792",
+   "bukti": 15,
+   "bentuk": "Nilai saat ini"
+  },
+  "L2": {
+   "sidik": "33be8d60aecef679",
+   "bukti": 8,
+   "bentuk": "Nilai saat ini"
+  },
+  "L3": {
+   "sidik": "85c16847431fb387",
+   "bukti": 15,
+   "bentuk": "Nilai saat ini"
+  },
+  "L4": {
+   "sidik": "8f5b0a5badee8357",
+   "bukti": 6,
+   "bentuk": "Nilai saat ini"
+  },
+  "L5": {
+   "sidik": "38fb10d78bdb9696",
+   "bukti": 9,
+   "bentuk": "Nilai saat ini"
+  },
+  "L6": {
+   "sidik": "fa5a08b352d69129",
+   "bukti": 15,
+   "bentuk": "Nilai saat ini"
+  },
+  "L7": {
+   "sidik": "63c910bf16d9384a",
+   "bukti": 4,
+   "bentuk": "Nilai saat ini"
+  },
+  "L8": {
+   "sidik": "4ff1b92e3d14d70e",
+   "bukti": 3,
+   "bentuk": "Nilai saat ini"
+  },
+  "L9": {
+   "sidik": "1c16d939020a4229",
+   "bukti": 5,
+   "bentuk": "Nilai saat ini"
+  },
+  "L10": {
+   "sidik": "13fbd1d7b27832fe",
+   "bukti": 8,
+   "bentuk": "Nilai saat ini"
+  },
+  "T1": {
+   "sidik": "92a52893030f8f65",
+   "bukti": 2,
+   "bentuk": "Tren antarperiode"
+  },
+  "T2": {
+   "sidik": "834f86ec7d965882",
+   "bukti": 11,
+   "bentuk": "Tren antarperiode"
+  },
+  "T3": {
+   "sidik": "e912d42d311cd54c",
+   "bukti": 1,
+   "bentuk": "Tren antarperiode"
+  },
+  "T4": {
+   "sidik": "2edfcebb809d6591",
+   "bukti": 6,
+   "bentuk": "Tren antarperiode"
+  },
+  "T5": {
+   "sidik": "9792056b47e13637",
+   "bukti": 11,
+   "bentuk": "Tren antarperiode"
+  },
+  "T6": {
+   "sidik": "7b5915739b039afd",
+   "bukti": 15,
+   "bentuk": "Tren antarperiode"
+  },
+  "T7": {
+   "sidik": "ad3d606301a034b6",
+   "bukti": 15,
+   "bentuk": "Tren antarperiode"
+  },
+  "T8": {
+   "sidik": "5c9195f87f04269b",
+   "bukti": 15,
+   "bentuk": "Tren antarperiode"
+  },
+  "T9": {
+   "sidik": "ed86d8f9c5beae9d",
+   "bukti": 6,
+   "bentuk": "Nilai saat ini"
+  },
+  "T10": {
+   "sidik": "808008f984b245d5",
+   "bukti": 15,
+   "bentuk": "Tren antarperiode"
+  },
+  "C1": {
+   "sidik": "8a070d4c54040322",
+   "bukti": 2,
+   "bentuk": "Perbandingan berdampingan"
+  },
+  "C2": {
+   "sidik": "f56b59e648e40183",
+   "bukti": 15,
+   "bentuk": "Perbandingan berdampingan"
+  },
+  "C3": {
+   "sidik": "3f94bc6d6c16fcb1",
+   "bukti": 13,
+   "bentuk": "Perbandingan berdampingan"
+  },
+  "C4": {
+   "sidik": "9a081e8345997198",
+   "bukti": 8,
+   "bentuk": "Perbandingan berdampingan"
+  },
+  "C5": {
+   "sidik": "526be7cd54652618",
+   "bukti": 9,
+   "bentuk": "Perbandingan berdampingan"
+  },
+  "C6": {
+   "sidik": "37a3a6fe1b09330b",
+   "bukti": 15,
+   "bentuk": "Perbandingan berdampingan"
+  },
+  "C7": {
+   "sidik": "f4e1a3fc11d2f005",
+   "bukti": 7,
+   "bentuk": "Perbandingan berdampingan"
+  },
+  "C8": {
+   "sidik": "cfd64ee1d1dc43ef",
+   "bukti": 0,
+   "bentuk": "Perbandingan berdampingan"
+  },
+  "C9": {
+   "sidik": "5cd4bf53ca5fcd78",
+   "bukti": 2,
+   "bentuk": "Perbandingan berdampingan"
+  },
+  "C10": {
+   "sidik": "70d52f32fefd49f4",
+   "bukti": 3,
+   "bentuk": "Perbandingan berdampingan"
+  },
+  "P1": {
+   "sidik": "ff87e0d8a221c3ab",
+   "bukti": 15,
+   "bentuk": "Nilai saat ini"
+  },
+  "P2": {
+   "sidik": "b64616c401267fce",
+   "bukti": 3,
+   "bentuk": "Sebaran per kelompok"
+  },
+  "P3": {
+   "sidik": "f0a9111f2e9003db",
+   "bukti": 15,
+   "bentuk": "Sebaran per kelompok"
+  },
+  "P4": {
+   "sidik": "0a0e22f54451b965",
+   "bukti": 15,
+   "bentuk": "Nilai saat ini"
+  },
+  "P5": {
+   "sidik": "d207672e70dc42ee",
+   "bukti": 9,
+   "bentuk": "Komposisi & porsi"
+  },
+  "P6": {
+   "sidik": "322800be7d1d008b",
+   "bukti": 6,
+   "bentuk": "Nilai saat ini"
+  },
+  "P7": {
+   "sidik": "79cbfb29d4966910",
+   "bukti": 3,
+   "bentuk": "Komposisi & porsi"
+  },
+  "P8": {
+   "sidik": "26026b43e9c597ec",
+   "bukti": 15,
+   "bentuk": "Nilai saat ini"
+  },
+  "P9": {
+   "sidik": "ae5b51c76bacccf5",
+   "bukti": 5,
+   "bentuk": "Komposisi & porsi"
+  },
+  "P10": {
+   "sidik": "5aa689f7010b654f",
+   "bukti": 3,
+   "bentuk": "Nilai saat ini"
+  },
+  "D1": {
+   "sidik": "1c002a9932f2d602",
+   "bukti": 15,
+   "bentuk": "Sebaran per kelompok"
+  },
+  "D2": {
+   "sidik": "9dbf1420f5a3fa26",
+   "bukti": 1,
+   "bentuk": "Sebaran per kelompok"
+  },
+  "D3": {
+   "sidik": "6077715c23916403",
+   "bukti": 15,
+   "bentuk": "Sebaran per kelompok"
+  },
+  "D4": {
+   "sidik": "4f855a9cf7eb3496",
+   "bukti": 11,
+   "bentuk": "Sebaran per kelompok"
+  },
+  "D5": {
+   "sidik": "38da6dc57fe8d960",
+   "bukti": 15,
+   "bentuk": "Sebaran per kelompok"
+  },
+  "D6": {
+   "sidik": "36576db9f7045a30",
+   "bukti": 15,
+   "bentuk": "Nilai saat ini"
+  },
+  "R1": {
+   "sidik": "e02e350007ea74bf",
+   "bukti": 0,
+   "bentuk": "Peringkat 5 besar"
+  },
+  "R2": {
+   "sidik": "5b33791d3bb3de71",
+   "bukti": 13,
+   "bentuk": "Peringkat 5 besar"
+  },
+  "R3": {
+   "sidik": "c9e8a09683404fb3",
+   "bukti": 7,
+   "bentuk": "Peringkat 5 besar"
+  },
+  "R4": {
+   "sidik": "3d5125c0979ca7d9",
+   "bukti": 0,
+   "bentuk": "Nilai saat ini"
+  },
+  "R5": {
+   "sidik": "3ef051ce50874037",
+   "bukti": 15,
+   "bentuk": "Peringkat 5 besar"
+  },
+  "R6": {
+   "sidik": "14d8090c90316db7",
+   "bukti": 6,
+   "bentuk": "Peringkat 5 besar"
+  },
+  "K1": {
+   "sidik": "a755557feeb341b9",
+   "bukti": 14,
+   "bentuk": "Nilai saat ini"
+  },
+  "K2": {
+   "sidik": "5d1df33ba37836a3",
+   "bukti": 15,
+   "bentuk": "Sebaran per kelompok"
+  },
+  "K3": {
+   "sidik": "9b13065d578ec07f",
+   "bukti": 14,
+   "bentuk": "Nilai saat ini"
+  },
+  "K4": {
+   "sidik": "5339e9a1fd8e19ea",
+   "bukti": 2,
+   "bentuk": "Sebaran per kelompok"
+  },
+  "A1": {
+   "sidik": "883bde4dbeab8e9e",
+   "bukti": 0,
+   "bentuk": "Nilai saat ini"
+  },
+  "A2": {
+   "sidik": "b30c7d33c37b4173",
+   "bukti": 0,
+   "bentuk": "Perbandingan berdampingan"
+  },
+  "A3": {
+   "sidik": "e7ae0b6499861204",
+   "bukti": 14,
+   "bentuk": "Nilai saat ini"
+  },
+  "A4": {
+   "sidik": "8c0576a332ed8d3f",
+   "bukti": 11,
+   "bentuk": "Nilai saat ini"
+  },
+  "M1": {
+   "sidik": "8b101fbf39e0e4b1",
+   "bukti": 7,
+   "bentuk": "Nilai saat ini"
+  },
+  "M2": {
+   "sidik": "ed8c058a80ffbcc1",
+   "bukti": 4,
+   "bentuk": "Nilai saat ini"
+  },
+  "M3": {
+   "sidik": "00c94a3b6cb9a441",
+   "bukti": 6,
+   "bentuk": "Sebaran per kelompok"
+  },
+  "M4": {
+   "sidik": "27d915eadf99d953",
+   "bukti": 15,
+   "bentuk": "Nilai saat ini"
+  },
+  "M5": {
+   "sidik": "60f3ad974a003f70",
+   "bukti": 15,
+   "bentuk": "Nilai saat ini"
+  },
+  "M6": {
+   "sidik": "761941ea23dc9708",
+   "bukti": 0,
+   "bentuk": "Nilai saat ini"
+  },
+  "U1": {
+   "sidik": "b22f69850fe35ef5",
+   "bukti": 6,
+   "bentuk": "Nilai saat ini"
+  },
+  "U2": {
+   "sidik": "449639d255ccab66",
+   "bukti": 1,
+   "bentuk": "Nilai saat ini"
+  },
+  "U3": {
+   "sidik": "032eb2f5be0f569d",
+   "bukti": 6,
+   "bentuk": "Nilai saat ini"
+  },
+  "U4": {
+   "sidik": "fd5e806be6f2b078",
+   "bukti": 15,
+   "bentuk": "Sebaran per kelompok"
+  },
+  "U5": {
+   "sidik": "cf77876a1c446f22",
+   "bukti": 3,
+   "bentuk": "Angka terdekat (bukan sebab)"
+  },
+  "U6": {
+   "sidik": "13b603ac8d4da125",
+   "bukti": 0,
+   "bentuk": "Nilai saat ini"
+  },
+  "X1": {
+   "sidik": "74357a3fd5c58bbe",
+   "bukti": 0,
+   "bentuk": "Tidak tersedia (data per orang)"
+  },
+  "X2": {
+   "sidik": "7646a618c31548bb",
+   "bukti": 0,
+   "bentuk": "Tidak tersedia (data per orang)"
+  },
+  "X3": {
+   "sidik": "f1fa73329ef13820",
+   "bukti": 0,
+   "bentuk": "Nilai saat ini"
+  },
+  "F1": {
+   "sidik": "745e265220e5c776",
+   "bukti": 14,
+   "bentuk": "Nilai saat ini"
+  },
+  "F2": {
+   "sidik": "1ef82ae6ead1c6b9",
+   "bukti": 3,
+   "bentuk": "Nilai saat ini"
+  },
+  "F3": {
+   "sidik": "0e37c44ee23f9e71",
+   "bukti": 11,
+   "bentuk": "Nilai saat ini"
+  },
+  "F4": {
+   "sidik": "2d70b7eed35f81c9",
+   "bukti": 5,
+   "bentuk": "Nilai saat ini"
+  },
+  "N1": {
+   "sidik": "baeec4158ddb08c8",
+   "bukti": 9,
+   "bentuk": "Perbandingan berdampingan"
+  },
+  "N2": {
+   "sidik": "d5fb2f62e6b3292b",
+   "bukti": 0,
+   "bentuk": "Peringkat 5 besar"
+  },
+  "N3": {
+   "sidik": "bd705404a9c82837",
+   "bukti": 15,
+   "bentuk": "Sebaran per kelompok"
+  },
+  "N4": {
+   "sidik": "eff0e32591d79c71",
+   "bukti": 3,
+   "bentuk": "Angka terdekat (bukan sebab)"
+  },
+  "W1": {
+   "sidik": "d25035834a756df0",
+   "bukti": 13,
+   "bentuk": "Nilai saat ini"
+  },
+  "S1": {
+   "sidik": "ad97e08ce8a93479",
+   "bukti": 0,
+   "bentuk": "Nilai saat ini"
+  },
+  "S2": {
+   "sidik": "7646a618c31548bb",
+   "bukti": 0,
+   "bentuk": "Tidak tersedia (data per orang)"
+  },
+  "S3": {
+   "sidik": "ad97e08ce8a93479",
+   "bukti": 0,
+   "bentuk": "Nilai saat ini"
+  },
+  "E01": {
+   "sidik": "1e3e54270a8026fd",
+   "bukti": 1,
+   "bentuk": "Nilai saat ini"
+  },
+  "E02": {
+   "sidik": "2a04b5479bda1fa2",
+   "bukti": 11,
+   "bentuk": "Nilai saat ini"
+  },
+  "E03": {
+   "sidik": "8152410de0211736",
+   "bukti": 15,
+   "bentuk": "Nilai saat ini"
+  },
+  "E04": {
+   "sidik": "0c0357b7ca0958e2",
+   "bukti": 5,
+   "bentuk": "Tren antarperiode"
+  },
+  "E05": {
+   "sidik": "0773b6707b3f3e55",
+   "bukti": 6,
+   "bentuk": "Tren antarperiode"
+  },
+  "E06": {
+   "sidik": "6894e4870828a2ea",
+   "bukti": 9,
+   "bentuk": "Tren antarperiode"
+  },
+  "E07": {
+   "sidik": "ed41e0a6c0d33687",
+   "bukti": 5,
+   "bentuk": "Tren antarperiode"
+  },
+  "E08": {
+   "sidik": "82ca1300d64a3e16",
+   "bukti": 15,
+   "bentuk": "Perbandingan berdampingan"
+  },
+  "E09": {
+   "sidik": "0668c8390b23c9f9",
+   "bukti": 5,
+   "bentuk": "Perbandingan berdampingan"
+  },
+  "E10": {
+   "sidik": "06716a78cd170575",
+   "bukti": 2,
+   "bentuk": "Perbandingan berdampingan"
+  },
+  "E11": {
+   "sidik": "34816f181e1ef9a6",
+   "bukti": 15,
+   "bentuk": "Peringkat 5 besar"
+  },
+  "E12": {
+   "sidik": "3c86494d9d9ff615",
+   "bukti": 9,
+   "bentuk": "Peringkat 5 besar"
+  },
+  "E13": {
+   "sidik": "e3b626047fa8c53e",
+   "bukti": 12,
+   "bentuk": "Peringkat 5 besar"
+  },
+  "E14": {
+   "sidik": "e21326ce17a76110",
+   "bukti": 6,
+   "bentuk": "Peringkat 5 besar"
+  },
+  "E15": {
+   "sidik": "20ec4d3557ed252d",
+   "bukti": 8,
+   "bentuk": "Komposisi & porsi"
+  },
+  "E16": {
+   "sidik": "37c29417bde51ba6",
+   "bukti": 15,
+   "bentuk": "Komposisi & porsi"
+  },
+  "E17": {
+   "sidik": "e5564626aec1a899",
+   "bukti": 10,
+   "bentuk": "Komposisi & porsi"
+  },
+  "E18": {
+   "sidik": "2ae05b46ecb4aa95",
+   "bukti": 15,
+   "bentuk": "Sebaran per kelompok"
+  },
+  "E19": {
+   "sidik": "aef0feb8c6e9d7d7",
+   "bukti": 15,
+   "bentuk": "Sebaran per kelompok"
+  },
+  "E20": {
+   "sidik": "00c94a3b6cb9a441",
+   "bukti": 6,
+   "bentuk": "Sebaran per kelompok"
+  },
+  "E21": {
+   "sidik": "8b101fbf39e0e4b1",
+   "bukti": 7,
+   "bentuk": "Nilai saat ini"
+  },
+  "E22": {
+   "sidik": "ed8c058a80ffbcc1",
+   "bukti": 4,
+   "bentuk": "Nilai saat ini"
+  },
+  "E23": {
+   "sidik": "8b101fbf39e0e4b1",
+   "bukti": 7,
+   "bentuk": "Nilai saat ini"
+  },
+  "E24": {
+   "sidik": "74b78410e038e4df",
+   "bukti": 3,
+   "bentuk": "Angka terdekat (bukan sebab)"
+  },
+  "E25": {
+   "sidik": "36ad5841b45a3d2c",
+   "bukti": 3,
+   "bentuk": "Angka terdekat (bukan sebab)"
+  },
+  "E26": {
+   "sidik": "eedde24c9b042046",
+   "bukti": 3,
+   "bentuk": "Angka terdekat (bukan sebab)"
+  },
+  "E27": {
+   "sidik": "3e6a02d6809d59d3",
+   "bukti": 3,
+   "bentuk": "Angka terdekat (bukan sebab)"
+  },
+  "E28": {
+   "sidik": "7646a618c31548bb",
+   "bukti": 0,
+   "bentuk": "Tidak tersedia (data per orang)"
+  },
+  "E29": {
+   "sidik": "7646a618c31548bb",
+   "bukti": 0,
+   "bentuk": "Tidak tersedia (data per orang)"
+  },
+  "E30": {
+   "sidik": "7646a618c31548bb",
+   "bukti": 0,
+   "bentuk": "Tidak tersedia (data per orang)"
+  }
+ }
+}
