@@ -3,6 +3,7 @@ import { fetchSapaData } from '@/lib/sapa-client';
 import { sitasiBalasan } from '@/services/sitasi-per-klaim';
 import { siapkanIndeksSemantik } from '@/app/api/query/route';
 import { tahunPadaBukti } from '@/services/grounding';
+import { nilaiKesegaran, ringkasKesegaran } from '@/lib/kesegaran';
 import { catatCelahBilaPerlu } from '@/app/api/query/route';
 import { composeAnswer } from '@/services/answer-compose';
 import { catatJejak, jejakDariHasil } from '@/lib/jejak-audit';
@@ -119,6 +120,10 @@ export async function POST(req: NextRequest) {
           dataFetchedAt: fetched.meta.diambilPada,
           dataFingerprint: fetched.meta.sidik,
           dataYears: tahunPadaBukti(hasil.evidence),
+          // P3 (aditif) — jalur streaming memakai aturan yang sama dengan JSON.
+          dataKesegaran: ringkasKesegaran(
+            nilaiKesegaran({ diambilPada: fetched.meta.diambilPada, tahunData: tahunPadaBukti(hasil.evidence) }),
+          ),
           // FR-19: sitasi per klaim — aturan yang sama dengan jalur JSON.
           ...sitasiBalasan(hasil.response.narasi, hasil.evidence),
           // FR-20: sebab jawaban — kontrak sama dengan jalur JSON.

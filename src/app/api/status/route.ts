@@ -4,6 +4,7 @@ import { metaSemantik } from '@/services/semantik';
 import { getAiRuntimeStatus } from '@/services/answer-compose';
 import { ringkasTelemetri, type RingkasTahap } from '@/lib/ai/telemetri';
 import { ringkasanSegarkan, ringkasSegarkan } from '@/lib/penyegar-cache';
+import { nilaiKesegaran, type BahanKesegaran, type NilaiKesegaran } from '@/lib/kesegaran';
 
 export const dynamic = 'force-dynamic';
 export const runtime = 'nodejs';
@@ -36,6 +37,14 @@ export interface SystemStatus {
    * satu jam, jadi itu bukti penjadwal berhenti, bukan sekadar data lama.
    */
   segarkanCache?: Record<string, unknown>;
+  /**
+   * P3: alarm kesegaran data. Menjawab satu pertanyaan yang sebelumnya tidak
+   * punya tempat: "apakah angka yang sedang disajikan sudah terlalu tua?" —
+   * dari dua sebab yang berbeda (tarikan lama & tahun katalog tertinggal),
+   * ditambah sinyal jadwal penyegaran OPS-03. `tingkat` bisa `tak-diketahui`,
+   * dan itu memang jawaban yang benar bila tidak ada bahan.
+   */
+  kesegaranData?: NilaiKesegaran;
   telemetri?: {
     aktif: boolean;
     jendela: number;
@@ -103,14 +112,24 @@ export async function GET() {
     ai: { state: 'inactive', provider: null, model: null, reason: null, dailyUsed: 0 },
   };
 
+  // P3: bahan kesegaran dikumpulkan dari tarikan yang SAMA (tidak ada tarikan
+  // kedua). Disimpan di variabel terpisah, bukan di dalam `sapa`, supaya bentuk
+  // balasan `/api/status` tidak berubah karena urusan internal ini.
+  let bahanKesegaran: BahanKesegaran = {};
+
   const [sapa, ai, telemetri, segarkan] = await Promise.all([
     fetchSapaData()
-      .then(({ records }) => ({
-        state: 'active' as const,
-        records: records.length,
-        opd: getUniqueOpd(records).length,
-        indikator: getUniqueIndicators(records).length,
-      }))
+      .then(({ records, meta }) => {
+        const diambilPada =
+          meta && typeof meta.diambilPada === 'string' ? meta.diambilPada : null;
+        bahanKesegaran = { diambilPada, tahunData: records.map((r) => r.tahun) };
+        return {
+          state: 'active' as const,
+          records: records.length,
+          opd: getUniqueOpd(records).length,
+          indikator: getUniqueIndicators(records).length,
+        };
+      })
       .catch(() => ({ state: 'down' as const, records: 0, opd: 0 })),
     getAiRuntimeStatus().catch(() => null),
     ringkasTelemetri().catch(() => null),
@@ -120,6 +139,21 @@ export async function GET() {
   ]);
 
   status.sapa = sapa;
+  // P3: kesegaran data dinilai SETELAH penyegaran diketahui, karena jadwal yang
+  // terlewat (OPS-03) adalah salah satu sebabnya. Bila SPLP tidak bisa dihubungi
+  // sama sekali, penilaian tetap dilakukan dengan bahan yang ada — dan bila
+  // bahan tidak ada sama sekali, jawabannya `tak-diketahui`, bukan `segar`.
+  // "Jadwal terlewat" HANYA berlaku bila penjadwal memang pernah berjalan pada
+  // instance ini (`terakhirMs` terisi). Instance baru yang belum pernah
+  // disegarkan bukan "terlewat" — ia "belum pernah", dan menyebutnya terlewat
+  // membuat alarm berbunyi pada setiap instance baru; alarm yang selalu
+  // berbunyi adalah alarm yang diabaikan orang. Ditemukan oleh
+  // `scripts/uji-kesegaran.mjs` pada percobaan pertama.
+  const segarkanRingkas = segarkan as { terlewat?: boolean; terakhirMs?: number | null } | null;
+  status.kesegaranData = nilaiKesegaran({
+    ...bahanKesegaran,
+    penyegaranTerlewat: Boolean(segarkanRingkas?.terlewat && segarkanRingkas?.terakhirMs),
+  });
   if (ai) status.ai = ai;
   status.semantik = metaSemantik();
   if (telemetri) status.telemetri = telemetri;

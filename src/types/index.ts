@@ -108,6 +108,16 @@ export interface AiMetaSummary {
 }
 
 
+/** P3: bentuk ringkas penilaian kesegaran yang ikut pada setiap jawaban. */
+export interface KesegaranRingkas {
+  tingkat: 'segar' | 'perhatian' | 'basi' | 'tak-diketahui';
+  label: string;
+  sebab: string[];
+  umurJam: number | null;
+  tahunTerbaru: number | null;
+  pesan: string;
+}
+
 export interface HybridResponse {
   narasi: string;
   visualisasi: {
@@ -128,6 +138,8 @@ export interface HybridResponse {
   dataFingerprint?: string;
   /** Tahun data pada bukti jawaban, urut menurun. Kosong = tidak ada bukti bertahun. */
   dataYears?: string[];
+  /** P3: penilaian kesegaran data oleh SERVER (bukan jam peramban). */
+  dataKesegaran?: KesegaranRingkas;
   /**
    * Niat pertanyaan hasil router deterministik (FR-18). Additif: respons lama
    * tidak memilikinya, dan UI wajib memperlakukannya sebagai "tidak tahu".

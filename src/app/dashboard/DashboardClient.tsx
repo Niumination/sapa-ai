@@ -13,6 +13,7 @@ const AIResponseRenderer = dynamic(() => import('@/components/AIResponseRenderer
 });
 import KpiPanel from '@/components/KpiPanel';
 import NotisTransparansi from '@/components/NotisTransparansi';
+import PeringatanKesegaran from '@/components/PeringatanKesegaran';
 import type { AiMetaSummary, HybridResponse } from '@/types';
 
 const TopOpdWidget = dynamic(() => import('@/components/TopOpdWidget'), {
@@ -111,6 +112,8 @@ export default function DashboardClient({ initialKpiData }: { initialKpiData?: {
         dataFetchedAt: json.dataFetchedAt,
         dataFingerprint: json.dataFingerprint,
         dataYears: Array.isArray(json.dataYears) ? json.dataYears : undefined,
+        // P3 — penilaian kesegaran datang dari SERVER (jam peramban bukan hakimnya).
+        dataKesegaran: json.dataKesegaran,
         ai: json.ai as AiMetaSummary | undefined,
       });
 
@@ -238,6 +241,7 @@ export default function DashboardClient({ initialKpiData }: { initialKpiData?: {
           )}
         </div>
       )}
+      <PeringatanKesegaran kesegaran={aiResponse?.dataKesegaran ?? null} />
       <NotisTransparansi ai={aiResponse?.ai ?? null} pertanyaan={pertanyaanTerakhir} />
     </div>
   );

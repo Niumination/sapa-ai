@@ -5,6 +5,7 @@ import { composeAnswer } from '@/services/answer-compose';
 import { getClientIp, rateLimitHeaders, checkRateLimit } from '@/lib/rate-limit';
 import { sitasiBalasan } from '@/services/sitasi-per-klaim';
 import { tahunPadaBukti } from '@/services/grounding';
+import { nilaiKesegaran, ringkasKesegaran } from '@/lib/kesegaran';
 import { catatCelah, type SebabCelah } from '@/lib/insight-celah';
 import { sebabUntukCelah, type Diagnosa } from '@/services/sebab-kegagalan';
 import { denganTelemetri, ukurTahapAsync } from '@/lib/ai/telemetri';
@@ -127,6 +128,12 @@ async function tanganiQuery(req: NextRequest) {
       dataFetchedAt: meta.diambilPada,
       dataFingerprint: meta.sidik,
       dataYears: tahunPadaBukti(hasil.evidence),
+      // P3: alarm kesegaran (ADITIF). Di sini tahun pembandingnya adalah tahun
+      // pada BUKTI jawaban ini — bukan seluruh katalog — karena pertanyaannya
+      // "apakah angka yang baru saja saya baca ini tua?".
+      dataKesegaran: ringkasKesegaran(
+        nilaiKesegaran({ diambilPada: meta.diambilPada, tahunData: tahunPadaBukti(hasil.evidence) }),
+      ),
       // FR-20: sebab jawaban ini (satu tag `lapis:rincian` + status). Selalu ada.
       diagnosa: hasil.diagnosa,
       // FR-24: pemeriksaan pasangan entitas atas narasi yang disajikan. `keras > 0`

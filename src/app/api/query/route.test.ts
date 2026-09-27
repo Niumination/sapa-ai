@@ -97,6 +97,49 @@ describe('POST /api/query — kesegaran data & sidik korpus', () => {
     expect(body.dataYears).toEqual([]);
   });
 
+  // ─── P3: alarm kesegaran pada setiap jawaban ───
+  it('P3 — tarikan yang baru saja terjadi dinilai SEGAR, tanpa pesan', async () => {
+    mockedFetch.mockResolvedValue({
+      records: fakeRecords,
+      origin: 'splp',
+      meta: { diambilPada: new Date().toISOString(), sidik: 'abcd1234' },
+    } as never);
+    const res = await POST(req({ query: 'Berapa jumlah ASN di Aceh Tengah?' }));
+    const body = await res.json();
+    expect(body.dataKesegaran.tingkat).toBe('segar');
+    expect(body.dataKesegaran.label).toBe('Data segar');
+    expect(body.dataKesegaran.pesan).toBe('');
+    // Tidak ada yang ditambahkan ke sebab saat segar.
+    expect(body.dataKesegaran.sebab).toEqual([]);
+  });
+
+  it('P3 — tarikan lama dinilai BASI dan pesannya menyebut alasannya', async () => {
+    mockedFetch.mockResolvedValue({
+      records: fakeRecords,
+      origin: 'splp',
+      meta: { diambilPada: '2020-01-01T00:00:00.000Z', sidik: 'abcd1234' },
+    } as never);
+    const res = await POST(req({ query: 'Berapa jumlah ASN di Aceh Tengah?' }));
+    const body = await res.json();
+    expect(body.dataKesegaran.tingkat).toBe('basi');
+    expect(body.dataKesegaran.pesan).toContain('basi');
+    expect(body.dataKesegaran.sebab).toContain('tarikan-lama');
+  });
+
+  it('P3 — jawaban TANPA bukti tetap membawa penilaian kesegaran (bukan menghilang)', async () => {
+    mockedFetch.mockResolvedValue({
+      records: fakeRecords,
+      origin: 'splp',
+      meta: { diambilPada: new Date().toISOString(), sidik: 'abcd1234' },
+    } as never);
+    const res = await POST(req({ query: 'qwertyzzz tidak ada di katalog' }));
+    const body = await res.json();
+    expect(body.evidence).toHaveLength(0);
+    // Tanpa bukti, tidak ada tahun pembanding — tetapi stempel tarikan tetap dinilai.
+    expect(body.dataKesegaran.tingkat).toBe('segar');
+    expect(body.dataKesegaran.tahunTerbaru).toBeNull();
+  });
+
   it('kunci lama TIDAK hilang (kontrak aditif)', async () => {
     const body = await (await POST(req({ query: 'Berapa jumlah ASN di Aceh Tengah?' }))).json();
     for (const k of ['narasi', 'answer', 'source', 'count', 'matched', 'aggregated', 'opds', 'evidence', 'query', 'ai', 'visualisasi', 'rekomendasi', 'timestamp', 'dataSource']) {

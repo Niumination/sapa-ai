@@ -1,0 +1,21 @@
+══ Uji kesegaran data (P3) — dua keadaan korpus ══
+
+── A. Korpus tahun berjalan (2026) — harap SEGAR ──
+  [32m✓[0m status A: tingkat = segar
+  [32m✓[0m status A: tahun terbaru 2026
+  [32m✓[0m status A: pesan kosong (tidak ada peringatan palsu)
+  [32m✓[0m status A: umur tarikan ≤ 1 jam — 0 jam
+  [32m✓[0m jawaban A: tingkat = segar
+  [32m✓[0m jawaban A: tanpa peringatan (kontrol negatif)
+
+── B. Korpus ditarik BARU tetapi tahun data 2019–2020 — harap TIDAK segar ──
+  [32m✓[0m status B: tingkat = basi (bukan segar)
+  [32m✓[0m status B: sebab tahun-katalog-tertinggal tercatat
+  [32m✓[0m status B: lag tahun terukur — 6 tahun
+  [32m✓[0m status B: pesan menyebut selisih tahun — Data yang sedang disajikan sudah basi: tahun data terbaru di katalog 2020, tertinggal 6 tahun dari 2026.
+  [32m✓[0m status B: tarikannya memang BARU (≤ 1 jam) — bukti sebabnya bukan umur tarikan — 0 jam
+  [32m✓[0m jawaban B: tingkat = basi (pembaca diberi tahu)
+  [32m✓[0m jawaban B: pesan peringatan terisi
+
+══ Ringkasan: 13 ✓ · 0 ✗ ══
+LULUS — alarm kesegaran bekerja pada kedua keadaan.
