@@ -3,6 +3,41 @@
 Semua perubahan penting pada aplikasi SAPA Smart AI dicatat di berkas ini.
 Format mengikuti Keep a Changelog; penomoran versi mengikuti Semantic Versioning.
 
+## [0.2.0-dev] — 27 September 2026 — Gelombang peningkatan AI tingkat lanjut (cabang `dev`)
+
+**Status: BELUM dipromosikan ke produksi.** Seluruh isi entri ini hidup di cabang `dev`
+(58 komit di atas `main` `ff00eb8`); `main` sengaja tidak disentuh sampai pemilik produk
+memutuskan. Catatan lengkap + cara mundur: `docs/usulan-ai-tingkat-lanjut/36-CATATAN-RILIS-0.2.0-dev.md`.
+
+### Ditambahkan
+- **Ketahanan penyedia AI**: sirkuit pemutus lintas-instance + klasifikasi galat (`provider-health.ts`), fail-fast ≤1 dtk saat penyedia mati (NFR-02).
+- **Metrik jujur & status yang tidak membakar kuota**: `/api/status` melaporkan keadaan nyata (`reachable`, sebab), `/api/revalidate` **fail-closed** tanpa rahasia (NFR-05/06).
+- **Niat jawaban & gerbang nilai-tambah**: AI hanya disajikan bila tidak lebih miskin daripada jawaban deterministik; bila gagal, jawaban deterministik utuh yang tampil (FR-01/15/17).
+- **Lapis semantik Bahasa Indonesia + fusi RRF** k=60 untuk kueri parafrase; leksikal tetap prioritas (FR-12, FR-14 awal).
+- **Telemetri per tahap** `gen_ai.*` (retrieval → prompt → model → grounding → gerbang) dan **dasbor celah pengetahuan** (NFR-07, FR-27).
+- **Kesegaran & keterlacakan**: stempel waktu tarik + sidik korpus + tahun data pada setiap jawaban (FR-25); penyegaran cache terjadwal + pembukuan (OPS-03); **alarm kesegaran dua sebab** — tarikan lama DAN tahun katalog tertinggal (DS-03 lanjutan).
+- **Mutu bahasa & bentuk**: bentuk jawaban per niat (tabel tren, peringkat, komposisi), sitasi per klaim `[n]`, klasifikasi sebab kegagalan, pemeriksa pasangan entitas (FR-18/19/20/24).
+- **Kejujuran & keamanan masukan**: pembersihan masukan katalog, penolakan permintaan data perorangan & aturan internal, kamus sinonim daerah Aceh (57 entri) (FR-21/22/23, DS-05).
+- **Tata kelola**: halaman keterbukaan AI + kanal koreksi, register 9 risiko AI, jejak audit tanpa data pribadi (CMP-02/03/04).
+- **Aksesibilitas**: WCAG 2.2 AA pada rute inti (NFR-09) + pemeriksa otomatis `uji-aksesibilitas.mjs`.
+- **Gerbang uji**: set evaluasi **120 item** dengan baseline terkunci, A/B AI vs deterministik, uji terima otomatis `uji-terima.sh`, harness kinerja dengan **anggaran p95**, dan **uji kontrak skema SPLP** yang menangkap pergeseran bentuk data (P2/P5).
+
+### Diperbaiki
+- **AI tidak lagi kalah dari deterministik** (gelombang 3): gerbang nilai-tambah, penyisipan frasa peringatan sistem, lima sebab positif-palsu grounding, aturan entitas pada retrieval.
+- **Pembersihan data katalog**: kerapian bentuk tidak lagi dihitung sebagai sinyal keamanan (`ringkasDariHasil()` — satu tempat aturan).
+- **Harness uji hermetik**: variabel shell operator (`REVALIDATE_SECRET`, `SAPA_KAMUS_DAERAH`, …) tidak lagi menentukan hasil uji; aplikasi yang diuji hanya menerima variabel yang disebut eksplisit.
+- **Bit eksekusi skrip** dipulihkan (pagar pre-commit PII + typecheck tidak lagi dilewati senyap).
+
+### Cara mundur (rollback ≤ 5 menit)
+1. **Produksi Vercel**: promosikan deployment sebelumnya lewat dasbor (Deployments → Promote). Ini tidak menyentuh Git.
+2. **Cabang**: `git switch main` — seluruh pekerjaan gelombang ini berada di `dev`, jadi `main` sudah menjadi keadaan aman sebelumnya.
+3. **Saklar darurat tanpa deployment**: `AI_ENABLED=false` (jawaban tetap tersedia lewat jalur deterministik penuh, NFR-03); pemulihan cache: `POST /api/revalidate` dengan `REVALIDATE_SECRET`.
+4. Rincian langkah + bukti: `docs/usulan-ai-tingkat-lanjut/36-CATATAN-RILIS-0.2.0-dev.md`.
+
+### Catatan
+- **Tag rilis**: `v0.2.0-dev` dibuat di repo pemilik (penyimpanan ringkas/snapshot tidak membawa tag; perintahnya ada di catatan rilis).
+- **Belum diuji di produksi**: langganan penyedia model belum diperpanjang, jadi jalur AI diuji dengan penyedia tiruan (EV-06 terbuka).
+
 ## [0.1.0] — 19 September 2026 — Tahap Awal Produksi (Final)
 
 Versi ini menandai selesainya tahap awal pengembangan dan siap diserahkan kepada

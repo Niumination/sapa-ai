@@ -1,6 +1,6 @@
 {
   "name": "sapa-ai",
-  "version": "0.1.0",
+  "version": "0.2.0-dev",
   "private": true,
   "description": "SAPA Smart AI — asisten data SPLP Kabupaten Aceh Tengah (SAPA-only: tanpa basis data, tanpa autentikasi, tanpa DTSEN)",
   "scripts": {
@@ -40,7 +40,7 @@
     "vitest": "^3.2.7"
   },
   "engines": {
-    "node": ">=20"
+    "node": ">=22"
   },
   "allowScripts": {
     "sharp@0.34.5": true,
