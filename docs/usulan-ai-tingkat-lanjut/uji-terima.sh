@@ -65,6 +65,19 @@ fi
 if grep -q "isGroundedText" src/services/grounding.ts 2>/dev/null; then ok "pagar grounding ada (INV-01)"; else no "pagar grounding hilang (INV-01)"; fi
 if grep -q "deteksiPermintaanSistem" src/services/deterministic-answer.ts 2>/dev/null; then ok "penjaga permintaan sistem ada (SEC-02)"; else no "penjaga permintaan sistem hilang (SEC-02)"; fi
 
+# ── 1b. Kontrak skema sumber data SPLP (P2) ─────────────────────────────────
+# Seluruh uji lain berjalan di atas korpus yang DISIMPAN. Bila SPLP mengganti
+# nama/tipe bidang, aplikasi bisa menjawab salah tanpa satu uji pun gagal —
+# bagian ini memeriksa bentuk data nyata terhadap kontrak + snapshot.
+if [ -f verifikasi/korpus-produksi.json ]; then
+  judul "1b. Kontrak skema SPLP (P2)"
+  if node scripts/uji-kontrak-splp.mjs > /tmp/ut-kontrak.txt 2>&1; then
+    ok "$(grep -oE 'katalog: [0-9]+ record · [0-9]+ OPD · [0-9]+ indikator unik' /tmp/ut-kontrak.txt | head -1)"
+  else
+    no "kontrak skema SPLP GAGAL — lihat /tmp/ut-kontrak.txt"
+  fi
+fi
+
 # ── 2. Kerahasiaan endpoint pembatal cache ──────────────────────────────────
 judul "2. Pagar /api/revalidate (SEC-01)"
 if [ "$(hidup "$AI_URL")" = "200" ]; then

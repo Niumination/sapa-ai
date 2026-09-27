@@ -1,0 +1,88 @@
+{
+  "jumlah": 2065,
+  "perBidang": {
+    "id": {
+      "ada": 2065,
+      "rasioAda": 100,
+      "tipeSalah": 0,
+      "rasioKosong": 0,
+      "contohSalah": null
+    },
+    "id_kode_indikator": {
+      "ada": 2065,
+      "rasioAda": 100,
+      "tipeSalah": 0,
+      "rasioKosong": 0,
+      "contohSalah": null
+    },
+    "kode_indikator_kode_indikator": {
+      "ada": 2065,
+      "rasioAda": 100,
+      "tipeSalah": 0,
+      "rasioKosong": 0,
+      "contohSalah": null
+    },
+    "kode_indikator_nama_indikator": {
+      "ada": 2065,
+      "rasioAda": 100,
+      "tipeSalah": 0,
+      "rasioKosong": 0,
+      "contohSalah": null
+    },
+    "id_opds": {
+      "ada": 2065,
+      "rasioAda": 100,
+      "tipeSalah": 0,
+      "rasioKosong": 0,
+      "contohSalah": null
+    },
+    "opds_nama_opd": {
+      "ada": 2065,
+      "rasioAda": 100,
+      "tipeSalah": 0,
+      "rasioKosong": 0,
+      "contohSalah": null
+    },
+    "jadwal_pemutakhiran": {
+      "ada": 2065,
+      "rasioAda": 100,
+      "tipeSalah": 0,
+      "rasioKosong": 0,
+      "contohSalah": null
+    },
+    "satuan": {
+      "ada": 2065,
+      "rasioAda": 100,
+      "tipeSalah": 0,
+      "rasioKosong": 0,
+      "contohSalah": null
+    },
+    "tahun": {
+      "ada": 2065,
+      "rasioAda": 100,
+      "tipeSalah": 0,
+      "rasioKosong": 0,
+      "contohSalah": null
+    },
+    "variabel": {
+      "ada": 2065,
+      "rasioAda": 100,
+      "tipeSalah": 0,
+      "rasioKosong": 0,
+      "contohSalah": null
+    }
+  },
+  "bidangTambahan": {
+    "kelompok_ssd": 2065,
+    "klasifikasi_penyajian": 2065
+  },
+  "opd": 38,
+  "indikator": 1791,
+  "tahunTeratas": {
+    "2022": 1,
+    "2023": 6,
+    "2024": 28,
+    "2025": 760,
+    "2026": 475
+  }
+}

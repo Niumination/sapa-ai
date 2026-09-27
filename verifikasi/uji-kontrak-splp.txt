@@ -1,0 +1,65 @@
+# Uji kontrak skema SPLP (P2) — bukti mentah
+
+## 1. Jalankan normal (korpus produksi 2.065 record + snapshot)
+```
+══ Uji kontrak skema SPLP (P2) ══
+   sumber: verifikasi/korpus-produksi.json
+
+── Kontrak bidang (yang benar-benar dibaca aplikasi) ──
+  [32m✓[0m bidang "id" lengkap & bertipe benar — 100% ada
+  [32m✓[0m bidang "id_kode_indikator" lengkap & bertipe benar — 100% ada
+  [32m✓[0m bidang "kode_indikator_kode_indikator" lengkap & bertipe benar — 100% ada
+  [32m✓[0m bidang "kode_indikator_nama_indikator" lengkap & bertipe benar — 100% ada
+  [32m✓[0m bidang "id_opds" lengkap & bertipe benar — 100% ada
+  [32m✓[0m bidang "opds_nama_opd" lengkap & bertipe benar — 100% ada
+  [32m✓[0m bidang "jadwal_pemutakhiran" lengkap & bertipe benar — 100% ada
+  [32m✓[0m bidang "satuan" lengkap & bertipe benar — 100% ada
+  [32m✓[0m bidang "tahun" lengkap & bertipe benar — 100% ada
+  [32m✓[0m bidang "variabel" lengkap & bertipe benar — 100% ada
+  [32m✓[0m opds_nama_opd tidak ada yang kosong — 0 dari 2065
+  [32m✓[0m variabel (nilai) tidak ada yang kosong — 0 dari 2065
+  · katalog: 2065 record · 38 OPD · 1791 indikator unik · tahun teratas {"2022":1,"2023":6,"2024":28,"2025":760,"2026":475}
+  [33m·[0m bidang tambahan pada sumber (tidak dibaca aplikasi) — kelompok_ssd(2065), klasifikasi_penyajian(2065)
+
+── Perbandingan dengan snapshot kontrak terakhir ──
+  [32m✓[0m tidak ada lonjakan rasio-kosong > 5 poin
+
+── Ringkasan ──
+  [32m✓ LULUS[0m — 13 pemeriksaan kontrak terpenuhi, 1 catatan
+exit=0
+```
+
+## 2. Jalur tarikan langsung (--url terhadap SPLP tiruan :9911)
+```
+
+── Perbandingan dengan snapshot kontrak terakhir ──
+  [32m✓[0m tidak ada lonjakan rasio-kosong > 5 poin
+
+── Ringkasan ──
+  [32m✓ LULUS[0m — 13 pemeriksaan kontrak terpenuhi, 1 catatan
+```
+
+## 3. Kontrol negatif — sabotase `hapus-bidang:satuan` (harness WAJIB menangkap)
+```
+── Ringkasan ──
+  [32m✓ KONTROL NEGATIF LULUS[0m — sabotase "hapus-bidang:satuan" tertangkap (1 pelanggaran)
+```
+
+## 3. Kontrol negatif — sabotase `ubah-tipe:id` (harness WAJIB menangkap)
+```
+── Ringkasan ──
+  [32m✓ KONTROL NEGATIF LULUS[0m — sabotase "ubah-tipe:id" tertangkap (1 pelanggaran)
+```
+
+## 3. Kontrol negatif — sabotase `kosongkan:opds_nama_opd` (harness WAJIB menangkap)
+```
+── Ringkasan ──
+  [32m✓ KONTROL NEGATIF LULUS[0m — sabotase "kosongkan:opds_nama_opd" tertangkap (1 pelanggaran)
+```
+
+## 4. Simulasi pergeseran nyata — korpus kehilangan bidang `satuan`
+```
+── Ringkasan ──
+  [31m✗ GAGAL[0m — 1 pelanggaran:
+    - bidang wajib "satuan" ada di semua record
+```
