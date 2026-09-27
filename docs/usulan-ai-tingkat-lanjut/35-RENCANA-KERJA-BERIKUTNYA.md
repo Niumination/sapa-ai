@@ -9,15 +9,38 @@ Keadaan saat dokumen ini ditulis:
 
 | Hal | Nilai |
 |---|---|
-| Cabang kerja | `dev` = **53 komit** di atas `main` `ff00eb8` |
+| Cabang kerja | `dev` = **59 komit** di atas `main` `ff00eb8` (per 27 Sep 2026) |
 | Yang sudah dipush hermes | **seluruhnya** — termasuk `0051` (harness hermetik) & `0052` (dokumen ini) |
-| Yang **belum** dipush | tidak ada (per verifikasi 26 Sep 2026, §0) |
-| Gerbang | 719 uji / 44 berkas · `tsc` 0 · build 0 · PII-gate 0 · uji terima **exit 0** |
+| Yang **belum** dipush | `0053`–`0058` (dokumen 35/36, P1, P2, P3, P5) — lihat §0 |
+| Butir §F yang **sudah selesai** | **P1 · P2 · P3 · P5** (27 Sep 2026) — sisa: P4, P6-P11, P14; P12/P13/P15/P16 menunggu pihak luar |
+| Gerbang | **745 uji / 45 berkas** · `tsc` 0 · build 0 · PII-gate 0 · uji terima **exit 0** (dengan §1b kontrak + §6i kinerja) |
 | Sisa terbuka | 4 butir (panel penilai manusia · EV-06 model sungguhan · a11y 8 rute · *top-up* semantik) |
 
 ---
 
-## 0. Status verifikasi — 26 September 2026 (pembaruan)
+## 0. Status verifikasi — 27 September 2026 (pembaruan kedua)
+
+Pekerjaan **dari sisi ini** (sandbox, tanpa operasi tulis ke remote) sejak verifikasi 26 Sep:
+
+| Komit | Isi | Bukti |
+|---|---|---|
+| `0053` | dokumen 35: status verifikasi + peta penyempurnaan + C5 (bit eksekusi) | — |
+| `0054` **P3** | alarm kesegaran data (dua sebab) di status, jawaban, dan UI | `verifikasi/uji-kesegaran.txt` **13 ✓ / 0 ✗** · 23 uji unit + 3 uji rute |
+| `0055` **P5** | anggaran kinerja p95 + §6i pada gerbang uji terima | `verifikasi/uji-kinerja.txt` (p50 142-150 ms · **p95 186-200 ms**) · kontrol negatif `uji-kinerja-anggaran-terlampau.txt` **GAGAL** |
+| `0056` **P2** | uji kontrak skema SPLP + deteksi pergeseran + §1b gerbang | `verifikasi/uji-kontrak-splp.txt` (3 sabotase tertangkap; pergeseran `satuan` GAGAL) · snapshot `verifikasi/kontrak-splp.json` |
+| `0057` **P1** | catatan rilis `v0.2.0-dev` + CHANGELOG + versi/engines (menutup `OPS-05`) | `36-CATATAN-RILIS-0.2.0-dev.md` |
+| `0058` | dokumen 10 & 35: status `OPS-05` ✅, `DS-03` +alarm, P1/P2/P3/P5 ✅ | — |
+
+**Temuan penting saat mengerjakan (kelas yang sama dengan tiga temuan sebelumnya):** bit
+eksekusi 15 berkas (`scripts/*`, `.githooks/pre-commit`, `verifikasi/uji-terima.sh`) tercopot
+lagi oleh snapshot, dan **komit `0054` sempat ikut mencopotnya**. Seluruh seri ditulis ulang
+(ketiga komit, isi berkas diverifikasi identik byte-per-byte) sehingga tidak satu pun patch
+membawa pencopotan bit; tiga harness baru ditambahkan sebagai `100755`. Aturan **C5** di §C
+lahir dari kejadian ini.
+
+---
+
+## 0b. Status verifikasi — 26 September 2026
 
 Diperiksa ulang dari luar (baca publik GitHub, **tanpa** operasi tulis dari sisi ini):
 
@@ -175,7 +198,11 @@ bukan daftar keinginan. Tiap butir punya pemicu, usaha, dan kriteria terima yang
 
 | # | Butir | Dasar (terukur) | Usaha | Kriteria terima |
 |---|---|---|---|---|
-| **P1** | **Catatan rilis + tag untuk gelombang 53 komit** (menutup `OPS-05` yang masih 🟡) | `git tag` = **0**; `CHANGELOG.md` masih berhenti di `0.1.0` (19 Sep) sementara `dev` sudah 53 komit | 1–2 jam | `CHANGELOG` punya entri gelombang ini (isi · bukti · **cara mundur**); tag `v0.2.0-dev` dibuat; `OPS-05` → ✅ |
+| ~~**P1**~~ ✅ | **Catatan rilis + tag untuk gelombang ini** (menutup `OPS-05`) | `git tag` kosong; `CHANGELOG` berhenti di `0.1.0` | selesai 27 Sep | ✅ `CHANGELOG` entri `0.2.0-dev` (isi · bukti · cara mundur) + dok **36**; **tag dibuat di repo pemilik** (patch tidak membawa tag) |
+| ~~**P2**~~ ✅ | **Uji kontrak skema SPLP + deteksi pergeseran** | 745 uji memakai korpus tarikan, bukan SPLP hidup | selesai 27 Sep | ✅ `scripts/uji-kontrak-splp.mjs` + §1b gerbang; 3 sabotase tertangkap; snapshot `verifikasi/kontrak-splp.json`; bukti `verifikasi/uji-kontrak-splp.txt` |
+| ~~**P3**~~ ✅ | **Ambang kesegaran data + alarm** (`DS-03` lanjutan) | stempel tampil tetapi tidak ada yang berbunyi | selesai 27 Sep | ✅ DUA sebab (tarikan lama & tahun katalog tertinggal) di `/api/status` + setiap jawaban + lencana UI; `verifikasi/uji-kesegaran.txt` 13 ✓ / 0 ✗ |
+| ~~**P5**~~ ✅ | **Regresi kinerja (anggaran p95)** | p95 hanya angka di dokumen | selesai 27 Sep | ✅ `scripts/uji-kinerja.mjs` + §6i gerbang; p95 186-200 ms vs anggaran 1000 ms; kontrol negatif anggaran 1 ms **GAGAL** |
+| **P4** | **Catatan rilis + tag untuk gelombang 53 komit** (menutup `OPS-05` yang masih 🟡) | `git tag` = **0**; `CHANGELOG.md` masih berhenti di `0.1.0` (19 Sep) sementara `dev` sudah 53 komit | 1–2 jam | `CHANGELOG` punya entri gelombang ini (isi · bukti · **cara mundur**); tag `v0.2.0-dev` dibuat; `OPS-05` → ✅ |
 | **P2** | **Uji kontrak skema SPLP + deteksi pergeseran** | Bila SPLP mengganti/menghapus nama bidang, aplikasi bisa menjawab salah **tanpa** uji apa pun gagal — 719 uji memakai korpus tarikan, bukan SPLP hidup | ±1 hari | Skrip membandingkan **bidang wajib** korpus tarikan terakhir vs tarikan baru; pergeseran ⇒ GAGAL dengan daftar bidang; ikut dijalankan di `uji-terima.sh` |
 | **P3** | **Ambang kesegaran data + alarm** (`DS-03` lanjutan) | Stempel kesegaran **tampil**, tetapi tidak ada yang **berbunyi** bila korpus basi berhari-hari | ±4 jam | `dataFetchedAt` lebih tua dari N hari ⇒ banner + entri peringatan operator; uji unit + tampil di `/admin/status`; N dapat diatur |
 | **P4** | **Pagar kuota & anggaran harian** (`NFR-04` lanjutan) | Batas harian panggilan model sudah ada; kuota penyimpanan (mis. Upstash) & volume cache belum terpantau | ±4 jam | `/api/admin/telemetri` menampilkan pemakaian & sisa per hari (model + cache); alarm bila > 80 % |
