@@ -4,6 +4,7 @@
 // Batas lintas instance bila Redis ada; tanpa Redis = limit × instance (didokumentasikan via `backend`).
 
 import { incrementCounter, resetCounter, activeBackend, type StoreBackend } from '@/lib/store';
+import { KUNCI_TEGURAN_LAJU, tanggalHariIni } from '@/lib/kuota';
 
 export interface RateLimitResult {
   ok: boolean;
@@ -28,6 +29,23 @@ export async function checkRateLimit({ key, limit, windowMs }: RateLimitOptions)
 
 export async function resetRateLimit(key: string): Promise<void> {
   await resetCounter(`rl:${key}`);
+}
+
+/**
+ * P4: catat bahwa pembatas laju MENOLAK sebuah permintaan.
+ *
+ * Dipakai untuk pagar kuota: operator perlu tahu bila ada yang menabrak 30
+ * permintaan/menit — bisa klien yang keliru, bisa penyalahgunaan. Penghitungnya
+ * dinaikkan HANYA saat penolakan terjadi (jarang), jadi biayanya kecil; dan bila
+ * penyimpanan gagal, kegagalan itu TIDAK boleh menggagalkan permintaan warga
+ * (penolakan 429 tetap dikembalikan apa adanya).
+ */
+export async function catatTeguranLaju(sekarangMs: number = Date.now()): Promise<void> {
+  try {
+    await incrementCounter(KUNCI_TEGURAN_LAJU(tanggalHariIni(sekarangMs)), 24 * 60 * 60 * 1000);
+  } catch {
+    /* pencatatan gagal bukan alasan menggagalkan permintaan */
+  }
 }
 
 export function getClientIp(req: Request): string {

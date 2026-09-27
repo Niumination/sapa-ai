@@ -2,7 +2,7 @@ import { NextRequest } from 'next/server';
 import { fetchSapaData } from '@/lib/sapa-client';
 import { indeksUntuk, opsiRemoteDariLingkungan, penyediaDariLingkungan } from '@/services/semantik';
 import { composeAnswer } from '@/services/answer-compose';
-import { getClientIp, rateLimitHeaders, checkRateLimit } from '@/lib/rate-limit';
+import { getClientIp, rateLimitHeaders, checkRateLimit, catatTeguranLaju } from '@/lib/rate-limit';
 import { sitasiBalasan } from '@/services/sitasi-per-klaim';
 import { tahunPadaBukti } from '@/services/grounding';
 import { nilaiKesegaran, ringkasKesegaran } from '@/lib/kesegaran';
@@ -63,6 +63,9 @@ async function tanganiQuery(req: NextRequest) {
   const ip = getClientIp(req);
   const batas = await checkRateLimit({ key: `query:${ip}`, limit: 30, windowMs: 60_000 });
   if (!batas.ok) {
+    // P4: teguran laju dicatat agar operator melihatnya di pagar kuota — tanpa
+    // mengubah balasan warga (429 + Retry-After tetap sama).
+    void catatTeguranLaju();
     return Response.json(
       { error: 'Terlalu banyak permintaan. Coba lagi beberapa saat.', stage: 'rate-limit' },
       { status: 429, headers: rateLimitHeaders(batas) },

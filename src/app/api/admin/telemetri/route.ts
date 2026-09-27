@@ -10,6 +10,7 @@ import {
   telemetriAktif,
   tulisRekapSekarang,
 } from '@/lib/ai/telemetri';
+import { ringkasKuota } from '@/lib/kuota';
 
 export const dynamic = 'force-dynamic';
 export const runtime = 'nodejs';
@@ -47,6 +48,20 @@ export async function GET(req: NextRequest) {
 
   const ag = await bacaAgregat();
   const ringkas = await ringkasTelemetri();
+  // P4: pagar kuota. Batas sudah bekerja; yang ditambahkan di sini adalah
+  // "sudah terpakai berapa dan sisanya berapa" SEBELUM batas itu tercapai.
+  //
+  // Kegagalannya DILAPORKAN, bukan ditelan: panel operator yang diam-diam kosong
+  // akan dibaca sebagai "tidak ada masalah", dan itu kebohongan yang paling
+  // mudah lolos (pelajaran dari percobaan pertama komit ini — `catch(() => null)`
+  // membuat bloknya hilang tanpa satu pun pesan).
+  let kuota: Awaited<ReturnType<typeof ringkasKuota>> | null = null;
+  let kuotaCatatan: string | null = null;
+  try {
+    kuota = await ringkasKuota();
+  } catch (e) {
+    kuotaCatatan = `Pagar kuota gagal dibaca: ${e instanceof Error ? e.message : String(e)}`;
+  }
 
   const sampel: Record<string, { n: number; kejadian: number; ms: number[]; p50: number; p95: number; maks: number }> = {};
   for (const nama of TAHAP_URUT) {
@@ -72,6 +87,8 @@ export async function GET(req: NextRequest) {
     tahap: ringkas.tahap,
     sampel,
     rekap,
+    kuota,
+    kuotaCatatan,
     catatan: telemetriAktif()
       ? null
       : 'Telemetri dimatikan (SAPA_TELEMETRI=off). Tidak ada baris [gen_ai] yang ditulis.',

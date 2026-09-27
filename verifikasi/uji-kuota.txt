@@ -1,0 +1,25 @@
+# Uji pagar kuota (P4) — bukti mentah
+
+Tanggal: 2026-09-27 16:34 UTC · batas laju 30 permintaan/menit per IP
+
+## 1. Tembak pembatas laju dari SATU IP (35 permintaan) — 30 pertama dilayani, sisanya ditolak
+   kode balasan: 30×200 5×429 
+
+## 2. Panel kuota (/api/admin/telemetri, header x-admin-token)
+   blok kuota ada: True | catatan galat: None
+   tanggal penghitung: 2026-09-27 | adaPerhatian: False
+     · ai-harian: 0/2000 (0%) → aman 
+     · teguran-laju: 5/200 (2.5%) → aman 
+   tak terukur: 
+     · kuota perintah penyimpanan (mis. Upstash per bulan) — tidak tersedia dari dalam aplikasi; periksa dasbor penyedia 
+     · pemakaian token/biaya penyedia model — milik penyedia, bukan penghitung kita
+
+## 3. Memantau TIDAK menggerogoti kuota (dua pembacaan berurutan harus sama)
+   baca #1: [0, 5]
+   baca #2: [0, 5]
+   → VERDICT: SAMA ✓ (peek, bukan increment)
+
+## 4. Tanpa token → ditolak (fail-closed)
+   HTTP 401 (harus 401)
+
+## 5. Tingkat perhatian/kritis diuji dengan batas kecil (AI_DAILY_CALL_LIMIT=200) — TEGURAN LAJU 5 dari batas 200 = aman; ambang diuji unit (lihat src/lib/__tests__/kuota.test.ts, 14 uji)
