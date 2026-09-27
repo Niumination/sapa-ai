@@ -18,6 +18,7 @@ import {
   type EvidenceItem,
 } from '@/services/grounding';
 import { getAiConfig, isAiEnabled, isAiShadow, aiStatusReason, type AiConfig } from '@/lib/ai/env';
+import { deteksiWaktuRelatif } from '@/lib/waktu-relatif';
 import { isAiToggleEnabled, isDetToggleEnabled, readToggleState, toggleBackend } from '@/lib/ai/toggle';
 import { buildPromptTerperiksa } from '@/lib/ai/prompt';
 import { adaPenandaMencurigakan, teksSajianAman } from '@/lib/ai/bersih-data';
@@ -702,7 +703,15 @@ async function composeAnswerInti(opts: ComposeOptions): Promise<ComposeResult> {
   meta.unknownTokens = ejected.unknown.length;
 
   const extraAllowedNumbers = [statistik.totalRecord, statistik.totalOpd, statistik.evidenceDihitung];
-  const tahunDimintaGuard = (opts.query.match(/\b(?:19|20)\d{2}\b/g) ?? []).slice(0, 4);
+  // P6: tahun dari frasa relatif ("tahun lalu") ikut diizinkan di sini — kalau
+  // tidak, narasi yang MENYEBUT pemetaannya sendiri ("… tahun 2025") akan
+  // ditandai sebagai angka di luar bukti, dan jawaban yang benar justru ditolak.
+  const tahunDimintaGuard = [
+    ...new Set([
+      ...(opts.query.match(/\b(?:19|20)\d{2}\b/g) ?? []),
+      ...(deteksiWaktuRelatif(opts.query)?.tahun ?? []),
+    ]),
+  ].slice(0, 8);
   const opsiGrounding = { extraAllowedNumbers, tahunDiminta: tahunDimintaGuard };
   const rekomendasiAman = terurai.data.rekomendasi.filter((r) => isGroundedText(r, dasar.evidence, opsiGrounding).ok);
   const followUpsAman = terurai.data.followUps.filter((r) => isGroundedText(r, dasar.evidence, opsiGrounding).ok);
@@ -735,7 +744,12 @@ async function composeAnswerInti(opts: ComposeOptions): Promise<ComposeResult> {
   //    menerima jawaban yang LEBIH MISKIN daripada mode deterministik (terukur:
   //    432 char vs 1014 char pada pertanyaan penduduk). Itu akar keluhan
   //    "AI aktif malah kalah dari deterministik".
-  const tahunDiminta = (opts.query.match(/\b(?:19|20)\d{2}\b/g) ?? []).slice(0, 4);
+  const tahunDiminta = [
+    ...new Set([
+      ...(opts.query.match(/\b(?:19|20)\d{2}\b/g) ?? []),
+      ...(deteksiWaktuRelatif(opts.query)?.tahun ?? []),
+    ]),
+  ].slice(0, 8);
   const tGrounding = Date.now();
   const cek = isGrounded(responsAi, dasar.evidence, { extraAllowedNumbers, tahunDiminta });
   // NFR-07 tahap `grounding`: apakah lolos, berapa temuan, berapa nilai diperiksa.

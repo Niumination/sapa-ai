@@ -1,0 +1,58 @@
+# Uji waktu relatif (P6 / FR-03 lanjutan) — bukti A/B
+
+Metode: server build LAMA (:3118, sebelum P6) dan build BARU (:3119, sesudah P6)
+menjawab 7 pertanyaan yang sama terhadap SPLP tiruan korpus produksi (2.065 record).
+IP klien berbeda tiap permintaan agar pembatas laju tidak mengubah apa pun.
+
+## Hasil berdampingan
+### Berapa IPM tahun lalu?
+- SEBELUM: tahun bukti 4 teratas = ['2025', None, '2026', None]
+  narasi: Tidak ada data SAPA yang memuat seluruh kata kunci sekaligus — tidak ada indikator yang memuat "lalu" bersama kata kunci
+- SESUDAH: tahun bukti 4 teratas = ['2025', '2025', '2025', '2025']
+  narasi: Tidak ada data SAPA yang memuat seluruh kata kunci sekaligus — tidak ada indikator yang memuat "lalu" bersama kata kunci
+
+### Berapa jumlah ASN tahun ini?
+- SEBELUM: tahun bukti 4 teratas = ['2026', None, None, '2026']
+  narasi: Berdasarkan data SAPA untuk "Berapa jumlah ASN tahun ini?", ditemukan 15 indikator terkait: Jumlah ASN 9.610 pegawai (Ba
+- SESUDAH: tahun bukti 4 teratas = ['2026', '2026', '2026', '2026']
+  narasi: "tahun ini" dimengerti sebagai tahun 2026. Berdasarkan data SAPA untuk "Berapa jumlah ASN tahun ini?", ditemukan 15 indi
+
+### tren kemiskinan 3 tahun terakhir
+- SEBELUM: tahun bukti 4 teratas = ['2026', None, '2026', '2025']
+  narasi: Berdasarkan data SAPA untuk "tren kemiskinan 3 tahun terakhir", ditemukan 15 indikator terkait: Jumlah Penyusunan Tugas 
+- SESUDAH: tahun bukti 4 teratas = ['2026', '2026', '2025', '2026']
+  narasi: "3 tahun terakhir" dimengerti sebagai tahun 2025 dan 2026. Berdasarkan data SAPA untuk "tren kemiskinan 3 tahun terakhir
+
+### berapa IPM sampai 2024
+- SEBELUM: tahun bukti 4 teratas = ['2025']
+  narasi: Tidak ada data untuk tahun 2024 di SAPA. Berdasarkan data SAPA untuk "berapa IPM sampai 2024", ditemukan 1 indikator ter
+- SESUDAH: tahun bukti 4 teratas = ['2025']
+  narasi: Tidak ada data untuk tahun 2024 di SAPA. Berdasarkan data SAPA untuk "berapa IPM sampai 2024", ditemukan 1 indikator ter
+
+### target stunting tahun depan
+- SEBELUM: tahun bukti 4 teratas = ['2025', '2025', None, None]
+  narasi: Tidak ada data SAPA yang memuat seluruh kata kunci sekaligus — tidak ada indikator yang memuat "target" bersama kata kun
+- SESUDAH: tahun bukti 4 teratas = ['2025', '2025', None, None]
+  narasi: Tidak ada data untuk tahun 2027 di SAPA. Tidak ada data SAPA yang memuat seluruh kata kunci sekaligus — tidak ada indika
+
+### berapa jumlah ASN
+- SEBELUM: tahun bukti 4 teratas = ['2026', None, None, '2026']
+  narasi: Berdasarkan data SAPA untuk "berapa jumlah ASN", ditemukan 15 indikator terkait: Jumlah ASN 9.610 pegawai (Badan Kepegaw
+- SESUDAH: tahun bukti 4 teratas = ['2026', None, None, '2026']
+  narasi: Berdasarkan data SAPA untuk "berapa jumlah ASN", ditemukan 15 indikator terkait: Jumlah ASN 9.610 pegawai (Badan Kepegaw
+
+### IPM 2025
+- SEBELUM: tahun bukti 4 teratas = ['2025']
+  narasi: Berdasarkan data SAPA untuk "IPM 2025", ditemukan 1 indikator terkait: Indeks Pembangunan Manusia 78,09 Indeks (Badan Pe
+- SESUDAH: tahun bukti 4 teratas = ['2025']
+  narasi: Berdasarkan data SAPA untuk "IPM 2025", ditemukan 1 indikator terkait: Indeks Pembangunan Manusia 78,09 Indeks (Badan Pe
+
+## Evaluasi penuh (120 item) terhadap build baru
+Lulus            : 120/120 (100.0%)
+Gagal            : 0
+  · invarians    : 0  (halu/token/jargon/sumber/NIK)
+
+## Uji unit
+  · waktu-relatif.test.ts: 21 uji
+  · kuota.test.ts: 14 uji
+  · seluruh suite: lihat npm test

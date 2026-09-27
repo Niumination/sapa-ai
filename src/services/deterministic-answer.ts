@@ -17,6 +17,7 @@ import {
   type SapaRecord,
 } from '@/lib/sapa-client';
 import { retrieveDenganSemantik, punyaJangkarIsi } from '@/services/semantik';
+import { dahulukanTahun, deteksiWaktuRelatif, kalimatPemetaan } from '@/lib/waktu-relatif';
 import { deteksiMetaIntent, deteksiNiat } from '@/lib/intent-meta';
 import {
   buildDeterministicNarasi,
@@ -389,6 +390,28 @@ export function buildDeterministicAnswer(query: string, records: SapaRecord[]): 
   }
   let evidence: EvidenceItem[] = [...seen.values()].slice(0, 15);
 
+  // ── P6 (FR-03 lanjutan): waktu relatif → tahun konkret ────────────────────
+  //
+  // "Berapa IPM tahun lalu?" tidak memuat tahun apa pun, jadi sebelum ini sistem
+  // menyajikan tahun campur dan pembaca harus menebak. Sekarang frasa relatif
+  // dipetakan ke tahun konkret (lihat src/lib/waktu-relatif.ts), baris bukti
+  // bertahun itu DIMINDAHKAN ke depan (tanpa dibuang — cakupan tetap utuh), dan
+  // bila tahun itu ada, narasi menyebutkan pemetaannya supaya pembaca tidak
+  // perlu menebak. Bila tahun itu tidak ada, kalimat pemetaan KOSONG dan
+  // peringatan tahun yang sudah ada yang berbicara ("Tidak ada data untuk tahun …").
+  //
+  // Hanya berlaku bila pertanyaan TIDAK memuat tahun eksplisit: "IPM 2025" sudah
+  // jelas dan tidak boleh digeser oleh tafsiran apa pun.
+  const tahunEksplisit = extractYears(query);
+  const waktuRelatif = tahunEksplisit.length ? null : deteksiWaktuRelatif(query);
+  if (waktuRelatif) {
+    evidence = dahulukanTahun(evidence, waktuRelatif.tahun);
+  }
+  const kalimatWaktu = kalimatPemetaan(
+    waktuRelatif,
+    evidence.map((e) => e.tahun),
+  );
+
   // ── Niat SEBAB: SAPA menyimpan angka, bukan sebab (perbaikan 23 Sep 2026) ──
   //
   // MENGAPA BUKAN HANYA DI PROMPT. Panduan prompt untuk niat `sebab` sudah ada
@@ -426,7 +449,10 @@ export function buildDeterministicAnswer(query: string, records: SapaRecord[]): 
   // Jujur soal tahun: bila pertanyaan menyebut tahun tertentu dan tidak satu
   // pun evidence bertahun itu (atau tanpa tahun), katakan terus terang —
   // jangan biarkan angka tahun lain terbaca sebagai jawaban atas tahun itu.
-  const tahunDiminta = extractYears(query);
+  // P6: tahun dari frasa relatif ikut dihitung sebagai "tahun yang diminta" —
+  // kalau tidak, peringatan kejujuran di bawah tidak akan berbunyi untuk
+  // "tahun lalu" yang datanya tidak ada, dan pemetaannya hanya akan menyesatkan.
+  const tahunDiminta = [...new Set([...tahunEksplisit, ...(waktuRelatif?.tahun ?? [])])];
   const tahunAda = evidence.some((e) => e.tahun && tahunDiminta.includes(e.tahun.trim()));
   const peringatanTahun =
     tahunDiminta.length && !tahunAda
@@ -470,7 +496,8 @@ export function buildDeterministicAnswer(query: string, records: SapaRecord[]): 
 
   const peringatanSemantik = retrieval.jalur === 'semantik' && retrieval.peringatan ? `${retrieval.peringatan} ` : '';
   const response = formatAngkaPresentasi({
-    narasi: peringatanTahun + peringatanSebab + peringatanKonsep + peringatanSemantik + narasiRaw,
+    narasi:
+      peringatanTahun + peringatanSebab + peringatanKonsep + peringatanSemantik + kalimatWaktu + narasiRaw,
     visualisasi,
     rekomendasi,
     dataSource: dataSourceLabel('splp'),
