@@ -1,0 +1,52 @@
+
+[1m── 1. Statis (typecheck · uji unit · build) ──[0m
+  [32m✓[0m typecheck lolos
+  [32m✓[0m uji unit: 45 berkas / 745 uji lulus (ambang 700)
+  [32m✓[0m pagar grounding ada (INV-01)
+  [32m✓[0m penjaga permintaan sistem ada (SEC-02)
+
+[1m── 2. Pagar /api/revalidate (SEC-01) ──[0m
+  · server http://127.0.0.1:3199 tidak hidup — lompati
+  · server http://127.0.0.1:3199 tidak hidup — lompati FR-25
+  · server http://127.0.0.1:3199 tidak hidup — lompati FR-27
+  · server http://127.0.0.1:3199 tidak hidup — lompati FR-26
+  · server http://127.0.0.1:3199 tidak hidup — lompati FR-19
+
+[1m── 6b. Lapis semantik Bahasa Indonesia (FR-12 / EV-05) ──[0m
+  [32m✓[0m lapis semantik aktif (penyedia: hash)
+  [32m✓[0m salah tulis 'pendudk' tetap menemukan indikator penduduk (batang kata)
+  [32m✓[0m salah tulis di luar katalog ditangani lapis semantik (15)
+  [32m✓[0m kueri di luar katalog ditolak (0 bukti)
+  · uji parafrase penuh dilewati (set SAPA_PARAFRASE_PENUH=1 untuk menjalankannya)
+
+[1m── 6c. Klasifikasi sebab kegagalan (FR-20) ──[0m
+  [32m✓[0m kueri di luar katalog membawa sebab 'retrieval:konsep-asing'
+  [32m✓[0m kueri terjawab diberi sebab 'selesai:leksikal+sisipan'
+  [32m✓[0m prosa sebab bebas angka
+  [32m✓[0m jalur streaming memberi sebab yang sama dengan jalur JSON
+  · harness penanda sebab dilewati (set SAPA_SEBAB_PENUH=1 untuk menjalankannya)
+
+[1m── 6d. Pemeriksa pasangan entitas (FR-24) ──[0m
+  [32m✓[0m balasan memuat pemeriksaan pasangan entitas (3 nilai diperiksa)
+  [32m✓[0m jawaban yang disajikan bebas temuan pasangan keras
+  · server penukar entitas tidak disediakan (set SAPA_TUKAR_URL untuk membuktikan gerbang menyala)
+  · uji 50 sampel pasangan dilewati (set SAPA_PASANGAN_PENUH=1 untuk menjalankannya)
+  · server http://127.0.0.1:3199 tidak hidup — lompati FR-23
+  · notifikasi sirkuit dilewati (set SAPA_SIRKUIT_URL=http://127.0.0.1:3131 untuk menjalankannya)
+
+[1m── 6g. Telemetri per tahap (NFR-07) ──[0m
+  [32m✓[0m telemetri per tahap: 19 ✓ / 0 ✗
+  [32m✓[0m p95 per tahap muncul di log — model p95 = 31 ms
+
+[1m── 6h. Penyegaran cache terjadwal (OPS-03) ──[0m
+  [32m✓[0m penyegaran cache terjadwal: 45 ✓ / 0 ✗
+  [32m✓[0m cache benar-benar dihitung ulang (cap waktu data) — 2026-09-27T15:01:47.626Z → 2026-09-27T15:01:48.378Z
+
+[1m── 6i. Anggaran kinerja p95 jalur deterministik (P5) — anggaran 1000 ms ──[0m
+  [32m✓[0m p50 150 ms · p95 200 ms
+
+[1m── 7. Evaluasi — DILEWATI (SAPA_SKIP_EVAL=1) ──[0m
+
+[1m── Ringkasan uji terima ──[0m
+  [32m✓ LULUS[0m — semua ambang terpenuhi.
+

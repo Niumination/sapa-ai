@@ -1,0 +1,10 @@
+══ Uji kinerja (P5) — anggaran p95 jalur deterministik ══
+   anggaran p95: 1000 ms · jumlah permintaan: 40 (+5 pemanasan) · korpus: korpus-produksi.json
+
+  p50 148 ms · p95 197 ms · p99 234 ms · maks 234 ms
+  permintaan gagal: 0 (di antaranya 429 pembatas laju: 0) · jawaban tanpa bukti: 3
+  bukti mentah: verifikasi/uji-kinerja.json
+  · 1 variabel shell dinetralkan agar skenario uji tetap sama: SAPA_KINERJA_BUKTI
+
+══ Ringkasan: LULUS ══
+LULUS — p95 197 ms di bawah anggaran 1000 ms.

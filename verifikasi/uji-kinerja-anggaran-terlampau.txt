@@ -1,0 +1,10 @@
+══ Uji kinerja (P5) — anggaran p95 jalur deterministik ══
+   anggaran p95: 1 ms · jumlah permintaan: 40 (+5 pemanasan) · korpus: korpus-produksi.json
+
+  p50 143 ms · p95 216 ms · p99 258 ms · maks 258 ms
+  permintaan gagal: 0 (di antaranya 429 pembatas laju: 0) · jawaban tanpa bukti: 3
+  bukti mentah: ../../../tmp/kinerja-negatif.json
+  · 2 variabel shell dinetralkan agar skenario uji tetap sama: SAPA_ANGGARAN_P95_MS, SAPA_KINERJA_BUKTI
+
+══ Ringkasan: GAGAL ══
+  - p95 216 ms > anggaran 1 ms

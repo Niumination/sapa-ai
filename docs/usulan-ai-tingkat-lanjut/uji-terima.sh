@@ -697,6 +697,30 @@ else
   fi
 fi
 
+# ── 6i. Anggaran kinerja jalur deterministik (P5) ───────────────────────────
+# Sebelum ini p95 hanya ANGKA DI DOKUMEN: tidak ada uji yang gagal bila
+# kinerjanya mundur sepuluh kali. Bagian ini menutupnya. Anggaran sengaja
+# longgar (bawaan 1000 ms terhadap p95 rujukan ~110-190 ms) supaya tidak pernah
+# gagal karena bising mesin — tetapi tetap menangkap kemunduran satu digit.
+if [ "${SAPA_SKIP_KINERJA:-0}" = "1" ]; then
+  info "anggaran kinerja dilewati (SAPA_SKIP_KINERJA=1)"
+elif [ "$(hidup "$DET_URL")" = "200" ]; then
+  judul "6i. Anggaran kinerja p95 jalur deterministik (P5) — anggaran ${SAPA_ANGGARAN_P95_MS:-1000} ms"
+  if SAPA_EVAL_URL="$DET_URL" SAPA_KINERJA_BUKTI=/tmp/ut-kinerja.json \
+     timeout 600 node scripts/uji-kinerja.mjs --pakai-yang-ada > /tmp/ut-kinerja.txt 2>&1; then
+    ok "$(grep -oE 'p50 [0-9]+ ms · p95 [0-9]+ ms' /tmp/ut-kinerja.txt | head -1)"
+  else
+    kode=$?
+    if [ "$kode" = "2" ]; then
+      no "harness kinerja tidak dapat berjalan (aplikasi tidak terjangkau)"
+    else
+      no "anggaran kinerja TERLAMPAUI — lihat /tmp/ut-kinerja.txt"
+    fi
+  fi
+else
+  info "server deterministik tidak hidup — anggaran kinerja dilewati"
+fi
+
 # ── 7. Evaluasi set penuh ($AMBANG_TOTAL item dari data/eval-set.json) ──────
 jalankan_eval() {
   local url="$1" label="$2" keluaran="$3"

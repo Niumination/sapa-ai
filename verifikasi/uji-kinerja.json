@@ -1,0 +1,14 @@
+{
+  "waktu": "2026-09-27T15:02:09.454Z",
+  "anggaranP95Ms": 1000,
+  "jumlahPermintaan": 40,
+  "korpus": "korpus-produksi.json",
+  "p50": 148,
+  "p95": 197,
+  "p99": 234,
+  "maks": 234,
+  "gagal": 0,
+  "dibatasiLaju": 0,
+  "tanpaBukti": 3,
+  "lulus": true
+}
