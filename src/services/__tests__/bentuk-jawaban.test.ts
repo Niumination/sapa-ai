@@ -243,7 +243,11 @@ describe('niat "nilai_saat_ini"', () => {
 describe('niat yang bukan bentuk data (meta_katalog, sebab, personal)', () => {
   it('sebab: selalu membawa catatan bahwa SAPA tidak menyimpan sebab', () => {
     const bentuk = bentukUntukNiat('sebab', 'kenapa stunting tinggi?', [baris(1, 'Prevalensi stunting', '31,4')]);
-    expect(bentuk.catatan).toMatch(/bukan sebab/i);
+    // P10: catatan harus menyebut batas sebab-akibat, konteks terdekat, dan sitasi per klaim.
+    expect(bentuk.catatan).toMatch(/tidak menyimpan.*sebab|bukan.*sebab/i);
+    expect(bentuk.catatan).toMatch(/konteks terdekat|bukan bukti sebab/i);
+    expect(bentuk.catatan).toMatch(/kajian OPD|kajian akademik/i);
+    expect(bentuk.catatan).toMatch(/\[n\]|sitasi|FR-19/i);
   });
   it('personal: batas 0 (tidak ada bukti per orang yang dipajang)', () => {
     const bentuk = bentukUntukNiat('personal', 'data per orang', []);

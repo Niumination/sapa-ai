@@ -1,0 +1,109 @@
+# P10 — FR-05 kausal bersitasi (27 Sep 2026)
+
+Tujuan: pertanyaan "kenapa"/"hubungan"/"kaitan"/"memengaruhi" dijawab dengan
+bukti terdekat + batas kesimpulan tertulis, tanpa mengarang sebab-akibat,
+dengan 0 klaim tanpa rujukan (FR-19).
+
+## Perubahan kode
+
+1. `src/lib/intent-meta.ts` — niat `sebab` diperluas:
+   - Sebelum: `kenapa|mengapa|penyebab|disebabkan|faktor (penyebab|utama)|sebab`
+   - Sesudah: `...|hubungan|kaitan|korelasi|memengaruhi|mempengaruhi|pengaruh|dampak|berhubungan|berkaitan`
+   - Alasan: K1–K4 ("hubungan antara", "kaitan antara", "berhubungan", "memengaruhi")
+     sebelumnya tidak terdeteksi sebagai sebab → evidence 14 acak, bukan 3 relevan.
+   - `PANDUAN_NIAT.sebab` diperbarui: menyebut hubungan/korelasi ≠ kausalitas,
+     sitasi per klaim, dan batas OPD/akademik.
+
+2. `src/services/deterministic-answer.ts` — P10:
+   - `KAUSAL_STOPWORDS` — daftar kata generik kausal yang TIDAK boleh jadi jangkar
+     domain (penyebab, hubungan, kaitan, tinggi, tingginya, ...). Tanpa ini,
+     "Perguruan Tinggi" tertangkap karena mengandung "tinggi" (terukur 27 Sep:
+     N4 "penyebab tingginya stunting" → evidence ke-3 = "Jumlah Pik R Jalur
+     Pendidikan Perguruan Tinggi").
+   - `labelMengandungDomain()` — filter ketat: label harus mengandung token domain
+     (bukan kata kausal generik). `tokenIsi(query)` → buang stopwords kausal →
+     domainTokens.
+   - `buildNarasiSebab()` — narasi khusus sebab:
+     * Setiap evidence → satu kalimat `"indikator" tercatat <nilai>...`
+       sehingga `beriSitasi()` dapat merujuk [n].
+     * Struktur: angka terdekat sebagai konteks topik: <daftar>; penutup
+       menegaskan batas: "Angka-angka di atas adalah konteks topik, bukan bukti
+       sebab. SAPA tidak menyimpan variabel sebab-akibat, sehingga hubungan
+       sebab-akibat tidak dapat disimpulkan..."
+     * Pembuka/batas awal disediakan oleh `peringatanSebab` (wajib, dijaga
+       `catatanWajib` pada jalur AI).
+   - Evidence untuk sebab: filter domain ketat → fallback jangkar isi lama →
+     slice 0,3. Sebelum P10: hanya `punyaJangkarIsi()` → longgar.
+
+3. `src/services/bentuk-jawaban.ts` — sebab:
+   - `catatan`: "SAPA menyimpan angka capaian, bukan analisis sebab-akibat.
+     Angka di bawah adalah konteks terdekat, bukan bukti sebab — hubungan
+     sebab-akibat tidak dapat disimpulkan dari katalog ini dan memerlukan
+     kajian OPD/akademik. Setiap klaim angka dirujuk ke baris bukti [n] (FR-19)."
+
+4. `src/lib/__tests__/kausal.test.ts` — 14 uji baru (P10):
+   - 7 intent: hubungan/kaitan/berhubungan/memengaruhi/mempengaruhi/dampak/korelasi → sebab
+   - 5 kausal umum: ≤3 bukti relevan, batas tertulis, 0 klaim tanpa rujukan
+   - N4: tidak mengandung kata terlarang, semua evidence stunting
+   - K1: tidak ada "Pik R"/"Perguruan Tinggi" lagi
+
+## Hasil ukur
+
+| Pertanyaan | Niat | Evidence | Klaim | Bersitasi | Tanpa | Catatan |
+|---|---|---|---|---|---:|---|
+| Apa penyebab tingginya angka stunting... (N4) | sebab | 3 | 1 | 1 | 0 | Semua stunting: 730 Orang, 4,9 Persen, 31,4 Persen — bukan Pik R |
+| Apa hubungan antara kemiskinan dan stunting (K1) | sebab (hubungan) | 3 | 1 | 1 | 0 | Dulu 14, kini 3: 12,29 Persen, 3 Laporan, 730 Orang |
+| Apakah ada kaitan antara UMKM dan jalan (K2) | sebab (kaitan) | 3 | 1 | 1 | 0 | Dulu 14 jalan acak, kini 3 jalan relevan (49,63 KM, 48,00 KM, 46,78 KM) |
+| Apakah kondisi jalan berhubungan dengan kemiskinan (K3) | sebab (berhubungan) | 3 | 1 | 1 | 0 | Jalan 49,63 KM, 48,00 KM, 46,78 KM |
+| Apakah jumlah keluarga memengaruhi jiwa per desa (K4) | sebab (memengaruhi) | 2 | 1 | 1 | 0 | Sub Ppkbd 870 Orang, Ppkbd 295 Orang |
+| Mengapa pengaduan ke Inspektorat menurun (E24) | sebab | 3 | 1 | 1 | 0 | 5 Laporan, 6 Kanal, 5 Dokumen |
+| Kenapa produksi kopi arabika berubah (E26) | sebab | 3 | 1 | 1 | 0 | 29.019 Ton/Tahun, 50.162 Ha, 38.294 KK |
+
+Kata larangan N4:
+- "disebabkan oleh" → tidak ada
+- "dikarenakan oleh" → tidak ada
+- "penyebab utamanya adalah" → tidak ada
+
+Bentuk jawaban (FR-18):
+- `bentukUntukNiat('sebab')` → label "Angka terdekat (bukan sebab)", visual teks, batas 5,
+  catatan mengandung "tidak menyimpan.*sebab", "konteks terdekat", "kajian OPD", "[n]" / "FR-19"
+
+## Eval
+
+```
+SAPA_EVAL_URL=http://127.0.0.1:3117 node scripts/eval-run.mjs --id=K1,K2,K3,K4,N4,U5,E24,E25,E26,E27
+→ Lulus 10/10 (100.0%) · Gagal 0 · menyesatkan 0 · invarians 0 · jujur-kosong 1 (U5)
+
+SAPA_EVAL_URL=http://127.0.0.1:3117 node scripts/eval-run.mjs
+→ Lulus 120/120 (100.0%) · Gagal 0 · menyesatkan 0 · invarians 0 · jujur-kosong 27
+  Perbandingan baseline 2026-09-24 (120/120): Regresi 0 · Membaik 0
+
+SAPA_EVAL_URL=http://127.0.0.1:3116 (mock-pintar) → 120/120, grounded pass 100%
+```
+
+## Sitasi per klaim (FR-19)
+
+Untuk semua K* di atas, `sitasi.totalKlaim=1, bersitasi=1, tanpaSitasi=[]` → 0 klaim tanpa rujukan.
+Mekanisme: setiap kalimat konteks memuat `<nilai>` yang ada di evidence, sehingga
+`beriSitasi()` menemukan rujukan.
+
+## Unit test
+
+```
+./node_modules/.bin/vitest run
+→ Test Files 48 passed (47+1) · Tests 794 passed (780+14)
+```
+
+Termasuk `src/lib/__tests__/kausal.test.ts` (14 uji P10).
+
+## Catatan jujur
+
+- K2/K3 masih memuat 3 jalan saja, tanpa UMKM/kemiskinan eksplisit, karena domainTokens
+  untuk query itu = [umkm, panjang, jalan, kecamatan] → filter substring "jalan"
+  mendominasi. Idealnya: setidaknya satu bukti per topik (UMKM + jalan). Ini belum
+  diimplementasikan karena butuh ranking per token, bukan sekadar filter. Namun
+  hasil sudah jauh lebih baik daripada 14 acak, dan eval lulus (relevan = ada
+  "jalan kabupaten").
+- K4: "keluarga" cocok dengan "Keluarga Berencana Desa" (Sub Ppkbd) — bukan jumlah
+  keluarga per desa, tetapi ini memang keterbatasan katalog (data keluarga per desa
+  tidak ada). Jawaban jujur dengan konteks terdekat adalah perilaku yang benar.

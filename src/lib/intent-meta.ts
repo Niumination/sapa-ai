@@ -172,7 +172,7 @@ const POLA_NIAT: { niat: NiatJawaban; pola: RegExp; nama: string }[] = [
     pola: /\bnik\b|\bnik-?\d|\bdata (per|perorangan)\b|\bsiapa\s+nama\b|\bdaftar\s+nama\b|\bnama\s+(penerima|warga|penduduk|orang|mustahik|pegawai)\b|\balamat\s+(lengkap\s+)?(petani|penerima|warga|penduduk|kepala desa|mustahik)\b|\bidentitas\s+(penerima|warga|penduduk|mustahik)\b|\balamat warga/i,
     nama: 'data per-orang',
   },
-  { niat: 'sebab', pola: /\b(kenapa|mengapa|penyebab|disebabkan|faktor (penyebab|utama)|sebab)\b/i, nama: 'sebab-akibat' },
+  { niat: 'sebab', pola: /\b(kenapa|mengapa|penyebab|disebabkan|faktor (penyebab|utama)|sebab|hubungan|kaitan|korelasi|memengaruhi|mempengaruhi|pengaruh|dampak|berhubungan|berkaitan)\b/i, nama: 'sebab-akibat' },
   { niat: 'tren', pola: /\b(tren|trend|perkembangan|menurun|menaik|naik|turun|fluktuasi|dari tahun ke tahun|antar ?tahun|time ?series|3 tahun|lima tahun|5 tahun)\b/i, nama: 'arah perubahan' },
   { niat: 'perbandingan', pola: /\b(bandingkan|dibandingkan|banding|versus|\bvs\b|selisih|lebih (tinggi|rendah|baik|besar|kecil)|perbedaan|dibanding)\b/i, nama: 'perbandingan' },
   { niat: 'peringkat', pola: /\b(tertinggi|terendah|terbanyak|tersedikit|terbesar|terkecil|ranking|peringkat|5 besar|lima besar|top\s?\d|urutkan|peringkatnya)\b/i, nama: 'peringkat' },
@@ -205,7 +205,7 @@ export const PANDUAN_NIAT: Record<NiatJawaban, string> = {
   komposisi: 'Sebutkan bagian yang diminta terhadap keseluruhan HANYA bila angka keseluruhannya ada di evidence; bila tidak ada, katakan bahwa totalnya tidak tersedia.',
   distribusi: 'Sebutkan sebaran per kelompok (kecamatan/OPD/kategori) sesuai yang ada di evidence, dan sebutkan bila hanya sebagian kelompok yang tersedia.',
   meta_katalog: 'Jawab dari statistik katalog (jumlah record/OPD/indikator). Tegaskan bahwa ini keterangan tentang katalog, bukan capaian kinerja.',
-  sebab: 'SAPA menyimpan angka, bukan sebab. Jangan menduga penyebab: susun angka terdekat lalu nyatakan bahwa analisis sebab memerlukan kajian OPD/akademik.',
+  sebab: 'SAPA menyimpan angka, bukan sebab. Jangan menduga penyebab atau menyimpulkan korelasi sebagai kausalitas: susun angka terdekat sebagai konteks topik, beri sitasi per klaim, lalu nyatakan batas bahwa analisis sebab/hubungan memerlukan kajian OPD/akademik.',
   personal: 'Tolak dengan sopan: SAPA tidak menyajikan data per orang. Tawarkan versi agregatnya.',
   nilai_saat_ini: 'Sebutkan nilai utama beserta satuan, OPD, dan tahun data; sebutkan bila tahun tidak tercantum.',
 };

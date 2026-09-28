@@ -217,7 +217,10 @@ export function bentukUntukNiat(
       return {
         ...dasar,
         judul: 'Angka terdekat (SAPA tidak menyimpan sebab)',
-        catatan: 'SAPA menyimpan angka, bukan sebab-akibat. Angka di bawah adalah konteks terdekat, bukan penjelasan sebab.',
+        catatan:
+          'SAPA menyimpan angka capaian, bukan analisis sebab-akibat. Angka di bawah adalah konteks terdekat, bukan bukti sebab — ' +
+          'hubungan sebab-akibat tidak dapat disimpulkan dari katalog ini dan memerlukan kajian OPD/akademik. ' +
+          'Setiap klaim angka dirujuk ke baris bukti [n] (FR-19).',
       };
     default:
       return dasar;

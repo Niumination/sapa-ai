@@ -16,8 +16,78 @@ import {
   granularitasTidakTersedia,
   type SapaRecord,
 } from '@/lib/sapa-client';
-import { retrieveDenganSemantik, punyaJangkarIsi } from '@/services/semantik';
+import { retrieveDenganSemantik, punyaJangkarIsi, tokenIsi } from '@/services/semantik';
 import { dahulukanTahun, deteksiWaktuRelatif, kalimatPemetaan } from '@/lib/waktu-relatif';
+
+// ─── P10 — FR-05 kausal bersitasi ───────────────────────────────────────────
+// Kata generik yang TIDAK boleh dipakai sebagai jangkar domain untuk pertanyaan
+// sebab/korelasi — karena ia ada di hampir semua pertanyaan kausal dan membuat
+// filter jangkar menjadi terlalu longgar (mis. "tinggi" cocok dengan "Perguruan
+// Tinggi" → indikator tidak relevan ikut terambil, terukur 27 Sep 2026 pada
+// "Apa penyebab tingginya angka stunting?").
+const KAUSAL_STOPWORDS = new Set([
+  'penyebab', 'sebab', 'disebabkan', 'faktor', 'utama',
+  'hubungan', 'kaitan', 'korelasi', 'memengaruhi', 'mempengaruhi',
+  'pengaruh', 'dampak', 'berhubungan', 'berkaitan',
+  'kenapa', 'mengapa', 'apa', 'apakah', 'ada', 'antara',
+  'tinggi', 'tingginya', 'rendah', 'rendahnya', 'besar', 'kecil',
+  'angka', 'jumlah', 'nilai',
+]);
+
+/**
+ * Apakah label mengandung salah satu token domain (bukan kata kausal generik)?
+ * Dipakai khusus untuk niat `sebab` agar "Perguruan Tinggi" tidak tertangkap
+ * hanya karena mengandung kata "tinggi".
+ */
+function labelMengandungDomain(label: string, domainTokens: string[]): boolean {
+  if (domainTokens.length === 0) return false;
+  const lower = label.toLowerCase();
+  for (const t of domainTokens) {
+    const tl = t.toLowerCase();
+    if (tl.length < 3) continue;
+    if (lower.includes(tl)) return true;
+    // toleransi salah tulis kecil: Dice 4-gram sudah dipakai punyaJangkarIsi,
+    // tetapi untuk sebab kita ingin lebih ketat — cukup substring.
+  }
+  return false;
+}
+
+/**
+ * Narasi khusus niat `sebab` — P10.
+ * Setiap kalimat yang memuat angka nilai berasal dari evidence, sehingga
+ * `beriSitasi()` dapat memberi rujukan [n] dan "0 klaim tanpa rujukan" tercapai.
+ * Struktur: batas awal → angka terdekat sebagai konteks → batas akhir.
+ */
+function buildNarasiSebab(evidence: EvidenceItem[], query: string, totalRecords: number): string {
+  // P10: narasi kausal bersitasi — setiap kalimat yang memuat angka berasal dari evidence,
+  // sehingga beriSitasi() dapat memberi rujukan [n] dan "0 klaim tanpa rujukan" tercapai.
+  // Pembuka/batas awal sudah disediakan oleh `peringatanSebab` (wajib), jadi di sini
+  // hanya daftar konteks + penutup yang menegaskan batas kesimpulan.
+  if (evidence.length === 0) {
+    const qPendek = query.trim().slice(0, 80);
+    return (
+      `Tidak ada angka terdekat yang relevan di SAPA untuk topik "${qPendek}". ` +
+      `SAPA tidak menyimpan variabel sebab-akibat, sehingga hubungan sebab-akibat tidak dapat disimpulkan. ` +
+      `Untuk analisis penyebab, diperlukan kajian lebih lanjut oleh OPD terkait atau kajian akademik.`
+    );
+  }
+
+  const kalimatKonteks = evidence.map((e) => {
+    const tahunStr = e.tahun && /^\d{4}$/.test(e.tahun.trim()) ? e.tahun.trim() : 'tahun tidak tercantum di SAPA';
+    const satuanStr = e.satuan ? ` ${e.satuan}` : '';
+    return `"${e.indikator}" tercatat ${e.nilai}${satuanStr} pada ${e.opd}, ${tahunStr}`;
+  });
+
+  const daftar = kalimatKonteks.join('; ') + '.';
+
+  const penutup =
+    'Angka-angka di atas adalah konteks topik, bukan bukti sebab. ' +
+    'SAPA tidak menyimpan variabel sebab-akibat, sehingga hubungan sebab-akibat tidak dapat disimpulkan dari angka di atas. ' +
+    'Untuk analisis penyebab, diperlukan kajian lebih lanjut oleh OPD terkait atau kajian akademik. ' +
+    `Dari ${totalRecords.toLocaleString('id-ID')} record SAPA, konteks ini mencakup ${evidence.length} indikator terkait.`;
+
+  return `Angka terdekat sebagai konteks topik: ${daftar} ${penutup}`;
+}
 import { deteksiMetaIntent, deteksiNiat } from '@/lib/intent-meta';
 import {
   buildDeterministicNarasi,
@@ -431,21 +501,38 @@ export function buildDeterministicAnswer(query: string, records: SapaRecord[]): 
   const { niat } = deteksiNiat(query);
   const sebabDiminta = niat === 'sebab';
   let peringatanSebab = '';
+  // P10: narasi khusus sebab — disusun di sini agar tidak tercampur dengan jalur umum.
+  let narasiSebabKhusus: string | null = null;
   if (sebabDiminta) {
-    const terjangkar = evidence.filter((e) => punyaJangkarIsi(query, `${e.indikator} ${e.opd}`));
+    // Domain token = token isi tanpa kata kausal generik (agar "tinggi" tidak
+    // menarik "Perguruan Tinggi").
+    const isi = tokenIsi(query);
+    const domainTokens = isi.filter((t) => !KAUSAL_STOPWORDS.has(t.toLowerCase()));
+    // Filter 1: yang mengandung domain token (ketat).
+    let terjangkar = domainTokens.length
+      ? evidence.filter((e) => labelMengandungDomain(`${e.indikator} ${e.opd}`, domainTokens))
+      : [];
+    // Fallback: bila domain kosong atau tidak ada yang cocok, pakai jangkar isi
+    // lama (lebih longgar) — supaya tidak jujur-kosong untuk pertanyaan yang
+    // memang punya topik tetapi tokennya terbuang semua.
+    if (terjangkar.length === 0) {
+      terjangkar = evidence.filter((e) => punyaJangkarIsi(query, `${e.indikator} ${e.opd}`));
+    }
     const dibuang = evidence.length - terjangkar.length;
     evidence = terjangkar.slice(0, 3);
     peringatanSebab =
       'Data penyebab atau kausalitas tidak tersedia di SAPA — katalog ini menyimpan angka capaian, bukan sebab. ' +
       (evidence.length > 0
         ? 'Angka berikut hanya konteks topik, bukan bukti sebab. '
-        : '') +
+        : 'Tidak ada angka terdekat yang relevan sebagai konteks topik. ') +
       (dibuang > 0
         ? `Indikator lain yang tidak mengenai topik pertanyaan tidak disajikan agar tidak terbaca sebagai penyebab. `
         : '');
+    // P10: bentuk kausal bersitasi — narasi yang setiap klaim angkanya ada di evidence.
+    narasiSebabKhusus = buildNarasiSebab(evidence, query, records.length);
   }
 
-  const narasiRaw = buildEnrichedNarasi(evidence, query, records.length);
+  const narasiRaw = narasiSebabKhusus ?? buildEnrichedNarasi(evidence, query, records.length);
   // Jujur soal tahun: bila pertanyaan menyebut tahun tertentu dan tidak satu
   // pun evidence bertahun itu (atau tanpa tahun), katakan terus terang —
   // jangan biarkan angka tahun lain terbaca sebagai jawaban atas tahun itu.

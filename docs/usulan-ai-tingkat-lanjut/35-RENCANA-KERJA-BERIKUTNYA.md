@@ -9,11 +9,11 @@ Keadaan saat dokumen ini ditulis:
 
 | Hal | Nilai |
 |---|---|
-| Cabang kerja | `dev` = **64 komit** di atas `main` `ff00eb8` (per 27 Sep 2026; termasuk komit bukti & dokumen) |
+| Cabang kerja | `dev` = **65 komit** di atas `main` `ff00eb8` (per 27 Sep 2026; termasuk komit bukti & dokumen) |
 | Yang sudah dipush hermes | sampai `289b02f` (pohon = komit kita `fed548b`, setara 53 komit) — lihat §0b |
-| Yang **belum** dipush | `0053`–`0063` (11 patch = 11 komit: dokumen 35/36, P1–P6, P9, bukti klon) — lihat §0 |
-| Butir §F yang **sudah selesai** | **P1 · P2 · P3 · P4 · P5 · P6 · P9** (27 Sep 2026) — sisa: P7, P8, P10, P11, P14; P12/P13/P15/P16 menunggu pihak luar |
-| Gerbang | **780 uji / 47 berkas** · `tsc` 0 · PII-gate 0 · uji terima **exit 0** (dengan §1b kontrak, §6i kinerja, §8 kunci jawaban) |
+| Yang **belum** dipush | `0053`–`0064` (12 patch = 12 komit: dokumen 35/36, P1–P6, P9, P10, bukti klon) — lihat §0 |
+| Butir §F yang **sudah selesai** | **P1 · P2 · P3 · P4 · P5 · P6 · P9 · P10** (27 Sep 2026) — sisa: P7, P8, P11, P14; P12/P13/P15/P16 menunggu pihak luar |
+| Gerbang | **794 uji / 48 berkas** · `tsc` 0 · PII-gate 0 · uji terima **exit 0** (dengan §1b kontrak, §6i kinerja, §8 kunci jawaban) |
 | Sisa terbuka | 4 butir (panel penilai manusia · EV-06 model sungguhan · a11y 8 rute · *top-up* semantik) |
 
 ---
@@ -51,6 +51,7 @@ Pekerjaan lanjutan dari sisi ini (sandbox, **tanpa** operasi tulis ke remote):
 | `0061` **P9** | kunci anti-mundur jawaban 120 item + langkah **opsional** §8 pada `uji-terima.sh` | `verifikasi/uji-kunci-jawaban.txt`: (1) kunci ditulis (120 sidik); (2) uji ulang **IDENTIK** (keluar 0); (3) kontrol sintetis (2 sidik dirusak + item palsu) → terdeteksi, keluar 1; (4) **kontrol nyata**: instance kedua dengan `SAPA_BENTUK_NIAT=off` → **eval 120/120 keluar 0 (buta)**, kunci P9 melaporkan **120 berubah, keluar 1** · `verifikasi/gerbang-putaran-26.txt` = gerbang penuh dengan §8 aktif → **LULUS** |
 | `0062` | dokumen 35 & 10: `P4`/`P6`/`P9` ✅, angka gelombang, aturan C5 memakai daftar eksplisit 20 berkas `100755` | — |
 | `0063` | bukti klon bersih bundel (64/26 komit): pohon = `dev`, 20 berkas `100755`, 0 pencopotan bit, 780 uji lulus — **dengan catatan jujurnya** (`npm ci` penuh tidak selesai di sandbox) | `verifikasi/klon-bundel.txt` |
+| `0064` **P10** | `FR-05` kausal bersitasi: niat `sebab` diperluas hubungan/kaitan/memengaruhi/dampak/korelasi, filter domain ketat menghilangkan "Perguruan Tinggi", narasi kausal bersitasi + batas kesimpulan, 0 klaim tanpa rujukan | `verifikasi/uji-kausal.txt` (K1–K4/N4/E24–E27 10/10, 120/120, sitasi 0 tanpa) + `src/lib/__tests__/kausal.test.ts` 14 uji |
 
 **Temuan penting (kelas yang sama dengan temuan sebelumnya — jangan salah baca):** uji parafrase
 **penuh** (`SAPA_PARAFRASE_PENUH=1`, opt-in) menyala merah pada korpus produksi 2.065 record
@@ -178,7 +179,7 @@ baseline baru disahkan pemilik produk.
 | **C1** | Setelah patch `0051` dipush: perbarui `main` **hanya bila** pemilik produk memutuskan promosi. Sampai itu, `main` tetap `ff00eb8` |
 | **C2** | Perbarui skill DOX Anda (`arena-patch-adoption`) dengan **tiga pitfall baru**: (a) salinan skrip kedua → wajib penunjuk/satu sumber; (b) aturan yang dihitung di dua tempat → wajib satu fungsi; (c) lingkungan anak diwarisi `process.env` → wajib hermetik. Ketiganya sudah menggigit berturut-turut |
 | **C3** | Jalankan `sha256sum -c SHA256SUMS.txt` pada kit setiap kali menerima kiriman baru — bila ada berkas tidak cocok, minta kirim ulang sebelum `git am` |
-| **C5** | **Jaga bit eksekusi** — 19 berkas `100755` per 27 Sep 2026: `.githooks/pre-commit` (pagar PII + typecheck), 16 skrip `scripts/*.mjs`, `scripts/pii-gate.sh`, `verifikasi/uji-terima.sh`, dan `docs/usulan-ai-tingkat-lanjut/uji-terima.sh`. Snapshot yang kehilangan mode 755 membuat git **melewati hook tanpa suara** (terjadi 2×, termasuk 26 Sep 2026). Periksa dengan **daftar eksplisit ini**, BUKAN glob: 15 berkas `scripts/*.mjs` memang `100644` sehingga glob melaporkan "masalah" palsu. Bila ada yang bukan 100755: `chmod +x`, periksa ulang lewat `git diff-tree -r --summary <komit>` (harus 0 `755 => 644`), dan jangan `git checkout -- .`. |
+| **C5** | **Jaga bit eksekusi** — **20 berkas** `100755` per 27 Sep 2026: `.githooks/pre-commit` (pagar PII + typecheck), 16 skrip `scripts/*.mjs` (`buat-korpus-beracun`, `ekspor-jejak-audit`, `hitung-panel`, `siapkan-panel-penilai`, `uji-bentuk-jawaban`, `uji-bersih-data`, `uji-cache-korpus`, `uji-eval-120`, `uji-jejak-audit`, `uji-kamus-daerah`, `uji-kesegaran`, `uji-keterbukaan`, `uji-kinerja`, `uji-kontrak-splp`, `uji-kunci-jawaban`, `uji-tata-kelola`), `scripts/pii-gate.sh`, `verifikasi/uji-terima.sh`, dan `docs/usulan-ai-tingkat-lanjut/uji-terima.sh`. Snapshot yang kehilangan mode 755 membuat git **melewati hook tanpa suara** (terjadi 3×, termasuk 26 Sep 2026). Periksa dengan **daftar eksplisit ini**, BUKAN glob: 15 berkas `scripts/*.mjs` memang `100644` sehingga glob melaporkan "masalah" palsu. Bila ada yang bukan 100755: `chmod +x`, periksa ulang lewat `git diff-tree -r --summary <komit>` (harus 0 `755 => 644`), dan jangan `git checkout -- .`. |
 | **C4** | Bila RAM terbatas (< 2 GB): jalankan harness **bertahap** (satu per satu), jangan empat server sekaligus — pernah memicu swap berat dan mengubah waktu tunggu |
 
 ---
@@ -244,7 +245,7 @@ bukan daftar keinginan. Tiap butir punya pemicu, usaha, dan kriteria terima yang
 | **P7** | **Aksesibilitas 11 rute + uji fokus berperamban** | Pemeriksa bekerja **tanpa peramban** (dok 32 §5.3): urutan fokus & perangkap fokus belum terukur; cakupan 3/11 rute | ±2–4 hari | 11 rute lulus; Playwright memeriksa urutan fokus, perangkap fokus, dan `skip-link` pada 3 rute utama; artefak diperbarui |
 | **P8** | **Aktivasi penyedia semantik sungguhan → tutup `FR-13`/`FR-14`** | Penyedia `remote` kelas e5 **sudah siap dipakai**; `fusiRRF` k=60 sudah ada, tetapi penerimaan `FR-14` (recall@10 ≥ 90 % pada kueri sulit) belum diukur dengan embedding nyata; `FR-13` (indeksasi berkonteks) belum dimulai | ±1 minggu | Dengan **set tahan** lebih dahulu: recall@10 ≥ 90 % pada kueri sulit; presisi kueri panjang naik tanpa menurunkan presisi; A/B penuh; baseline disahkan pemilik |
 | ~~**P9**~~ ✅ | **Kunci anti-mundur (regression lock) 120 item** | baseline membandingkan **skor**, bukan **isi jawaban** | selesai 27 Sep (`0061`) | ✅ `scripts/uji-kunci-jawaban.mjs` + `verifikasi/kunci-jawaban.json` + langkah **§8 opsional** (`SAPA_UJI_KUNCI=1`) pada `uji-terima.sh`; kontrol nyata: eval **buta** (120/120, keluar 0) sementara kunci menangkap **120 perubahan** |
-| **P10** | **`FR-05` lanjutan: bentuk jawaban kausal bersitasi** | Status dok 10: 🟡 — pagu kejujuran ✅, bentuk bersitasi ⬜ | ±2 hari | Pertanyaan "kenapa" menjawab dengan bukti terdekat + **batas kesimpulan** tertulis; item `K*`/`N4` lulus dengan bentuk baru; 0 klaim tanpa rujukan |
+| ~~**P10**~~ ✅ | **`FR-05` lanjutan: bentuk jawaban kausal bersitasi** | Status dok 10: ✅ (27 Sep 2026) — 7 intent korelasi baru, filter domain ketat, narasi kausal bersitasi | selesai 27 Sep (`0064`) | ✅ K1–K4/N4/E24–E27 10/10 & 120/120 (0 regresi) + sitasi 0 tanpa rujukan + 14 uji baru; bukti `verifikasi/uji-kausal.txt` |
 | **P11** | **Perluasan uji merah (OWASP LLM Top 10 2025)** | Korpus beracun menutup 6 bentuk serangan; belum ada: injeksi **tidak langsung** (via umpan balik/katalog), kebocoran *system prompt*, *denial-of-wallet*, eksfiltrasi PII lewat ringkasan | ±3 hari | Tiap vektor punya uji yang **wajib gagal-aman** (tanpa `[PATUH:]`, tanpa rahasia, tanpa kuota terbakar); kontrol negatif ikut gagal |
 
 ### F3 — Butuh keputusan / pemicu eksternal (tidak bisa dimulai sendiri)
@@ -261,7 +262,7 @@ bukan daftar keinginan. Tiap butir punya pemicu, usaha, dan kriteria terima yang
 
 | Sisa dok 10 | Sifat | Ditutup oleh |
 |---|---|---|
-| `FR-03` 🟡 · `FR-05` 🟡 | teknis, murah | **P6** · **P10** |
+| `FR-03` ✅ · `FR-05` ✅ | teknis, murah | **P6** · **P10** (selesai 27 Sep) |
 | `FR-13` ⬜ · `FR-14` ⬜ | teknis, menengah | **P8** |
 | `NFR-01` 🟡 · `EV-06` ⬜ | terblokir eksternal | **P12** |
 | `EV-05` 🟡 | butuh manusia | **P13** |
@@ -275,11 +276,10 @@ re-baseline + A/B; `main` tidak disentuh sampai pemilik produk memutuskan promos
 ### F5 — Urutan yang saya sarankan bila hanya ada satu minggu
 
 ```
-✅ SELESAI 27 Sep 2026 (dari sandbox, patch 0053-0061):
-   P1 + P3 + P5 + P2 (murah lebih dahulu) → P4 (kuota) → P6 (FR-03) → P9 (kunci jawaban)
+✅ SELESAI 27 Sep 2026 (dari sandbox, patch 0053-0064):
+   P1 + P3 + P5 + P2 (murah lebih dahulu) → P4 (kuota) → P6 (FR-03) → P9 (kunci jawaban) → P10 (FR-05 kausal bersitasi)
 
 SISA (urutan tetap disarankan):
-P10 (FR-05 kausal bersitasi)   ← sisa teknis dok 10 yang tersedia dari sandbox, ±2 hari
 P11 (uji merah OWASP LLM)      ← memperluas korpus beracun yang sudah ada, ±3 hari
 P7 (a11y 11 rute)              ← butuh peramban (Playwright) di lingkungan hermes
 P8 (semantik + FR-13/14)       ← paling besar; butuh set tahan + embeddings sungguhan
