@@ -9,10 +9,10 @@ Keadaan saat dokumen ini ditulis:
 
 | Hal | Nilai |
 |---|---|
-| Cabang kerja | `dev` = **65 komit** di atas `main` `ff00eb8` (per 27 Sep 2026; termasuk komit bukti & dokumen) |
+| Cabang kerja | `dev` = **66 komit** di atas `main` `ff00eb8` (per 28 Sep 2026; termasuk komit bukti & dokumen) |
 | Yang sudah dipush hermes | sampai `289b02f` (pohon = komit kita `fed548b`, setara 53 komit) — lihat §0b |
-| Yang **belum** dipush | `0053`–`0064` (12 patch = 12 komit: dokumen 35/36, P1–P6, P9, P10, bukti klon) — lihat §0 |
-| Butir §F yang **sudah selesai** | **P1 · P2 · P3 · P4 · P5 · P6 · P9 · P10** (27 Sep 2026) — sisa: P7, P8, P11, P14; P12/P13/P15/P16 menunggu pihak luar |
+| Yang **belum** dipush | `0053`–`0065` (13 patch = 13 komit: dokumen 35/36, P1–P6, P9, P10, P11, bukti klon) — lihat §0 |
+| Butir §F yang **sudah selesai** | **P1 · P2 · P3 · P4 · P5 · P6 · P9 · P10 · P11** (28 Sep 2026) — sisa: P7, P8, P14; P12/P13/P15/P16 menunggu pihak luar |
 | Gerbang | **794 uji / 48 berkas** · `tsc` 0 · PII-gate 0 · uji terima **exit 0** (dengan §1b kontrak, §6i kinerja, §8 kunci jawaban) |
 | Sisa terbuka | 4 butir (panel penilai manusia · EV-06 model sungguhan · a11y 8 rute · *top-up* semantik) |
 
@@ -52,6 +52,7 @@ Pekerjaan lanjutan dari sisi ini (sandbox, **tanpa** operasi tulis ke remote):
 | `0062` | dokumen 35 & 10: `P4`/`P6`/`P9` ✅, angka gelombang, aturan C5 memakai daftar eksplisit 20 berkas `100755` | — |
 | `0063` | bukti klon bersih bundel (64/26 komit): pohon = `dev`, 20 berkas `100755`, 0 pencopotan bit, 780 uji lulus — **dengan catatan jujurnya** (`npm ci` penuh tidak selesai di sandbox) | `verifikasi/klon-bundel.txt` |
 | `0064` **P10** | `FR-05` kausal bersitasi: niat `sebab` diperluas hubungan/kaitan/memengaruhi/dampak/korelasi, filter domain ketat menghilangkan "Perguruan Tinggi", narasi kausal bersitasi + batas kesimpulan, 0 klaim tanpa rujukan | `verifikasi/uji-kausal.txt` (K1–K4/N4/E24–E27 10/10, 120/120, sitasi 0 tanpa) + `src/lib/__tests__/kausal.test.ts` 14 uji |
+| `0065` **P11** | OWASP LLM Top 10 2025: korpus beracun 6→10 (eksfiltrasi URL, BEGIN SYSTEM, DoW 10000 paragraf, PII NIK), bersih-data perluasan 8 pola + NIK [data-pii] + anti-sarang, mock-patuh 4 vektor baru, harness `uji-merah-owasp.mjs` | `verifikasi/uji-merah-owasp.txt` (10 katalog + 5 langsung LULUS, 0 PATUH, prompt bersih, umpan balik bersih) |
 
 **Temuan penting (kelas yang sama dengan temuan sebelumnya — jangan salah baca):** uji parafrase
 **penuh** (`SAPA_PARAFRASE_PENUH=1`, opt-in) menyala merah pada korpus produksi 2.065 record
@@ -246,7 +247,7 @@ bukan daftar keinginan. Tiap butir punya pemicu, usaha, dan kriteria terima yang
 | **P8** | **Aktivasi penyedia semantik sungguhan → tutup `FR-13`/`FR-14`** | Penyedia `remote` kelas e5 **sudah siap dipakai**; `fusiRRF` k=60 sudah ada, tetapi penerimaan `FR-14` (recall@10 ≥ 90 % pada kueri sulit) belum diukur dengan embedding nyata; `FR-13` (indeksasi berkonteks) belum dimulai | ±1 minggu | Dengan **set tahan** lebih dahulu: recall@10 ≥ 90 % pada kueri sulit; presisi kueri panjang naik tanpa menurunkan presisi; A/B penuh; baseline disahkan pemilik |
 | ~~**P9**~~ ✅ | **Kunci anti-mundur (regression lock) 120 item** | baseline membandingkan **skor**, bukan **isi jawaban** | selesai 27 Sep (`0061`) | ✅ `scripts/uji-kunci-jawaban.mjs` + `verifikasi/kunci-jawaban.json` + langkah **§8 opsional** (`SAPA_UJI_KUNCI=1`) pada `uji-terima.sh`; kontrol nyata: eval **buta** (120/120, keluar 0) sementara kunci menangkap **120 perubahan** |
 | ~~**P10**~~ ✅ | **`FR-05` lanjutan: bentuk jawaban kausal bersitasi** | Status dok 10: ✅ (27 Sep 2026) — 7 intent korelasi baru, filter domain ketat, narasi kausal bersitasi | selesai 27 Sep (`0064`) | ✅ K1–K4/N4/E24–E27 10/10 & 120/120 (0 regresi) + sitasi 0 tanpa rujukan + 14 uji baru; bukti `verifikasi/uji-kausal.txt` |
-| **P11** | **Perluasan uji merah (OWASP LLM Top 10 2025)** | Korpus beracun menutup 6 bentuk serangan; belum ada: injeksi **tidak langsung** (via umpan balik/katalog), kebocoran *system prompt*, *denial-of-wallet*, eksfiltrasi PII lewat ringkasan | ±3 hari | Tiap vektor punya uji yang **wajib gagal-aman** (tanpa `[PATUH:]`, tanpa rahasia, tanpa kuota terbakar); kontrol negatif ikut gagal |
+| ~~**P11**~~ ✅ | **Perluasan uji merah (OWASP LLM Top 10 2025)** | Korpus beracun 6→10 + 4 langsung (URL, system prompt, DoW, PII) + umpan balik | selesai 28 Sep (`0065`) | ✅ 10 katalog + 5 langsung LULUS, 0 PATUH, prompt bersih, umpan balik bersih, kontrol negatif tetap gagal (4 PATUH tambahan bila tanpa bersih); bukti `verifikasi/uji-merah-owasp.txt` |
 
 ### F3 — Butuh keputusan / pemicu eksternal (tidak bisa dimulai sendiri)
 
@@ -276,11 +277,10 @@ re-baseline + A/B; `main` tidak disentuh sampai pemilik produk memutuskan promos
 ### F5 — Urutan yang saya sarankan bila hanya ada satu minggu
 
 ```
-✅ SELESAI 27 Sep 2026 (dari sandbox, patch 0053-0064):
-   P1 + P3 + P5 + P2 (murah lebih dahulu) → P4 (kuota) → P6 (FR-03) → P9 (kunci jawaban) → P10 (FR-05 kausal bersitasi)
+✅ SELESAI 28 Sep 2026 (dari sandbox, patch 0053-0065):
+   P1 + P3 + P5 + P2 (murah lebih dahulu) → P4 (kuota) → P6 (FR-03) → P9 (kunci jawaban) → P10 (FR-05 kausal bersitasi) → P11 (uji merah OWASP)
 
 SISA (urutan tetap disarankan):
-P11 (uji merah OWASP LLM)      ← memperluas korpus beracun yang sudah ada, ±3 hari
 P7 (a11y 11 rute)              ← butuh peramban (Playwright) di lingkungan hermes
 P8 (semantik + FR-13/14)       ← paling besar; butuh set tahan + embeddings sungguhan
 P14 (latihan mundur ≤ 5 mnt)   ← butuh jendela pemeliharaan (pemilik produk)
