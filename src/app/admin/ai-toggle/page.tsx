@@ -75,7 +75,10 @@ export default function AdminToggle() {
 
   return (
     <main className={styles.main}>
-      <h1>Admin Panel — AI Toggle</h1>
+      <a href="#konten-utama" className="sr-only focus:not-sr-only focus:absolute focus:left-4 focus:top-3 focus:z-50 focus:rounded-lg focus:bg-[var(--brand)] focus:px-4 focus:py-2 focus:text-sm focus:font-bold focus:text-white">Lompati ke konten</a>
+      <nav aria-label="Admin navigasi" className="mb-4 flex gap-3 text-xs"><a href="/dashboard" className="underline">Dashboard</a><a href="/admin/celah-pengetahuan" className="underline">Celah pengetahuan</a><a href="/admin/umpan-balik" className="underline">Umpan balik</a></nav>
+      <h1 id="konten-utama">Admin Panel — AI Toggle</h1>
+      <p role="status" aria-live="polite" className="sr-only">{msg || (loading ? 'Memuat status admin' : '')}</p>
       <div className={styles.card}>
         <div className={styles.status}>
           <span>AI:</span>
@@ -99,9 +102,12 @@ export default function AdminToggle() {
           </p>
         )}
 
+        <label htmlFor="admin-key" className="sr-only">Kunci admin</label>
         <input
+          id="admin-key"
           type="password"
           placeholder="Admin Key"
+          aria-label="Kunci admin"
           value={key}
           onChange={(e) => setKey(e.target.value)}
           className={styles.input}

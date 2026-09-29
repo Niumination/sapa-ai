@@ -33,8 +33,8 @@ export default function StatusPage() {
 
   useEffect(() => { void fetchStatus(); }, [fetchStatus]);
 
-  if (busy) return <div className="p-6 space-y-4"><div className="h-6 w-48 bg-[var(--surface-muted)] rounded animate-pulse" /><div className="grid grid-cols-3 gap-4">{[1,2,3].map(i=><div key={i} className="h-24 bg-[var(--surface-muted)] rounded-2xl animate-pulse" />)}</div></div>;
-  if (error) return <div className="p-6"><div className="rounded-xl border border-[var(--danger)]/30 bg-[var(--danger-tint)] p-4 text-sm text-[var(--danger)]">{error} <button onClick={fetchStatus} className="ml-3 underline">Coba lagi</button></div></div>;
+  if (busy) return <div className="p-6 space-y-4"><h1 className="text-2xl font-bold text-[var(--brand)]">Status & Tentang</h1><div className="h-6 w-48 bg-[var(--surface-muted)] rounded animate-pulse" /><div className="grid grid-cols-3 gap-4">{[1,2,3].map(i=><div key={i} className="h-24 bg-[var(--surface-muted)] rounded-2xl animate-pulse" />)}</div></div>;
+  if (error) return <div className="p-6"><h1 className="text-2xl font-bold text-[var(--brand)]">Status & Tentang</h1><div className="rounded-xl border border-[var(--danger)]/30 bg-[var(--danger-tint)] p-4 text-sm text-[var(--danger)]">{error} <button onClick={fetchStatus} className="ml-3 underline">Coba lagi</button></div></div>;
 
   const ov = data?.overview ?? data?.kabupaten;
   const isOnline = data?.status === 'ok';

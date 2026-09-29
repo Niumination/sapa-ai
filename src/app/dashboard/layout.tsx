@@ -44,7 +44,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
               className="w-9 h-9 rounded-lg object-contain flex-shrink-0"
             />
             <div>
-              <h1 className="text-sm font-bold tracking-wide text-white">SAPA Smart AI</h1>
+              <div className="text-sm font-bold tracking-wide text-white" aria-hidden="true">SAPA Smart AI</div>
               <p className="text-[10px] uppercase tracking-widest text-[var(--text-on-dark-muted)]">Aceh Tengah · Diskominfo</p>
             </div>
           </div>

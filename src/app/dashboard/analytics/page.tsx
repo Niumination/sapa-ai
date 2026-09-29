@@ -11,14 +11,18 @@ export default async function AnalyticsPage() {
   try {
     const data = await getAnalyticsData();
     return (
-      <Suspense fallback={<p className="p-6 text-sm text-[#767D6F]">Memuat analitik…</p>}>
-        <AnalyticsClient initialData={data} />
-      </Suspense>
+      <>
+        <h1 className="sr-only">Analitik Data SAPA</h1>
+        <Suspense fallback={<p className="p-6 text-sm text-[#767D6F]">Memuat analitik…</p>}>
+          <AnalyticsClient initialData={data} />
+        </Suspense>
+      </>
     );
   } catch (e) {
     const msg = e instanceof Error ? e.message : 'Gagal memuat analitik';
     return (
       <div className="flex flex-col items-center justify-center py-20 text-center">
+        <h1 className="text-2xl font-bold text-[var(--brand)]">Analitik Data SAPA</h1>
         <div className="text-4xl mb-3">⚠️</div>
         <p className="text-[var(--danger)] text-sm mb-4">{msg}</p>
       </div>

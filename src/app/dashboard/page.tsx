@@ -9,5 +9,10 @@ export default async function DashboardPage() {
     const d = await getKpiData();
     initialKpiData = { kpis: d.kpis, source: d.source };
   } catch {}
-  return <DashboardClient initialKpiData={initialKpiData} />;
+  return (
+    <>
+      <h1 className="sr-only">Dashboard SAPA Aceh Tengah</h1>
+      <DashboardClient initialKpiData={initialKpiData} />
+    </>
+  );
 }

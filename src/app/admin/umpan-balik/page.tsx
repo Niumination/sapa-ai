@@ -87,7 +87,10 @@ export default function UmpanBalikPage() {
 
   return (
     <main className="mx-auto max-w-5xl p-6">
-      <h1 className="text-lg font-bold text-[var(--brand)]">Laporan koreksi warga</h1>
+      <a href="#konten-utama" className="sr-only focus:not-sr-only focus:absolute focus:left-4 focus:top-3 focus:z-50 focus:rounded-lg focus:bg-[var(--brand)] focus:px-4 focus:py-2 focus:text-sm focus:font-bold focus:text-white">Lompati ke konten</a>
+      <nav aria-label="Admin navigasi" className="mb-4 flex gap-3 text-xs"><a href="/dashboard" className="underline">Dashboard</a><a href="/admin/ai-toggle" className="underline">AI toggle</a><a href="/admin/celah-pengetahuan" className="underline">Celah pengetahuan</a></nav>
+      <h1 id="konten-utama" className="text-lg font-bold text-[var(--brand)]">Laporan koreksi warga</h1>
+      <p role="status" aria-live="polite" className="sr-only">{memuat ? 'Memuat laporan koreksi warga' : galat ? `Gagal: ${galat}` : data ? `Data laporan minggu ${data.minggu ?? ''} dimuat` : ''}</p>
       <p className="mt-2 text-xs leading-relaxed text-[var(--text-muted)]">
         Laporan dari kanal &quot;Lapor angka&quot; pada dasbor. Setiap laporan sudah dibersihkan: seluruh angka,
         surel, tautan, dan nomor telepon dibuang sebelum disimpan — tidak ada NIK, IP, maupun id pengguna.
@@ -99,13 +102,15 @@ export default function UmpanBalikPage() {
       </p>
 
       <div className="mt-5 rounded-xl border border-[var(--border)] bg-[var(--surface-card)] p-4">
-        <label className="block text-[10px] font-bold uppercase tracking-wide text-[var(--text-muted)]">
+        <label htmlFor="token-admin" className="block text-[10px] font-bold uppercase tracking-wide text-[var(--text-muted)]">
           Token admin
         </label>
         <div className="mt-1 flex flex-wrap gap-2">
           <input
+            id="token-admin"
             type="password"
             value={token}
+            aria-label="Token admin"
             onChange={(e) => setToken(e.target.value)}
             placeholder="nilai ADMIN_TOKEN"
             className="min-w-[240px] flex-1 rounded-lg border border-[var(--border)] bg-[var(--surface-container-low)] px-3 py-2 text-xs text-[var(--text-body)]"
