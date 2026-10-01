@@ -1,10 +1,12 @@
 # sapa-ai — SAPA Smart AI Aceh Tengah (SPLP-only, publik)
 
 > **Next.js 16 + SPLP API langsung (tanpa DB, tanpa auth/login, tanpa DTSEN, tanpa warehouse)**
-> **Path:** `services/sapa-ai/` · **Repo:** `Niumination/sapa-ai` (`main`)
-> **Produksi:** https://sapa-smart-ai.vercel.app — AI `deepseek-v4.1-flash` (OpenCode Go) + jawaban deterministik, keduanya dikendalikan toggle admin (`/admin/ai-toggle`, state di Upstash Redis)
-> **Status:** ⏸️ **Selesai — menunggu client** (19 Sep 2026). Perf RSC+ISR 10m (analytics/dashboard server-fetch, kpi/stats/report/sapa cache terdistribusi, revalidate endpoint). Serah-terima lengkap: BAST, KAK, RAB (`docs/serah-terima/`). Pengembangan tahap lanjut menunggu client & instruksi pemilik
-> **Backlog priority:** P2 — ditangguhkan sampai instruksi client
+> **Path:** `services/sapa-ai/` · **Repo:** `Niumination/sapa-ai` — **PUBLIK** (`visibility: PUBLIC`, terverifikasi 1 Okt 2026); seluruh isi repo terbaca umum, jangan menulis apa pun yang tidak boleh dipublikasikan
+> **Produksi:** https://sapa-smart-ai.vercel.app — branch `main` `ff00eb8` = versi **0.1.0**, AI `deepseek-v4.1-flash` (OpenCode Go) + jawaban deterministik, keduanya dikendalikan toggle admin (`/admin/ai-toggle`, state di Upstash Redis)
+> **Status produksi (1 Okt 2026):** 🟢 hidup, `sapa: active` 2.081 record · AI **ON** + deterministik **ON** · dua kueri nyata HTTP 200 dalam 11,8–12,1 dtk · sumber status berjalan: `GET /api/status`
+> **Status pengembangan:** 🔀 cabang `dev` = **0.2.0-dev** (`052f2f0`, tag `v0.2.0-dev`, 67 komit di atas `main`, pohon `2b8d13500e7a`). **BELUM dipromosikan** — `main` sengaja tidak disentuh sampai pemilik produk memutuskan. Gerbang terverifikasi: 794 uji/48 berkas · `tsc` 0 · uji terima exit 0 · eval 120/120 dua mode · a11y 11 rute · OWASP 10 vektor 0 PATUH
+> **Backlog priority:** P1 — 7 butir tahap berikutnya (P8 fokus peramban · P12 eval model nyata · P13 panel penilai manusia · P14 latihan mundur · P15 top-up semantik · P16 data desa · FR-13/14 embeddings) → `docs/usulan-ai-tingkat-lanjut/37-BACKLOG-TAHAP-BERIKUTNYA.md`. Keputusan pemilik 1 Okt 2026: **ketujuhnya dikerjakan di repo ini**, menunggu arahan eksekusi
+> **Catatan:** Perf RSC+ISR 10m (analytics/dashboard server-fetch, kpi/stats/report/sapa cache terdistribusi, revalidate endpoint). Serah-terima lengkap: BAST, KAK, RAB (`docs/serah-terima/`)
 
 ## Arsitektur
 
