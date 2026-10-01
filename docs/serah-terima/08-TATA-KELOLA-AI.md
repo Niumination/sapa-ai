@@ -98,6 +98,11 @@ Catatan teknis penting (agar tidak salah tafsir):
 - Model terakhir yang dipakai: `deepseek-v4.1-flash`.
 - Catatan operasional dari `AGENTS.md`: `state: inactive` di `/api/status` belum
   berarti rusak — periksa `toggles` lebih dulu, karena toggle admin menang atas env.
+- **Kondisi terbaru (1 Oktober 2026): kedua saklar MENYALA**, layanan menjawab dengan
+  `deepseek-v4.1-flash`, 2 kueri nyata terukur HTTP 200 dalam 11,8–12,1 dtk.
+  Fakta bahwa langganan pernah mandek **tidak lagi berlaku** — jangan menjadikan
+  `503` sebagai keadaan normal saat triase. Status berjalan selalu dibaca dari
+  `GET /api/status` (field `toggles`), bukan dari dokumen ini.
 
 ---
 

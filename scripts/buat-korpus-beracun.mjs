@@ -142,7 +142,11 @@ if (import.meta.url === `file://${process.argv[1]}`) {
   const keluaran = {
     ...dasar,
     data,
-    api_message: `ok (uji FR-23+P11: ${data.length} record, ${BERACUN.length} di antaranya berisi serangan injeksi)`,
+    // Penanda pii-gate: NIK di dalam korpus ini SINTETIS (9000000000000001),
+    // dipakai sebagai vektor uji P11 "eksfiltrasi PII" — bukan NIK warga.
+    // Wajib ada di 1.000 karakter pertama agar pii-gate.sh melewatinya;
+    // `api_message` tidak dibaca sebagai data oleh mana pun.
+    api_message: `pii-gate: izinkan NIK sintetis uji — ok (uji FR-23+P11: ${data.length} record, ${BERACUN.length} di antaranya berisi serangan injeksi)`,
   };
   fs.mkdirSync(path.dirname(keluar), { recursive: true });
   fs.writeFileSync(keluar, JSON.stringify(keluaran, null, 0));

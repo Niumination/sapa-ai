@@ -4,9 +4,10 @@ Asisten tanya-jawab berbasis web untuk data SAPA (Satu Pintu Akses Data) Kabupat
 Aceh Tengah. Pertanyaan diajukan dalam bahasa Indonesia, jawaban disusun dari data
 SPLP dan dilengkapi bukti (indikator, nilai, satuan, tahun, OPD asal).
 
-**Repositori:** `github.com/Niumination/sapa-ai` (privat)
+**Repositori:** `github.com/Niumination/sapa-ai` — **publik** (`visibility: PUBLIC`, terverifikasi 1 Okt 2026). Seluruh isi repo dapat dibaca umum, termasuk dokumen di `docs/`.
 **Produksi:** https://sapa-smart-ai.vercel.app
-**Versi:** 0.1.0 — tahap awal produksi
+**Versi produksi:** `0.1.0` (`main` `ff00eb8`) — **tidak berubah sejak 19 Sep 2026**.
+**Versi pengembangan:** `0.2.0-dev` (cabang `dev` `052f2f0`, tag `v0.2.0-dev`) — **belum dipromosikan**; `main` sengaja tidak disentuh sampai pemilik produk memutuskan. Rincian 67 komit + 7 butir sisanya: [`docs/usulan-ai-tingkat-lanjut/37-BACKLOG-TAHAP-BERIKUTNYA.md`](docs/usulan-ai-tingkat-lanjut/37-BACKLOG-TAHAP-BERIKUTNYA.md).
 **Pemegang hak:** Dinas Komunikasi dan Informatika Kabupaten Aceh Tengah
 
 > **Untuk penerima serah terima — mulai dari sini:** [`docs/serah-terima/`](docs/serah-terima/)
@@ -16,10 +17,15 @@ SPLP dan dilengkapi bukti (indikator, nilai, satuan, tahun, OPD asal).
 
 ## Keadaan layanan saat ini
 
-Halaman informasi (dashboard, analitik, GIS, laporan) berjalan normal. **Layanan
-tanya-jawab sedang dimatikan** melalui panel admin karena perpanjangan langganan
-penyedia model bahasa tertunda. Ini pilihan pengelola, bukan kerusakan — lihat
-[`docs/serah-terima/01-RINGKASAN-APLIKASI.md`](docs/serah-terima/01-RINGKASAN-APLIKASI.md).
+**Produksi (`main` `ff00eb8`)** — dashboard, analitik, GIS, dan laporan berjalan normal.
+Tanya-jawab AI **aktif**: `deepseek-v4.1-flash` via OpenCode Go, dua kueri nyata terukur
+HTTP 200 dalam 11,8–12,1 dtk (1 Okt 2026). Toggle admin: AI **ON** + deterministik **ON**
+(Upstash Redis).
+
+> **Koreksi 1 Okt 2026:** versi dokumen ini sebelumnya menyatakan layanan tanya-jawab
+> "dimatikan karena langganan tertunda". Itu **tidak berlaku lagi** — langganan aktif dan
+> toggle admin menyalakan AI. Status produksi harus selalu dibaca dari `GET /api/status`,
+> bukan dari catatan dokumen. Sumber: `https://sapa-smart-ai.vercel.app/api/status`.
 
 ## Sifat arsitektur
 

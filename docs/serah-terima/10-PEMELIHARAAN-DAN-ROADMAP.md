@@ -147,6 +147,6 @@ ketidaktersediaan sumber data.
 
 - **Vercel** — proyek Hobby; pemakaian penyimpanan dan fungsi dibatasi
 - **Upstash Redis** — tier gratis; menyimpan keadaan kedua saklar layanan
-- **OpenCode Go** — langganan berbayar; saat ini tertunda perpanjangannya
+- **OpenCode Go** — langganan berbayar; **aktif** (per 1 Okt 2026 — menjawab dengan `deepseek-v4.1-flash`, toggle AI menyala)
 - **API SPLP** — layanan pemerintah, di luar kendali Diskominfo
 - **Node.js** — versi minimum tercantum pada `package.json` dan `.nvmrc`

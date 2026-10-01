@@ -84,12 +84,24 @@ Saklar ini bersifat global — berlaku untuk semua pengguna, diatur dari
 5. Tidak ada akun pengguna — halaman bersifat terbuka, panel admin dilindungi
    satu kunci.
 
-## Keadaan saat ini (19 September 2026)
+## Keadaan saat ini (diperbarui 1 Oktober 2026)
 
-Versi **0.1.0**, tahap awal produksi. Halaman informasi (dashboard, analitik, GIS,
-laporan) berjalan normal. **Layanan tanya-jawab sedang dimatikan** melalui kedua
-saklar karena perpanjangan langganan penyedia model bahasa tertunda — ini pilihan
-pengelola, bukan kerusakan.
+**Produksi tetap versi `0.1.0` (cabang `main` `ff00eb8`) — tidak berubah sejak 19 Sep 2026.**
+Halaman informasi (dashboard, analitik, GIS, laporan) berjalan normal.
+
+**Layanan tanya-jawab sekarang AKTIF.** Kedua saklar menyala: tanya-jawab model
+(`deepseek-v4.1-flash` via OpenCode Go) dan jawaban deterministik. Terverifikasi 1 Okt 2026:
+`GET /api/status` → `toggles: {aiEnabled: true, detEnabled: true}`, `sapa: active`,
+2.081 record; dua kueri nyata dijawab HTTP 200 dalam 11,8–12,1 dtk.
+
+> **Catatan koreksi.** Paragraf versi dokumen ini sebelumnya berbunyi "layanan tanya-jawab
+> sedang dimatikan … perpanjangan langganan tertunda". Itu berlaku sampai 19 Sep 2026 saja.
+> ksinya: layanan **dinyalakan kembali**, bukan rusak. Status produksi selalu dibaca dari
+> `GET /api/status`, bukan dari catatan dokumen ini.
+
+Pengembangan tahap lanjut berjalan di cabang `dev` = `0.2.0-dev` (`052f2f0`, tag
+`v0.2.0-dev`); belum dipromosikan ke produksi. Rincian 67 komit dan 7 butir pekerjaan
+sisa: `docs/usulan-ai-tingkat-lanjut/37-BACKLOG-TAHAP-BERIKUTNYA.md`.
 
 ## Dokumen lain dalam paket ini
 

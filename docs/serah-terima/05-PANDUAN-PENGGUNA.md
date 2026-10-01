@@ -233,7 +233,9 @@ Riwayat disimpan di peramban Anda sendiri (penyimpanan lokal), bukan di server, 
 | `Gagal memuat laporan: HTTP 500` atau `Gagal memuat analitik` | Halaman gagal mengambil data dari server aplikasi. | Tekan **Coba Lagi** atau muat ulang halaman. Bila berulang, laporkan ke pengelola beserta waktu kejadian. |
 | `Gagal memuat data` atau `Gagal menghubungi server` pada Peta GIS | Data wilayah gagal dimuat. | Tekan **Coba lagi**. Peta dasar berasal dari layanan OpenStreetMap sehingga memerlukan koneksi internet yang baik. |
 
-Catatan keadaan terkini (verifikasi 19 September 2026): kedua mode jawaban berada pada posisi mati, sehingga setiap pertanyaan dibalas dengan pesan `AI tidak aktif — jawaban deterministik dan AI tidak menghasilkan jawaban`. Ini keadaan yang disengaja, bukan kerusakan, dan akan berubah setelah pengelola menyalakan kembali mode jawaban melalui panel admin.
+Catatan keadaan saat serah terima (verifikasi 19 September 2026): kedua mode jawaban berada pada posisi mati, sehingga setiap pertanyaan dibalas dengan pesan `AI tidak aktif — jawaban deterministik dan AI tidak menghasilkan jawaban`. Ini keadaan yang disengaja, bukan kerusakan, dan memang berubah setelah pengelola menyalakan kembali mode jawaban melalui panel admin.
+
+**Kondisi terbaru (1 Oktober 2026): kedua mode jawaban sudah MENYALA dan pertanyaan dijawab normal.** Kalau Anda masih menerima pesan `AI tidak aktif`, berarti ada yang mematikan saklar setelah tanggal tersebut — laporkan ke pengelola dengan waktu kejadian. Verifikasi mandiri: `curl -s https://sapa-smart-ai.vercel.app/api/status` (lihat §7 tabel di atas).
 
 ---
 

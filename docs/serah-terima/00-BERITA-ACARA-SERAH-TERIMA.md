@@ -58,6 +58,13 @@ Hal-hal berikut dicatat apa adanya agar penerima tidak menemukan kejutan:
 2. **Model terakhir yang dipakai:** `deepseek-v4.1-flash`, diakses melalui
    OpenCode Go. Aplikasi sudah mendukung penyedia lain tanpa perubahan kode —
    termasuk Google Gemini — lihat `08-TATA-KELOLA-AI.md`.
+
+> **⚠️ Koreksi keadaan — 1 Oktober 2026.** Catatan di atas adalah **keadaan saat serah terima
+> 19 Sep 2026** dan sengaja dibiarkan sebagai riwayat. Keadaan produksi **sekarang**:
+> kedua saklar **MENYALA** (`toggles: {aiEnabled: true, detEnabled: true}`), layanan
+> tanya-jawab aktif menjawab dengan `deepseek-v4.1-flash`, 2 kueri nyata terukur HTTP 200
+> dalam 11,8–12,1 dtk. Sumber: `GET https://sapa-smart-ai.vercel.app/api/status`.
+> Verified 1 Okt 2026 — jangan memakai catatan lama sebagai status berjalan.
 3. **Kuota penyimpanan Vercel terlampaui** (Functions Storage). Ini tidak
    menghentikan layanan yang berjalan, tetapi dapat memblokir penempatan
    (deployment) baru. Kebijakan retensi sudah diatur pada 19 Sep 2026 (canceled

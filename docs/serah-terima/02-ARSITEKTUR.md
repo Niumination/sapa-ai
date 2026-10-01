@@ -507,6 +507,13 @@ Keterangan:
 - Akibatnya `POST /api/query` membalas **503** dengan
   `stage: "service-unavailable"`. Ini **keadaan yang disengaja, bukan kerusakan**.
 - Model terakhir yang dipakai: `deepseek-v4.1-flash`.
+
+> **⚠️ Koreksi keadaan — 1 Oktober 2026.** Catatan di atas adalah **keadaan saat serah terima
+> 19 Sep 2026** dan sengaja dibiarkan sebagai riwayat. Keadaan produksi **sekarang**:
+> kedua saklar **MENYALA** (`toggles: {aiEnabled: true, detEnabled: true}`), layanan
+> tanya-jawab aktif menjawab dengan `deepseek-v4.1-flash`, 2 kueri nyata terukur HTTP 200
+> dalam 11,8–12,1 dtk. Sumber: `GET https://sapa-smart-ai.vercel.app/api/status`.
+> Verified 1 Okt 2026 — jangan memakai catatan lama sebagai status berjalan.
 - Backend state sakelar: `redis` — artinya Upstash terkonfigurasi dan sakelar
   berlaku lintas-instance.
 
